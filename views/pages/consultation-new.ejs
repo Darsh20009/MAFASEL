@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-plus-circle"></i> طلب استشارة جديدة</h1>
+    </div>
+    <div class="form-card">
+      <form method="POST" action="/consultations/new">
+        <div class="form-group">
+          <label>التخصص المطلوب</label>
+          <select name="specialty" required>
+            <option value="">اختر التخصص</option>
+            <option value="طب عام">طب عام</option>
+            <option value="طب أسنان">طب أسنان</option>
+            <option value="طب عيون">طب عيون</option>
+            <option value="طب أطفال">طب أطفال</option>
+            <option value="طب نساء وولادة">طب نساء وولادة</option>
+            <option value="جراحة عامة">جراحة عامة</option>
+            <option value="طب عظام">طب عظام</option>
+            <option value="طب القلب">طب القلب</option>
+            <option value="طب الجلدية">طب الجلدية</option>
+            <option value="طب نفسي">طب نفسي</option>
+            <option value="طب باطني">طب باطني</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>الأولوية</label>
+          <select name="priority">
+            <option value="low">منخفضة</option>
+            <option value="medium" selected>متوسطة</option>
+            <option value="high">مرتفعة</option>
+            <option value="urgent">عاجلة</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>وصف الأعراض</label>
+          <textarea name="symptoms" required rows="5" placeholder="اشرح الأعراض التي تعاني منها بالتفصيل..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">إرسال الاستشارة</button>
+          <a href="/consultations" class="btn btn-outline">إلغاء</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,68 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-comment-dots"></i> الشكاوى والمتابعة</h1>
+    </div>
+
+    <div class="form-card">
+      <h2>تقديم شكوى جديدة</h2>
+      <form method="POST" action="/complaints/new">
+        <div class="form-row">
+          <div class="form-group">
+            <label>التصنيف</label>
+            <select name="category">
+              <option value="service">خدمة</option>
+              <option value="technical">تقني</option>
+              <option value="billing">مالي</option>
+              <option value="doctor">طبيب</option>
+              <option value="pharmacy">صيدلية</option>
+              <option value="other">أخرى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>الأولوية</label>
+            <select name="priority">
+              <option value="low">منخفضة</option>
+              <option value="medium" selected>متوسطة</option>
+              <option value="high">مرتفعة</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>الموضوع</label>
+          <input type="text" name="subject" required placeholder="عنوان الشكوى">
+        </div>
+        <div class="form-group">
+          <label>التفاصيل</label>
+          <textarea name="description" required rows="4" placeholder="اشرح المشكلة بالتفصيل..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">إرسال الشكوى</button>
+      </form>
+    </div>
+
+    <% if (complaints.length > 0) { %>
+    <h2 style="margin-top:2rem">شكاواي السابقة</h2>
+    <div class="list-items">
+      <% complaints.forEach(c => { %>
+      <div class="list-item">
+        <div class="list-item-info">
+          <strong><%= c.subject %></strong>
+          <p><%= c.description.substring(0, 100) %></p>
+          <span class="text-muted"><%= new Date(c.createdAt).toLocaleDateString('ar-SA') %></span>
+          <% if (c.response) { %>
+          <div class="complaint-response">
+            <strong>الرد:</strong> <%= c.response %>
+          </div>
+          <% } %>
+        </div>
+        <span class="badge badge-<%= c.status === 'resolved' ? 'success' : c.status === 'open' ? 'warning' : 'primary' %>">
+          <%= c.status === 'open' ? 'مفتوحة' : c.status === 'in_progress' ? 'قيد المعالجة' : c.status === 'resolved' ? 'تم الحل' : 'مغلقة' %>
+        </span>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

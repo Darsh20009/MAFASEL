@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-comment-dots"></i> إدارة الشكاوى</h1>
+      <a href="/admin" class="btn btn-outline">العودة</a>
+    </div>
+    <div class="list-items">
+      <% complaints.forEach(c => { %>
+      <div class="list-item complaint-admin-item">
+        <div class="list-item-info">
+          <strong><%= c.subject %></strong>
+          <p><%= c.description %></p>
+          <span class="text-muted">من: <%= c.user ? c.user.name : '-' %> | <%= new Date(c.createdAt).toLocaleDateString('ar-SA') %></span>
+          <% if (c.response) { %>
+          <div class="complaint-response"><strong>الرد:</strong> <%= c.response %></div>
+          <% } %>
+        </div>
+        <div>
+          <span class="badge badge-<%= c.status === 'resolved' ? 'success' : c.status === 'open' ? 'warning' : 'primary' %>"><%= c.status %></span>
+          <% if (c.status !== 'resolved' && c.status !== 'closed') { %>
+          <form method="POST" action="/admin/complaints/<%= c._id %>/respond" style="margin-top:0.5rem">
+            <textarea name="response" required placeholder="اكتب ردك..." rows="2" class="form-control-sm"></textarea>
+            <button type="submit" class="btn btn-sm btn-primary" style="margin-top:0.5rem">إرسال الرد</button>
+          </form>
+          <% } %>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

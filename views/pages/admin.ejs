@@ -1,0 +1,54 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-cog"></i> لوحة الإدارة</h1>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon bg-primary"><i class="fas fa-users"></i></div><div class="stat-info"><h3><%= stats.users %></h3><p>المستخدمين</p></div></div>
+      <div class="stat-card"><div class="stat-icon bg-success"><i class="fas fa-stethoscope"></i></div><div class="stat-info"><h3><%= stats.consultations %></h3><p>الاستشارات</p></div></div>
+      <div class="stat-card"><div class="stat-icon bg-warning"><i class="fas fa-pills"></i></div><div class="stat-info"><h3><%= stats.orders %></h3><p>الطلبات</p></div></div>
+      <div class="stat-card"><div class="stat-icon bg-error"><i class="fas fa-exclamation-circle"></i></div><div class="stat-info"><h3><%= stats.complaints %></h3><p>شكاوى مفتوحة</p></div></div>
+    </div>
+
+    <div class="admin-nav">
+      <a href="/admin/users" class="action-card"><i class="fas fa-users"></i><span>المستخدمين</span></a>
+      <a href="/admin/consultations" class="action-card"><i class="fas fa-stethoscope"></i><span>الاستشارات</span></a>
+      <a href="/admin/orders" class="action-card"><i class="fas fa-pills"></i><span>الطلبات</span></a>
+      <a href="/admin/complaints" class="action-card"><i class="fas fa-comment-dots"></i><span>الشكاوى</span></a>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="dashboard-section">
+        <h2>آخر المستخدمين</h2>
+        <div class="list-items">
+          <% recentUsers.forEach(u => { %>
+          <div class="list-item">
+            <div class="list-item-info">
+              <strong><%= u.name %></strong>
+              <p><%= u.email %></p>
+            </div>
+            <span class="badge badge-primary"><%= u.role === 'admin' ? 'مدير' : u.role === 'doctor' ? 'طبيب' : u.role === 'pharmacist' ? 'صيدلي' : 'مريض' %></span>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+      <div class="dashboard-section">
+        <h2>آخر الاستشارات</h2>
+        <div class="list-items">
+          <% recentConsultations.forEach(c => { %>
+          <div class="list-item">
+            <div class="list-item-info">
+              <strong><%= c.patient ? c.patient.name : 'غير معروف' %></strong>
+              <p><%= c.specialty %></p>
+            </div>
+            <span class="badge badge-<%= c.status === 'pending' ? 'warning' : 'primary' %>"><%= c.status %></span>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

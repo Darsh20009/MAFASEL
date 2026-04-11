@@ -1,0 +1,84 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-stethoscope"></i> تفاصيل الاستشارة</h1>
+      <a href="/consultations" class="btn btn-outline">العودة</a>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-info">
+        <div class="card">
+          <h3>معلومات الاستشارة</h3>
+          <div class="info-row"><span>التخصص:</span><strong><%= consultation.specialty %></strong></div>
+          <div class="info-row"><span>الأولوية:</span><span class="badge badge-<%= consultation.priority === 'urgent' ? 'error' : 'warning' %>"><%= consultation.priority %></span></div>
+          <div class="info-row"><span>الحالة:</span><span class="badge badge-<%= consultation.status === 'completed' ? 'success' : 'primary' %>"><%= consultation.status === 'pending' ? 'معلقة' : consultation.status === 'assigned' ? 'تم التعيين' : consultation.status === 'in_progress' ? 'جارية' : consultation.status === 'completed' ? 'مكتملة' : 'ملغاة' %></span></div>
+          <% if (consultation.doctor) { %>
+          <div class="info-row"><span>الطبيب:</span><strong><%= consultation.doctor.name %></strong></div>
+          <% } %>
+          <div class="info-row"><span>التاريخ:</span><strong><%= new Date(consultation.createdAt).toLocaleDateString('ar-SA') %></strong></div>
+          <h4>الأعراض</h4>
+          <p><%= consultation.symptoms %></p>
+          <% if (consultation.diagnosis) { %>
+          <h4>التشخيص</h4>
+          <p><%= consultation.diagnosis %></p>
+          <% } %>
+          <% if (consultation.prescription) { %>
+          <h4>الوصفة الطبية</h4>
+          <p><%= consultation.prescription %></p>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="chat-section">
+        <div class="card">
+          <h3><i class="fas fa-comments"></i> المحادثة</h3>
+          <div class="chat-messages" id="chatMessages">
+            <% consultation.messages.forEach(msg => { %>
+            <div class="chat-msg <%= msg.sender && msg.sender._id.toString() === user._id.toString() ? 'msg-sent' : 'msg-received' %>">
+              <div class="msg-header">
+                <strong><%= msg.sender ? msg.sender.name : 'مجهول' %></strong>
+                <span class="msg-time"><%= new Date(msg.createdAt).toLocaleTimeString('ar-SA', {hour: '2-digit', minute: '2-digit'}) %></span>
+              </div>
+              <p><%= msg.text %></p>
+            </div>
+            <% }) %>
+          </div>
+          <% if (consultation.status !== 'completed' && consultation.status !== 'cancelled') { %>
+          <form class="chat-input" id="chatForm">
+            <input type="text" id="chatText" placeholder="اكتب رسالتك..." required>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+          </form>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatForm = document.getElementById('chatForm');
+  if (chatForm) {
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = document.getElementById('chatText').value.trim();
+      if (!text) return;
+      try {
+        const res = await fetch('/consultations/<%= consultation._id %>/message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        if (res.ok) {
+          const msgDiv = document.createElement('div');
+          msgDiv.className = 'chat-msg msg-sent';
+          msgDiv.innerHTML = '<div class="msg-header"><strong><%= user.name %></strong><span class="msg-time">الآن</span></div><p>' + text + '</p>';
+          document.getElementById('chatMessages').appendChild(msgDiv);
+          document.getElementById('chatText').value = '';
+          msgDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+      } catch(err) { console.error(err); }
+    });
+  }
+</script>
+<%- include('../partials/footer') %>

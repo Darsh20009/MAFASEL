@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-stethoscope"></i> إدارة الاستشارات</h1>
+      <a href="/admin" class="btn btn-outline">العودة</a>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead><tr><th>المريض</th><th>التخصص</th><th>الأولوية</th><th>الطبيب</th><th>الحالة</th><th>إجراء</th></tr></thead>
+        <tbody>
+          <% consultations.forEach(c => { %>
+          <tr>
+            <td><%= c.patient ? c.patient.name : '-' %></td>
+            <td><%= c.specialty %></td>
+            <td><span class="badge badge-<%= c.priority === 'urgent' ? 'error' : 'warning' %>"><%= c.priority %></span></td>
+            <td><%= c.doctor ? c.doctor.name : 'غير معين' %></td>
+            <td><span class="badge badge-<%= c.status === 'completed' ? 'success' : 'primary' %>"><%= c.status %></span></td>
+            <td>
+              <% if (c.status === 'pending' && doctors.length > 0) { %>
+              <form method="POST" action="/admin/consultations/<%= c._id %>/assign" style="display:inline">
+                <select name="doctorId" class="select-sm">
+                  <% doctors.forEach(d => { %>
+                  <option value="<%= d._id %>"><%= d.name %></option>
+                  <% }) %>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">تعيين</button>
+              </form>
+              <% } %>
+              <a href="/consultations/<%= c._id %>" class="btn btn-sm btn-outline">عرض</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,60 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-robot"></i> المساعد الذكي</h1>
+    </div>
+    <div class="ai-chat-container">
+      <div class="ai-messages" id="aiMessages">
+        <div class="ai-msg ai-bot">
+          <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+          <div class="ai-bubble">مرحباً! أنا المساعد الطبي الذكي في منصة مفاصل. كيف يمكنني مساعدتك اليوم؟</div>
+        </div>
+      </div>
+      <form class="ai-input" id="aiForm">
+        <input type="text" id="aiText" placeholder="اكتب سؤالك الطبي..." required>
+        <button type="submit" class="btn btn-primary" id="aiSend"><i class="fas fa-paper-plane"></i></button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const aiForm = document.getElementById('aiForm');
+  const aiMessages = document.getElementById('aiMessages');
+  const aiText = document.getElementById('aiText');
+  const aiSend = document.getElementById('aiSend');
+
+  aiForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = aiText.value.trim();
+    if (!msg) return;
+
+    const userDiv = document.createElement('div');
+    userDiv.className = 'ai-msg ai-user';
+    userDiv.innerHTML = '<div class="ai-bubble">' + msg + '</div><div class="ai-avatar"><i class="fas fa-user"></i></div>';
+    aiMessages.appendChild(userDiv);
+    aiText.value = '';
+    aiSend.disabled = true;
+
+    const loadDiv = document.createElement('div');
+    loadDiv.className = 'ai-msg ai-bot';
+    loadDiv.innerHTML = '<div class="ai-avatar"><i class="fas fa-robot"></i></div><div class="ai-bubble"><i class="fas fa-spinner fa-spin"></i> جاري التفكير...</div>';
+    aiMessages.appendChild(loadDiv);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+
+    try {
+      const res = await fetch('/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      loadDiv.querySelector('.ai-bubble').innerHTML = data.reply.replace(/\n/g, '<br>');
+    } catch(err) {
+      loadDiv.querySelector('.ai-bubble').textContent = 'عذراً، حدث خطأ. حاول مرة أخرى.';
+    }
+    aiSend.disabled = false;
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  });
+</script>
+<%- include('../partials/footer') %>

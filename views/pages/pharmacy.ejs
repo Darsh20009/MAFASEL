@@ -1,0 +1,148 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-pills"></i> الصيدلية</h1>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('medicines')">الأدوية</button>
+      <button class="tab-btn" onclick="switchTab('orders')">طلباتي</button>
+      <button class="tab-btn" onclick="switchTab('cart')">السلة <span id="cartCount" class="badge badge-primary">0</span></button>
+    </div>
+
+    <div id="tab-medicines" class="tab-content active">
+      <div class="cards-grid">
+        <% medicines.forEach(med => { %>
+        <div class="card medicine-card">
+          <div class="card-header">
+            <h3><%= med.name %></h3>
+            <% if (med.prescription) { %><span class="badge badge-warning">بوصفة</span><% } %>
+          </div>
+          <p class="text-muted"><%= med.category %></p>
+          <p><%= med.description %></p>
+          <div class="card-footer">
+            <strong class="price"><%= med.price %> ريال</strong>
+            <button class="btn btn-sm btn-primary" onclick="addToCart(<%= med.id %>, '<%= med.name %>', <%= med.price %>)">
+              <i class="fas fa-cart-plus"></i> إضافة
+            </button>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <div id="tab-orders" class="tab-content">
+      <% if (orders.length > 0) { %>
+      <div class="list-items">
+        <% orders.forEach(o => { %>
+        <div class="list-item">
+          <div class="list-item-info">
+            <strong><%= o.trackingNumber %></strong>
+            <p><%= o.items.map(i => i.name).join('، ') %></p>
+            <span class="text-muted"><%= new Date(o.createdAt).toLocaleDateString('ar-SA') %></span>
+          </div>
+          <div>
+            <span class="badge badge-<%= o.status === 'delivered' ? 'success' : o.status === 'cancelled' ? 'error' : 'primary' %>">
+              <%= o.status === 'pending' ? 'معلق' : o.status === 'confirmed' ? 'مؤكد' : o.status === 'preparing' ? 'قيد التحضير' : o.status === 'delivering' ? 'في الطريق' : o.status === 'delivered' ? 'تم التوصيل' : 'ملغي' %>
+            </span>
+            <strong><%= o.totalPrice %> ريال</strong>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="empty-state-lg">
+        <i class="fas fa-shopping-bag"></i>
+        <h3>لا توجد طلبات</h3>
+      </div>
+      <% } %>
+    </div>
+
+    <div id="tab-cart" class="tab-content">
+      <div id="cartItems" class="list-items"></div>
+      <div id="cartEmpty" class="empty-state-lg">
+        <i class="fas fa-shopping-cart"></i>
+        <h3>السلة فارغة</h3>
+      </div>
+      <div id="cartCheckout" style="display:none">
+        <div class="cart-total">
+          <strong>الإجمالي: <span id="cartTotal">0</span> ريال</strong>
+        </div>
+        <div class="form-card">
+          <div class="form-group">
+            <label>عنوان التوصيل</label>
+            <input type="text" id="orderAddress" placeholder="أدخل عنوان التوصيل" required>
+          </div>
+          <div class="form-group">
+            <label>ملاحظات</label>
+            <textarea id="orderNotes" rows="2" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="submitOrder()">تأكيد الطلب</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let cart = [];
+
+  function addToCart(id, name, price) {
+    const existing = cart.find(i => i.id === id);
+    if (existing) { existing.quantity++; }
+    else { cart.push({ id, name, price, quantity: 1 }); }
+    updateCart();
+  }
+
+  function removeFromCart(id) {
+    cart = cart.filter(i => i.id !== id);
+    updateCart();
+  }
+
+  function updateCart() {
+    document.getElementById('cartCount').textContent = cart.length;
+    const itemsDiv = document.getElementById('cartItems');
+    const emptyDiv = document.getElementById('cartEmpty');
+    const checkoutDiv = document.getElementById('cartCheckout');
+
+    if (cart.length === 0) {
+      itemsDiv.innerHTML = '';
+      emptyDiv.style.display = 'block';
+      checkoutDiv.style.display = 'none';
+      return;
+    }
+
+    emptyDiv.style.display = 'none';
+    checkoutDiv.style.display = 'block';
+
+    let total = 0;
+    itemsDiv.innerHTML = cart.map(item => {
+      const subtotal = item.price * item.quantity;
+      total += subtotal;
+      return `<div class="list-item"><div class="list-item-info"><strong>${item.name}</strong><p>${item.price} ريال × ${item.quantity} = ${subtotal} ريال</p></div><button class="btn btn-sm btn-outline" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button></div>`;
+    }).join('');
+    document.getElementById('cartTotal').textContent = total;
+  }
+
+  async function submitOrder() {
+    const address = document.getElementById('orderAddress').value.trim();
+    if (!address) { alert('يرجى إدخال عنوان التوصيل'); return; }
+    try {
+      const res = await fetch('/pharmacy/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: JSON.stringify(cart), address, notes: document.getElementById('orderNotes').value })
+      });
+      if (res.ok) { cart = []; updateCart(); alert('تم إرسال الطلب بنجاح'); location.reload(); }
+    } catch(err) { alert('حدث خطأ'); }
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+<%- include('../partials/footer') %>

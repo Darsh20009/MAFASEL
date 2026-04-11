@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="<%= user && user.darkMode ? 'dark' : 'light' %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | مفاصل</title>
+  <link rel="icon" href="/icons/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<% if (user) { %>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/dashboard" class="nav-logo">
+      <img src="/icons/logo.png" alt="مفاصل" class="nav-logo-img">
+      <span>مفاصل</span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="القائمة">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="nav-menu" id="navMenu">
+      <a href="/dashboard" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a>
+      <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
+      <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
+      <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
+      <a href="/ai" class="nav-link"><i class="fas fa-robot"></i> المساعد الذكي</a>
+      <a href="/complaints" class="nav-link"><i class="fas fa-comment-dots"></i> الشكاوى</a>
+      <% if (user.role === 'admin' || user.role === 'moderator') { %>
+      <a href="/admin" class="nav-link nav-admin"><i class="fas fa-cog"></i> الإدارة</a>
+      <% } %>
+    </div>
+    <div class="nav-actions">
+      <a href="/notifications" class="nav-icon-btn" id="notifBtn" title="الإشعارات">
+        <i class="fas fa-bell"></i>
+        <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+      </a>
+      <button class="nav-icon-btn" id="darkToggle" title="الوضع الليلي">
+        <i class="fas fa-moon"></i>
+      </button>
+      <div class="nav-user-dropdown">
+        <button class="nav-user-btn">
+          <i class="fas fa-user-circle"></i>
+          <span class="nav-user-name"><%= user.name %></span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="/profile"><i class="fas fa-user"></i> الملف الشخصي</a>
+          <a href="/logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<% } %>
+
+<% if (success) { %>
+<div class="toast toast-success" id="toastSuccess">
+  <i class="fas fa-check-circle"></i>
+  <span><%= success %></span>
+  <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+</div>
+<% } %>
+<% if (error) { %>
+<div class="toast toast-error" id="toastError">
+  <i class="fas fa-exclamation-circle"></i>
+  <span><%= error %></span>
+  <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+</div>
+<% } %>
+
+<div class="notification-popup" id="notifPopup" style="display:none">
+  <div class="notif-popup-content">
+    <i class="fas fa-bell"></i>
+    <div>
+      <strong id="notifPopupTitle"></strong>
+      <p id="notifPopupBody"></p>
+    </div>
+  </div>
+</div>

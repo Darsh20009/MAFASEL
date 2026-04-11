@@ -1,0 +1,112 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1>مرحباً، <%= user.name %></h1>
+      <p>لوحة التحكم الخاصة بك في منصة مفاصل</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon bg-primary"><i class="fas fa-stethoscope"></i></div>
+        <div class="stat-info">
+          <h3><%= stats.consultations %></h3>
+          <p>الاستشارات</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon bg-success"><i class="fas fa-pills"></i></div>
+        <div class="stat-info">
+          <h3><%= stats.orders %></h3>
+          <p>طلبات الصيدلية</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon bg-warning"><i class="fas fa-bell"></i></div>
+        <div class="stat-info">
+          <h3><%= stats.unreadNotifs %></h3>
+          <p>إشعارات جديدة</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon <%= stats.activeInsurance ? 'bg-success' : 'bg-muted' %>"><i class="fas fa-shield-alt"></i></div>
+        <div class="stat-info">
+          <h3><%= stats.activeInsurance ? 'فعّال' : 'غير مفعّل' %></h3>
+          <p>التأمين الصحي</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <h2>إجراءات سريعة</h2>
+      <div class="actions-grid">
+        <a href="/consultations/new" class="action-card">
+          <i class="fas fa-plus-circle"></i>
+          <span>استشارة جديدة</span>
+        </a>
+        <a href="/pharmacy" class="action-card">
+          <i class="fas fa-shopping-cart"></i>
+          <span>طلب أدوية</span>
+        </a>
+        <a href="/ai" class="action-card">
+          <i class="fas fa-robot"></i>
+          <span>المساعد الذكي</span>
+        </a>
+        <a href="/profile" class="action-card">
+          <i class="fas fa-file-medical"></i>
+          <span>ملفي الطبي</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="dashboard-section">
+        <h2><i class="fas fa-stethoscope"></i> آخر الاستشارات</h2>
+        <% if (consultations.length > 0) { %>
+        <div class="list-items">
+          <% consultations.forEach(c => { %>
+          <a href="/consultations/<%= c._id %>" class="list-item">
+            <div class="list-item-info">
+              <strong><%= c.specialty %></strong>
+              <p><%= c.symptoms.substring(0, 60) %>...</p>
+            </div>
+            <span class="badge badge-<%= c.status === 'completed' ? 'success' : c.status === 'pending' ? 'warning' : 'primary' %>">
+              <%= c.status === 'pending' ? 'معلقة' : c.status === 'assigned' ? 'تم التعيين' : c.status === 'in_progress' ? 'جارية' : c.status === 'completed' ? 'مكتملة' : 'ملغاة' %>
+            </span>
+          </a>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-stethoscope"></i>
+          <p>لا توجد استشارات حتى الآن</p>
+          <a href="/consultations/new" class="btn btn-sm btn-primary">طلب استشارة</a>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="dashboard-section">
+        <h2><i class="fas fa-bell"></i> آخر الإشعارات</h2>
+        <% if (notifications.length > 0) { %>
+        <div class="list-items">
+          <% notifications.forEach(n => { %>
+          <div class="list-item notif-item" onclick="<% if(n.link) { %>window.location='<%= n.link %>'<% } %>">
+            <div class="list-item-info">
+              <strong><%= n.title %></strong>
+              <p><%= n.body %></p>
+            </div>
+            <span class="notif-time"><%= new Date(n.createdAt).toLocaleDateString('ar-SA') %></span>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-bell-slash"></i>
+          <p>لا توجد إشعارات جديدة</p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

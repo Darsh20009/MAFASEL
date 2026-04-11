@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-stethoscope"></i> الاستشارات الطبية</h1>
+      <a href="/consultations/new" class="btn btn-primary"><i class="fas fa-plus"></i> استشارة جديدة</a>
+    </div>
+    <% if (consultations.length > 0) { %>
+    <div class="cards-grid">
+      <% consultations.forEach(c => { %>
+      <a href="/consultations/<%= c._id %>" class="card">
+        <div class="card-header">
+          <h3><%= c.specialty %></h3>
+          <span class="badge badge-<%= c.status === 'completed' ? 'success' : c.status === 'pending' ? 'warning' : 'primary' %>">
+            <%= c.status === 'pending' ? 'معلقة' : c.status === 'assigned' ? 'تم التعيين' : c.status === 'in_progress' ? 'جارية' : c.status === 'completed' ? 'مكتملة' : 'ملغاة' %>
+          </span>
+        </div>
+        <p class="card-text"><%= c.symptoms.substring(0, 100) %></p>
+        <div class="card-footer">
+          <span class="badge badge-<%= c.priority === 'urgent' ? 'error' : c.priority === 'high' ? 'warning' : 'muted' %>"><%= c.priority === 'urgent' ? 'عاجل' : c.priority === 'high' ? 'مرتفع' : c.priority === 'medium' ? 'متوسط' : 'منخفض' %></span>
+          <span class="text-muted"><%= new Date(c.createdAt).toLocaleDateString('ar-SA') %></span>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <div class="empty-state-lg">
+      <i class="fas fa-stethoscope"></i>
+      <h3>لا توجد استشارات</h3>
+      <p>ابدأ بطلب استشارة طبية مع أطبائنا المتخصصين</p>
+      <a href="/consultations/new" class="btn btn-primary">طلب استشارة جديدة</a>
+    </div>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

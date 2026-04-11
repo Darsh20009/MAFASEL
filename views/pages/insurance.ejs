@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-shield-alt"></i> التأمين الصحي</h1>
+    </div>
+
+    <% if (insurances.length > 0) { %>
+    <div class="cards-grid">
+      <% insurances.forEach(ins => { %>
+      <div class="card">
+        <div class="card-header">
+          <h3><%= ins.company %></h3>
+          <span class="badge badge-<%= ins.status === 'active' ? 'success' : ins.status === 'pending' ? 'warning' : 'error' %>">
+            <%= ins.status === 'active' ? 'فعّال' : ins.status === 'pending' ? 'قيد المراجعة' : ins.status === 'expired' ? 'منتهي' : 'معلق' %>
+          </span>
+        </div>
+        <div class="info-row"><span>رقم البوليصة:</span><strong><%= ins.policyNumber %></strong></div>
+        <div class="info-row"><span>النوع:</span><strong><%= ins.type === 'vip' ? 'VIP' : ins.type === 'premium' ? 'بريميوم' : 'أساسي' %></strong></div>
+        <div class="info-row"><span>التغطية:</span><strong><%= ins.coverageAmount.toLocaleString() %> ريال</strong></div>
+        <div class="info-row"><span>المستخدم:</span><strong><%= ins.usedAmount.toLocaleString() %> ريال</strong></div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: <%= ins.coverageAmount > 0 ? (ins.usedAmount / ins.coverageAmount * 100) : 0 %>%"></div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+
+    <div class="form-card" style="margin-top: 2rem">
+      <h2>طلب تأمين جديد</h2>
+      <form method="POST" action="/insurance/apply">
+        <div class="form-group">
+          <label>شركة التأمين</label>
+          <select name="company" required>
+            <option value="">اختر الشركة</option>
+            <option value="التعاونية">التعاونية</option>
+            <option value="بوبا العربية">بوبا العربية</option>
+            <option value="ميدغلف">ميدغلف</option>
+            <option value="تكافل الراجحي">تكافل الراجحي</option>
+            <option value="ملاذ للتأمين">ملاذ للتأمين</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>نوع التأمين</label>
+          <select name="type" required>
+            <option value="basic">أساسي - تغطية 50,000 ريال</option>
+            <option value="premium">بريميوم - تغطية 200,000 ريال</option>
+            <option value="vip">VIP - تغطية 500,000 ريال</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">تقديم الطلب</button>
+      </form>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>
