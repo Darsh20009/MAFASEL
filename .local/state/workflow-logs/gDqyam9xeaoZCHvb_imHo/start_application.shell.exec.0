@@ -1,0 +1,93 @@
+/home/runner/workspace/node_modules/mongodb/lib/sdam/topology.js:327
+                const timeoutError = new error_1.MongoServerSelectionError(`Server selection timed out after ${timeout?.duration} ms`, this.description);
+                                     ^
+
+MongoServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'Unknown'[39m,
+    servers: Map(1) {
+      [32m'localhost:27017'[39m => ServerDescription {
+        address: [32m'localhost:27017'[39m,
+        type: [32m'Unknown'[39m,
+        hosts: [],
+        passives: [],
+        arbiters: [],
+        tags: {},
+        minWireVersion: [33m0[39m,
+        maxWireVersion: [33m0[39m,
+        roundTripTime: [33m-1[39m,
+        minRoundTripTime: [33m0[39m,
+        lastUpdateTime: [33m8014234[39m,
+        lastWriteDate: [33m0[39m,
+        error: MongoNetworkError: connect ECONNREFUSED 127.0.0.1:27017
+            at Socket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+        [90m    at Object.onceWrapper (node:events:639:26)[39m
+        [90m    at Socket.emit (node:events:524:28)[39m
+        [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+        [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+        [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+          errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+          beforeHandshake: [33mfalse[39m,
+          [cause]: Error: connect ECONNREFUSED 127.0.0.1:27017
+          [90m    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)[39m {
+            errno: [33m-111[39m,
+            code: [32m'ECONNREFUSED'[39m,
+            syscall: [32m'connect'[39m,
+            address: [32m'127.0.0.1'[39m,
+            port: [33m27017[39m
+          }
+        },
+        topologyVersion: [1mnull[22m,
+        setName: [1mnull[22m,
+        setVersion: [1mnull[22m,
+        electionId: [1mnull[22m,
+        logicalSessionTimeoutMinutes: [1mnull[22m,
+        maxMessageSizeBytes: [1mnull[22m,
+        maxWriteBatchSize: [1mnull[22m,
+        maxBsonObjectSize: [1mnull[22m,
+        primary: [1mnull[22m,
+        me: [1mnull[22m,
+        [32m'$clusterTime'[39m: [1mnull[22m,
+        iscryptd: [33mfalse[39m
+      }
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [1mnull[22m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: connect ECONNREFUSED 127.0.0.1:27017
+      at Socket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at Socket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: Error: connect ECONNREFUSED 127.0.0.1:27017
+    [90m    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)[39m {
+      errno: [33m-111[39m,
+      code: [32m'ECONNREFUSED'[39m,
+      syscall: [32m'connect'[39m,
+      address: [32m'127.0.0.1'[39m,
+      port: [33m27017[39m
+    }
+  }
+}
+
+Node.js v20.20.0

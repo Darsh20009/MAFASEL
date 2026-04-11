@@ -1,0 +1,2 @@
+MongoDB connection failed: The 'tlsInsecure' option cannot be used with the 'tlsAllowInvalidCertificates' option
+MAFASEL server running on port 5000 (without DB)
