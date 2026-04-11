@@ -8,3 +8,5 @@ memory/*
 !memory/.gitkeep
 test_reports/*
 !test_reports/.gitkeep
+apple-pay-certs/*.p8
+*.p8

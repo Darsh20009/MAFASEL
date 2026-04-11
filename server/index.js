@@ -31,16 +31,23 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(ROOT_DIR, 'public')));
 app.use('/uploads', express.static(path.join(ROOT_DIR, 'uploads')));
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 let sessionConfig = {
   secret: process.env.SESSION_SECRET || 'mafasel-secret-key-2026',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false,
+    secure: isProduction,
     httpOnly: true,
+    sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000
   }
 };
+
+if (isProduction) {
+  app.set('trust proxy', 1);
+}
 
 const sessionMiddleware = session(sessionConfig);
 app.use(sessionMiddleware);
@@ -56,6 +63,9 @@ app.use((req, res, next) => {
 });
 
 app.locals.io = io;
+
+const { setupPassport } = require('./modules/auth/passport.setup');
+setupPassport(app);
 
 const authRoutes = require('./modules/auth/auth.routes');
 const dashboardRoutes = require('./modules/users/dashboard.routes');
@@ -158,10 +168,11 @@ async function startServer() {
       }
 
       const MongoStore = require('connect-mongo');
-      sessionConfig.store = MongoStore.create({
+      const mongoStore = MongoStore.create({
         client: mongoose.connection.getClient(),
         ttl: 24 * 60 * 60
       });
+      sessionMiddleware.store = mongoStore;
     } catch (seedErr) {
       console.error('Seed error:', seedErr.message);
     }

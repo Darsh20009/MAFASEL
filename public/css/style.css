@@ -452,7 +452,7 @@ body {
   border-radius: var(--radius);
   padding: 2.5rem;
   width: 100%;
-  max-width: 440px;
+  max-width: 500px;
   box-shadow: var(--shadow-lg);
 }
 
@@ -462,8 +462,227 @@ body {
 .auth-header p { color: var(--text-muted); }
 
 .auth-form { margin-bottom: 1.5rem; }
-.auth-footer { text-align: center; color: var(--text-muted); }
+.auth-footer { text-align: center; color: var(--text-muted); margin-top: 1.5rem; }
 .auth-footer a { color: var(--secondary); text-decoration: none; font-weight: 600; }
+
+.auth-tabs {
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.auth-tab {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: var(--input-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.auth-tab:not(:last-child) { border-left: 1px solid var(--border); }
+[dir="rtl"] .auth-tab:not(:last-child) { border-left: none; border-right: 1px solid var(--border); }
+[dir="rtl"] .auth-tab:first-child { border-right: none; }
+.auth-tab.active {
+  background: var(--secondary);
+  color: white;
+}
+.auth-tab:hover:not(.active) { background: var(--border); }
+.auth-tab-content { display: none; }
+.auth-tab-content.active { display: block; }
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.auth-divider span {
+  padding: 0 1rem;
+  white-space: nowrap;
+}
+
+.social-login-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  width: 100%;
+}
+.btn-social:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+.btn-google:hover { border-color: #4285F4; }
+.btn-apple { background: #000; color: #fff; border-color: #000; }
+.btn-apple:hover { background: #222; }
+.btn-webauthn { border-color: var(--secondary); color: var(--secondary); }
+.btn-webauthn:hover { background: var(--secondary); color: #fff; }
+
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-input-wrap input { padding-left: 2.5rem; width: 100%; }
+[dir="rtl"] .password-input-wrap input { padding-left: 2.5rem; padding-right: 0.75rem; }
+.password-toggle {
+  position: absolute;
+  left: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+}
+[dir="rtl"] .password-toggle { left: 0.75rem; right: auto; }
+
+.otp-inputs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  direction: ltr;
+  margin: 1rem 0;
+}
+.otp-digit {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--text);
+  transition: border-color 0.2s;
+  font-family: monospace;
+}
+.otp-digit:focus {
+  border-color: var(--secondary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(18,169,155,0.15);
+}
+.otp-info {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(18,169,155,0.08);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  color: var(--secondary);
+}
+.otp-info i { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+.otp-demo {
+  background: rgba(59,130,246,0.08);
+  border: 1px dashed var(--info);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  text-align: center;
+  color: var(--info);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.otp-timer {
+  text-align: center;
+  color: var(--text-muted);
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--secondary);
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+.nafath-info { text-align: center; margin-bottom: 1.5rem; }
+.nafath-logo-wrap {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, #2d7a3a, #4caf50);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nafath-icon { font-size: 2rem; color: white; }
+.nafath-verify-box {
+  text-align: center;
+  padding: 2rem;
+  background: var(--input-bg);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+.nafath-phone-icon { font-size: 2.5rem; color: var(--secondary); margin-bottom: 1rem; }
+.nafath-verify-box h3 { margin-bottom: 0.5rem; }
+.nafath-code {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--secondary);
+  letter-spacing: 0.5rem;
+  margin: 1.5rem 0;
+  font-family: monospace;
+}
+.nafath-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+}
+.spinner-sm {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--secondary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.ltr-input { direction: ltr; text-align: left; }
+.form-row { display: flex; gap: 1rem; }
+.form-row .form-group { flex: 1; }
 
 .landing {
   min-height: 100vh;
@@ -834,8 +1053,11 @@ body {
   .nav-user-name { display: none; }
   .detail-grid { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
-  .form-row { grid-template-columns: 1fr; }
+  .form-row { flex-direction: column; gap: 0; }
   .landing-content h1 { font-size: 1.8rem; }
+  .auth-card { padding: 1.5rem; }
+  .otp-digit { width: 40px; height: 48px; font-size: 1.2rem; }
+  .nafath-code { font-size: 2.2rem; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .dashboard-grid { grid-template-columns: 1fr; }
 }
