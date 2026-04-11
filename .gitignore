@@ -1,5 +1,10 @@
 node_modules/
 .env
-uploads/
+uploads/*
+!uploads/.gitkeep
 *.log
 .DS_Store
+memory/*
+!memory/.gitkeep
+test_reports/*
+!test_reports/.gitkeep
