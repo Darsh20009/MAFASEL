@@ -57,27 +57,29 @@ app.use((req, res, next) => {
 
 app.locals.io = io;
 
-const authRoutes = require('./routes/auth');
-const dashboardRoutes = require('./routes/dashboard');
-const consultationRoutes = require('./routes/consultation');
-const pharmacyRoutes = require('./routes/pharmacy');
-const insuranceRoutes = require('./routes/insurance');
-const notificationRoutes = require('./routes/notification');
-const aiRoutes = require('./routes/ai');
-const adminRoutes = require('./routes/admin');
-const complaintRoutes = require('./routes/complaint');
-const profileRoutes = require('./routes/profile');
+const authRoutes = require('./modules/auth/auth.routes');
+const dashboardRoutes = require('./modules/users/dashboard.routes');
+const usersRoutes = require('./modules/users/users.routes');
+const medicalRoutes = require('./modules/medical/medical.routes');
+const insuranceRoutes = require('./modules/medical/insurance.routes');
+const ordersRoutes = require('./modules/orders/orders.routes');
+const chatRoutes = require('./modules/chat/chat.routes');
+const notificationsRoutes = require('./modules/notifications/notifications.routes');
+const aiRoutes = require('./modules/ai/ai.routes');
+const settingsRoutes = require('./modules/settings/settings.routes');
+const adminRoutes = require('./modules/admin/admin.routes');
 
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
-app.use('/consultations', consultationRoutes);
-app.use('/pharmacy', pharmacyRoutes);
+app.use('/profile', usersRoutes);
+app.use('/consultations', medicalRoutes);
 app.use('/insurance', insuranceRoutes);
-app.use('/notifications', notificationRoutes);
+app.use('/pharmacy', ordersRoutes);
+app.use('/chat', chatRoutes);
+app.use('/notifications', notificationsRoutes);
 app.use('/ai', aiRoutes);
+app.use('/complaints', settingsRoutes);
 app.use('/admin', adminRoutes);
-app.use('/complaints', complaintRoutes);
-app.use('/profile', profileRoutes);
 
 const connectedUsers = new Map();
 
@@ -139,7 +141,7 @@ async function startServer() {
 
   if (dbConnected) {
     try {
-      const User = require('./models/User');
+      const User = require('./modules/users/user.model');
       const adminExists = await User.findOne({ role: 'admin' });
       if (!adminExists) {
         const bcrypt = require('bcryptjs');

@@ -1,0 +1,54 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-comments"></i> محادثة</h1>
+      <a href="/chat" class="btn btn-outline">العودة</a>
+    </div>
+    <div class="ai-chat-container">
+      <div class="ai-messages" id="chatMessages">
+        <% messages.forEach(msg => { %>
+        <div class="ai-msg <%= msg.sender._id.toString() === user._id.toString() ? 'ai-user' : 'ai-bot' %>">
+          <% if (msg.sender._id.toString() !== user._id.toString()) { %>
+          <div class="ai-avatar"><i class="fas fa-user-md"></i></div>
+          <% } %>
+          <div class="ai-bubble">
+            <div class="msg-header"><strong><%= msg.sender.name %></strong></div>
+            <%= msg.text %>
+          </div>
+          <% if (msg.sender._id.toString() === user._id.toString()) { %>
+          <div class="ai-avatar"><i class="fas fa-user"></i></div>
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+      <form class="ai-input" id="chatForm">
+        <input type="text" id="chatText" placeholder="اكتب رسالتك..." required>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById('chatForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = document.getElementById('chatText').value.trim();
+    if (!text) return;
+    try {
+      const res = await fetch('/chat/room/<%= room._id %>/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      if (res.ok) {
+        const div = document.createElement('div');
+        div.className = 'ai-msg ai-user';
+        div.innerHTML = '<div class="ai-bubble">' + text + '</div><div class="ai-avatar"><i class="fas fa-user"></i></div>';
+        document.getElementById('chatMessages').appendChild(div);
+        document.getElementById('chatText').value = '';
+        div.scrollIntoView({ behavior: 'smooth' });
+      }
+    } catch(err) { console.error(err); }
+  });
+</script>
+<%- include('../partials/footer') %>
