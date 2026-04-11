@@ -10,6 +10,8 @@ channel = "stable-25_05"
 [userenv.shared]
 PORT = "5000"
 NODE_ENV = "development"
+GROQ_API_KEY = "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"
+MONGODB_URI = "mongodb+srv://mafaseltec_12478:ASDqwe123@mafasel.iwktcdg.mongodb.net/?appName=mafasel"
 
 [workflows]
 runButton = "Project"
@@ -37,4 +39,4 @@ outputType = "webview"
 
 [[ports]]
 localPort = 5000
-externalPort = 80
+externalPort = 5000
