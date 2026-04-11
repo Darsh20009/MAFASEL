@@ -7,6 +7,7 @@ const notificationSchema = new mongoose.Schema({
   body: { type: String, required: true },
   link: { type: String, default: '' },
   icon: { type: String, default: '' },
+  priority: { type: String, enum: ['normal', 'high', 'urgent'], default: 'normal' },
   read: { type: Boolean, default: false }
 }, { timestamps: true });
 

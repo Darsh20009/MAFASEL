@@ -1,12 +1,53 @@
 <%- include('../partials/header') %>
 <div class="main-content">
   <div class="container">
-    <div class="page-header">
-      <h1>مرحباً، <%= user.name %></h1>
-      <p>لوحة التحكم الخاصة بك في منصة مفاصل</p>
-    </div>
 
-    <div class="stats-grid">
+    <section class="hero-banner" id="heroBanner">
+      <div class="banner-slides">
+        <div class="banner-slide active">
+          <img src="/icons/banner1.png" alt="وسهلناها عليك - اكتشف الطب التقني مع مفاصل">
+        </div>
+        <div class="banner-slide">
+          <img src="/icons/banner2.png" alt="حمل التطبيق الآن - مستشفى في البيت">
+        </div>
+        <div class="banner-slide">
+          <img src="/icons/banner3.png" alt="دايماً معاك - متخصص ودعم فني متكامل">
+        </div>
+      </div>
+      <button class="banner-arrow banner-prev" onclick="changeBannerSlide(-1)"><i class="fas fa-chevron-right"></i></button>
+      <button class="banner-arrow banner-next" onclick="changeBannerSlide(1)"><i class="fas fa-chevron-left"></i></button>
+      <div class="banner-dots">
+        <span class="banner-dot active" onclick="goToSlide(0)"></span>
+        <span class="banner-dot" onclick="goToSlide(1)"></span>
+        <span class="banner-dot" onclick="goToSlide(2)"></span>
+      </div>
+    </section>
+
+    <section class="welcome-section">
+      <div class="welcome-card">
+        <div class="welcome-info">
+          <h1>مرحباً، <%= user.name %> <span class="wave-emoji">&#x1F44B;</span></h1>
+          <p>أهلاً بك في منصة مفاصل الطبية</p>
+          <div class="account-status">
+            <span class="status-pill <%= user.isVerified ? 'verified' : 'unverified' %>">
+              <i class="fas fa-<%= user.isVerified ? 'check-circle' : 'exclamation-circle' %>"></i>
+              الحساب: <%= user.isVerified ? 'موثّق' : 'غير موثّق' %>
+            </span>
+            <span class="status-pill role-pill">
+              <i class="fas fa-user-tag"></i>
+              <%= user.role === 'patient' ? 'مريض' : user.role === 'doctor' ? 'طبيب' : user.role === 'pharmacist' ? 'صيدلي' : user.role === 'admin' ? 'مدير' : user.role === 'moderator' ? 'مشرف' : user.role === 'company' ? 'شركة' : user.role === 'employee' ? 'موظف' : 'وكيل تأمين' %>
+            </span>
+          </div>
+        </div>
+        <div class="welcome-avatar">
+          <div class="avatar-circle">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon bg-primary"><i class="fas fa-stethoscope"></i></div>
         <div class="stat-info">
@@ -35,40 +76,52 @@
           <p>التأمين الصحي</p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="quick-actions">
-      <h2>إجراءات سريعة</h2>
+    <section class="quick-actions">
+      <h2><i class="fas fa-bolt"></i> إجراءات سريعة</h2>
       <div class="actions-grid">
         <a href="/consultations/new" class="action-card">
-          <i class="fas fa-plus-circle"></i>
+          <div class="action-icon-wrap"><i class="fas fa-plus-circle"></i></div>
           <span>استشارة جديدة</span>
         </a>
         <a href="/pharmacy" class="action-card">
-          <i class="fas fa-shopping-cart"></i>
+          <div class="action-icon-wrap"><i class="fas fa-shopping-cart"></i></div>
           <span>طلب أدوية</span>
         </a>
         <a href="/ai" class="action-card">
-          <i class="fas fa-robot"></i>
+          <div class="action-icon-wrap"><i class="fas fa-robot"></i></div>
           <span>المساعد الذكي</span>
         </a>
         <a href="/profile" class="action-card">
-          <i class="fas fa-file-medical"></i>
+          <div class="action-icon-wrap"><i class="fas fa-file-medical"></i></div>
           <span>ملفي الطبي</span>
         </a>
+        <a href="/insurance" class="action-card">
+          <div class="action-icon-wrap"><i class="fas fa-shield-alt"></i></div>
+          <span>التأمين</span>
+        </a>
+        <a href="/complaints" class="action-card">
+          <div class="action-icon-wrap"><i class="fas fa-headset"></i></div>
+          <span>الشكاوى والدعم</span>
+        </a>
       </div>
-    </div>
+    </section>
 
-    <div class="dashboard-grid">
+    <section class="dashboard-grid">
       <div class="dashboard-section">
-        <h2><i class="fas fa-stethoscope"></i> آخر الاستشارات</h2>
+        <div class="section-header">
+          <h2><i class="fas fa-stethoscope"></i> آخر الاستشارات</h2>
+          <a href="/consultations" class="view-all-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
+        </div>
         <% if (consultations.length > 0) { %>
         <div class="list-items">
           <% consultations.forEach(c => { %>
           <a href="/consultations/<%= c._id %>" class="list-item">
+            <div class="list-item-icon"><i class="fas fa-notes-medical"></i></div>
             <div class="list-item-info">
               <strong><%= c.specialty %></strong>
-              <p><%= c.symptoms.substring(0, 60) %>...</p>
+              <p><%= c.symptoms ? c.symptoms.substring(0, 60) + '...' : 'بدون تفاصيل' %></p>
             </div>
             <span class="badge badge-<%= c.status === 'completed' ? 'success' : c.status === 'pending' ? 'warning' : 'primary' %>">
               <%= c.status === 'pending' ? 'معلقة' : c.status === 'assigned' ? 'تم التعيين' : c.status === 'in_progress' ? 'جارية' : c.status === 'completed' ? 'مكتملة' : 'ملغاة' %>
@@ -86,11 +139,48 @@
       </div>
 
       <div class="dashboard-section">
-        <h2><i class="fas fa-bell"></i> آخر الإشعارات</h2>
+        <div class="section-header">
+          <h2><i class="fas fa-shopping-bag"></i> آخر الطلبات</h2>
+          <a href="/pharmacy" class="view-all-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
+        </div>
+        <% if (orders.length > 0) { %>
+        <div class="list-items">
+          <% orders.forEach(o => { %>
+          <div class="list-item">
+            <div class="list-item-icon"><i class="fas fa-pills"></i></div>
+            <div class="list-item-info">
+              <strong>طلب #<%= o._id.toString().slice(-6) %></strong>
+              <p><%= o.items ? o.items.length + ' منتج' : 'طلب صيدلية' %> - <%= new Date(o.createdAt).toLocaleDateString('ar-SA') %></p>
+            </div>
+            <span class="badge badge-<%= o.status === 'delivered' ? 'success' : o.status === 'pending' ? 'warning' : o.status === 'cancelled' ? 'error' : 'primary' %>">
+              <%= o.status === 'pending' ? 'قيد المراجعة' : o.status === 'processing' ? 'قيد التجهيز' : o.status === 'shipped' ? 'تم الشحن' : o.status === 'delivered' ? 'تم التوصيل' : 'ملغي' %>
+            </span>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-shopping-bag"></i>
+          <p>لا توجد طلبات حتى الآن</p>
+          <a href="/pharmacy" class="btn btn-sm btn-primary">تصفح الصيدلية</a>
+        </div>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h2><i class="fas fa-bell"></i> الإشعارات المهمة</h2>
+          <a href="/notifications" class="view-all-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
+        </div>
         <% if (notifications.length > 0) { %>
         <div class="list-items">
-          <% notifications.forEach(n => { %>
-          <div class="list-item notif-item" onclick="<% if(n.link) { %>window.location='<%= n.link %>'<% } %>">
+          <% notifications.slice(0, 5).forEach(n => { %>
+          <div class="list-item notif-item <%= n.priority === 'high' || n.priority === 'urgent' ? 'notif-important' : '' %>" <% if(n.link) { %>data-href="<%= n.link %>"<% } %> onclick="if(this.dataset.href)window.location=this.dataset.href">
+            <div class="list-item-icon notif-icon-<%= n.priority === 'urgent' ? 'urgent' : n.priority === 'high' ? 'high' : 'normal' %>">
+              <i class="fas fa-<%= n.priority === 'urgent' ? 'exclamation-triangle' : n.priority === 'high' ? 'exclamation-circle' : 'info-circle' %>"></i>
+            </div>
             <div class="list-item-info">
               <strong><%= n.title %></strong>
               <p><%= n.body %></p>
@@ -106,7 +196,72 @@
         </div>
         <% } %>
       </div>
-    </div>
+
+      <div class="dashboard-section ai-assistant-card">
+        <div class="ai-card-inner">
+          <div class="ai-card-glow"></div>
+          <div class="ai-icon-wrap">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3>المساعد الذكي</h3>
+          <p>احصل على إجابات فورية لأسئلتك الطبية بمساعدة الذكاء الاصطناعي</p>
+          <a href="/ai" class="btn btn-primary btn-ai-start">
+            <i class="fas fa-comments"></i> ابدأ محادثة
+          </a>
+          <div class="ai-features">
+            <span><i class="fas fa-check"></i> تشخيص أولي</span>
+            <span><i class="fas fa-check"></i> معلومات الأدوية</span>
+            <span><i class="fas fa-check"></i> نصائح صحية</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 </div>
+
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll('.banner-slide');
+const dots = document.querySelectorAll('.banner-dot');
+let bannerInterval;
+
+function showSlide(index) {
+  slides.forEach((s, i) => {
+    s.classList.toggle('active', i === index);
+  });
+  dots.forEach((d, i) => {
+    d.classList.toggle('active', i === index);
+  });
+  currentSlide = index;
+}
+
+function changeBannerSlide(dir) {
+  let next = currentSlide + dir;
+  if (next < 0) next = slides.length - 1;
+  if (next >= slides.length) next = 0;
+  showSlide(next);
+  resetBannerTimer();
+}
+
+function goToSlide(index) {
+  showSlide(index);
+  resetBannerTimer();
+}
+
+function resetBannerTimer() {
+  clearInterval(bannerInterval);
+  bannerInterval = setInterval(() => changeBannerSlide(1), 5000);
+}
+
+bannerInterval = setInterval(() => changeBannerSlide(1), 5000);
+
+const banner = document.getElementById('heroBanner');
+let touchStartX = 0;
+banner.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+banner.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) changeBannerSlide(diff > 0 ? 1 : -1);
+});
+</script>
 <%- include('../partials/footer') %>

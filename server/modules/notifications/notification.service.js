@@ -16,7 +16,8 @@ async function fireNotify(app, userId, title, body, opts = {}) {
       title,
       body,
       link: opts.link || '',
-      icon: opts.icon || ''
+      icon: opts.icon || '',
+      priority: opts.priority || 'normal'
     });
 
     const io = app.locals.io;
