@@ -18,14 +18,20 @@ function buildSessionUser(user) {
 
 async function logLogin(user, method, req) {
   try {
+    const ua = req.headers['user-agent'] || '';
+    const ip = req.ip || req.connection.remoteAddress || '';
     user.lastLogin = new Date();
+    user.trackDevice(ua, ip);
+    const parsed = user.parseDevice(ua, ip);
     user.loginHistory.push({
       method,
-      ip: req.ip || req.connection.remoteAddress,
-      userAgent: req.headers['user-agent'] || ''
+      action: 'login',
+      ip,
+      userAgent: ua,
+      deviceName: parsed.deviceName
     });
-    if (user.loginHistory.length > 20) {
-      user.loginHistory = user.loginHistory.slice(-20);
+    if (user.loginHistory.length > 50) {
+      user.loginHistory = user.loginHistory.slice(-50);
     }
     await user.save();
   } catch (e) {}
@@ -336,12 +342,20 @@ router.post('/auth/nafath/verify', async (req, res) => {
 
     let user = await User.findOne({ nafathId: nationalId });
     if (!user) {
+      user = await User.findOne({ nationalId: nationalId });
+    }
+    if (!user) {
       user = await User.create({
         name: 'مستخدم نفاذ',
         nafathId: nationalId,
+        nationalId: nationalId,
         authProvider: 'nafath',
         isVerified: true
       });
+    } else if (!user.nafathId) {
+      user.nafathId = nationalId;
+      user.nationalId = nationalId;
+      await user.save();
     }
 
     delete req.session.nafathPending;
@@ -504,8 +518,25 @@ router.post('/auth/webauthn/login-verify', async (req, res) => {
   }
 });
 
-router.get('/logout', (req, res) => {
+router.get('/logout', async (req, res) => {
   const userId = req.session.user?._id;
+  if (userId) {
+    try {
+      const user = await User.findById(userId);
+      if (user) {
+        user.loginHistory.push({
+          method: user.authProvider || 'local',
+          action: 'logout',
+          ip: req.ip || '',
+          userAgent: req.headers['user-agent'] || ''
+        });
+        if (user.loginHistory.length > 50) {
+          user.loginHistory = user.loginHistory.slice(-50);
+        }
+        await user.save();
+      }
+    } catch (e) {}
+  }
   req.session.destroy((err) => {
     res.clearCookie('connect.sid');
     if (userId) {

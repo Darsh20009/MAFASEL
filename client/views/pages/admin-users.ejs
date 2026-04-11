@@ -5,23 +5,58 @@
       <h1><i class="fas fa-users"></i> إدارة المستخدمين</h1>
       <a href="/admin" class="btn btn-outline">العودة</a>
     </div>
+
+    <div class="stats-grid" style="margin-bottom: 1.5rem;">
+      <% const roleCounts = {}; users.forEach(u => { roleCounts[u.role] = (roleCounts[u.role]||0)+1; }); %>
+      <div class="stat-card"><div class="stat-number"><%= users.length %></div><div class="stat-label">إجمالي المستخدمين</div></div>
+      <div class="stat-card"><div class="stat-number"><%= roleCounts.patient || 0 %></div><div class="stat-label">مرضى</div></div>
+      <div class="stat-card"><div class="stat-number"><%= roleCounts.doctor || 0 %></div><div class="stat-label">أطباء</div></div>
+      <div class="stat-card"><div class="stat-number"><%= roleCounts.company || 0 %></div><div class="stat-label">شركات</div></div>
+    </div>
+
     <div class="table-responsive">
       <table class="table">
-        <thead><tr><th>الاسم</th><th>البريد</th><th>الهاتف</th><th>الدور</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
+        <thead>
+          <tr>
+            <th>المستخدم</th>
+            <th>الجوال</th>
+            <th>الهوية</th>
+            <th>الدور</th>
+            <th>طريقة التسجيل</th>
+            <th>آخر دخول</th>
+            <th>الأجهزة</th>
+            <th>إجراء</th>
+          </tr>
+        </thead>
         <tbody>
           <% users.forEach(u => { %>
           <tr>
-            <td><%= u.name %></td>
-            <td><%= u.email %></td>
-            <td><%= u.phone %></td>
-            <td><span class="badge badge-primary"><%= u.role %></span></td>
-            <td><%= new Date(u.createdAt).toLocaleDateString('ar-SA') %></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.5rem;">
+                <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;flex-shrink:0;">
+                  <% if (u.avatar) { %><img src="<%= u.avatar %>" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"><% } else { %><%= u.name.charAt(0) %><% } %>
+                </div>
+                <div>
+                  <strong><%= u.name %></strong>
+                  <br><small class="text-muted"><%= u.email || '-' %></small>
+                </div>
+              </div>
+            </td>
+            <td dir="ltr"><%= u.phone || '-' %></td>
+            <td dir="ltr"><%= u.nationalId || u.nafathId || '-' %></td>
+            <td><span class="role-badge role-<%= u.role %>"><%= {patient:'مريض',doctor:'طبيب',pharmacist:'صيدلي',company:'شركة',employee:'موظف',admin:'مدير',moderator:'مشرف',insurance_agent:'وكيل تأمين'}[u.role] || u.role %></span></td>
+            <td><%= {local:'بريد',google:'Google',apple:'Apple',nafath:'نفاذ',phone:'جوال'}[u.authProvider] || u.authProvider || 'بريد' %></td>
+            <td><%= u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('ar-SA', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : 'لم يسجل' %></td>
+            <td><%= u.devices ? u.devices.filter(d => d.isActive).length : 0 %></td>
             <td>
               <form method="POST" action="/admin/users/<%= u._id %>/role" style="display:inline">
                 <select name="role" onchange="this.form.submit()" class="select-sm">
                   <option value="patient" <%= u.role==='patient'?'selected':'' %>>مريض</option>
                   <option value="doctor" <%= u.role==='doctor'?'selected':'' %>>طبيب</option>
                   <option value="pharmacist" <%= u.role==='pharmacist'?'selected':'' %>>صيدلي</option>
+                  <option value="company" <%= u.role==='company'?'selected':'' %>>شركة</option>
+                  <option value="employee" <%= u.role==='employee'?'selected':'' %>>موظف</option>
+                  <option value="insurance_agent" <%= u.role==='insurance_agent'?'selected':'' %>>وكيل تأمين</option>
                   <option value="moderator" <%= u.role==='moderator'?'selected':'' %>>مشرف</option>
                   <option value="admin" <%= u.role==='admin'?'selected':'' %>>مدير</option>
                 </select>

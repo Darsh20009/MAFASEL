@@ -854,6 +854,153 @@ body {
   gap: 1.5rem;
 }
 
+.profile-info-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.profile-avatar-lg {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.profile-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+.profile-avatar-lg i { font-size: 3rem; color: rgba(255,255,255,0.9); }
+.profile-avatar-section h2 { margin-bottom: 0.3rem; }
+
+.role-badge {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.role-patient { background: rgba(18,169,155,0.15); color: var(--secondary); }
+.role-doctor { background: rgba(59,130,246,0.15); color: var(--info); }
+.role-pharmacist { background: rgba(245,158,11,0.15); color: var(--warning); }
+.role-company { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+.role-employee { background: rgba(107,114,128,0.15); color: var(--text-muted); }
+.role-admin { background: rgba(239,68,68,0.15); color: var(--error); }
+.role-moderator { background: rgba(239,68,68,0.1); color: #dc2626; }
+.role-insurance_agent { background: rgba(16,185,129,0.15); color: var(--success); }
+
+.profile-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+.profile-tab {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.profile-tab.active { background: var(--secondary); color: white; border-color: var(--secondary); }
+.profile-tab:hover:not(.active) { border-color: var(--secondary); color: var(--secondary); }
+.profile-tab-content { display: none; }
+.profile-tab-content.active { display: block; }
+
+.device-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.75rem;
+}
+.device-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(18,169,155,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.device-info { flex: 1; }
+.device-info strong { display: block; margin-bottom: 0.2rem; }
+
+.history-list { max-height: 500px; overflow-y: auto; }
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.history-item:last-child { border-bottom: none; }
+.history-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badge-success { background: rgba(16,185,129,0.15); color: var(--success); }
+.badge-warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+.badge-error { background: rgba(239,68,68,0.15); color: var(--error); }
+.badge-info { background: rgba(59,130,246,0.15); color: var(--info); }
+.history-info { flex: 1; }
+
+.info-box {
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--info);
+  margin-bottom: 1.5rem;
+}
+.security-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.security-section h3 { margin-bottom: 0.3rem; }
+.security-section p { margin-bottom: 0.75rem; }
+.text-success { color: var(--success); }
+.text-error { color: var(--error); }
+.loading-sm {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  padding: 1rem;
+}
+.btn-danger { background: var(--error); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; padding: 0.4rem 0.8rem; }
+
 .complaint-response {
   margin-top: 0.5rem;
   padding: 0.5rem 0.75rem;

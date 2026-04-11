@@ -5,23 +5,102 @@
       <h1><i class="fas fa-user"></i> الملف الشخصي</h1>
     </div>
 
-    <div class="profile-grid">
+    <div class="profile-info-card">
+      <div class="profile-avatar-section">
+        <div class="profile-avatar-lg">
+          <% if (profile.avatar) { %>
+            <img src="<%= profile.avatar %>" alt="<%= profile.name %>">
+          <% } else { %>
+            <i class="fas fa-user-circle"></i>
+          <% } %>
+        </div>
+        <div>
+          <h2><%= profile.name %></h2>
+          <span class="role-badge role-<%= profile.role %>"><%= {patient:'مريض',doctor:'طبيب',pharmacist:'صيدلي',company:'شركة',employee:'موظف',admin:'مدير',moderator:'مشرف',insurance_agent:'وكيل تأمين'}[profile.role] || profile.role %></span>
+          <p class="text-muted"><i class="fas fa-clock"></i> آخر دخول: <%= profile.lastLogin ? new Date(profile.lastLogin).toLocaleDateString('ar-SA', {year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}) : 'لم يسجل بعد' %></p>
+          <% if (profile.nationalId) { %><p class="text-muted"><i class="fas fa-id-card"></i> رقم الهوية: <%= profile.nationalId %></p><% } %>
+          <p class="text-muted"><i class="fas fa-sign-in-alt"></i> طريقة التسجيل: <%= {local:'بريد إلكتروني',google:'Google',apple:'Apple',nafath:'نفاذ',phone:'رقم الجوال'}[profile.authProvider] || profile.authProvider %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-tabs">
+      <button class="profile-tab active" data-target="tab-personal"><i class="fas fa-user"></i> المعلومات الشخصية</button>
+      <button class="profile-tab" data-target="tab-medical"><i class="fas fa-heartbeat"></i> الملف الطبي</button>
+      <% if (profile.role === 'doctor') { %>
+      <button class="profile-tab" data-target="tab-doctor"><i class="fas fa-user-md"></i> بيانات الطبيب</button>
+      <% } %>
+      <% if (profile.role === 'company') { %>
+      <button class="profile-tab" data-target="tab-company"><i class="fas fa-building"></i> بيانات الشركة</button>
+      <% } %>
+      <button class="profile-tab" data-target="tab-security"><i class="fas fa-shield-alt"></i> الأمان</button>
+      <button class="profile-tab" data-target="tab-devices"><i class="fas fa-laptop"></i> الأجهزة</button>
+      <button class="profile-tab" data-target="tab-history"><i class="fas fa-history"></i> سجل الدخول</button>
+    </div>
+
+    <form method="POST" action="/profile/update">
+
+    <div id="tab-personal" class="profile-tab-content active">
       <div class="form-card">
-        <h2>المعلومات الشخصية</h2>
-        <form method="POST" action="/profile/update">
+        <h2><i class="fas fa-user-edit"></i> المعلومات الشخصية</h2>
+        <div class="form-row">
           <div class="form-group">
-            <label>الاسم</label>
+            <label>الاسم الكامل</label>
             <input type="text" name="name" value="<%= profile.name %>" required>
           </div>
           <div class="form-group">
+            <label>الجنس</label>
+            <select name="gender">
+              <option value="">غير محدد</option>
+              <option value="male" <%= profile.gender === 'male' ? 'selected' : '' %>>ذكر</option>
+              <option value="female" <%= profile.gender === 'female' ? 'selected' : '' %>>أنثى</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label>البريد الإلكتروني</label>
-            <input type="email" value="<%= profile.email %>" disabled>
+            <input type="email" value="<%= profile.email || '' %>" disabled>
           </div>
           <div class="form-group">
-            <label>الهاتف</label>
-            <input type="tel" name="phone" value="<%= profile.phone %>" required>
+            <label>رقم الجوال</label>
+            <input type="tel" name="phone" value="<%= profile.phone || '' %>" dir="ltr" class="ltr-input">
           </div>
-          <h3>الملف الطبي</h3>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>تاريخ الميلاد</label>
+            <input type="date" name="dateOfBirth" value="<%= profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '' %>">
+          </div>
+          <div class="form-group">
+            <label>رقم الهوية الوطنية</label>
+            <input type="text" name="nationalId" value="<%= profile.nationalId || '' %>" maxlength="10" dir="ltr" class="ltr-input" placeholder="1xxxxxxxxx">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>المدينة</label>
+            <input type="text" name="city" value="<%= profile.address ? profile.address.city || '' : '' %>" placeholder="مثال: الرياض">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الحي</label>
+            <input type="text" name="district" value="<%= profile.address ? profile.address.district || '' : '' %>">
+          </div>
+          <div class="form-group">
+            <label>الشارع</label>
+            <input type="text" name="street" value="<%= profile.address ? profile.address.street || '' : '' %>">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ التغييرات</button>
+      </div>
+    </div>
+
+    <div id="tab-medical" class="profile-tab-content">
+      <div class="form-card">
+        <h2><i class="fas fa-heartbeat"></i> الملف الطبي</h2>
+        <div class="form-row">
           <div class="form-group">
             <label>فصيلة الدم</label>
             <select name="bloodType">
@@ -32,36 +111,252 @@
             </select>
           </div>
           <div class="form-group">
-            <label>الحساسيات (مفصولة بفاصلة)</label>
-            <input type="text" name="allergies" value="<%= profile.medicalProfile && profile.medicalProfile.allergies ? profile.medicalProfile.allergies.join(', ') : '' %>" placeholder="مثال: بنسلين، غبار">
+            <label>الطول (سم)</label>
+            <input type="number" name="height" value="<%= profile.medicalProfile ? profile.medicalProfile.height || '' : '' %>" placeholder="170">
           </div>
           <div class="form-group">
-            <label>الأمراض المزمنة (مفصولة بفاصلة)</label>
-            <input type="text" name="chronicDiseases" value="<%= profile.medicalProfile && profile.medicalProfile.chronicDiseases ? profile.medicalProfile.chronicDiseases.join(', ') : '' %>" placeholder="مثال: سكري، ضغط">
+            <label>الوزن (كجم)</label>
+            <input type="number" name="weight" value="<%= profile.medicalProfile ? profile.medicalProfile.weight || '' : '' %>" placeholder="70">
           </div>
-          <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
-        </form>
+        </div>
+        <div class="form-group">
+          <label>الحساسيات (مفصولة بفاصلة)</label>
+          <input type="text" name="allergies" value="<%= profile.medicalProfile && profile.medicalProfile.allergies ? profile.medicalProfile.allergies.join(', ') : '' %>" placeholder="مثال: بنسلين، غبار">
+        </div>
+        <div class="form-group">
+          <label>الأمراض المزمنة (مفصولة بفاصلة)</label>
+          <input type="text" name="chronicDiseases" value="<%= profile.medicalProfile && profile.medicalProfile.chronicDiseases ? profile.medicalProfile.chronicDiseases.join(', ') : '' %>" placeholder="مثال: سكري، ضغط">
+        </div>
+        <div class="form-group">
+          <label>الأدوية الحالية (مفصولة بفاصلة)</label>
+          <input type="text" name="medications" value="<%= profile.medicalProfile && profile.medicalProfile.medications ? profile.medicalProfile.medications.join(', ') : '' %>" placeholder="مثال: ميتفورمين، أسبرين">
+        </div>
+        <div class="form-group">
+          <label>العمليات السابقة (مفصولة بفاصلة)</label>
+          <input type="text" name="surgeries" value="<%= profile.medicalProfile && profile.medicalProfile.surgeries ? profile.medicalProfile.surgeries.join(', ') : '' %>" placeholder="مثال: زائدة، عملية قلب">
+        </div>
+        <h3><i class="fas fa-ambulance"></i> جهة اتصال الطوارئ</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الاسم</label>
+            <input type="text" name="emergencyName" value="<%= profile.medicalProfile && profile.medicalProfile.emergencyContact ? profile.medicalProfile.emergencyContact.name || '' : '' %>">
+          </div>
+          <div class="form-group">
+            <label>رقم الجوال</label>
+            <input type="tel" name="emergencyPhone" value="<%= profile.medicalProfile && profile.medicalProfile.emergencyContact ? profile.medicalProfile.emergencyContact.phone || '' : '' %>" dir="ltr" class="ltr-input">
+          </div>
+          <div class="form-group">
+            <label>صلة القرابة</label>
+            <input type="text" name="emergencyRelation" value="<%= profile.medicalProfile && profile.medicalProfile.emergencyContact ? profile.medicalProfile.emergencyContact.relation || '' : '' %>" placeholder="مثال: أب، أخ، زوج">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ الملف الطبي</button>
       </div>
+    </div>
 
+    <% if (profile.role === 'doctor') { %>
+    <div id="tab-doctor" class="profile-tab-content">
       <div class="form-card">
-        <h2>تغيير كلمة المرور</h2>
+        <h2><i class="fas fa-user-md"></i> بيانات الطبيب</h2>
+        <div class="form-group">
+          <label>التخصص</label>
+          <input type="text" name="specialty" value="<%= profile.specialty || '' %>" placeholder="مثال: طب باطنية">
+        </div>
+        <div class="form-group">
+          <label>رقم الترخيص</label>
+          <input type="text" name="licenseNumber" value="<%= profile.licenseNumber || '' %>">
+        </div>
+        <div class="form-group">
+          <label>نبذة تعريفية</label>
+          <textarea name="bio" rows="4" placeholder="اكتب نبذة عنك..."><%= profile.bio || '' %></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (profile.role === 'company') { %>
+    <div id="tab-company" class="profile-tab-content">
+      <div class="form-card">
+        <h2><i class="fas fa-building"></i> بيانات الشركة</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>اسم الشركة</label>
+            <input type="text" name="companyName" value="<%= profile.companyProfile ? profile.companyProfile.companyName || '' : '' %>">
+          </div>
+          <div class="form-group">
+            <label>رقم السجل التجاري</label>
+            <input type="text" name="commercialRegister" value="<%= profile.companyProfile ? profile.companyProfile.commercialRegister || '' : '' %>">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>القطاع</label>
+            <input type="text" name="sector" value="<%= profile.companyProfile ? profile.companyProfile.sector || '' : '' %>" placeholder="مثال: تقنية، صحة">
+          </div>
+          <div class="form-group">
+            <label>عدد الموظفين</label>
+            <input type="number" name="employeeCount" value="<%= profile.companyProfile ? profile.companyProfile.employeeCount || '' : '' %>">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>مسؤول التواصل</label>
+          <input type="text" name="contactPerson" value="<%= profile.companyProfile ? profile.companyProfile.contactPerson || '' : '' %>">
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+      </div>
+    </div>
+    <% } %>
+
+    </form>
+
+    <div id="tab-security" class="profile-tab-content">
+      <div class="form-card">
+        <h2><i class="fas fa-shield-alt"></i> الأمان</h2>
+        <% if (profile.password) { %>
         <form method="POST" action="/profile/change-password">
           <div class="form-group">
             <label>كلمة المرور الحالية</label>
             <input type="password" name="currentPassword" required>
           </div>
-          <div class="form-group">
-            <label>كلمة المرور الجديدة</label>
-            <input type="password" name="newPassword" required minlength="6">
+          <div class="form-row">
+            <div class="form-group">
+              <label>كلمة المرور الجديدة</label>
+              <input type="password" name="newPassword" required minlength="6">
+            </div>
+            <div class="form-group">
+              <label>تأكيد كلمة المرور</label>
+              <input type="password" name="confirmNewPassword" required>
+            </div>
           </div>
-          <div class="form-group">
-            <label>تأكيد كلمة المرور الجديدة</label>
-            <input type="password" name="confirmNewPassword" required>
-          </div>
-          <button type="submit" class="btn btn-primary">تغيير كلمة المرور</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-key"></i> تغيير كلمة المرور</button>
         </form>
+        <% } else { %>
+        <div class="info-box">
+          <i class="fas fa-info-circle"></i>
+          <p>تم تسجيل حسابك عبر <%= {google:'Google',apple:'Apple',nafath:'نفاذ',phone:'رقم الجوال'}[profile.authProvider] || profile.authProvider %> — لا يمكن تغيير كلمة المرور.</p>
+        </div>
+        <% } %>
+
+        <div class="security-section">
+          <h3><i class="fas fa-fingerprint"></i> تسجيل الدخول بالبصمة / الوجه</h3>
+          <p class="text-muted">أضف بصمتك للدخول السريع بدون كلمة مرور</p>
+          <% if (profile.webauthnCredentials && profile.webauthnCredentials.length > 0) { %>
+          <p class="text-success"><i class="fas fa-check-circle"></i> مسجل (<%= profile.webauthnCredentials.length %> جهاز/أجهزة)</p>
+          <% } %>
+          <button class="btn btn-outline" onclick="registerWebAuthn()"><i class="fas fa-plus"></i> إضافة بصمة جديدة</button>
+        </div>
       </div>
     </div>
+
+    <div id="tab-devices" class="profile-tab-content">
+      <div class="form-card">
+        <h2><i class="fas fa-laptop"></i> الأجهزة المرتبطة</h2>
+        <div id="devicesContainer">
+          <div class="loading-sm"><div class="spinner-sm"></div> جاري التحميل...</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-history" class="profile-tab-content">
+      <div class="form-card">
+        <h2><i class="fas fa-history"></i> سجل الدخول والخروج</h2>
+        <div id="historyContainer">
+          <div class="loading-sm"><div class="spinner-sm"></div> جاري التحميل...</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<script>
+document.querySelectorAll('.profile-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.target).classList.add('active');
+    if (tab.dataset.target === 'tab-devices') loadDevices();
+    if (tab.dataset.target === 'tab-history') loadHistory();
+  });
+});
+
+async function loadDevices() {
+  try {
+    const res = await fetch('/profile/devices');
+    const data = await res.json();
+    const container = document.getElementById('devicesContainer');
+    if (!data.devices || data.devices.length === 0) {
+      container.innerHTML = '<p class="text-muted">لا توجد أجهزة مسجلة</p>';
+      return;
+    }
+    const icons = { mobile: 'fa-mobile-alt', tablet: 'fa-tablet-alt', desktop: 'fa-desktop', unknown: 'fa-question-circle' };
+    container.innerHTML = data.devices.map(d => `
+      <div class="device-item">
+        <div class="device-icon"><i class="fas ${icons[d.deviceType] || icons.unknown}"></i></div>
+        <div class="device-info">
+          <strong>${d.deviceName || 'جهاز غير معروف'}</strong>
+          <p class="text-muted">${d.browser || ''} • ${d.os || ''} • ${d.ip || ''}</p>
+          <small class="text-muted">آخر استخدام: ${new Date(d.lastUsed).toLocaleDateString('ar-SA', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</small>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="revokeDevice('${d._id}')"><i class="fas fa-times"></i></button>
+      </div>
+    `).join('');
+  } catch (e) { document.getElementById('devicesContainer').innerHTML = '<p class="text-error">خطأ في التحميل</p>'; }
+}
+
+async function revokeDevice(id) {
+  if (!confirm('هل تريد إزالة هذا الجهاز؟')) return;
+  await fetch('/profile/devices/' + id + '/revoke', { method: 'POST' });
+  loadDevices();
+}
+
+async function loadHistory() {
+  try {
+    const res = await fetch('/profile/login-history');
+    const data = await res.json();
+    const container = document.getElementById('historyContainer');
+    if (!data.history || data.history.length === 0) {
+      container.innerHTML = '<p class="text-muted">لا يوجد سجل</p>';
+      return;
+    }
+    const methodLabels = { email: 'بريد', phone_otp: 'جوال OTP', google: 'Google', apple: 'Apple', nafath: 'نفاذ', webauthn: 'بصمة', register: 'تسجيل' };
+    const actionLabels = { login: 'دخول', logout: 'خروج', register: 'تسجيل', failed: 'فشل' };
+    const actionColors = { login: 'success', logout: 'warning', register: 'info', failed: 'error' };
+    container.innerHTML = '<div class="history-list">' + data.history.map(h => `
+      <div class="history-item">
+        <span class="history-badge badge-${actionColors[h.action] || 'info'}">${actionLabels[h.action] || h.action}</span>
+        <div class="history-info">
+          <strong>${methodLabels[h.method] || h.method}</strong>
+          ${h.deviceName ? '<span class="text-muted"> • ' + h.deviceName + '</span>' : ''}
+          ${h.ip ? '<span class="text-muted"> • ' + h.ip + '</span>' : ''}
+        </div>
+        <small class="text-muted">${new Date(h.timestamp).toLocaleDateString('ar-SA', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</small>
+      </div>
+    `).join('') + '</div>';
+  } catch (e) { document.getElementById('historyContainer').innerHTML = '<p class="text-error">خطأ في التحميل</p>'; }
+}
+
+async function registerWebAuthn() {
+  try {
+    const optRes = await fetch('/auth/webauthn/register-options', { method: 'POST' });
+    const optData = await optRes.json();
+    if (!optData.success) return alert(optData.message);
+    const { startRegistration } = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@10.0.0/+esm');
+    const regResp = await startRegistration(optData.options);
+    const verRes = await fetch('/auth/webauthn/register-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(regResp)
+    });
+    const verData = await verRes.json();
+    alert(verData.success ? 'تم تسجيل البصمة بنجاح' : verData.message);
+    if (verData.success) location.reload();
+  } catch (e) {
+    if (e.name === 'NotAllowedError') return;
+    alert('المتصفح لا يدعم هذه الميزة');
+  }
+}
+</script>
 <%- include('../partials/footer') %>
