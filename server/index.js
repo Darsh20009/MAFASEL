@@ -167,6 +167,19 @@ async function startServer() {
         console.log('Default admin created: admin@mafasel.com / admin123');
       }
 
+      const Banner = require('./modules/admin/banner.model');
+      const bannerCount = await Banner.countDocuments();
+      if (bannerCount === 0) {
+        const defaultBanners = [
+          { title: 'منصة صحية رقمية متكاملة', filePath: '/uploads/banners/banner1.png', type: 'image', order: 0, isActive: true },
+          { title: 'وسهلناها عليك', filePath: '/uploads/banners/banner2.png', type: 'image', order: 1, isActive: true },
+          { title: 'دايماً معاك - دعم فني متكامل', filePath: '/uploads/banners/banner3.png', type: 'image', order: 2, isActive: true },
+          { title: 'حمل التطبيق الآن', filePath: '/uploads/banners/banner4.png', type: 'image', order: 3, isActive: true }
+        ];
+        await Banner.insertMany(defaultBanners);
+        console.log('Default banners seeded (4 banners)');
+      }
+
       const MongoStore = require('connect-mongo');
       const mongoStore = MongoStore.create({
         client: mongoose.connection.getClient(),
