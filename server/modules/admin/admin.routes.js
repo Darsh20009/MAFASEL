@@ -36,8 +36,100 @@ router.get('/users', isAuthenticated, isAdmin, async (req, res) => {
   res.render('pages/admin-users', { title: 'إدارة المستخدمين', users });
 });
 
+router.post('/users/create', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const { name, email, phone, password, role, nationalId } = req.body;
+    if (!name || !password) {
+      req.session.error = 'الاسم وكلمة المرور مطلوبان';
+      return res.redirect('/admin/users');
+    }
+    if (password.length < 6) {
+      req.session.error = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+      return res.redirect('/admin/users');
+    }
+    if (!email && !phone) {
+      req.session.error = 'يجب إدخال البريد الإلكتروني أو رقم الجوال على الأقل';
+      return res.redirect('/admin/users');
+    }
+    const allowedRoles = ['doctor', 'pharmacist', 'moderator', 'company', 'employee', 'insurance_agent'];
+    if (!allowedRoles.includes(role)) {
+      req.session.error = 'دور غير صالح';
+      return res.redirect('/admin/users');
+    }
+    if (email) {
+      const existingEmail = await User.findOne({ email: email.toLowerCase().trim() });
+      if (existingEmail) {
+        req.session.error = 'البريد الإلكتروني مستخدم بالفعل';
+        return res.redirect('/admin/users');
+      }
+    }
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash(password, 10);
+    let cleanPhone = phone ? phone.replace(/\D/g, '') : undefined;
+    if (cleanPhone) {
+      if (cleanPhone.startsWith('966')) cleanPhone = cleanPhone.slice(3);
+      else if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.slice(1);
+      if (!/^5\d{8}$/.test(cleanPhone)) {
+        req.session.error = 'رقم الجوال غير صالح';
+        return res.redirect('/admin/users');
+      }
+      const existingPhone = await User.findOne({ phone: cleanPhone });
+      if (existingPhone) {
+        req.session.error = 'رقم الجوال مستخدم بالفعل';
+        return res.redirect('/admin/users');
+      }
+    }
+    let cleanId = nationalId ? nationalId.replace(/\D/g, '') : undefined;
+    if (cleanId) {
+      if (!/^[12]\d{9}$/.test(cleanId)) {
+        req.session.error = 'رقم الهوية غير صالح';
+        return res.redirect('/admin/users');
+      }
+      const existingId = await User.findOne({ nationalId: cleanId });
+      if (existingId) {
+        req.session.error = 'رقم الهوية مستخدم بالفعل';
+        return res.redirect('/admin/users');
+      }
+    }
+
+    await User.create({
+      name: name.trim(),
+      email: email ? email.toLowerCase().trim() : undefined,
+      phone: cleanPhone || undefined,
+      nationalId: cleanId || undefined,
+      password: hash,
+      role,
+      isVerified: true,
+      authProvider: 'local'
+    });
+    req.session.success = 'تم إنشاء المستخدم بنجاح';
+  } catch (err) {
+    console.error('Admin create user error:', err);
+    req.session.error = 'حدث خطأ في إنشاء المستخدم';
+  }
+  res.redirect('/admin/users');
+});
+
 router.post('/users/:id/role', isAuthenticated, isAdmin, async (req, res) => {
-  await User.findByIdAndUpdate(req.params.id, { role: req.body.role });
+  const allowedRoles = ['patient', 'doctor', 'pharmacist', 'company', 'employee', 'insurance_agent', 'moderator'];
+  const newRole = req.body.role;
+  if (newRole === 'admin' && req.session.user.role !== 'admin') {
+    req.session.error = 'لا يمكنك تعيين دور المدير';
+    return res.redirect('/admin/users');
+  }
+  if (newRole === 'admin') {
+    allowedRoles.push('admin');
+  }
+  if (!allowedRoles.includes(newRole)) {
+    req.session.error = 'دور غير صالح';
+    return res.redirect('/admin/users');
+  }
+  const targetUser = await User.findById(req.params.id);
+  if (targetUser && targetUser.role === 'admin' && req.session.user.role !== 'admin') {
+    req.session.error = 'لا يمكنك تعديل دور مدير آخر';
+    return res.redirect('/admin/users');
+  }
+  await User.findByIdAndUpdate(req.params.id, { role: newRole }, { runValidators: true });
   req.session.success = 'تم تحديث الدور';
   res.redirect('/admin/users');
 });

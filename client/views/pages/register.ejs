@@ -23,21 +23,10 @@
     </div>
 
     <form method="POST" action="/register" class="auth-form" id="registerForm">
-      <div class="form-row">
-        <div class="form-group">
-          <label><i class="fas fa-user"></i> الاسم الكامل</label>
-          <input type="text" name="name" required placeholder="أدخل اسمك الكامل">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-user-tag"></i> نوع الحساب</label>
-          <select name="role">
-            <option value="patient">مريض</option>
-            <option value="doctor">طبيب</option>
-            <option value="pharmacist">صيدلي</option>
-            <option value="company">شركة</option>
-            <option value="employee">موظف</option>
-          </select>
-        </div>
+      <input type="hidden" name="role" value="patient">
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> الاسم الكامل</label>
+        <input type="text" name="name" required placeholder="أدخل اسمك الكامل">
       </div>
       <div class="form-group">
         <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>

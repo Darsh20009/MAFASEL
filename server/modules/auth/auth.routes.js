@@ -127,7 +127,7 @@ router.post('/register', async (req, res) => {
       phone: cleanPhone || undefined,
       nationalId: cleanId || undefined,
       password: hash,
-      role: role || 'patient',
+      role: 'patient',
       isVerified: true,
       authProvider: 'local'
     });

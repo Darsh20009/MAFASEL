@@ -1,53 +1,178 @@
 <%- include('../partials/header') %>
 <div class="landing">
   <div class="landing-hero">
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="hero-gradient-overlay"></div>
     <div class="landing-content">
-      <img src="/icons/logo.png" alt="مفاصل" class="landing-logo">
-      <h1>منصة مفاصل الطبية</h1>
-      <p class="landing-subtitle">نظام طبي رقمي متكامل يجمع بين الخدمات الصحية في مكان واحد</p>
-      <div class="landing-buttons">
-        <a href="/login" class="btn btn-primary btn-lg">تسجيل الدخول</a>
-        <a href="/register" class="btn btn-outline btn-lg">إنشاء حساب</a>
+      <div class="logo-glow">
+        <img src="/icons/logo.png" alt="مفاصل" class="landing-logo">
       </div>
+      <h1 class="hero-title">
+        <span class="title-line">منصة</span>
+        <span class="title-accent">مفاصل</span>
+        <span class="title-line">الطبية</span>
+      </h1>
+      <p class="landing-subtitle">نظام طبي رقمي متكامل يجمع بين الخدمات الصحية في مكان واحد</p>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="500">0</div>
+          <div class="hero-stat-label">طبيب متخصص</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="50">0</div>
+          <div class="hero-stat-label">تخصص طبي</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" data-count="10000">0</div>
+          <div class="hero-stat-label">مريض مسجل</div>
+        </div>
+      </div>
+      <div class="landing-buttons">
+        <a href="/login" class="btn btn-primary btn-lg btn-glow">
+          <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+        </a>
+        <a href="/register" class="btn btn-outline btn-lg">
+          <i class="fas fa-user-plus"></i> إنشاء حساب
+        </a>
+        <a href="/dashboard" class="btn btn-ghost btn-lg">
+          <i class="fas fa-eye"></i> تصفح المنصة
+        </a>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator">
+      <i class="fas fa-chevron-down"></i>
     </div>
   </div>
 
   <div class="landing-features">
     <div class="container">
-      <h2 class="section-title">خدماتنا</h2>
+      <div class="section-heading">
+        <span class="section-tag">خدماتنا</span>
+        <h2 class="section-title">كل ما تحتاجه في مكان واحد</h2>
+        <p class="section-desc">نوفر لك مجموعة متكاملة من الخدمات الصحية الرقمية</p>
+      </div>
       <div class="features-grid">
-        <div class="feature-card">
+        <div class="feature-card feature-card-premium">
+          <div class="feature-card-glow"></div>
           <div class="feature-icon"><i class="fas fa-stethoscope"></i></div>
           <h3>استشارات طبية</h3>
           <p>تواصل مع أطباء متخصصين واحصل على استشارة طبية فورية</p>
+          <div class="feature-arrow"><i class="fas fa-arrow-left"></i></div>
         </div>
-        <div class="feature-card">
+        <div class="feature-card feature-card-premium">
+          <div class="feature-card-glow"></div>
           <div class="feature-icon"><i class="fas fa-pills"></i></div>
           <h3>صيدلية إلكترونية</h3>
           <p>اطلب أدويتك وتوصل لباب بيتك بسهولة وأمان</p>
+          <div class="feature-arrow"><i class="fas fa-arrow-left"></i></div>
         </div>
-        <div class="feature-card">
+        <div class="feature-card feature-card-premium">
+          <div class="feature-card-glow"></div>
           <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
           <h3>تأمين صحي</h3>
           <p>إدارة التأمين الصحي الخاص بك ومتابعة التغطية</p>
+          <div class="feature-arrow"><i class="fas fa-arrow-left"></i></div>
         </div>
-        <div class="feature-card">
+        <div class="feature-card feature-card-premium">
+          <div class="feature-card-glow"></div>
           <div class="feature-icon"><i class="fas fa-user-md"></i></div>
           <h3>فريق طبي متخصص</h3>
           <p>تواصل مع أطبائنا وفريق الرعاية الصحية في أي وقت</p>
+          <div class="feature-arrow"><i class="fas fa-arrow-left"></i></div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-file-medical"></i></div>
-          <h3>ملف طبي</h3>
-          <p>ملفك الطبي الشامل في مكان واحد آمن</p>
+        <div class="feature-card feature-card-premium">
+          <div class="feature-card-glow"></div>
+          <div class="feature-icon"><i class="fas fa-heartbeat"></i></div>
+          <h3>ملف طبي شامل</h3>
+          <p>ملفك الطبي الشامل في مكان واحد آمن ومحمي</p>
+          <div class="feature-arrow"><i class="fas fa-arrow-left"></i></div>
         </div>
-        <div class="feature-card">
+        <div class="feature-card feature-card-premium">
+          <div class="feature-card-glow"></div>
           <div class="feature-icon"><i class="fas fa-bell"></i></div>
           <h3>إشعارات لحظية</h3>
           <p>تابع كل التحديثات فوراً عبر إشعارات ذكية</p>
+          <div class="feature-arrow"><i class="fas fa-arrow-left"></i></div>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="landing-cta">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-glow"></div>
+        <h2>ابدأ رحلتك الصحية الآن</h2>
+        <p>انضم لآلاف المستخدمين الذين يثقون بمنصة مفاصل</p>
+        <a href="/register" class="btn btn-primary btn-lg btn-glow">
+          <i class="fas fa-rocket"></i> سجّل مجاناً
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="/icons/logo.png" alt="مفاصل" class="footer-logo">
+          <p>منصة مفاصل الطبية - نظام طبي رقمي متكامل</p>
+        </div>
+        <div class="footer-copy">
+          <p>&copy; 2024 مفاصل. جميع الحقوق محفوظة</p>
+        </div>
+      </div>
+    </div>
+  </footer>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var counters = document.querySelectorAll('.hero-stat-num');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var target = parseInt(el.dataset.count);
+        var step = Math.ceil(target / 60);
+        var current = 0;
+        var timer = setInterval(function() {
+          current += step;
+          if (current >= target) { current = target; clearInterval(timer); }
+          el.textContent = current.toLocaleString('ar-SA') + '+';
+        }, 30);
+        observer.unobserve(el);
+      }
+    });
+  });
+  counters.forEach(function(c) { observer.observe(c); });
+
+  var particles = document.getElementById('heroParticles');
+  if (particles) {
+    for (var i = 0; i < 30; i++) {
+      var dot = document.createElement('div');
+      dot.className = 'particle';
+      dot.style.left = Math.random() * 100 + '%';
+      dot.style.top = Math.random() * 100 + '%';
+      dot.style.animationDelay = Math.random() * 6 + 's';
+      dot.style.animationDuration = (4 + Math.random() * 4) + 's';
+      dot.style.width = dot.style.height = (2 + Math.random() * 4) + 'px';
+      particles.appendChild(dot);
+    }
+  }
+
+  var cards = document.querySelectorAll('.feature-card-premium');
+  var cardObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        cardObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  cards.forEach(function(c) { cardObserver.observe(c); });
+});
+</script>
 <%- include('../partials/footer') %>

@@ -1,16 +1,16 @@
 <%- include('../partials/header') %>
 <div class="main-content">
-  <div class="container">
 
+  <section class="hero-banner-wrap">
     <% if (banners && banners.length > 0) { %>
-    <section class="hero-banner" id="heroBanner">
+    <div class="hero-banner" id="heroBanner">
       <div class="banner-slides">
         <% banners.forEach((b, i) => { %>
         <div class="banner-slide <%= i === 0 ? 'active' : '' %>" <% if (b.link) { %>data-link="<%= b.link %>"<% } %>>
           <% if (b.type === 'video') { %>
           <video src="<%= b.filePath %>" muted autoplay loop playsinline class="banner-media"></video>
           <% } else { %>
-          <img src="<%= b.filePath %>" alt="<%= b.title || 'بانر مفاصل' %>" class="banner-media">
+          <img src="<%= b.filePath %>" alt="<%= b.title || 'مفاصل' %>" class="banner-media">
           <% } %>
           <% if (b.title) { %>
           <div class="banner-overlay">
@@ -29,96 +29,130 @@
         <% }) %>
       </div>
       <% } %>
-    </section>
+      <div class="banner-gradient-bottom"></div>
+    </div>
+    <% } else { %>
+    <div class="hero-banner-placeholder">
+      <div class="hero-placeholder-content">
+        <div class="hero-placeholder-icon"><i class="fas fa-hand-holding-medical"></i></div>
+        <h2>مرحباً بك في منصة مفاصل</h2>
+        <p>نظامك الطبي الرقمي المتكامل</p>
+      </div>
+      <div class="banner-gradient-bottom"></div>
+    </div>
     <% } %>
+  </section>
+
+  <div class="container dashboard-container">
 
     <section class="welcome-section">
-      <div class="welcome-card">
+      <div class="welcome-card-premium">
+        <div class="welcome-card-bg"></div>
         <div class="welcome-info">
+          <% if (typeof isGuest !== 'undefined' && isGuest) { %>
+          <h1>مرحباً، مستخدم <span class="wave-emoji">&#x1F44B;</span></h1>
+          <p>أهلاً بك في منصة مفاصل الطبية. سجّل دخولك للاستفادة من جميع الخدمات.</p>
+          <div class="welcome-guest-actions">
+            <a href="/login" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a>
+            <a href="/register" class="btn btn-outline btn-sm"><i class="fas fa-user-plus"></i> إنشاء حساب</a>
+          </div>
+          <% } else { %>
           <h1>مرحباً، <%= user.name %> <span class="wave-emoji">&#x1F44B;</span></h1>
           <p>أهلاً بك في منصة مفاصل الطبية</p>
           <div class="account-status">
             <span class="status-pill <%= user.isVerified ? 'verified' : 'unverified' %>">
               <i class="fas fa-<%= user.isVerified ? 'check-circle' : 'exclamation-circle' %>"></i>
-              الحساب: <%= user.isVerified ? 'موثّق' : 'غير موثّق' %>
+              <%= user.isVerified ? 'موثّق' : 'غير موثّق' %>
             </span>
             <span class="status-pill role-pill">
               <i class="fas fa-user-tag"></i>
-              <%= user.role === 'patient' ? 'مريض' : user.role === 'doctor' ? 'طبيب' : user.role === 'pharmacist' ? 'صيدلي' : user.role === 'admin' ? 'مدير' : user.role === 'moderator' ? 'مشرف' : user.role === 'company' ? 'شركة' : user.role === 'employee' ? 'موظف' : 'وكيل تأمين' %>
+              <%= user.role === 'patient' ? 'مريض' : user.role === 'doctor' ? 'طبيب' : user.role === 'pharmacist' ? 'صيدلي' : user.role === 'admin' ? 'مدير النظام' : user.role === 'moderator' ? 'مشرف' : user.role === 'company' ? 'شركة' : user.role === 'employee' ? 'موظف' : 'وكيل تأمين' %>
             </span>
           </div>
+          <% } %>
         </div>
         <div class="welcome-avatar">
-          <div class="avatar-circle">
+          <div class="avatar-circle-premium">
+            <% if (typeof isGuest !== 'undefined' && isGuest) { %>
             <i class="fas fa-user"></i>
+            <% } else { %>
+            <i class="fas fa-user-circle"></i>
+            <% } %>
           </div>
         </div>
       </div>
     </section>
 
+    <% if (typeof isGuest === 'undefined' || !isGuest) { %>
     <section class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon bg-primary"><i class="fas fa-stethoscope"></i></div>
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium"><i class="fas fa-stethoscope"></i></div>
         <div class="stat-info">
           <h3><%= stats.consultations %></h3>
           <p>الاستشارات</p>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon bg-success"><i class="fas fa-pills"></i></div>
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium bg-green"><i class="fas fa-pills"></i></div>
         <div class="stat-info">
           <h3><%= stats.orders %></h3>
           <p>طلبات الصيدلية</p>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon bg-warning"><i class="fas fa-bell"></i></div>
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium bg-amber"><i class="fas fa-bell"></i></div>
         <div class="stat-info">
           <h3><%= stats.unreadNotifs %></h3>
           <p>إشعارات جديدة</p>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon <%= stats.activeInsurance ? 'bg-success' : 'bg-muted' %>"><i class="fas fa-shield-alt"></i></div>
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium <%= stats.activeInsurance ? 'bg-green' : 'bg-muted' %>"><i class="fas fa-shield-alt"></i></div>
         <div class="stat-info">
-          <h3><%= stats.activeInsurance ? 'فعّال' : 'غير مفعّل' %></h3>
+          <h3><%= stats.activeInsurance ? 'فعّال' : 'غير فعّل' %></h3>
           <p>التأمين الصحي</p>
         </div>
       </div>
     </section>
+    <% } %>
 
     <section class="quick-actions">
-      <h2><i class="fas fa-bolt"></i> إجراءات سريعة</h2>
-      <div class="actions-grid">
-        <a href="/consultations/new" class="action-card">
-          <div class="action-icon-wrap"><i class="fas fa-plus-circle"></i></div>
+      <h2 class="section-heading-inline"><i class="fas fa-bolt"></i> إجراءات سريعة</h2>
+      <div class="actions-grid-premium">
+        <a href="<%= (typeof isGuest !== 'undefined' && isGuest) ? '/login' : '/consultations/new' %>" class="action-card-premium">
+          <div class="action-icon-glow"><i class="fas fa-plus-circle"></i></div>
           <span>استشارة جديدة</span>
         </a>
-        <a href="/pharmacy" class="action-card">
-          <div class="action-icon-wrap"><i class="fas fa-shopping-cart"></i></div>
+        <a href="<%= (typeof isGuest !== 'undefined' && isGuest) ? '/login' : '/pharmacy' %>" class="action-card-premium">
+          <div class="action-icon-glow"><i class="fas fa-shopping-cart"></i></div>
           <span>طلب أدوية</span>
         </a>
-        <a href="/ai" class="action-card">
-          <div class="action-icon-wrap"><i class="fas fa-user-md"></i></div>
+        <a href="<%= (typeof isGuest !== 'undefined' && isGuest) ? '/login' : '/ai' %>" class="action-card-premium">
+          <div class="action-icon-glow"><i class="fas fa-user-md"></i></div>
           <span>فريق الرعاية</span>
         </a>
-        <a href="/profile" class="action-card">
-          <div class="action-icon-wrap"><i class="fas fa-file-medical"></i></div>
+        <a href="<%= (typeof isGuest !== 'undefined' && isGuest) ? '/login' : '/profile' %>" class="action-card-premium">
+          <div class="action-icon-glow"><i class="fas fa-heartbeat"></i></div>
           <span>ملفي الطبي</span>
         </a>
-        <a href="/insurance" class="action-card">
-          <div class="action-icon-wrap"><i class="fas fa-shield-alt"></i></div>
+        <a href="<%= (typeof isGuest !== 'undefined' && isGuest) ? '/login' : '/insurance' %>" class="action-card-premium">
+          <div class="action-icon-glow"><i class="fas fa-shield-alt"></i></div>
           <span>التأمين</span>
         </a>
-        <a href="/complaints" class="action-card">
-          <div class="action-icon-wrap"><i class="fas fa-headset"></i></div>
+        <a href="<%= (typeof isGuest !== 'undefined' && isGuest) ? '/login' : '/complaints' %>" class="action-card-premium">
+          <div class="action-icon-glow"><i class="fas fa-headset"></i></div>
           <span>الشكاوى والدعم</span>
         </a>
       </div>
     </section>
 
+    <% if (typeof isGuest === 'undefined' || !isGuest) { %>
     <section class="dashboard-grid">
-      <div class="dashboard-section">
+      <div class="dashboard-section-premium">
         <div class="section-header">
           <h2><i class="fas fa-stethoscope"></i> آخر الاستشارات</h2>
           <a href="/consultations" class="view-all-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
@@ -126,8 +160,8 @@
         <% if (consultations.length > 0) { %>
         <div class="list-items">
           <% consultations.forEach(c => { %>
-          <a href="/consultations/<%= c._id %>" class="list-item">
-            <div class="list-item-icon"><i class="fas fa-notes-medical"></i></div>
+          <a href="/consultations/<%= c._id %>" class="list-item-premium">
+            <div class="list-item-icon-premium"><i class="fas fa-notes-medical"></i></div>
             <div class="list-item-info">
               <strong><%= c.specialty %></strong>
               <p><%= c.symptoms ? c.symptoms.substring(0, 60) + '...' : 'بدون تفاصيل' %></p>
@@ -139,15 +173,15 @@
           <% }) %>
         </div>
         <% } else { %>
-        <div class="empty-state">
-          <i class="fas fa-stethoscope"></i>
+        <div class="empty-state-premium">
+          <div class="empty-icon"><i class="fas fa-stethoscope"></i></div>
           <p>لا توجد استشارات حتى الآن</p>
           <a href="/consultations/new" class="btn btn-sm btn-primary">طلب استشارة</a>
         </div>
         <% } %>
       </div>
 
-      <div class="dashboard-section">
+      <div class="dashboard-section-premium">
         <div class="section-header">
           <h2><i class="fas fa-shopping-bag"></i> آخر الطلبات</h2>
           <a href="/pharmacy" class="view-all-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
@@ -155,8 +189,8 @@
         <% if (orders.length > 0) { %>
         <div class="list-items">
           <% orders.forEach(o => { %>
-          <div class="list-item">
-            <div class="list-item-icon"><i class="fas fa-pills"></i></div>
+          <div class="list-item-premium">
+            <div class="list-item-icon-premium bg-green"><i class="fas fa-pills"></i></div>
             <div class="list-item-info">
               <strong>طلب #<%= o._id.toString().slice(-6) %></strong>
               <p><%= o.items ? o.items.length + ' منتج' : 'طلب صيدلية' %> - <%= new Date(o.createdAt).toLocaleDateString('ar-SA') %></p>
@@ -168,8 +202,8 @@
           <% }) %>
         </div>
         <% } else { %>
-        <div class="empty-state">
-          <i class="fas fa-shopping-bag"></i>
+        <div class="empty-state-premium">
+          <div class="empty-icon"><i class="fas fa-shopping-bag"></i></div>
           <p>لا توجد طلبات حتى الآن</p>
           <a href="/pharmacy" class="btn btn-sm btn-primary">تصفح الصيدلية</a>
         </div>
@@ -178,7 +212,7 @@
     </section>
 
     <section class="dashboard-grid">
-      <div class="dashboard-section">
+      <div class="dashboard-section-premium">
         <div class="section-header">
           <h2><i class="fas fa-bell"></i> الإشعارات المهمة</h2>
           <a href="/notifications" class="view-all-link">عرض الكل <i class="fas fa-arrow-left"></i></a>
@@ -186,8 +220,8 @@
         <% if (notifications.length > 0) { %>
         <div class="list-items">
           <% notifications.slice(0, 5).forEach(n => { %>
-          <div class="list-item notif-item <%= n.priority === 'high' || n.priority === 'urgent' ? 'notif-important' : '' %>" <% if(n.link) { %>data-href="<%= n.link %>"<% } %> onclick="if(this.dataset.href)window.location=this.dataset.href">
-            <div class="list-item-icon notif-icon-<%= n.priority === 'urgent' ? 'urgent' : n.priority === 'high' ? 'high' : 'normal' %>">
+          <div class="list-item-premium notif-item <%= n.priority === 'high' || n.priority === 'urgent' ? 'notif-important' : '' %>" <% if(n.link) { %>data-href="<%= n.link %>"<% } %> onclick="if(this.dataset.href)window.location=this.dataset.href">
+            <div class="list-item-icon-premium notif-icon-<%= n.priority === 'urgent' ? 'urgent' : n.priority === 'high' ? 'high' : 'normal' %>">
               <i class="fas fa-<%= n.priority === 'urgent' ? 'exclamation-triangle' : n.priority === 'high' ? 'exclamation-circle' : 'info-circle' %>"></i>
             </div>
             <div class="list-item-info">
@@ -199,49 +233,63 @@
           <% }) %>
         </div>
         <% } else { %>
-        <div class="empty-state">
-          <i class="fas fa-bell-slash"></i>
+        <div class="empty-state-premium">
+          <div class="empty-icon"><i class="fas fa-bell-slash"></i></div>
           <p>لا توجد إشعارات جديدة</p>
         </div>
         <% } %>
       </div>
 
-      <div class="dashboard-section ai-assistant-card">
-        <div class="ai-card-inner">
-          <div class="ai-card-glow"></div>
-          <div class="ai-icon-wrap">
+      <div class="dashboard-section-premium care-team-card">
+        <div class="care-card-inner">
+          <div class="care-card-glow"></div>
+          <div class="care-icon-wrap">
             <i class="fas fa-user-md"></i>
           </div>
           <h3>فريق الرعاية الصحية</h3>
           <p>تحدث مع أطبائنا المتخصصين واحصل على استشارة فورية</p>
-          <a href="/ai" class="btn btn-primary btn-ai-start">
+          <a href="<%= (typeof isGuest !== 'undefined' && isGuest) ? '/login' : '/ai' %>" class="btn btn-primary btn-glow">
             <i class="fas fa-comments"></i> ابدأ محادثة
           </a>
-          <div class="ai-features">
-            <span><i class="fas fa-check"></i> تشخيص أولي</span>
-            <span><i class="fas fa-check"></i> معلومات الأدوية</span>
-            <span><i class="fas fa-check"></i> نصائح صحية</span>
+          <div class="care-features">
+            <span><i class="fas fa-check-circle"></i> تقييم أولي</span>
+            <span><i class="fas fa-check-circle"></i> معلومات الأدوية</span>
+            <span><i class="fas fa-check-circle"></i> نصائح صحية</span>
           </div>
         </div>
       </div>
     </section>
+    <% } else { %>
+    <section class="guest-info-section">
+      <div class="guest-info-card">
+        <div class="guest-info-icon"><i class="fas fa-info-circle"></i></div>
+        <div class="guest-info-text">
+          <h3>سجّل دخولك للاستفادة الكاملة</h3>
+          <p>لعرض الاستشارات والطلبات والإشعارات والتحدث مع فريق الرعاية، يرجى تسجيل الدخول أو إنشاء حساب جديد.</p>
+        </div>
+      </div>
+    </section>
+    <% } %>
 
   </div>
 </div>
 
 <script>
-let currentSlide = 0;
-const slides = document.querySelectorAll('.banner-slide');
-const dots = document.querySelectorAll('.banner-dot');
-let bannerInterval;
+var currentSlide = 0;
+var slides = document.querySelectorAll('.banner-slide');
+var dots = document.querySelectorAll('.banner-dot');
+var bannerInterval;
 
 if (slides.length > 0) {
-  slides.forEach(s => {
+  slides.forEach(function(s) {
     if (s.dataset.link) {
       s.style.cursor = 'pointer';
-      s.addEventListener('click', (e) => {
+      s.addEventListener('click', function(e) {
         if (!e.target.closest('.banner-arrow') && !e.target.closest('.banner-dot')) {
-          window.location.href = s.dataset.link;
+          var link = s.dataset.link;
+          if (link.startsWith('/') || link.startsWith('http')) {
+            window.location.href = link;
+          }
         }
       });
     }
@@ -249,22 +297,22 @@ if (slides.length > 0) {
 }
 
 function showSlide(index) {
-  slides.forEach((s, i) => {
+  slides.forEach(function(s, i) {
     s.classList.toggle('active', i === index);
-    const video = s.querySelector('video');
+    var video = s.querySelector('video');
     if (video) {
-      if (i === index) { video.play().catch(() => {}); }
+      if (i === index) { video.play().catch(function(){}); }
       else { video.pause(); video.currentTime = 0; }
     }
   });
-  dots.forEach((d, i) => {
+  dots.forEach(function(d, i) {
     d.classList.toggle('active', i === index);
   });
   currentSlide = index;
 }
 
 function changeBannerSlide(dir) {
-  let next = currentSlide + dir;
+  var next = currentSlide + dir;
   if (next < 0) next = slides.length - 1;
   if (next >= slides.length) next = 0;
   showSlide(next);
@@ -279,20 +327,20 @@ function goToSlide(index) {
 function resetBannerTimer() {
   clearInterval(bannerInterval);
   if (slides.length > 1) {
-    bannerInterval = setInterval(() => changeBannerSlide(1), 5000);
+    bannerInterval = setInterval(function() { changeBannerSlide(1); }, 5000);
   }
 }
 
 if (slides.length > 1) {
-  bannerInterval = setInterval(() => changeBannerSlide(1), 5000);
+  bannerInterval = setInterval(function() { changeBannerSlide(1); }, 5000);
 }
 
-const banner = document.getElementById('heroBanner');
+var banner = document.getElementById('heroBanner');
 if (banner) {
-  let touchStartX = 0;
-  banner.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
-  banner.addEventListener('touchend', e => {
-    const diff = touchStartX - e.changedTouches[0].clientX;
+  var touchStartX = 0;
+  banner.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
+  banner.addEventListener('touchend', function(e) {
+    var diff = touchStartX - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) changeBannerSlide(diff > 0 ? 1 : -1);
   });
 }

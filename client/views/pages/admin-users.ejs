@@ -3,7 +3,60 @@
   <div class="container">
     <div class="page-header">
       <h1><i class="fas fa-users"></i> إدارة المستخدمين</h1>
-      <a href="/admin" class="btn btn-outline">العودة</a>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-primary" onclick="document.getElementById('createUserModal').style.display='flex'"><i class="fas fa-user-plus"></i> إضافة مستخدم</button>
+        <a href="/admin" class="btn btn-outline">العودة</a>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="createUserModal" style="display:none">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2><i class="fas fa-user-plus"></i> إضافة مستخدم جديد</h2>
+          <button class="modal-close" onclick="document.getElementById('createUserModal').style.display='none'"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST" action="/admin/users/create" class="modal-form">
+          <div class="form-group">
+            <label>الاسم الكامل</label>
+            <input type="text" name="name" required placeholder="أدخل الاسم">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>البريد الإلكتروني</label>
+              <input type="email" name="email" placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+              <label>رقم الجوال</label>
+              <input type="text" name="phone" placeholder="05XXXXXXXX" dir="ltr">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>كلمة المرور</label>
+              <input type="password" name="password" required placeholder="أدخل كلمة المرور" minlength="6">
+            </div>
+            <div class="form-group">
+              <label>الدور</label>
+              <select name="role">
+                <option value="doctor">طبيب</option>
+                <option value="pharmacist">صيدلي</option>
+                <option value="moderator">مشرف</option>
+                <option value="company">شركة</option>
+                <option value="employee">موظف</option>
+                <option value="insurance_agent">وكيل تأمين</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>رقم الهوية الوطنية (اختياري)</label>
+            <input type="text" name="nationalId" placeholder="10 أرقام" dir="ltr">
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> إنشاء المستخدم</button>
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('createUserModal').style.display='none'">إلغاء</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <div class="stats-grid" style="margin-bottom: 1.5rem;">

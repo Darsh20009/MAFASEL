@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<% if (user) { %>
 <nav class="navbar">
   <div class="nav-container">
     <a href="/dashboard" class="nav-logo">
@@ -22,6 +21,7 @@
     </button>
     <div class="nav-menu" id="navMenu">
       <a href="/dashboard" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a>
+      <% if (user) { %>
       <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
       <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
       <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
@@ -30,8 +30,10 @@
       <% if (user.role === 'admin' || user.role === 'moderator') { %>
       <a href="/admin" class="nav-link nav-admin"><i class="fas fa-cog"></i> الإدارة</a>
       <% } %>
+      <% } %>
     </div>
     <div class="nav-actions">
+      <% if (user) { %>
       <a href="/notifications" class="nav-icon-btn" id="notifBtn" title="الإشعارات">
         <i class="fas fa-bell"></i>
         <span class="notif-badge" id="notifBadge" style="display:none">0</span>
@@ -50,10 +52,12 @@
           <a href="/logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
         </div>
       </div>
+      <% } else { %>
+      <a href="/login" class="btn btn-primary btn-sm nav-login-btn"><i class="fas fa-sign-in-alt"></i> دخول</a>
+      <% } %>
     </div>
   </div>
 </nav>
-<% } %>
 
 <% if (success) { %>
 <div class="toast toast-success" id="toastSuccess">
