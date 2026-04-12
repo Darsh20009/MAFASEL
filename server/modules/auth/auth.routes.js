@@ -40,9 +40,14 @@ async function logLogin(user, method, req) {
   } catch (e) {}
 }
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   if (req.session.user) return res.redirect('/dashboard');
-  res.render('pages/landing', { title: 'مفاصل - منصة طبية متكاملة', metaDescription: 'منصة مفاصل الطبية الرقمية المتكاملة في السعودية - استشارات طبية متخصصة، صيدلية إلكترونية، تأمين صحي، مساعد ذكي بالذكاء الاصطناعي، مواعيد وتذكيرات أدوية' });
+  let banners = [];
+  try {
+    const Banner = require('../admin/banner.model');
+    banners = await Banner.find({ isActive: true }).sort({ order: 1 });
+  } catch (e) {}
+  res.render('pages/landing', { title: 'مفاصل - منصة طبية متكاملة', metaDescription: 'منصة مفاصل الطبية الرقمية المتكاملة في السعودية - استشارات طبية متخصصة، صيدلية إلكترونية، تأمين صحي، مساعد ذكي بالذكاء الاصطناعي، مواعيد وتذكيرات أدوية', banners });
 });
 
 router.get('/login', (req, res) => {
