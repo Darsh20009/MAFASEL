@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 
 const chatMessageSchema = new mongoose.Schema({
-  room: { type: String, required: true, index: true },
+  room: { type: mongoose.Schema.Types.ObjectId, ref: 'ChatRoom', required: true, index: true },
   sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  text: { type: String, required: true },
+  text: { type: String, default: '' },
   type: { type: String, enum: ['text', 'image', 'file', 'system'], default: 'text' },
-  attachments: [{ url: String, name: String, type: String }],
+  attachments: [{
+    url: { type: String, required: true },
+    name: { type: String },
+    type: { type: String },
+    size: { type: Number }
+  }],
   read: { type: Boolean, default: false },
   readAt: { type: Date }
 }, { timestamps: true });
@@ -15,12 +19,19 @@ chatMessageSchema.index({ room: 1, createdAt: -1 });
 
 const chatRoomSchema = new mongoose.Schema({
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  type: { type: String, enum: ['direct', 'consultation', 'support'], default: 'direct' },
+  type: { type: String, enum: ['doctor', 'support', 'internal', 'consultation'], default: 'support' },
   relatedTo: { type: mongoose.Schema.Types.ObjectId },
+  title: { type: String, default: '' },
   lastMessage: { type: String },
   lastMessageAt: { type: Date },
-  isActive: { type: Boolean, default: true }
+  lastMessageBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  unreadCount: { type: Map, of: Number, default: {} },
+  isActive: { type: Boolean, default: true },
+  closedAt: { type: Date },
+  closedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
+
+chatRoomSchema.index({ participants: 1, isActive: 1, lastMessageAt: -1 });
 
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);
 const ChatRoom = mongoose.model('ChatRoom', chatRoomSchema);

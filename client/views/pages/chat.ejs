@@ -3,26 +3,162 @@
   <div class="container">
     <div class="page-header">
       <h1><i class="fas fa-comments"></i> المحادثات</h1>
+      <div class="chat-header-actions">
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('newChatModal').style.display='flex'">
+          <i class="fas fa-plus"></i> محادثة جديدة
+        </button>
+      </div>
     </div>
-    <% if (rooms && rooms.length > 0) { %>
-    <div class="list-items">
+
+    <div class="chat-tabs">
+      <button class="chat-tab active" data-filter="all">الكل</button>
+      <button class="chat-tab" data-filter="doctor">مع الأطباء</button>
+      <button class="chat-tab" data-filter="support">الدعم الفني</button>
+      <% if (['admin','moderator','doctor','pharmacist','employee'].includes(user.role)) { %>
+      <button class="chat-tab" data-filter="internal">داخلي</button>
+      <% } %>
+    </div>
+
+    <div class="chat-rooms-list" id="chatRoomsList">
+      <% if (rooms && rooms.length > 0) { %>
       <% rooms.forEach(room => { %>
-      <a href="/chat/room/<%= room._id %>" class="list-item">
-        <div class="list-item-info">
-          <strong><%= room.participants.filter(p => p._id.toString() !== user._id.toString()).map(p => p.name).join('، ') || 'محادثة' %></strong>
-          <p><%= room.lastMessage || 'لا توجد رسائل بعد' %></p>
+      <% const other = room.participants.find(p => p._id.toString() !== user._id.toString()); %>
+      <% const unread = unreadCounts[room._id] || 0; %>
+      <a href="/chat/room/<%= room._id %>" class="chat-room-item <%= unread > 0 ? 'has-unread' : '' %>" data-type="<%= room.type %>">
+        <div class="chat-room-avatar">
+          <% if (room.type === 'doctor') { %>
+          <i class="fas fa-user-md"></i>
+          <% } else if (room.type === 'support') { %>
+          <i class="fas fa-headset"></i>
+          <% } else { %>
+          <i class="fas fa-user"></i>
+          <% } %>
+          <span class="chat-type-badge chat-type-<%= room.type %>">
+            <%= room.type === 'doctor' ? 'طبيب' : room.type === 'support' ? 'دعم' : 'داخلي' %>
+          </span>
         </div>
-        <span class="text-muted"><%= room.lastMessageAt ? new Date(room.lastMessageAt).toLocaleDateString('ar-SA') : '' %></span>
+        <div class="chat-room-info">
+          <div class="chat-room-top">
+            <strong><%= room.title || (other ? other.name : 'محادثة') %></strong>
+            <span class="chat-room-time">
+              <%= room.lastMessageAt ? new Date(room.lastMessageAt).toLocaleDateString('ar-SA', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '' %>
+            </span>
+          </div>
+          <div class="chat-room-bottom">
+            <p class="chat-room-preview"><%= room.lastMessage || 'لا توجد رسائل بعد' %></p>
+            <% if (unread > 0) { %>
+            <span class="chat-unread-badge"><%= unread %></span>
+            <% } %>
+          </div>
+        </div>
       </a>
       <% }) %>
+      <% } else { %>
+      <div class="empty-state-premium">
+        <div class="empty-icon"><i class="fas fa-comments"></i></div>
+        <h3>لا توجد محادثات</h3>
+        <p>ابدأ محادثة جديدة مع طبيب أو الدعم الفني</p>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('newChatModal').style.display='flex'">
+          <i class="fas fa-plus"></i> محادثة جديدة
+        </button>
+      </div>
+      <% } %>
     </div>
-    <% } else { %>
-    <div class="empty-state-lg">
-      <i class="fas fa-comments"></i>
-      <h3>لا توجد محادثات</h3>
-      <p>ستظهر المحادثات هنا عند بدء استشارة طبية</p>
-    </div>
-    <% } %>
   </div>
 </div>
+
+<div class="modal-overlay" id="newChatModal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2><i class="fas fa-plus-circle"></i> محادثة جديدة</h2>
+      <button class="modal-close" onclick="document.getElementById('newChatModal').style.display='none'"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="new-chat-options">
+      <form method="POST" action="/chat/new" class="new-chat-option">
+        <input type="hidden" name="type" value="support">
+        <div class="new-chat-icon"><i class="fas fa-headset"></i></div>
+        <div class="new-chat-info">
+          <h3>الدعم الفني</h3>
+          <p>تواصل مع فريق الدعم لأي استفسار أو مشكلة</p>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left"></i></button>
+      </form>
+
+      <div class="new-chat-divider"><span>أو اختر طبيب</span></div>
+
+      <% if (doctors && doctors.length > 0) { %>
+      <div class="doctors-list-chat">
+        <% doctors.forEach(doc => { %>
+        <form method="POST" action="/chat/new" class="new-chat-option doctor-option">
+          <input type="hidden" name="type" value="doctor">
+          <input type="hidden" name="targetId" value="<%= doc._id %>">
+          <div class="new-chat-icon doctor-icon"><i class="fas fa-user-md"></i></div>
+          <div class="new-chat-info">
+            <h3>د. <%= doc.name %></h3>
+            <p>طبيب</p>
+          </div>
+          <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-comments"></i></button>
+        </form>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="empty-state-sm">
+        <p>لا يوجد أطباء مسجلون حالياً</p>
+      </div>
+      <% } %>
+
+      <% if (['admin','moderator','doctor','pharmacist','employee'].includes(user.role)) { %>
+      <div class="new-chat-divider"><span>محادثة داخلية</span></div>
+      <button class="btn btn-outline btn-sm" style="width:100%" onclick="loadStaffList()">
+        <i class="fas fa-users"></i> عرض الموظفين
+      </button>
+      <div id="staffList" style="display:none"></div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+var chatTabs = document.querySelectorAll('.chat-tab');
+chatTabs.forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    chatTabs.forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    var filter = tab.dataset.filter;
+    var items = document.querySelectorAll('.chat-room-item');
+    items.forEach(function(item) {
+      if (filter === 'all' || item.dataset.type === filter) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+});
+
+async function loadStaffList() {
+  try {
+    var res = await fetch('/chat/staff');
+    var data = await res.json();
+    var container = document.getElementById('staffList');
+    if (data.staff && data.staff.length > 0) {
+      var html = '';
+      data.staff.forEach(function(s) {
+        var roleLabel = {admin:'مدير',moderator:'مشرف',doctor:'طبيب',pharmacist:'صيدلي',employee:'موظف'}[s.role] || s.role;
+        html += '<form method="POST" action="/chat/new" class="new-chat-option" style="margin-top:0.5rem">' +
+          '<input type="hidden" name="type" value="internal">' +
+          '<input type="hidden" name="targetId" value="' + s._id + '">' +
+          '<div class="new-chat-icon"><i class="fas fa-user"></i></div>' +
+          '<div class="new-chat-info"><h3>' + s.name + '</h3><p>' + roleLabel + '</p></div>' +
+          '<button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-comments"></i></button>' +
+          '</form>';
+      });
+      container.innerHTML = html;
+    } else {
+      container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:1rem">لا يوجد موظفون</p>';
+    }
+    container.style.display = 'block';
+  } catch(e) { console.error(e); }
+}
+</script>
 <%- include('../partials/footer') %>
