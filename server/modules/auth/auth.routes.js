@@ -215,7 +215,7 @@ router.post('/login/verify-otp', async (req, res) => {
   }
 });
 
-router.get('/auth/google', (req, res) => {
+router.get('/api/auth/google', (req, res) => {
   const passport = req.app.locals.passport;
   if (!passport) {
     req.session.error = 'تسجيل الدخول عبر Google غير متاح حالياً';
@@ -224,7 +224,7 @@ router.get('/auth/google', (req, res) => {
   passport.authenticate('google', { scope: ['profile', 'email'] })(req, res);
 });
 
-router.get('/auth/google/callback', (req, res, next) => {
+router.get('/api/auth/google/callback', (req, res, next) => {
   const passport = req.app.locals.passport;
   if (!passport) {
     req.session.error = 'تسجيل الدخول عبر Google غير متاح حالياً';
@@ -267,18 +267,131 @@ router.get('/auth/google/callback', (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/auth/apple/callback', async (req, res) => {
+function generateAppleClientSecret() {
+  const jwt = require('jsonwebtoken');
+  const teamId = process.env.APPLE_TEAM_ID;
+  const keyId = process.env.APPLE_KEY_ID;
+  const clientId = process.env.APPLE_CLIENT_ID;
+  const privateKey = (process.env.APPLE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+
+  if (!teamId || !keyId || !clientId || !privateKey) return null;
+
+  return jwt.sign({}, privateKey, {
+    algorithm: 'ES256',
+    expiresIn: '5m',
+    audience: 'https://appleid.apple.com',
+    issuer: teamId,
+    subject: clientId,
+    keyid: keyId
+  });
+}
+
+router.get('/api/auth/apple', (req, res) => {
+  const clientId = process.env.APPLE_CLIENT_ID;
+  if (!clientId || !process.env.APPLE_TEAM_ID || !process.env.APPLE_KEY_ID || !process.env.APPLE_PRIVATE_KEY) {
+    req.session.error = 'تسجيل الدخول عبر Apple غير متاح حالياً';
+    return res.redirect('/login');
+  }
+
+  const callbackURL = process.env.APPLE_CALLBACK_URL ||
+    (process.env.NODE_ENV === 'production'
+      ? 'https://mafaseltech.com/api/auth/apple/callback'
+      : 'http://localhost:5000/api/auth/apple/callback');
+
+  const state = require('crypto').randomBytes(16).toString('hex');
+  req.session.appleState = state;
+
+  const params = new URLSearchParams({
+    response_type: 'code id_token',
+    response_mode: 'form_post',
+    client_id: clientId,
+    redirect_uri: callbackURL,
+    scope: 'name email',
+    state
+  });
+
+  res.redirect(`https://appleid.apple.com/auth/authorize?${params.toString()}`);
+});
+
+router.post('/api/auth/apple/callback', async (req, res) => {
   try {
-    const appleSignin = require('apple-signin-auth');
-    const { id_token, user: userData } = req.body;
+    const { code, id_token, user: userData, state } = req.body;
 
-    const applePayload = await appleSignin.verifyIdToken(id_token, {
-      audience: process.env.APPLE_CLIENT_ID || 'com.mafasel.web',
-      ignoreExpiration: false
-    });
+    if (state && req.session.appleState && state !== req.session.appleState) {
+      req.session.error = 'فشل التحقق من الهوية عبر Apple';
+      return res.redirect('/login');
+    }
+    req.session.appleState = null;
 
-    const appleId = applePayload.sub;
-    const email = applePayload.email;
+    if (!id_token && !code) {
+      req.session.error = 'فشل تسجيل الدخول عبر Apple';
+      return res.redirect('/login');
+    }
+
+    let appleId, email;
+
+    if (id_token) {
+      const appleSignin = require('apple-signin-auth');
+      const applePayload = await appleSignin.verifyIdToken(id_token, {
+        audience: process.env.APPLE_CLIENT_ID,
+        ignoreExpiration: false
+      });
+      appleId = applePayload.sub;
+      email = applePayload.email;
+    } else if (code) {
+      const clientSecret = generateAppleClientSecret();
+      if (!clientSecret) throw new Error('Apple client secret generation failed');
+
+      const callbackURL = process.env.APPLE_CALLBACK_URL ||
+        (process.env.NODE_ENV === 'production'
+          ? 'https://mafaseltech.com/api/auth/apple/callback'
+          : 'http://localhost:5000/api/auth/apple/callback');
+
+      const https = require('https');
+      const qs = require('querystring');
+      const postData = qs.stringify({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: callbackURL,
+        client_id: process.env.APPLE_CLIENT_ID,
+        client_secret: clientSecret
+      });
+
+      const tokenData = await new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'appleid.apple.com',
+          path: '/auth/token',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(postData)
+          }
+        };
+        const reqHttp = https.request(options, (resp) => {
+          let data = '';
+          resp.on('data', (chunk) => { data += chunk; });
+          resp.on('end', () => {
+            try { resolve(JSON.parse(data)); }
+            catch (e) { reject(e); }
+          });
+        });
+        reqHttp.on('error', reject);
+        reqHttp.write(postData);
+        reqHttp.end();
+      });
+
+      if (!tokenData.id_token) throw new Error('No id_token in Apple response');
+
+      const appleSignin = require('apple-signin-auth');
+      const applePayload = await appleSignin.verifyIdToken(tokenData.id_token, {
+        audience: process.env.APPLE_CLIENT_ID,
+        ignoreExpiration: false
+      });
+      appleId = applePayload.sub;
+      email = applePayload.email;
+    }
+
+    if (!appleId) throw new Error('No Apple ID returned');
 
     let user = await User.findOne({ appleId });
     if (!user && email) {

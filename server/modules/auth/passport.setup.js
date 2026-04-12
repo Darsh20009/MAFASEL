@@ -10,9 +10,10 @@ function setupPassport(app) {
     return null;
   }
 
-  const callbackURL = process.env.REPLIT_DEV_DOMAIN
-    ? `https://${process.env.REPLIT_DEV_DOMAIN}/auth/google/callback`
-    : 'http://localhost:5000/auth/google/callback';
+  const callbackURL = process.env.GOOGLE_CALLBACK_URL ||
+    (process.env.NODE_ENV === 'production'
+      ? 'https://mafaseltech.com/api/auth/google/callback'
+      : 'http://localhost:5000/api/auth/google/callback');
 
   passport.use(new GoogleStrategy({
     clientID,
