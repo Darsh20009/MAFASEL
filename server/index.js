@@ -103,6 +103,15 @@ io.on('connection', (socket) => {
     }
   }
 
+  socket.on('typing', (data) => {
+    if (sess && sess.user && data.roomId) {
+      socket.broadcast.emit('chat_typing', {
+        roomId: data.roomId,
+        userId: sess.user._id.toString()
+      });
+    }
+  });
+
   socket.on('disconnect', () => {
     if (sess && sess.user) {
       connectedUsers.delete(sess.user._id);

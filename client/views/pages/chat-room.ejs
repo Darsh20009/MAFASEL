@@ -11,6 +11,8 @@
   if (otherParticipant && otherParticipant.avatar) headerAvatar = otherParticipant.avatar;
 %>
 <div class="chat-page-wrap">
+
+  <!-- ── HEADER ─────────────────────────────────── -->
   <div class="chat-room-header">
     <a href="/chat" class="chat-back-btn"><i class="fas fa-arrow-right"></i></a>
     <div class="chat-room-header-info">
@@ -20,6 +22,7 @@
       <div>
         <strong><%= room.title || (otherParticipant ? otherParticipant.name : 'محادثة') %></strong>
         <span class="chat-room-type-label">
+          <span class="chat-online-dot"></span>
           <%= room.type === 'doctor' ? 'استشارة طبية' : room.type === 'support' ? 'دعم فني' : 'محادثة داخلية' %>
         </span>
       </div>
@@ -33,27 +36,25 @@
     </div>
   </div>
 
+  <!-- ── MESSAGES ───────────────────────────────── -->
   <div class="chat-messages-area" id="chatMessages">
     <% messages.forEach(function(msg) { %>
     <% var isMe = msg.sender && msg.sender._id && msg.sender._id.toString() === user._id.toString(); %>
+
     <% if (msg.type === 'system') { %>
     <div class="chat-system-msg">
       <span><%= msg.text %></span>
       <small><%= new Date(msg.createdAt).toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></small>
     </div>
+
     <% } else { %>
     <%
       let msgAvatar = '/avatars/support-nouf.svg';
       if (msg.sender) {
-        if (msg.sender.avatar) {
-          msgAvatar = msg.sender.avatar;
-        } else if (msg.sender.role === 'doctor') {
-          msgAvatar = '/avatars/doctor-fahad.svg';
-        } else if (msg.sender.role === 'admin' || msg.sender.role === 'moderator') {
-          msgAvatar = '/avatars/support-ahmad.svg';
-        } else if (msg.sender.role === 'pharmacist') {
-          msgAvatar = '/avatars/pharmacist-abdullah.svg';
-        }
+        if (msg.sender.avatar) msgAvatar = msg.sender.avatar;
+        else if (msg.sender.role === 'doctor') msgAvatar = '/avatars/doctor-fahad.svg';
+        else if (msg.sender.role === 'admin' || msg.sender.role === 'moderator') msgAvatar = '/avatars/support-ahmad.svg';
+        else if (msg.sender.role === 'pharmacist') msgAvatar = '/avatars/pharmacist-abdullah.svg';
       }
     %>
     <div class="chat-msg <%= isMe ? 'chat-msg-me' : 'chat-msg-other' %>">
@@ -72,29 +73,37 @@
             <% msg.attachments.forEach(function(att) { %>
             <% if (att.type && att.type.startsWith('image/')) { %>
             <a href="<%= att.url %>" target="_blank" class="chat-img-attach">
-              <img src="<%= att.url %>" alt="<%= att.name %>" loading="lazy">
+              <img src="<%= att.url %>" alt="<%= att.name %>" loading="lazy" onload="scrollBottom()">
+            </a>
+            <% } else if (att.type && att.type.includes('pdf')) { %>
+            <a href="<%= att.url %>" target="_blank" class="chat-file-attach chat-file-pdf" download>
+              <div class="chat-file-icon pdf-icon"><i class="fas fa-file-pdf"></i></div>
+              <div class="chat-file-info">
+                <span class="chat-file-name"><%= att.name || 'ملف PDF' %></span>
+                <% if (att.size) { %><small class="chat-file-size"><%= (att.size / 1024).toFixed(0) %> KB</small><% } %>
+              </div>
+              <i class="fas fa-download chat-file-dl"></i>
             </a>
             <% } else { %>
             <a href="<%= att.url %>" target="_blank" class="chat-file-attach" download>
-              <i class="fas fa-<%= att.type && att.type.includes('pdf') ? 'file-pdf' : 'file-alt' %>"></i>
-              <span><%= att.name || 'ملف' %></span>
-              <% if (att.size) { %>
-              <small><%= (att.size / 1024).toFixed(0) %> KB</small>
-              <% } %>
+              <div class="chat-file-icon"><i class="fas fa-file-alt"></i></div>
+              <div class="chat-file-info">
+                <span class="chat-file-name"><%= att.name || 'ملف' %></span>
+                <% if (att.size) { %><small class="chat-file-size"><%= (att.size / 1024).toFixed(0) %> KB</small><% } %>
+              </div>
+              <i class="fas fa-download chat-file-dl"></i>
             </a>
             <% } %>
             <% }) %>
           </div>
           <% } %>
-          <% if (msg.text && msg.type !== 'image') { %>
-          <p><%= msg.text %></p>
-          <% } %>
+          <% if (msg.text && msg.type !== 'image') { %><p><%= msg.text %></p><% } %>
           <div class="chat-msg-time">
             <%= new Date(msg.createdAt).toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %>
             <% if (isMe && msg.read) { %>
-            <i class="fas fa-check-double" style="color:var(--secondary);margin-right:4px"></i>
+            <i class="fas fa-check-double" style="color:rgba(255,255,255,0.9);"></i>
             <% } else if (isMe) { %>
-            <i class="fas fa-check" style="opacity:0.5;margin-right:4px"></i>
+            <i class="fas fa-check" style="opacity:0.55;"></i>
             <% } %>
           </div>
         </div>
@@ -108,8 +117,22 @@
       <i class="fas fa-lock"></i> تم إغلاق هذه المحادثة
     </div>
     <% } %>
+
+    <!-- typing indicator (hidden by default) -->
+    <div class="chat-typing-indicator" id="typingIndicator" style="display:none">
+      <div class="chat-msg-avatar"><img src="<%= headerAvatar %>" alt=""></div>
+      <div class="chat-bubble chat-typing-bubble">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
   </div>
 
+  <!-- scroll-to-bottom button -->
+  <button class="chat-scroll-btn" id="scrollBtn" onclick="scrollBottom(true)" style="display:none">
+    <i class="fas fa-chevron-down"></i>
+  </button>
+
+  <!-- ── INPUT ──────────────────────────────────── -->
   <% if (room.isActive) { %>
   <div class="chat-input-area">
     <div class="chat-input-preview" id="filePreview" style="display:none"></div>
@@ -118,7 +141,7 @@
         <i class="fas fa-paperclip"></i>
       </button>
       <input type="file" id="chatFileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" style="display:none">
-      <input type="text" id="chatTextInput" placeholder="اكتب رسالتك..." autocomplete="off">
+      <textarea id="chatTextInput" placeholder="اكتب رسالتك..." rows="1" autocomplete="off"></textarea>
       <button type="submit" class="chat-send-btn" id="sendBtn">
         <i class="fas fa-paper-plane"></i>
       </button>
@@ -127,6 +150,119 @@
   <% } %>
 </div>
 
+<style>
+.chat-online-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* ── Improved file attachment ── */
+.chat-file-attach {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.9rem;
+  background: rgba(255,255,255,0.13);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.82rem;
+  transition: opacity 0.2s;
+  min-width: 180px;
+  max-width: 260px;
+}
+.chat-file-attach:hover { opacity: 0.8; }
+.chat-msg-other .chat-file-attach { background: var(--bg); border: 1px solid var(--border); }
+
+.chat-file-icon {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.pdf-icon { background: rgba(239,68,68,0.15); color: #ef4444 !important; }
+.chat-msg-other .chat-file-icon { background: rgba(18,169,155,0.1); color: var(--secondary); }
+
+.chat-file-info { flex: 1; min-width: 0; }
+.chat-file-name { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.82rem; }
+.chat-file-size { font-size: 0.7rem; opacity: 0.65; }
+.chat-file-dl { opacity: 0.5; font-size: 0.8rem; flex-shrink: 0; }
+
+/* ── Typing indicator ── */
+.chat-typing-indicator {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  align-self: flex-end;
+}
+.chat-typing-bubble {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.65rem 1rem !important;
+}
+.chat-typing-bubble span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: typingDot 1.2s infinite;
+}
+.chat-typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ── Scroll-to-bottom button ── */
+.chat-scroll-btn {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--secondary);
+  color: #fff;
+  border: none;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(18,169,155,0.4);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+/* ── Textarea auto-resize ── */
+#chatTextInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.95rem;
+  resize: none;
+  max-height: 120px;
+  outline: none;
+  line-height: 1.5;
+  color: var(--text);
+  overflow-y: auto;
+  padding: 0;
+}
+#chatTextInput::placeholder { color: var(--text-muted); }
+
+/* ── min-height fix for flex scroll ── */
+.chat-messages-area { min-height: 0; }
+.chat-page-wrap { position: relative; }
+</style>
+
 <script>
 var roomId = '<%= room._id %>';
 var myId = '<%= user._id %>';
@@ -134,15 +270,57 @@ var myName = '<%= user.name %>';
 var headerAvatarUrl = '<%= headerAvatar %>';
 var chatArea = document.getElementById('chatMessages');
 var pendingFiles = [];
+var isNearBottom = true;
 
-if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
+/* ── Scroll helpers ──────────────────────────────── */
+function scrollBottom(smooth) {
+  chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
+}
 
+function checkScrollPosition() {
+  var threshold = 120;
+  var fromBottom = chatArea.scrollHeight - chatArea.scrollTop - chatArea.clientHeight;
+  isNearBottom = fromBottom < threshold;
+  var btn = document.getElementById('scrollBtn');
+  if (btn) btn.style.display = isNearBottom ? 'none' : 'flex';
+}
+
+chatArea.addEventListener('scroll', checkScrollPosition);
+
+/* Initial scroll — wait for images & layout */
+function initScroll() { scrollBottom(false); }
+initScroll();
+setTimeout(initScroll, 100);
+setTimeout(initScroll, 400);
+window.addEventListener('load', initScroll);
+chatArea.querySelectorAll('img').forEach(function(img) {
+  img.addEventListener('load', function() { if (isNearBottom) scrollBottom(false); });
+});
+
+/* ── Escape HTML ─────────────────────────────────── */
 function escHtml(s) {
   var d = document.createElement('div');
-  d.textContent = s;
+  d.textContent = s || '';
   return d.innerHTML;
 }
 
+/* ── Build file attachment HTML ──────────────────── */
+function buildFileHTML(att) {
+  if (att.type && att.type.startsWith('image/')) {
+    return '<a href="' + att.url + '" target="_blank" class="chat-img-attach">' +
+           '<img src="' + att.url + '" loading="lazy" onload="if(isNearBottom)scrollBottom(false)"></a>';
+  }
+  var isPdf = att.type && att.type.includes('pdf');
+  var iconClass = isPdf ? 'pdf-icon' : '';
+  var iconName  = isPdf ? 'fa-file-pdf' : 'fa-file-alt';
+  var sizeHtml  = att.size ? '<small class="chat-file-size">' + Math.round(att.size/1024) + ' KB</small>' : '';
+  return '<a href="' + att.url + '" target="_blank" class="chat-file-attach' + (isPdf?' chat-file-pdf':'') + '" download>' +
+         '<div class="chat-file-icon ' + iconClass + '"><i class="fas ' + iconName + '"></i></div>' +
+         '<div class="chat-file-info"><span class="chat-file-name">' + escHtml(att.name||'ملف') + '</span>' + sizeHtml + '</div>' +
+         '<i class="fas fa-download chat-file-dl"></i></a>';
+}
+
+/* ── Add message to DOM ──────────────────────────── */
 function addMsg(data, isMe) {
   var div = document.createElement('div');
   div.className = 'chat-msg ' + (isMe ? 'chat-msg-me' : 'chat-msg-other');
@@ -151,80 +329,103 @@ function addMsg(data, isMe) {
   if (data.sender && data.sender.avatar) senderAvatar = data.sender.avatar;
 
   var html = '';
-  if (!isMe) {
-    html += '<div class="chat-msg-avatar"><img src="' + senderAvatar + '" alt=""></div>';
-  }
+  if (!isMe) html += '<div class="chat-msg-avatar"><img src="' + senderAvatar + '" alt=""></div>';
   html += '<div class="chat-msg-content">';
-  if (!isMe && data.sender) {
-    html += '<div class="chat-msg-sender">' + escHtml(data.sender.name) + '</div>';
-  }
+  if (!isMe && data.sender) html += '<div class="chat-msg-sender">' + escHtml(data.sender.name) + '</div>';
   html += '<div class="chat-bubble">';
 
   if (data.attachments && data.attachments.length > 0) {
     html += '<div class="chat-attachments">';
-    data.attachments.forEach(function(att) {
-      if (att.type && att.type.startsWith('image/')) {
-        html += '<a href="' + att.url + '" target="_blank" class="chat-img-attach"><img src="' + att.url + '" loading="lazy"></a>';
-      } else {
-        html += '<a href="' + att.url + '" target="_blank" class="chat-file-attach" download><i class="fas fa-file-alt"></i><span>' + escHtml(att.name || 'ملف') + '</span></a>';
-      }
-    });
+    data.attachments.forEach(function(att) { html += buildFileHTML(att); });
     html += '</div>';
   }
-
-  if (data.text && data.type !== 'image') {
-    html += '<p>' + escHtml(data.text) + '</p>';
-  }
+  if (data.text && data.type !== 'image') html += '<p>' + escHtml(data.text) + '</p>';
 
   var now = new Date();
-  html += '<div class="chat-msg-time">' + now.toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) + '</div>';
+  html += '<div class="chat-msg-time">' + now.toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit'});
+  if (isMe) html += ' <i class="fas fa-check" style="opacity:0.55;"></i>';
+  html += '</div>';
   html += '</div></div></div>';
   div.innerHTML = html;
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
+
+  var typingEl = document.getElementById('typingIndicator');
+  chatArea.insertBefore(div, typingEl || null);
+  if (isNearBottom || isMe) scrollBottom(true);
+  checkScrollPosition();
 }
 
-var chatForm = document.getElementById('chatForm');
+/* ── Textarea auto-resize ────────────────────────── */
 var chatInput = document.getElementById('chatTextInput');
-var fileInput = document.getElementById('chatFileInput');
+if (chatInput) {
+  chatInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+  chatInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('chatForm') && document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+    }
+  });
+}
+
+/* ── File input preview ──────────────────────────── */
+var fileInput  = document.getElementById('chatFileInput');
 var filePreview = document.getElementById('filePreview');
 
 if (fileInput) {
   fileInput.addEventListener('change', function() {
     pendingFiles = Array.from(fileInput.files);
-    if (pendingFiles.length > 0) {
-      var html = '';
-      pendingFiles.forEach(function(f, i) {
-        if (f.type.startsWith('image/')) {
-          html += '<div class="file-preview-item"><img src="' + URL.createObjectURL(f) + '"><button type="button" onclick="removeFile(' + i + ')"><i class="fas fa-times"></i></button></div>';
-        } else {
-          html += '<div class="file-preview-item file-preview-doc"><i class="fas fa-file-alt"></i><span>' + escHtml(f.name) + '</span><button type="button" onclick="removeFile(' + i + ')"><i class="fas fa-times"></i></button></div>';
-        }
-      });
-      filePreview.innerHTML = html;
-      filePreview.style.display = 'flex';
+    renderPreview();
+  });
+}
+
+function renderPreview() {
+  if (!filePreview) return;
+  if (pendingFiles.length === 0) {
+    filePreview.style.display = 'none';
+    filePreview.innerHTML = '';
+    return;
+  }
+  var html = '';
+  pendingFiles.forEach(function(f, i) {
+    if (f.type.startsWith('image/')) {
+      html += '<div class="file-preview-item">' +
+              '<img src="' + URL.createObjectURL(f) + '">' +
+              '<button type="button" class="file-preview-rm" onclick="removeFile(' + i + ')"><i class="fas fa-times"></i></button>' +
+              '</div>';
     } else {
-      filePreview.style.display = 'none';
+      var isPdf = f.type.includes('pdf');
+      html += '<div class="file-preview-item file-preview-doc">' +
+              '<i class="fas ' + (isPdf ? 'fa-file-pdf' : 'fa-file-alt') + '" style="' + (isPdf ? 'color:#ef4444' : '') + '"></i>' +
+              '<span>' + escHtml(f.name) + '</span>' +
+              '<button type="button" class="file-preview-rm" onclick="removeFile(' + i + ')"><i class="fas fa-times"></i></button>' +
+              '</div>';
     }
   });
+  filePreview.innerHTML = html;
+  filePreview.style.display = 'flex';
 }
 
 function removeFile(idx) {
   pendingFiles.splice(idx, 1);
   var dt = new DataTransfer();
   pendingFiles.forEach(function(f) { dt.items.add(f); });
-  fileInput.files = dt.files;
-  fileInput.dispatchEvent(new Event('change'));
+  if (fileInput) fileInput.files = dt.files;
+  renderPreview();
 }
 
+/* ── Send form ───────────────────────────────────── */
+var chatForm = document.getElementById('chatForm');
 if (chatForm) {
   chatForm.addEventListener('submit', async function(e) {
     e.preventDefault();
-    var text = chatInput.value.trim();
+    var text = chatInput ? chatInput.value.trim() : '';
     var sendBtn = document.getElementById('sendBtn');
 
     if (pendingFiles.length > 0) {
       sendBtn.disabled = true;
+      sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       var fd = new FormData();
       pendingFiles.forEach(function(f) { fd.append('files', f); });
       if (text) fd.append('text', text);
@@ -233,19 +434,20 @@ if (chatForm) {
         var data = await res.json();
         if (data.success) {
           addMsg(data.message, true);
-          chatInput.value = '';
+          if (chatInput) { chatInput.value = ''; chatInput.style.height = 'auto'; }
           pendingFiles = [];
-          fileInput.value = '';
-          filePreview.style.display = 'none';
-          filePreview.innerHTML = '';
+          if (fileInput) fileInput.value = '';
+          renderPreview();
         }
       } catch(err) { console.error(err); }
       sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
       return;
     }
 
     if (!text) return;
     sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     try {
       var res = await fetch('/chat/room/' + roomId + '/send', {
         method: 'POST',
@@ -255,21 +457,49 @@ if (chatForm) {
       var data = await res.json();
       if (data.success) {
         addMsg({ text: text, type: 'text' }, true);
-        chatInput.value = '';
+        if (chatInput) { chatInput.value = ''; chatInput.style.height = 'auto'; }
       }
     } catch(err) { console.error(err); }
     sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
   });
 }
 
+/* ── Socket.io real-time ─────────────────────────── */
 if (typeof io !== 'undefined') {
   var socket = io();
+  var typingTimer;
+
   socket.on('chat_message', function(data) {
-    if (data.roomId === roomId && data.message.sender._id !== myId) {
+    if (data.roomId.toString() === roomId && data.message.sender._id !== myId) {
+      hideTyping();
       addMsg(data.message, false);
-      fetch('/chat/room/' + roomId + '/send', { method: 'OPTIONS' }).catch(function(){});
     }
   });
+
+  socket.on('chat_typing', function(data) {
+    if (data.roomId === roomId && data.userId !== myId) {
+      showTyping();
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(hideTyping, 3000);
+    }
+  });
+
+  /* emit typing when user types */
+  if (chatInput) {
+    chatInput.addEventListener('input', function() {
+      socket.emit('typing', { roomId: roomId });
+    });
+  }
+}
+
+function showTyping() {
+  var el = document.getElementById('typingIndicator');
+  if (el) { el.style.display = 'flex'; if (isNearBottom) scrollBottom(true); }
+}
+function hideTyping() {
+  var el = document.getElementById('typingIndicator');
+  if (el) el.style.display = 'none';
 }
 </script>
 <%- include('../partials/footer') %>
