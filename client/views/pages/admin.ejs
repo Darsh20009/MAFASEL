@@ -40,7 +40,7 @@
             </div>
             <div class="admin-section-body">
               <% if (recentUsers.length > 0) { %>
-              <% var roleMap = { admin:'مدير', doctor:'طبيب', pharmacist:'صيدلي', patient:'مريض', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين' };
+              <% var roleMap = { admin:'مدير', doctor:'أخصائي', pharmacist:'صيدلي', patient:'مستفيد', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين' };
                  var roleColor = { admin:'#ef4444', doctor:'#3b82f6', pharmacist:'#22c55e', moderator:'#8b5cf6', company:'#f59e0b', employee:'#06b6d4', insurance_agent:'#ec4899' }; %>
               <% recentUsers.slice(0, 6).forEach(function(u) { %>
               <div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border);">
@@ -93,7 +93,7 @@
             <% if (recentOrders.length > 0) { %>
             <div class="table-responsive">
               <table class="table" style="font-size:0.85rem;">
-                <thead><tr><th>الطلب</th><th>المريض</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th></tr></thead>
+                <thead><tr><th>الطلب</th><th>المستفيد</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th></tr></thead>
                 <tbody>
                 <% var oStatusMap = { pending:'معلق', confirmed:'مؤكد', preparing:'تحضير', delivering:'توصيل', delivered:'تم', cancelled:'ملغي' };
                    var oStatusColor = { pending:'#f59e0b', confirmed:'var(--secondary)', preparing:'#3b82f6', delivering:'#8b5cf6', delivered:'#22c55e', cancelled:'#ef4444' }; %>

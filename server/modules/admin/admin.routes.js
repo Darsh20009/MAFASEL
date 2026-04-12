@@ -308,10 +308,10 @@ router.post('/consultations/:id/assign', isAuthenticated, isAdmin, async (req, r
   await fireNotify(req.app, req.body.doctorId, 'استشارة جديدة', 'تم تعيين استشارة جديدة لك', {
     type: 'info', link: `/consultations/${req.params.id}`
   });
-  await fireNotify(req.app, consultation.patient, 'تم تعيين طبيب', 'تم تعيين طبيب لاستشارتك', {
+  await fireNotify(req.app, consultation.patient, 'تم تعيين أخصائي', 'تم تعيين أخصائي لاستشارتك', {
     type: 'success', link: `/consultations/${req.params.id}`
   });
-  req.session.success = 'تم تعيين الطبيب';
+  req.session.success = 'تم تعيين الأخصائي';
   res.redirect('/admin/consultations');
 });
 
@@ -486,7 +486,7 @@ router.post('/invitations/create', isAuthenticated, isAdmin, async (req, res) =>
     const inviteLink = `${baseUrl}/join/${invitation.token}`;
 
     if (email) {
-      const roleLabels = { doctor: 'طبيب', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
+      const roleLabels = { doctor: 'أخصائي', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
       const html = buildEmailHTML({
         title: 'دعوة للانضمام إلى مفاصل الطبيه',
         greeting: name ? `مرحباً ${name}` : 'مرحباً بك',
@@ -523,7 +523,7 @@ router.post('/invitations/:id/resend', isAuthenticated, isAdmin, async (req, res
     }
     const baseUrl = process.env.BASE_URL || `https://${process.env.REPLIT_DEV_DOMAIN}`;
     const inviteLink = `${baseUrl}/join/${invitation.token}`;
-    const roleLabels = { doctor: 'طبيب', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
+    const roleLabels = { doctor: 'أخصائي', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
     const html = buildEmailHTML({
       title: 'تذكير: دعوة للانضمام إلى مفاصل الطبيه',
       greeting: invitation.name ? `مرحباً ${invitation.name}` : 'مرحباً بك',

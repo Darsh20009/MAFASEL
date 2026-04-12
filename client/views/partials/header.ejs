@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="<%= user && user.darkMode ? 'dark' : 'light' %>">
+<html lang="<%= typeof lang !== 'undefined' ? lang : 'ar' %>" dir="<%= typeof dir !== 'undefined' ? dir : 'rtl' %>" data-theme="<%= user && user.darkMode ? 'dark' : 'light' %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title><%= title %> | مفاصل</title>
+  <title><%= title %> | <%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></title>
   <% var seoDesc = typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'منصة مفاصل الطبية الرقمية المتكاملة - استشارات طبية، صيدلية إلكترونية، تأمين صحي، مساعد ذكي، مواعيد وتذكيرات أدوية'; %>
   <% var seoUrl = typeof canonicalUrl !== 'undefined' && canonicalUrl ? canonicalUrl : ''; %>
   <% var seoImage = typeof metaImage !== 'undefined' && metaImage ? metaImage : '/icons/icon-512.png'; %>
   <meta name="description" content="<%= seoDesc %>">
-  <meta name="keywords" content="مفاصل, منصة طبية, استشارات طبية, صيدلية إلكترونية, تأمين صحي, مواعيد طبية, تذكير أدوية, طبيب, صيدلي, السعودية, رعاية صحية رقمية">
+  <meta name="keywords" content="مفاصل, منصة طبية, استشارات طبية, صيدلية إلكترونية, تأمين صحي, مواعيد طبية, تذكير أدوية, أخصائي علاج طبيعي, صيدلي, السعودية, رعاية صحية رقمية">
   <meta name="author" content="مفاصل">
   <meta name="robots" content="<%= typeof metaRobots !== 'undefined' && metaRobots ? metaRobots : 'index, follow' %>">
   <link rel="canonical" href="<%= seoUrl %>">
@@ -41,63 +41,63 @@
 <nav class="navbar">
   <div class="nav-container">
     <a href="/dashboard" class="nav-logo">
-      <img src="/icons/logo.png" alt="مفاصل" class="nav-logo-img">
-      <span>مفاصل</span>
+      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>" class="nav-logo-img">
+      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
     </a>
     <button class="nav-toggle" id="navToggle" aria-label="القائمة">
       <i class="fas fa-bars"></i>
     </button>
     <div class="nav-menu" id="navMenu">
-      <a href="/dashboard" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a>
+      <a href="/dashboard" class="nav-link"><i class="fas fa-home"></i> <%= typeof t === 'function' ? t('nav.home') : 'الرئيسية' %></a>
       <% if (user) { %>
         <% var r = user.role; %>
         <% if (r === 'patient') { %>
-          <a href="/physiotherapy" class="nav-link"><i class="fas fa-hand-holding-medical"></i> العلاج الطبيعي</a>
-          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
-          <a href="/medical-profile" class="nav-link"><i class="fas fa-heartbeat"></i> الملف الطبي</a>
-          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
-          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
-          <a href="/scheduler" class="nav-link"><i class="fas fa-calendar-alt"></i> المواعيد</a>
-          <a href="/maps" class="nav-link"><i class="fas fa-map-marked-alt"></i> الخريطة</a>
-          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+          <a href="/physiotherapy" class="nav-link"><i class="fas fa-hand-holding-medical"></i> <%= typeof t === 'function' ? t('nav.physiotherapy') : 'العلاج الطبيعي' %></a>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> <%= typeof t === 'function' ? t('nav.consultations') : 'الاستشارات' %></a>
+          <a href="/medical-profile" class="nav-link"><i class="fas fa-heartbeat"></i> <%= typeof t === 'function' ? t('nav.medical_profile') : 'الملف الطبي' %></a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> <%= typeof t === 'function' ? t('nav.pharmacy') : 'الصيدلية' %></a>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> <%= typeof t === 'function' ? t('nav.insurance') : 'التأمين' %></a>
+          <a href="/scheduler" class="nav-link"><i class="fas fa-calendar-alt"></i> <%= typeof t === 'function' ? t('nav.scheduler') : 'المواعيد' %></a>
+          <a href="/maps" class="nav-link"><i class="fas fa-map-marked-alt"></i> <%= typeof t === 'function' ? t('nav.maps') : 'الخريطة' %></a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> <%= typeof t === 'function' ? t('nav.support') : 'الدعم' %></a>
         <% } else if (r === 'doctor') { %>
-          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
-          <a href="/scheduler" class="nav-link"><i class="fas fa-calendar-alt"></i> المواعيد</a>
-          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
-          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
-          <a href="/ai" class="nav-link"><i class="fas fa-robot"></i> المساعد الذكي</a>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> <%= typeof t === 'function' ? t('nav.consultations') : 'الاستشارات' %></a>
+          <a href="/scheduler" class="nav-link"><i class="fas fa-calendar-alt"></i> <%= typeof t === 'function' ? t('nav.scheduler') : 'المواعيد' %></a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> <%= typeof t === 'function' ? t('nav.meetings') : 'الاجتماعات' %></a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> <%= typeof t === 'function' ? t('nav.pharmacy') : 'الصيدلية' %></a>
+          <a href="/ai" class="nav-link"><i class="fas fa-robot"></i> <%= typeof t === 'function' ? t('nav.ai_assistant') : 'المساعد الذكي' %></a>
         <% } else if (r === 'pharmacist') { %>
-          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
-          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> <%= typeof t === 'function' ? t('nav.pharmacy') : 'الصيدلية' %></a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> <%= typeof t === 'function' ? t('nav.meetings') : 'الاجتماعات' %></a>
         <% } else if (r === 'employee') { %>
-          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
-          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
-          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> <%= typeof t === 'function' ? t('nav.consultations') : 'الاستشارات' %></a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> <%= typeof t === 'function' ? t('nav.meetings') : 'الاجتماعات' %></a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> <%= typeof t === 'function' ? t('nav.support') : 'الدعم' %></a>
         <% } else if (r === 'company') { %>
-          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
-          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
-          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
-          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> <%= typeof t === 'function' ? t('nav.insurance') : 'التأمين' %></a>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> <%= typeof t === 'function' ? t('nav.consultations') : 'الاستشارات' %></a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> <%= typeof t === 'function' ? t('nav.pharmacy') : 'الصيدلية' %></a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> <%= typeof t === 'function' ? t('nav.support') : 'الدعم' %></a>
         <% } else if (r === 'insurance_agent') { %>
-          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
-          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> <%= typeof t === 'function' ? t('nav.insurance') : 'التأمين' %></a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> <%= typeof t === 'function' ? t('nav.meetings') : 'الاجتماعات' %></a>
         <% } else { %>
-          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
-          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
-          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
-          <a href="/maps" class="nav-link"><i class="fas fa-map-marked-alt"></i> الخريطة</a>
-          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
-          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> <%= typeof t === 'function' ? t('nav.consultations') : 'الاستشارات' %></a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> <%= typeof t === 'function' ? t('nav.pharmacy') : 'الصيدلية' %></a>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> <%= typeof t === 'function' ? t('nav.insurance') : 'التأمين' %></a>
+          <a href="/maps" class="nav-link"><i class="fas fa-map-marked-alt"></i> <%= typeof t === 'function' ? t('nav.maps') : 'الخريطة' %></a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> <%= typeof t === 'function' ? t('nav.meetings') : 'الاجتماعات' %></a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> <%= typeof t === 'function' ? t('nav.support') : 'الدعم' %></a>
         <% } %>
         <% if (r === 'admin' || r === 'moderator') { %>
-        <a href="/admin" class="nav-link nav-admin"><i class="fas fa-shield-halved"></i> الإدارة</a>
+        <a href="/admin" class="nav-link nav-admin"><i class="fas fa-shield-halved"></i> <%= typeof t === 'function' ? t('nav.admin') : 'الإدارة' %></a>
         <% } %>
       <% } %>
     </div>
@@ -106,12 +106,16 @@
       <button class="nav-icon-btn pwa-install-btn" id="pwaInstallBtn" onclick="installPWA()" title="تثبيت التطبيق" style="display:none">
         <i class="fas fa-download"></i>
       </button>
-      <a href="/notifications" class="nav-icon-btn" id="notifBtn" title="الإشعارات">
+      <a href="/notifications" class="nav-icon-btn" id="notifBtn" title="<%= typeof t === 'function' ? t('nav.notifications') : 'الإشعارات' %>">
         <i class="fas fa-bell"></i>
         <span class="notif-badge" id="notifBadge" style="display:none">0</span>
       </a>
       <button class="nav-icon-btn" id="darkToggle" title="الوضع الليلي">
         <i class="fas fa-moon"></i>
+      </button>
+      <button class="nav-icon-btn lang-toggle-btn" id="langToggle" onclick="toggleLanguage()" title="<%= typeof t === 'function' ? t('common.language') : 'اللغة' %>">
+        <i class="fas fa-globe"></i>
+        <span class="lang-label"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'ع' : 'EN' %></span>
       </button>
       <div class="nav-user-dropdown">
         <button class="nav-user-btn">
@@ -120,12 +124,16 @@
           <i class="fas fa-chevron-down"></i>
         </button>
         <div class="dropdown-menu">
-          <a href="/profile"><i class="fas fa-user"></i> الملف الشخصي</a>
-          <a href="/logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+          <a href="/profile"><i class="fas fa-user"></i> <%= typeof t === 'function' ? t('nav.profile') : 'الملف الشخصي' %></a>
+          <a href="/logout"><i class="fas fa-sign-out-alt"></i> <%= typeof t === 'function' ? t('nav.logout') : 'تسجيل الخروج' %></a>
         </div>
       </div>
       <% } else { %>
-      <a href="/login" class="btn btn-primary btn-sm nav-login-btn"><i class="fas fa-sign-in-alt"></i> دخول</a>
+      <button class="nav-icon-btn lang-toggle-btn" id="langToggleGuest" onclick="toggleLanguage()" title="<%= typeof t === 'function' ? t('common.language') : 'اللغة' %>">
+        <i class="fas fa-globe"></i>
+        <span class="lang-label"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'ع' : 'EN' %></span>
+      </button>
+      <a href="/login" class="btn btn-primary btn-sm nav-login-btn"><i class="fas fa-sign-in-alt"></i> <%= typeof t === 'function' ? t('nav.login') : 'دخول' %></a>
       <% } %>
     </div>
   </div>

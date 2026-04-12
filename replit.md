@@ -12,12 +12,23 @@
 - **Auth**: Passport.js (Google OAuth), Apple Sign-In, WebAuthn, OTP, Nafath
 - **Port**: 5000
 
+## نظام الترجمة (i18n)
+- **Middleware**: `server/middleware/i18n.js` - يقرأ اللغة من query param `?lang=`, cookie `lang`, أو session
+- **ملفات الترجمة**: `locales/ar.json` (عربي - افتراضي), `locales/en.json` (إنجليزي)
+- **دالة الترجمة**: `t('key.path')` متاحة في جميع القوالب عبر `res.locals.t`
+- **متغيرات القالب**: `lang` (ar/en), `dir` (rtl/ltr), `t()`, `translations`
+- **تبديل اللغة**: زر الكرة الأرضية في الـ navbar (يظهر "EN" بالعربي، "ع" بالإنجليزي)
+- **CSS LTR**: قواعد `html[dir="ltr"]` في نهاية `style.css` لتحويل التخطيط من RTL إلى LTR
+- **الخط الإنجليزي**: Inter (Google Fonts) للنصوص الإنجليزية
+
 ## هيكل الملفات
 ```
 ├── server.js                    # نقطة الدخول الرئيسية
+├── locales/                     # ملفات الترجمة (ar.json, en.json)
 ├── server/
 │   ├── index.js                 # إعداد Express والخادم
 │   ├── middleware/auth.js       # وسيط المصادقة
+│   ├── middleware/i18n.js       # وسيط الترجمة
 │   └── modules/                 # وحدات النظام
 │       ├── auth/                # تسجيل الدخول (Email, Phone OTP, Google, Apple, Nafath, WebAuthn)
 │       │   ├── auth.routes.js

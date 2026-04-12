@@ -33,7 +33,7 @@
           </div>
           <div class="appt-info">
             <div class="appt-title">
-              <strong><%= a.doctorName || (a.doctor ? a.doctor.name : 'طبيب غير محدد') %></strong>
+              <strong><%= a.doctorName || (a.doctor ? a.doctor.name : 'أخصائي غير محدد') %></strong>
               <% if (a.specialty) { %><span class="appt-spec"><%= a.specialty %></span><% } %>
             </div>
             <div class="appt-meta">
@@ -98,7 +98,7 @@
               <div class="appt-month"><%= d.toLocaleDateString('ar-SA', { month: 'short' }) %></div>
             </div>
             <div class="appt-info">
-              <strong style="font-size:0.88rem;"><%= a.doctorName || (a.doctor ? a.doctor.name : 'طبيب') %></strong>
+              <strong style="font-size:0.88rem;"><%= a.doctorName || (a.doctor ? a.doctor.name : 'أخصائي') %></strong>
               <div class="appt-meta"><span><i class="fas fa-clock"></i> <%= a.time %></span></div>
             </div>
             <span class="appt-status" style="color:<%= statusColor[a.status] %>;font-size:0.78rem;"><%= statusMap[a.status] || a.status %></span>
@@ -179,16 +179,16 @@
     <form method="POST" action="/scheduler/appointments/add" class="modal-form">
       <div class="form-row">
         <div class="form-group">
-          <label>الطبيب</label>
+          <label>الأخصائي</label>
           <% if (doctors.length > 0) { %>
           <select name="doctorId" id="doctorSelect" onchange="var opt=this.options[this.selectedIndex];document.getElementById('doctorNameInput').value=opt.text;">
-            <option value="">-- اختر طبيب --</option>
+            <option value="">-- اختر أخصائي --</option>
             <% doctors.forEach(function(d) { %>
             <option value="<%= d._id %>"><%= d.name %></option>
             <% }) %>
           </select>
           <% } else { %>
-          <input type="text" name="doctorName" id="doctorNameInput" placeholder="اسم الطبيب">
+          <input type="text" name="doctorName" id="doctorNameInput" placeholder="اسم الأخصائي">
           <% } %>
         </div>
         <div class="form-group">
@@ -220,7 +220,7 @@
       </div>
       <div class="form-group">
         <label>المكان</label>
-        <input type="text" name="location" placeholder="مثال: مستشفى الملك فيصل التخصصي">
+        <input type="text" name="location" placeholder="مثال: مركز مفاصل للعلاج الطبيعي">
       </div>
       <div class="form-group">
         <label>ملاحظات</label>

@@ -39,7 +39,7 @@
         <div class="chat-room-avatar">
           <img src="<%= roomAvatar %>" alt="صورة">
           <span class="chat-type-badge chat-type-<%= room.type %>">
-            <%= room.type === 'doctor' ? 'طبيب' : room.type === 'support' ? 'دعم' : 'داخلي' %>
+            <%= room.type === 'doctor' ? 'أخصائي' : room.type === 'support' ? 'دعم' : 'داخلي' %>
           </span>
         </div>
         <div class="chat-room-info">
@@ -62,7 +62,7 @@
       <div class="empty-state-premium">
         <div class="empty-icon"><i class="fas fa-comments"></i></div>
         <h3>لا توجد محادثات</h3>
-        <p>ابدأ محادثة جديدة مع طبيب أو الدعم الفني</p>
+        <p>ابدأ محادثة جديدة مع أخصائي أو الدعم الفني</p>
         <button class="btn btn-primary btn-sm" onclick="document.getElementById('newChatModal').style.display='flex'">
           <i class="fas fa-plus"></i> محادثة جديدة
         </button>
@@ -91,7 +91,7 @@
         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left"></i></button>
       </form>
 
-      <div class="new-chat-divider"><span>أو اختر طبيب</span></div>
+      <div class="new-chat-divider"><span>أو اختر أخصائي</span></div>
 
       <% if (doctors && doctors.length > 0) { %>
       <div class="doctors-list-chat">
@@ -103,8 +103,8 @@
             <img src="<%= doc.avatar || '/avatars/doctor-fahad.svg' %>" style="width:100%;height:100%;border-radius:50%">
           </div>
           <div class="new-chat-info">
-            <h3>د. <%= doc.name %></h3>
-            <p>طبيب</p>
+            <h3>أ. <%= doc.name %></h3>
+            <p>أخصائي</p>
           </div>
           <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-comments"></i></button>
         </form>
@@ -159,7 +159,7 @@ async function loadStaffList() {
     if (data.staff && data.staff.length > 0) {
       container.innerHTML = '';
       data.staff.forEach(function(s) {
-        var roleLabel = {admin:'مدير',moderator:'مشرف',doctor:'طبيب',pharmacist:'صيدلي',employee:'موظف'}[s.role] || s.role;
+        var roleLabel = {admin:'مدير',moderator:'مشرف',doctor:'أخصائي',pharmacist:'صيدلي',employee:'موظف'}[s.role] || s.role;
         var avatar = s.avatar || '/avatars/support-nouf.svg';
         var form = document.createElement('form');
         form.method = 'POST';

@@ -4608,3 +4608,79 @@ body {
 .mobile-nav-item.active i {
   color: var(--secondary);
 }
+
+.lang-toggle-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.lang-toggle-btn .lang-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+html[dir="ltr"] body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  text-align: left;
+}
+
+html[dir="ltr"] .navbar {
+  direction: ltr;
+}
+
+html[dir="ltr"] .nav-container {
+  flex-direction: row;
+}
+
+html[dir="ltr"] .nav-menu {
+  direction: ltr;
+}
+
+html[dir="ltr"] .nav-user-dropdown .dropdown-menu {
+  right: auto;
+  left: 0;
+}
+
+html[dir="ltr"] .mobile-bottom-nav {
+  direction: ltr;
+}
+
+html[dir="ltr"] .card,
+html[dir="ltr"] .dashboard-card,
+html[dir="ltr"] .stat-card {
+  text-align: left;
+}
+
+html[dir="ltr"] .form-group label {
+  text-align: left;
+}
+
+html[dir="ltr"] .toast {
+  right: auto;
+  left: 1rem;
+}
+
+html[dir="ltr"] .notification-popup {
+  right: auto;
+  left: 1rem;
+}
+
+html[dir="ltr"] .sidebar {
+  right: auto;
+  left: 0;
+  border-right: 1px solid var(--border);
+  border-left: none;
+}
+
+html[dir="ltr"] .main-with-sidebar {
+  margin-right: 0;
+  margin-left: 260px;
+}
+
+html[dir="ltr"] .footer {
+  direction: ltr;
+  text-align: center;
+}

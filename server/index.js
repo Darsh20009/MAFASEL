@@ -66,6 +66,9 @@ app.use((req, res, next) => {
 
 app.locals.io = io;
 
+const { i18nMiddleware } = require('./middleware/i18n');
+app.use(i18nMiddleware);
+
 const { setupPassport } = require('./modules/auth/passport.setup');
 setupPassport(app);
 

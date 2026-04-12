@@ -36,18 +36,18 @@
         <div class="welcome-card-bg"></div>
         <div class="welcome-info">
           <% if (typeof isGuest !== 'undefined' && isGuest) { %>
-          <h1>مرحباً، مستخدم <span class="wave-emoji">&#x1F44B;</span></h1>
-          <p>أهلاً بك في منصة مفاصل الطبية. سجّل دخولك للاستفادة من جميع الخدمات.</p>
+          <h1><%= typeof t === 'function' ? t('common.welcome') : 'مرحباً' %>، <%= (typeof lang !== 'undefined' && lang === 'en') ? 'Guest' : 'مستخدم' %> <span class="wave-emoji">&#x1F44B;</span></h1>
+          <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Welcome to Mafasel platform. Please log in to access all services.' : 'أهلاً بك في منصة مفاصل الطبية. سجّل دخولك للاستفادة من جميع الخدمات.' %></p>
           <div class="welcome-guest-actions">
-            <a href="/login" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a>
-            <a href="/register" class="btn btn-outline btn-sm"><i class="fas fa-user-plus"></i> إنشاء حساب</a>
+            <a href="/login" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> <%= typeof t === 'function' ? t('nav.login') : 'تسجيل الدخول' %></a>
+            <a href="/register" class="btn btn-outline btn-sm"><i class="fas fa-user-plus"></i> <%= typeof t === 'function' ? t('nav.register') : 'إنشاء حساب' %></a>
           </div>
           <% } else { %>
-          <h1>مرحباً، <%= user.name %> <span class="wave-emoji">&#x1F44B;</span></h1>
+          <h1><%= typeof t === 'function' ? t('common.welcome') : 'مرحباً' %>، <%= user.name %> <span class="wave-emoji">&#x1F44B;</span></h1>
           <% var roleGreeting = {
-            patient: 'نتمنى لك الصحة والعافية',
-            doctor: 'مرحباً بك في منصة مفاصل الطبية',
-            pharmacist: 'مرحباً بك في قسم الصيدلة',
+            patient: typeof t === 'function' ? t('dashboard.greeting_patient') : 'نتمنى لك الصحة والعافية',
+            doctor: typeof t === 'function' ? t('dashboard.greeting_doctor') : 'مرحباً بك في منصة مفاصل',
+            pharmacist: typeof t === 'function' ? t('dashboard.greeting_pharmacist') : 'مرحباً بك في قسم الصيدلة',
             admin: 'مرحباً بك في لوحة التحكم',
             moderator: 'مرحباً بك في لوحة الإشراف',
             company: 'مرحباً بشركة ' + user.name,
@@ -58,11 +58,11 @@
           <div class="account-status">
             <span class="status-pill <%= user.isVerified ? 'verified' : 'unverified' %>">
               <i class="fas fa-<%= user.isVerified ? 'check-circle' : 'exclamation-circle' %>"></i>
-              <%= user.isVerified ? 'موثّق' : 'غير موثّق' %>
+              <%= user.isVerified ? (typeof t === 'function' ? t('dashboard.verified') : 'موثّق') : (typeof t === 'function' ? t('dashboard.unverified') : 'غير موثّق') %>
             </span>
             <span class="status-pill role-pill">
               <i class="fas fa-user-tag"></i>
-              <% var roleLabels = { patient:'مريض', doctor:'طبيب', pharmacist:'صيدلي', admin:'مدير النظام', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين' }; %>
+              <% var roleLabels = typeof t === 'function' ? { patient: t('roles.patient'), doctor: t('roles.doctor'), pharmacist: t('roles.pharmacist'), admin: t('roles.admin'), moderator: t('roles.moderator'), company: t('roles.company'), employee: t('roles.employee'), insurance_agent: t('roles.insurance_agent') } : { patient:'مستفيد', doctor:'أخصائي', pharmacist:'صيدلي', admin:'مدير النظام', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين' }; %>
               <%= roleLabels[user.role] || user.role %>
             </span>
           </div>

@@ -50,7 +50,7 @@
             </div>
             <div class="location-card-info">
               <strong><%= loc.name %></strong>
-              <span class="location-type-badge <%= loc.type %>"><%= loc.type === 'hospital' ? 'مستشفى' : 'صيدلية' %></span>
+              <span class="location-type-badge <%= loc.type %>"><%= loc.type === 'hospital' ? 'مركز' : 'صيدلية' %></span>
               <% if (loc.address) { %><p class="location-address"><i class="fas fa-map-pin"></i> <%= loc.address %></p><% } %>
               <% if (loc.city) { %><p class="location-city"><i class="fas fa-city"></i> <%= loc.city %></p><% } %>
               <% if (loc.phone) { %><p class="location-phone"><i class="fas fa-phone"></i> <%= loc.phone %></p><% } %>
@@ -94,13 +94,13 @@
     <form method="POST" action="/maps/add" class="modal-form">
       <div class="form-group">
         <label>اسم الموقع *</label>
-        <input type="text" name="name" required placeholder="مثال: مستشفى المملكة">
+        <input type="text" name="name" required placeholder="مثال: مركز مفاصل للعلاج الطبيعي">
       </div>
       <div class="form-row">
         <div class="form-group">
           <label>النوع *</label>
           <select name="type" required>
-            <option value="hospital">مستشفى</option>
+            <option value="hospital">مركز</option>
             <option value="pharmacy">صيدلية</option>
           </select>
         </div>
@@ -386,7 +386,7 @@ function initMap() {
 
   locationsData.forEach(function(loc) {
     var icon = loc.type === 'hospital' ? hospitalIcon : pharmacyIcon;
-    var typeLabel = loc.type === 'hospital' ? 'مستشفى' : 'صيدلية';
+    var typeLabel = loc.type === 'hospital' ? 'مركز' : 'صيدلية';
     var popupContent = '<div style="text-align:right;font-family:Tajawal;min-width:180px;">' +
       '<strong style="font-size:0.9rem;">' + loc.name + '</strong>' +
       '<br><span style="font-size:0.75rem;color:#888;">' + typeLabel + '</span>' +

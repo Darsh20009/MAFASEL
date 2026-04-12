@@ -144,8 +144,8 @@ userSchema.methods.trackDevice = function(userAgentStr, ip) {
 
 userSchema.statics.getRoleLabel = function(role) {
   const map = {
-    patient: 'مريض',
-    doctor: 'طبيب',
+    patient: 'مستفيد',
+    doctor: 'أخصائي',
     pharmacist: 'صيدلي',
     company: 'شركة',
     employee: 'موظف',

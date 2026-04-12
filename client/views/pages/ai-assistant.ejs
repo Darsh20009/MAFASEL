@@ -58,7 +58,7 @@
               <i class="fas fa-user-md"></i>
             </div>
             <div class="staff-info">
-              <div class="staff-name" id="staffName">فريق الرعاية الصحية</div>
+              <div class="staff-name" id="staffName">فريق مفاصل</div>
               <div class="staff-status" id="staffStatus">
                 <span class="online-dot"></span> متصل الآن
               </div>
@@ -84,8 +84,8 @@
             <div class="welcome-services">
               <button class="service-card" data-type="medical">
                 <div class="service-icon"><i class="fas fa-stethoscope"></i></div>
-                <div class="service-name">استشارة طبية</div>
-                <div class="service-desc">تحدث مع طبيب مختص</div>
+                <div class="service-name">استشارة صحية</div>
+                <div class="service-desc">تحدث مع أخصائي مختص</div>
               </button>
               <button class="service-card" data-type="pharmacy">
                 <div class="service-icon"><i class="fas fa-pills"></i></div>
@@ -298,11 +298,11 @@
         actionsBar.style.display = 'none';
 
         const greetings = {
-          medical: 'السلام عليكم، أنا ' + (data.persona ? data.persona.name : 'الطبيب') + '. كيف أقدر أساعدك اليوم؟ اوصف لي الأعراض اللي تحس فيها.',
-          support: 'أهلاً وسهلاً! أنا ' + (data.persona ? data.persona.name : 'خدمة العملاء') + '. كيف أقدر أساعدك؟',
-          insurance: 'مرحباً! أنا ' + (data.persona ? data.persona.name : 'قسم التأمين') + '. كيف أقدر أفيدك بخصوص التأمين الصحي؟',
-          pharmacy: 'أهلاً! أنا ' + (data.persona ? data.persona.name : 'الصيدلي') + '. عندك استفسار عن أدوية أو وصفة طبية؟',
-          complaint: 'مرحباً، أنا ' + (data.persona ? data.persona.name : 'علاقات المرضى') + '. أنا هنا أسمعك وأساعدك. تفضل.',
+          medical: 'السلام عليكم! أنا ' + (data.persona ? data.persona.name : 'الأخصائي') + '. كيفك إن شاء الله بخير؟ وش اللي تحس فيه؟ اشرح لي عشان أقدر أساعدك.',
+          support: 'هلا والله! أنا ' + (data.persona ? data.persona.name : 'خدمة العملاء') + '. كيف أقدر أخدمك اليوم؟',
+          insurance: 'هلا فيك! أنا ' + (data.persona ? data.persona.name : 'قسم التأمين') + '. وش تبي تعرف عن التأمين الصحي؟',
+          pharmacy: 'أهلاً! أنا ' + (data.persona ? data.persona.name : 'الصيدلي') + '. عندك سؤال عن دوا أو وصفة؟ أبشر.',
+          complaint: 'هلا فيك، أنا ' + (data.persona ? data.persona.name : 'علاقات المستفيدين') + '. تفضل اشرح لي وش المشكلة وإن شاء الله نحلها.',
           general: 'أهلاً وسهلاً! أنا ' + (data.persona ? data.persona.name : 'منسقة الخدمات') + '. كيف أقدر أخدمك اليوم؟'
         };
 
@@ -332,6 +332,9 @@
         body: JSON.stringify({ message: msg, conversationId: currentConvId })
       });
       const data = await res.json();
+
+      var typingDelay = Math.max(1200, Math.min(3500, (data.reply || '').length * 25));
+      await new Promise(function(r) { setTimeout(r, typingDelay); });
       removeTypingIndicator();
 
       if (data.success) {
@@ -387,7 +390,7 @@
       welcomeScreen.style.display = 'flex';
       messagesEl.appendChild(welcomeScreen);
     }
-    staffName.textContent = 'فريق الرعاية الصحية';
+    staffName.textContent = 'فريق مفاصل';
     staffStatus.innerHTML = '<span class="online-dot"></span> متصل الآن';
     staffAvatar.innerHTML = '<i class="fas fa-user-md"></i>';
     btnReport.style.display = 'none';

@@ -41,7 +41,7 @@
                 <div class="form-group">
                   <label>الدور</label>
                   <select name="role">
-                    <option value="doctor">طبيب</option>
+                    <option value="doctor">أخصائي</option>
                     <option value="pharmacist">صيدلي</option>
                     <option value="moderator">مشرف</option>
                     <option value="company">شركة</option>
@@ -99,8 +99,8 @@
                 <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">الدور</label>
                 <select name="role" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;" onchange="document.getElementById('filterForm').submit()">
                   <option value="all" <%= !query.role || query.role === 'all' ? 'selected' : '' %>>الكل</option>
-                  <option value="patient" <%= query.role === 'patient' ? 'selected' : '' %>>مريض</option>
-                  <option value="doctor" <%= query.role === 'doctor' ? 'selected' : '' %>>طبيب</option>
+                  <option value="patient" <%= query.role === 'patient' ? 'selected' : '' %>>مستفيد</option>
+                  <option value="doctor" <%= query.role === 'doctor' ? 'selected' : '' %>>أخصائي</option>
                   <option value="pharmacist" <%= query.role === 'pharmacist' ? 'selected' : '' %>>صيدلي</option>
                   <option value="company" <%= query.role === 'company' ? 'selected' : '' %>>شركة</option>
                   <option value="employee" <%= query.role === 'employee' ? 'selected' : '' %>>موظف</option>
@@ -156,7 +156,7 @@
               </tr>
             </thead>
             <tbody>
-              <% const roleMap = {admin:'مدير',doctor:'طبيب',pharmacist:'صيدلي',patient:'مريض',moderator:'مشرف',company:'شركة',employee:'موظف',insurance_agent:'وكيل تأمين'};
+              <% const roleMap = {admin:'مدير',doctor:'أخصائي',pharmacist:'صيدلي',patient:'مستفيد',moderator:'مشرف',company:'شركة',employee:'موظف',insurance_agent:'وكيل تأمين'};
                  const roleColor = {admin:'#ef4444',doctor:'#3b82f6',pharmacist:'#22c55e',moderator:'#8b5cf6',company:'#f59e0b',employee:'#06b6d4',insurance_agent:'#ec4899',patient:'var(--secondary)'}; %>
               <% users.forEach(u => { %>
               <% const isActive = u.isActive !== false; %>
@@ -193,7 +193,7 @@
                   <div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap;">
                     <form method="POST" action="/admin/users/<%= u._id %>/role" style="display:inline;">
                       <select name="role" onchange="this.form.submit()" class="select-sm" style="font-size:0.75rem;padding:0.25rem 0.5rem;">
-                        <option value="patient" <%= u.role==='patient'?'selected':'' %>>مريض</option>
+                        <option value="patient" <%= u.role==='patient'?'selected':'' %>>مستفيد</option>
                         <option value="doctor" <%= u.role==='doctor'?'selected':'' %>>طبيب</option>
                         <option value="pharmacist" <%= u.role==='pharmacist'?'selected':'' %>>صيدلي</option>
                         <option value="company" <%= u.role==='company'?'selected':'' %>>شركة</option>

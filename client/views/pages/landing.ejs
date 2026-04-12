@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="<%= typeof lang !== 'undefined' ? lang : 'ar' %>" dir="<%= typeof dir !== 'undefined' ? dir : 'rtl' %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>مفاصل | منصة طبية رقمية متكاملة</title>
+  <title><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %> | <%= typeof t === 'function' ? t('site_desc') : 'منصة طبية رقمية متكاملة' %></title>
   <meta name="description" content="<%= typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'منصة مفاصل الطبية الرقمية المتكاملة - استشارات طبية، صيدلية إلكترونية، تأمين صحي، مساعد ذكي بالذكاء الاصطناعي' %>">
   <meta name="keywords" content="مفاصل, منصة طبية, استشارات طبية, صيدلية إلكترونية, تأمين صحي, مواعيد طبية, تذكير أدوية, طبيب, صيدلي, السعودية, رعاية صحية رقمية">
   <meta name="author" content="مفاصل">
@@ -23,7 +23,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="icon" href="/icons/logo.png">
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <% if (typeof schemaMarkup !== 'undefined' && schemaMarkup) { %>
   <script type="application/ld+json"><%- JSON.stringify(schemaMarkup) %></script>
@@ -435,21 +435,64 @@
       .onboard-icon-wrap i { font-size: 1.9rem; }
       .onboard-body { padding: 1.2rem 1rem 7rem; }
     }
+
+    html[dir="ltr"] body { font-family: 'Inter', 'Segoe UI', sans-serif; text-align: left; }
+    html[dir="ltr"] .slide-topbar { direction: ltr; }
+    html[dir="ltr"] .onboard-body { text-align: left; }
+    html[dir="ltr"] .login-body { text-align: left; }
+
+    .landing-lang-toggle {
+      position: fixed;
+      top: 0.8rem;
+      left: 0.8rem;
+      z-index: 9999;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.35rem 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      transition: background 0.2s;
+    }
+    html[dir="rtl"] .landing-lang-toggle { left: auto; right: 0.8rem; }
+    .landing-lang-toggle:hover { background: rgba(255,255,255,1); }
+    .landing-lang-toggle i { font-size: 0.75rem; color: var(--accent); }
   </style>
 </head>
 <body>
+<button class="landing-lang-toggle" onclick="toggleLandingLang()">
+  <i class="fas fa-globe"></i>
+  <span><%= (typeof lang !== 'undefined' && lang === 'en') ? 'العربية' : 'English' %></span>
+</button>
+<script>
+function toggleLandingLang() {
+  var currentLang = document.documentElement.getAttribute('lang') || 'ar';
+  var newLang = currentLang === 'ar' ? 'en' : 'ar';
+  document.cookie = 'lang=' + newLang + ';path=/;max-age=' + (365*24*60*60);
+  var url = new URL(window.location.href);
+  url.searchParams.set('lang', newLang);
+  window.location.href = url.toString();
+}
+</script>
 <div id="splash">
 
   <!-- ══ SLIDE 0: VIDEO ══════════════════════════════ -->
   <div class="slide active" id="slide-video">
     <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="مفاصل">
-      <span>مفاصل</span>
+      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
+      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
     </div>
     <div class="video-wrap">
       <div class="video-fallback-logo" id="videoFallback">
-        <img src="/icons/logo.png" alt="مفاصل">
-        <p><span>مفاصل</span></p>
+        <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
+        <p><span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span></p>
       </div>
       <video id="splash-video" autoplay muted playsinline preload="auto" style="position:relative;z-index:2;opacity:0;transition:opacity 0.3s;">
         <source src="/splash-video.mp4" type="video/mp4">
@@ -463,36 +506,36 @@
   <!-- ══ SLIDE 1: ABOUT PLATFORM ════════════════════ -->
   <div class="slide" id="slide-about">
     <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="مفاصل">
-      <span>مفاصل</span>
+      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
+      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
     </div>
     <div class="onboard-body">
       <div class="onboard-icon-wrap teal">
         <i class="fas fa-heartbeat icon-teal"></i>
       </div>
-      <span class="onboard-tag tag-teal">منصة مفاصل الطبية</span>
+      <span class="onboard-tag tag-teal"><%= typeof t === 'function' ? t('landing.tagline') : 'منصة مفاصل الطبية' %></span>
       <h1 class="onboard-title">
-        كل رعايتك الصحية<br>في <span class="acc-teal">مكان واحد</span>
+        <%= typeof t === 'function' ? t('landing.hero_title') : 'كل رعايتك الصحية في مكان واحد' %>
       </h1>
       <p class="onboard-desc">
-        منصة رقمية متكاملة تجمع بين الاستشارات الطبية والصيدلية الإلكترونية وإدارة التأمين الصحي — بسهولة وأمان تام.
+        <%= typeof t === 'function' ? t('landing.hero_desc') : 'منصة رقمية متكاملة تجمع بين الاستشارات الطبية والصيدلية الإلكترونية وإدارة التأمين الصحي — بسهولة وأمان تام.' %>
       </p>
       <div class="onboard-features">
         <div class="onboard-feature-item">
           <div class="feat-icon feat-teal"><i class="fas fa-stethoscope"></i></div>
-          <span>استشارات مع أطباء متخصصين</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_sessions') : 'جلسات مع أخصائيين متميزين' %></span>
         </div>
         <div class="onboard-feature-item">
           <div class="feat-icon feat-teal"><i class="fas fa-pills"></i></div>
-          <span>صيدلية إلكترونية بتوصيل سريع</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_pharmacy') : 'صيدلية إلكترونية بتوصيل سريع' %></span>
         </div>
         <div class="onboard-feature-item">
           <div class="feat-icon feat-teal"><i class="fas fa-shield-alt"></i></div>
-          <span>إدارة التأمين الصحي</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_insurance') : 'إدارة التأمين الصحي' %></span>
         </div>
         <div class="onboard-feature-item">
           <div class="feat-icon feat-teal"><i class="fas fa-robot"></i></div>
-          <span>مساعد ذكاء اصطناعي طبي</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_ai') : 'مساعد ذكاء اصطناعي طبي' %></span>
         </div>
       </div>
     </div>
@@ -501,36 +544,36 @@
   <!-- ══ SLIDE 2: HEALTH TRACKING ═══════════════════ -->
   <div class="slide" id="slide-tracking">
     <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="مفاصل">
-      <span>مفاصل</span>
+      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
+      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
     </div>
     <div class="onboard-body">
       <div class="onboard-icon-wrap blue">
         <i class="fas fa-house icon-blue"></i>
       </div>
-      <span class="onboard-tag tag-blue">تتبع صحي ذكي</span>
+      <span class="onboard-tag tag-blue"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Smart Health Tracking' : 'تتبع صحي ذكي' %></span>
       <h1 class="onboard-title">
-        صحتك تحت <span class="acc-blue">إشرافك</span><br>من المنزل
+        <%= typeof t === 'function' ? t('landing.tracking_title') : 'صحتك تحت إشرافك من المنزل' %>
       </h1>
       <p class="onboard-desc">
-        تابع ملفك الطبي الشامل، سجّل قياساتك اليومية، واستقبل تنبيهات صحية ذكية — كل ذلك دون الحاجة للخروج من البيت.
+        <%= typeof t === 'function' ? t('landing.tracking_desc') : 'تابع ملفك الطبي الشامل، سجّل قياساتك اليومية، واستقبل تنبيهات صحية ذكية.' %>
       </p>
       <div class="onboard-features">
         <div class="onboard-feature-item">
           <div class="feat-icon feat-blue"><i class="fas fa-file-medical"></i></div>
-          <span>ملف طبي شامل ومحمي</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_record') : 'ملف طبي شامل ومحمي' %></span>
         </div>
         <div class="onboard-feature-item">
           <div class="feat-icon feat-blue"><i class="fas fa-bell"></i></div>
-          <span>تنبيهات ومواعيد صحية</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_alerts') : 'تنبيهات ومواعيد صحية' %></span>
         </div>
         <div class="onboard-feature-item">
           <div class="feat-icon feat-blue"><i class="fas fa-chart-line"></i></div>
-          <span>متابعة مؤشراتك الصحية</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_tracking') : 'متابعة مؤشراتك الصحية' %></span>
         </div>
         <div class="onboard-feature-item">
           <div class="feat-icon feat-blue"><i class="fas fa-comments"></i></div>
-          <span>تواصل مباشر مع طبيبك</span>
+          <span><%= typeof t === 'function' ? t('landing.feat_contact') : 'تواصل مباشر مع أخصائيك' %></span>
         </div>
       </div>
     </div>
@@ -539,36 +582,36 @@
   <!-- ══ SLIDE 3: LOGIN ══════════════════════════════ -->
   <div class="slide" id="slide-login">
     <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="مفاصل">
-      <span>مفاصل</span>
+      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
+      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
     </div>
     <div class="login-body">
       <div class="onboard-icon-wrap purple">
         <i class="fas fa-user-shield icon-purple"></i>
       </div>
-      <span class="onboard-tag tag-purple">ابدأ رحلتك الصحية</span>
+      <span class="onboard-tag tag-purple"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Start Your Health Journey' : 'ابدأ رحلتك الصحية' %></span>
       <h1 class="onboard-title">
-        انضم إلى <span class="acc-purple">مفاصل</span><br>اليوم
+        <%= typeof t === 'function' ? t('landing.join_title') : 'انضم إلى مفاصل اليوم' %>
       </h1>
       <p class="onboard-desc" style="margin-bottom:0;">
-        سجّل دخولك أو أنشئ حساباً جديداً مجاناً وابدأ بالوصول لأفضل الخدمات الطبية.
+        <%= typeof t === 'function' ? t('landing.join_desc') : 'سجّل دخولك أو أنشئ حساباً جديداً مجاناً وابدأ بالوصول لأفضل الخدمات الطبية.' %>
       </p>
       <div class="login-card">
-        <p class="login-card-title">اختر طريقة الدخول</p>
+        <p class="login-card-title"><%= typeof t === 'function' ? t('landing.login_method') : 'اختر طريقة الدخول' %></p>
         <div class="login-btns">
           <a href="/login" class="btn-sp btn-sp-primary">
-            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+            <i class="fas fa-sign-in-alt"></i> <%= typeof t === 'function' ? t('landing.login_btn') : 'تسجيل الدخول' %>
           </a>
           <div class="login-divider">
             <div class="login-divider-line"></div>
-            <span class="login-divider-text">أو</span>
+            <span class="login-divider-text"><%= typeof t === 'function' ? t('common.or') : 'أو' %></span>
             <div class="login-divider-line"></div>
           </div>
           <a href="/register" class="btn-sp btn-sp-outline">
-            <i class="fas fa-user-plus"></i> إنشاء حساب جديد
+            <i class="fas fa-user-plus"></i> <%= typeof t === 'function' ? t('landing.register_btn') : 'إنشاء حساب جديد' %>
           </a>
           <a href="/dashboard" class="btn-sp btn-sp-ghost">
-            <i class="fas fa-eye"></i> تصفح بدون تسجيل
+            <i class="fas fa-eye"></i> <%= typeof t === 'function' ? t('landing.browse_btn') : 'تصفح بدون تسجيل' %>
           </a>
         </div>
       </div>
@@ -579,7 +622,7 @@
 
 <!-- Skip (video slide only) -->
 <button id="skip-btn" onclick="skipVideo()">
-  تخطي <i class="fas fa-forward"></i>
+  <%= typeof t === 'function' ? t('landing.skip') : 'تخطي' %> <i class="fas fa-forward"></i>
 </button>
 
 <!-- Dots -->
@@ -591,7 +634,7 @@
 
 <!-- Next -->
 <button id="next-btn" onclick="nextSlide()">
-  التالي <i class="fas fa-arrow-left"></i>
+  <%= typeof t === 'function' ? t('common.next') : 'التالي' %> <i class="fas fa-arrow-<%= (typeof lang !== 'undefined' && lang === 'en') ? 'right' : 'left' %>"></i>
 </button>
 
 <script>
