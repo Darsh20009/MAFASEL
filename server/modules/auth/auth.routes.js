@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../users/user.model');
 const { sendTemplateEmail, templates, sendEmail } = require('../email/email.service');
+const { logAudit } = require('../audit/audit.service');
 
 function buildSessionUser(user) {
   return {
@@ -35,6 +36,7 @@ async function logLogin(user, method, req) {
       user.loginHistory = user.loginHistory.slice(-50);
     }
     await user.save();
+    logAudit({ req, userId: user._id, userName: user.name, userRole: user.role, action: 'تسجيل دخول', category: 'auth', details: 'طريقة: ' + method });
   } catch (e) {}
 }
 
@@ -54,11 +56,13 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user || !user.password) {
       req.session.error = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+      logAudit({ req, action: 'محاولة دخول فاشلة', category: 'auth', details: 'بريد غير مسجل: ' + email, success: false, statusCode: 401 });
       return res.redirect('/login');
     }
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       req.session.error = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+      logAudit({ req, userId: user._id, userName: user.name, userRole: user.role, action: 'محاولة دخول فاشلة', category: 'auth', details: 'كلمة مرور خاطئة', success: false, statusCode: 401 });
       return res.redirect('/login');
     }
     await logLogin(user, 'email', req);
@@ -674,6 +678,8 @@ router.post('/auth/webauthn/login-verify', async (req, res) => {
 
 router.get('/logout', async (req, res) => {
   const userId = req.session.user?._id;
+  const userName = req.session.user?.name || '';
+  const userRole = req.session.user?.role || '';
   if (userId) {
     try {
       const user = await User.findById(userId);
@@ -689,6 +695,7 @@ router.get('/logout', async (req, res) => {
         }
         await user.save();
       }
+      logAudit({ req, userId, userName, userRole, action: 'تسجيل خروج', category: 'auth' });
     } catch (e) {}
   }
   req.session.destroy((err) => {

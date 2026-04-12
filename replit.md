@@ -180,6 +180,17 @@
   - `pageSchema()` middleware لصفحات مخصصة (Pharmacy, MedicalClinic, ItemList)
 - الملفات: `server/modules/seo/seo.routes.js`, `server/modules/seo/seo.middleware.js`
 
+## سجل النشاطات (Audit Log)
+- **النموذج**: `server/modules/audit/audit.model.js` — يسجل: userId, userName, userRole, action, category, details, targetId, targetType, ip, device, userAgent, method, path, statusCode, success
+- **الخدمة**: `server/modules/audit/audit.service.js` — `logAudit()` لتسجيل الأحداث، `auditAction()` middleware تلقائي
+  - `getClientIp()` يدعم X-Forwarded-For, X-Real-IP
+  - `parseDevice()` يستخدم `ua-parser-js` لتحليل المتصفح/النظام/الجهاز
+- **التصنيفات**: auth, user, consultation, pharmacy, insurance, admin, chat, notification, system, scheduler, maps
+- **الأحداث المسجلة**: تسجيل دخول (كل الطرق)، محاولات فاشلة، تسجيل خروج، إنشاء مستخدم، تغيير أدوار
+- **صفحة الإدارة**: `/admin/audit` — جدول مع فلاتر (تصنيف، إجراء، IP، تاريخ)، إحصائيات، pagination
+- **تصدير CSV**: `/admin/audit/api/export` — تصدير حتى 5000 سجل بترميز UTF-8 BOM
+- **فهارس MongoDB**: createdAt, userId, action, category, ip — للأداء
+
 ## التسجيل
 - التسجيل للمرضى فقط (لا يوجد اختيار دور)
 - المدير ينشئ الحسابات الأخرى (أطباء، صيادلة، مشرفين، شركات، موظفين)

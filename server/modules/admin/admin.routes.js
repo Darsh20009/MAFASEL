@@ -9,8 +9,10 @@ const Insurance = require('../medical/insurance.model');
 const Complaint = require('../settings/complaint.model');
 const Banner = require('./banner.model');
 const Invitation = require('./invitation.model');
+const AuditLog = require('../audit/audit.model');
 const { fireNotify } = require('../notifications/notification.service');
 const { sendEmail, buildEmailHTML } = require('../email/email.service');
+const { logAudit } = require('../audit/audit.service');
 const fs = require('fs');
 const path = require('path');
 
@@ -105,9 +107,11 @@ router.post('/users/create', isAuthenticated, isAdmin, async (req, res) => {
       authProvider: 'local'
     });
     req.session.success = 'تم إنشاء المستخدم بنجاح';
+    logAudit({ req, action: 'إنشاء مستخدم', category: 'admin', details: `${name.trim()} (${role})`, targetType: 'User' });
   } catch (err) {
     console.error('Admin create user error:', err);
     req.session.error = 'حدث خطأ في إنشاء المستخدم';
+    logAudit({ req, action: 'إنشاء مستخدم', category: 'admin', success: false, details: err.message });
   }
   res.redirect('/admin/users');
 });
@@ -132,6 +136,7 @@ router.post('/users/:id/role', isAuthenticated, isAdmin, async (req, res) => {
     return res.redirect('/admin/users');
   }
   await User.findByIdAndUpdate(req.params.id, { role: newRole }, { runValidators: true });
+  logAudit({ req, action: 'تغيير دور مستخدم', category: 'admin', details: `${targetUser.name}: ${targetUser.role} → ${newRole}`, targetId: targetUser._id, targetType: 'User' });
   req.session.success = 'تم تحديث الدور';
   res.redirect('/admin/users');
 });
@@ -380,6 +385,79 @@ router.post('/invitations/:id/resend', isAuthenticated, isAdmin, async (req, res
     req.session.error = 'فشل إعادة الإرسال';
   }
   res.redirect('/admin/invitations');
+});
+
+router.get('/audit', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 50;
+    const skip = (page - 1) * limit;
+
+    const filter = {};
+    if (req.query.category && req.query.category !== 'all') filter.category = req.query.category;
+    if (req.query.action) filter.action = { $regex: req.query.action, $options: 'i' };
+    if (req.query.userId) filter.userId = req.query.userId;
+    if (req.query.ip) filter.ip = req.query.ip;
+    if (req.query.from || req.query.to) {
+      filter.createdAt = {};
+      if (req.query.from) filter.createdAt.$gte = new Date(req.query.from);
+      if (req.query.to) filter.createdAt.$lte = new Date(req.query.to + 'T23:59:59');
+    }
+
+    const [logs, total] = await Promise.all([
+      AuditLog.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      AuditLog.countDocuments(filter)
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    const stats = await AuditLog.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 } } }
+    ]);
+
+    const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+    const todayCount = await AuditLog.countDocuments({ createdAt: { $gte: todayStart } });
+
+    res.render('pages/admin-audit', {
+      title: 'سجل النشاطات',
+      logs,
+      total,
+      todayCount,
+      stats,
+      page,
+      totalPages,
+      query: req.query
+    });
+  } catch (err) {
+    console.error('Audit page error:', err);
+    req.session.error = 'خطأ في تحميل السجل';
+    res.redirect('/admin');
+  }
+});
+
+router.get('/audit/api/export', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.category && req.query.category !== 'all') filter.category = req.query.category;
+    if (req.query.from || req.query.to) {
+      filter.createdAt = {};
+      if (req.query.from) filter.createdAt.$gte = new Date(req.query.from);
+      if (req.query.to) filter.createdAt.$lte = new Date(req.query.to + 'T23:59:59');
+    }
+
+    const logs = await AuditLog.find(filter).sort({ createdAt: -1 }).limit(5000).lean();
+
+    let csv = 'التاريخ,المستخدم,الدور,الإجراء,التصنيف,التفاصيل,IP,الجهاز,الحالة\n';
+    for (const log of logs) {
+      csv += `"${new Date(log.createdAt).toLocaleString('ar-SA')}","${log.userName}","${log.userRole}","${log.action}","${log.category}","${log.details}","${log.ip}","${log.device}","${log.success ? 'نجاح' : 'فشل'}"\n`;
+    }
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename=audit-log.csv');
+    res.send('\uFEFF' + csv);
+  } catch (err) {
+    res.status(500).json({ error: 'خطأ في التصدير' });
+  }
 });
 
 module.exports = router;

@@ -1,0 +1,154 @@
+<%- include('../partials/header') %>
+
+<div class="admin-layout">
+  <%- include('../partials/admin-sidebar') %>
+  <div class="admin-main">
+    <% if (success) { %><div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= success %></div><% } %>
+    <% if (error) { %><div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error %></div><% } %>
+
+    <div class="page-header">
+      <div>
+        <h1><i class="fas fa-clipboard-list"></i> سجل النشاطات</h1>
+        <p style="color:var(--text-muted);margin-top:0.25rem;">مراقبة جميع الأنشطة والإجراءات على المنصة</p>
+      </div>
+      <a href="/admin/audit/api/export?<%= Object.entries(query).map(([k,v]) => k+'='+encodeURIComponent(v)).join('&') %>" class="btn btn-outline" style="font-size:0.82rem;">
+        <i class="fas fa-download"></i> تصدير CSV
+      </a>
+    </div>
+
+    <div class="admin-stats-row" style="margin-bottom:1.5rem;">
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:rgba(18,169,155,0.12);color:#12a99b;"><i class="fas fa-list"></i></div>
+        <div class="stat-info"><span class="stat-number"><%= total %></span><span class="stat-label">إجمالي السجلات</span></div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:rgba(59,130,246,0.12);color:#3b82f6;"><i class="fas fa-clock"></i></div>
+        <div class="stat-info"><span class="stat-number"><%= todayCount %></span><span class="stat-label">نشاط اليوم</span></div>
+      </div>
+      <% var authCount = stats.find(s => s._id === 'auth'); %>
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:rgba(168,85,247,0.12);color:#a855f7;"><i class="fas fa-sign-in-alt"></i></div>
+        <div class="stat-info"><span class="stat-number"><%= authCount ? authCount.count : 0 %></span><span class="stat-label">أحداث المصادقة</span></div>
+      </div>
+      <% var adminCount = stats.find(s => s._id === 'admin'); %>
+      <div class="admin-stat-card">
+        <div class="stat-icon" style="background:rgba(239,68,68,0.12);color:#ef4444;"><i class="fas fa-shield-alt"></i></div>
+        <div class="stat-info"><span class="stat-number"><%= adminCount ? adminCount.count : 0 %></span><span class="stat-label">إجراءات إدارية</span></div>
+      </div>
+    </div>
+
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1.25rem;">
+      <form method="GET" action="/admin/audit" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:flex-end;">
+        <div style="flex:1;min-width:140px;">
+          <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">التصنيف</label>
+          <select name="category" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;">
+            <option value="all" <%= query.category === 'all' || !query.category ? 'selected' : '' %>>الكل</option>
+            <option value="auth" <%= query.category === 'auth' ? 'selected' : '' %>>المصادقة</option>
+            <option value="user" <%= query.category === 'user' ? 'selected' : '' %>>المستخدمين</option>
+            <option value="admin" <%= query.category === 'admin' ? 'selected' : '' %>>الإدارة</option>
+            <option value="consultation" <%= query.category === 'consultation' ? 'selected' : '' %>>الاستشارات</option>
+            <option value="pharmacy" <%= query.category === 'pharmacy' ? 'selected' : '' %>>الصيدلية</option>
+            <option value="insurance" <%= query.category === 'insurance' ? 'selected' : '' %>>التأمين</option>
+            <option value="chat" <%= query.category === 'chat' ? 'selected' : '' %>>المحادثات</option>
+            <option value="scheduler" <%= query.category === 'scheduler' ? 'selected' : '' %>>المواعيد</option>
+            <option value="system" <%= query.category === 'system' ? 'selected' : '' %>>النظام</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">الإجراء</label>
+          <input type="text" name="action" value="<%= query.action || '' %>" placeholder="بحث..." style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;">
+        </div>
+        <div style="flex:1;min-width:120px;">
+          <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">IP</label>
+          <input type="text" name="ip" value="<%= query.ip || '' %>" placeholder="عنوان IP" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;">
+        </div>
+        <div style="flex:1;min-width:130px;">
+          <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">من تاريخ</label>
+          <input type="date" name="from" value="<%= query.from || '' %>" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;">
+        </div>
+        <div style="flex:1;min-width:130px;">
+          <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">إلى تاريخ</label>
+          <input type="date" name="to" value="<%= query.to || '' %>" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;">
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+          <button type="submit" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.82rem;"><i class="fas fa-search"></i> بحث</button>
+          <a href="/admin/audit" class="btn btn-outline" style="padding:0.5rem 1rem;font-size:0.82rem;">مسح</a>
+        </div>
+      </form>
+    </div>
+
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="overflow-x:auto;">
+        <table class="admin-table" style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+          <thead>
+            <tr style="background:var(--bg-secondary);border-bottom:2px solid var(--border);">
+              <th style="padding:0.75rem 0.6rem;text-align:right;font-weight:600;white-space:nowrap;">التاريخ</th>
+              <th style="padding:0.75rem 0.6rem;text-align:right;font-weight:600;">المستخدم</th>
+              <th style="padding:0.75rem 0.6rem;text-align:right;font-weight:600;">الإجراء</th>
+              <th style="padding:0.75rem 0.6rem;text-align:right;font-weight:600;">التصنيف</th>
+              <th style="padding:0.75rem 0.6rem;text-align:right;font-weight:600;">التفاصيل</th>
+              <th style="padding:0.75rem 0.6rem;text-align:right;font-weight:600;">IP</th>
+              <th style="padding:0.75rem 0.6rem;text-align:right;font-weight:600;">الجهاز</th>
+              <th style="padding:0.75rem 0.6rem;text-align:center;font-weight:600;">الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (logs.length === 0) { %>
+            <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">
+              <i class="fas fa-inbox" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:0.5rem;"></i>
+              لا توجد سجلات
+            </td></tr>
+            <% } %>
+            <% logs.forEach(function(log) { %>
+            <% var catColors = { auth: '#a855f7', admin: '#ef4444', user: '#3b82f6', consultation: '#12a99b', pharmacy: '#f59e0b', insurance: '#06b6d4', chat: '#8b5cf6', system: '#6b7280', scheduler: '#ec4899', maps: '#22c55e', notification: '#f97316' }; %>
+            <% var catLabels = { auth: 'مصادقة', admin: 'إدارة', user: 'مستخدم', consultation: 'استشارة', pharmacy: 'صيدلية', insurance: 'تأمين', chat: 'محادثة', system: 'نظام', scheduler: 'مواعيد', maps: 'خرائط', notification: 'إشعار' }; %>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:0.6rem;white-space:nowrap;color:var(--text-muted);font-size:0.78rem;">
+                <%= new Date(log.createdAt).toLocaleDateString('ar-SA') %><br>
+                <span style="opacity:0.7;"><%= new Date(log.createdAt).toLocaleTimeString('ar-SA') %></span>
+              </td>
+              <td style="padding:0.6rem;">
+                <div style="font-weight:500;"><%= log.userName %></div>
+                <% if (log.userRole) { %><span style="font-size:0.72rem;color:var(--text-muted);"><%= log.userRole %></span><% } %>
+              </td>
+              <td style="padding:0.6rem;font-weight:500;"><%= log.action %></td>
+              <td style="padding:0.6rem;">
+                <span style="display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.72rem;font-weight:600;background:<%= catColors[log.category] || '#6b7280' %>18;color:<%= catColors[log.category] || '#6b7280' %>;">
+                  <%= catLabels[log.category] || log.category %>
+                </span>
+              </td>
+              <td style="padding:0.6rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted);font-size:0.78rem;" title="<%= log.details %>"><%= log.details || '—' %></td>
+              <td style="padding:0.6rem;font-family:monospace;font-size:0.75rem;color:var(--text-muted);direction:ltr;"><%= log.ip || '—' %></td>
+              <td style="padding:0.6rem;font-size:0.75rem;color:var(--text-muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<%= log.device %>"><%= log.device || '—' %></td>
+              <td style="padding:0.6rem;text-align:center;">
+                <% if (log.success) { %>
+                <span style="color:#22c55e;"><i class="fas fa-check-circle"></i></span>
+                <% } else { %>
+                <span style="color:#ef4444;"><i class="fas fa-times-circle"></i></span>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (totalPages > 1) { %>
+      <div style="padding:0.75rem 1rem;display:flex;justify-content:center;gap:0.35rem;border-top:1px solid var(--border);">
+        <% if (page > 1) { %>
+        <a href="/admin/audit?page=<%= page-1 %>&<%= Object.entries(query).filter(([k]) => k !== 'page').map(([k,v]) => k+'='+encodeURIComponent(v)).join('&') %>" class="btn btn-outline" style="padding:0.35rem 0.65rem;font-size:0.78rem;"><i class="fas fa-chevron-right"></i></a>
+        <% } %>
+        <% for (var p = Math.max(1, page-2); p <= Math.min(totalPages, page+2); p++) { %>
+        <a href="/admin/audit?page=<%= p %>&<%= Object.entries(query).filter(([k]) => k !== 'page').map(([k,v]) => k+'='+encodeURIComponent(v)).join('&') %>" class="btn <%= p === page ? 'btn-primary' : 'btn-outline' %>" style="padding:0.35rem 0.65rem;font-size:0.78rem;"><%= p %></a>
+        <% } %>
+        <% if (page < totalPages) { %>
+        <a href="/admin/audit?page=<%= page+1 %>&<%= Object.entries(query).filter(([k]) => k !== 'page').map(([k,v]) => k+'='+encodeURIComponent(v)).join('&') %>" class="btn btn-outline" style="padding:0.35rem 0.65rem;font-size:0.78rem;"><i class="fas fa-chevron-left"></i></a>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
