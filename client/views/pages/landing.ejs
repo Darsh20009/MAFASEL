@@ -572,14 +572,15 @@
   var nextBtn = document.getElementById('next-btn');
   var dots = document.querySelectorAll('.dot');
 
+  video.playbackRate = 1.8;
   video.addEventListener('timeupdate', function() {
     if (video.duration) {
       progressBar.style.width = (video.currentTime / video.duration * 100) + '%';
     }
   });
   video.addEventListener('ended', function() { goToSlide(1); });
-  video.addEventListener('error', function() { setTimeout(function(){ goToSlide(1); }, 400); });
-  setTimeout(function() { if (current === 0) goToSlide(1); }, 18000);
+  video.addEventListener('error', function() { setTimeout(function(){ goToSlide(1); }, 300); });
+  setTimeout(function() { if (current === 0) goToSlide(1); }, 7000);
 
   function skipVideo() { goToSlide(1); }
 
