@@ -257,33 +257,7 @@
   });
 
   function addToAppleWallet() {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      const overlay = document.createElement('div');
-      overlay.id = 'walletOverlay';
-      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;display:flex;align-items:center;justify-content:center';
-      const modal = document.createElement('div');
-      modal.style.cssText = 'background:#fff;border-radius:20px;padding:2rem;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;max-width:320px;font-family:Tajawal';
-      modal.innerHTML = `
-        <div style="width:60px;height:60px;background:#000;border-radius:14px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center">
-          <i class="fab fa-apple" style="color:#fff;font-size:1.8rem"></i>
-        </div>
-        <h3 style="margin:0 0 0.5rem;color:#101d23">إضافة إلى Apple Wallet</h3>
-        <p style="color:#666;font-size:0.8rem;margin-bottom:1rem">سيتم تحميل صورة البطاقة الصحية لإضافتها يدوياً.</p>
-        <div style="display:flex;gap:0.5rem;justify-content:center">
-          <button onclick="document.getElementById('walletOverlay').remove();downloadCard()" style="background:#000;color:#fff;border:none;padding:0.6rem 1.5rem;border-radius:10px;font-family:Tajawal;font-weight:700;cursor:pointer">تحميل البطاقة</button>
-          <button onclick="document.getElementById('walletOverlay').remove()" style="background:#f1f5f9;color:#101d23;border:none;padding:0.6rem 1.5rem;border-radius:10px;font-family:Tajawal;font-weight:700;cursor:pointer">إلغاء</button>
-        </div>
-      `;
-      overlay.appendChild(modal);
-      document.body.appendChild(overlay);
-    } else {
-      const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#101d23;color:#fff;padding:0.8rem 1.5rem;border-radius:12px;font-size:0.8rem;z-index:9999;font-family:Tajawal;box-shadow:0 8px 30px rgba(0,0,0,0.3);display:flex;align-items:center;gap:0.5rem';
-      toast.innerHTML = '<i class="fab fa-apple" style="font-size:1.2rem"></i> هذه الميزة متاحة فقط على أجهزة Apple';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
+    window.location.href = '/health-card/wallet-pass';
   }
 
   function downloadAsWalletPass() {

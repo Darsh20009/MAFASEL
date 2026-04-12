@@ -1,0 +1,79 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.mafaseltech.com",
+  "teamIdentifier": "V4K6RM59LS",
+  "organizationName": "مفاصل",
+  "description": "البطاقة الصحية - مفاصل",
+  "serialNumber": "{{serialNumber}}",
+  "foregroundColor": "rgb(255, 255, 255)",
+  "backgroundColor": "rgb(16, 29, 35)",
+  "labelColor": "rgb(18, 169, 155)",
+  "logoText": "مفاصل",
+  "generic": {
+    "primaryFields": [
+      {
+        "key": "name",
+        "label": "الاسم",
+        "value": "{{name}}"
+      }
+    ],
+    "secondaryFields": [
+      {
+        "key": "blood",
+        "label": "فصيلة الدم",
+        "value": "{{bloodType}}"
+      },
+      {
+        "key": "nationalId",
+        "label": "رقم الهوية",
+        "value": "{{nationalId}}"
+      }
+    ],
+    "auxiliaryFields": [
+      {
+        "key": "memberId",
+        "label": "رقم العضوية",
+        "value": "{{memberId}}"
+      },
+      {
+        "key": "phone",
+        "label": "الجوال",
+        "value": "{{phone}}"
+      }
+    ],
+    "backFields": [
+      {
+        "key": "allergies",
+        "label": "الحساسية",
+        "value": "{{allergies}}"
+      },
+      {
+        "key": "chronic",
+        "label": "أمراض مزمنة",
+        "value": "{{chronic}}"
+      },
+      {
+        "key": "medications",
+        "label": "أدوية حالية",
+        "value": "{{medications}}"
+      },
+      {
+        "key": "emergency",
+        "label": "جهة اتصال الطوارئ",
+        "value": "{{emergency}}"
+      }
+    ]
+  },
+  "barcode": {
+    "format": "PKBarcodeFormatQR",
+    "message": "{{qrMessage}}",
+    "messageEncoding": "iso-8859-1"
+  },
+  "barcodes": [
+    {
+      "format": "PKBarcodeFormatQR",
+      "message": "{{qrMessage}}",
+      "messageEncoding": "iso-8859-1"
+    }
+  ]
+}
