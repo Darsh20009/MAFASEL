@@ -1,0 +1,345 @@
+<%- include('../partials/header') %>
+<style>
+  .hc-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;background:linear-gradient(160deg,#e6faf8 0%,#f0f4f8 40%,#dbeafe 100%)}
+  .hc-scene{perspective:1200px;width:400px;max-width:100%}
+  .hc-card{position:relative;width:100%;border-radius:24px;overflow:hidden;box-shadow:0 25px 60px rgba(16,29,35,0.25),0 0 0 1px rgba(18,169,155,0.1);transform:rotateY(0deg);transition:transform 0.8s cubic-bezier(0.4,0,0.2,1);transform-style:preserve-3d;cursor:pointer}
+  .hc-card.flipped{transform:rotateY(180deg)}
+  .hc-front,.hc-back{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .hc-back{transform:rotateY(180deg);position:absolute;top:0;left:0;width:100%;height:100%}
+
+  .hc-front-inner{background:linear-gradient(145deg,#101d23 0%,#1a2e38 40%,#0d1920 100%);padding:0;position:relative;overflow:hidden}
+  .hc-glow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(18,169,155,0.25) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+  .hc-glow2{position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(37,99,235,0.15) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+  .hc-pattern{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2312a99b' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+  .hc-stripe{height:4px;background:linear-gradient(90deg,#12a99b,#2563eb,#12a99b);position:relative;z-index:1}
+
+  .hc-top{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.5rem 0.8rem;position:relative;z-index:2}
+  .hc-logo{display:flex;align-items:center;gap:0.5rem}
+  .hc-logo svg{width:32px;height:32px}
+  .hc-logo-text{font-size:1.1rem;font-weight:800;color:#fff;font-family:'Tajawal',sans-serif}
+  .hc-type{font-size:0.65rem;background:rgba(18,169,155,0.2);color:#12a99b;padding:0.2rem 0.6rem;border-radius:20px;font-weight:600;letter-spacing:0.5px}
+
+  .hc-avatar-section{display:flex;flex-direction:column;align-items:center;padding:1rem 1.5rem;position:relative;z-index:2}
+  .hc-avatar-ring{width:90px;height:90px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#12a99b,#2563eb);display:flex;align-items:center;justify-content:center;margin-bottom:0.6rem}
+  .hc-avatar-inner{width:100%;height:100%;border-radius:50%;background:#1a2e38;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #101d23}
+  .hc-avatar-inner img{width:100%;height:100%;object-fit:cover}
+  .hc-avatar-inner i{font-size:2.4rem;color:#12a99b}
+  .hc-name{font-size:1.3rem;font-weight:800;color:#fff;text-align:center;margin-bottom:0.15rem;text-shadow:0 2px 10px rgba(0,0,0,0.3)}
+  .hc-member-id{font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:monospace;letter-spacing:1.5px}
+
+  .hc-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;padding:0 1.5rem 1rem;position:relative;z-index:2}
+  .hc-info-item{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.6rem 0.7rem;text-align:center;transition:background 0.3s}
+  .hc-info-item:hover{background:rgba(18,169,155,0.1)}
+  .hc-info-label{font-size:0.58rem;color:rgba(255,255,255,0.45);display:block;margin-bottom:0.2rem;font-weight:500}
+  .hc-info-value{font-size:0.82rem;color:#fff;font-weight:700;display:block}
+  .hc-info-value.blood{color:#12a99b;font-size:1rem}
+
+  .hc-qr-section{display:flex;align-items:center;justify-content:center;padding:0.8rem 1.5rem 1.2rem;position:relative;z-index:2}
+  .hc-qr-box{background:#fff;border-radius:14px;padding:0.6rem;position:relative;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+  .hc-qr-box img{display:block;width:120px;height:120px;border-radius:8px}
+  .hc-qr-label{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);background:#12a99b;color:#fff;font-size:0.55rem;padding:0.15rem 0.6rem;border-radius:10px;white-space:nowrap;font-weight:700;box-shadow:0 2px 8px rgba(18,169,155,0.4)}
+
+  .hc-footer-bar{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 1.5rem;background:rgba(0,0,0,0.2);position:relative;z-index:2}
+  .hc-footer-text{font-size:0.58rem;color:rgba(255,255,255,0.4)}
+  .hc-emergency{font-size:0.58rem;color:#ef4444;font-weight:700}
+  .hc-emergency i{margin-left:0.2rem}
+
+  .hc-back-inner{background:linear-gradient(145deg,#f8fafc,#e6faf8);padding:1.5rem;height:100%;display:flex;flex-direction:column;box-sizing:border-box}
+  .hc-back-title{font-size:1rem;font-weight:800;color:#101d23;text-align:center;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:0.4rem}
+  .hc-back-title i{color:#12a99b}
+  .hc-detail-row{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 0;border-bottom:1px solid rgba(16,29,35,0.08)}
+  .hc-detail-row:last-child{border-bottom:none}
+  .hc-detail-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.8rem}
+  .hc-detail-icon.ic-red{background:#fee2e2;color:#dc2626}
+  .hc-detail-icon.ic-amber{background:#fef3c7;color:#d97706}
+  .hc-detail-icon.ic-blue{background:#dbeafe;color:#2563eb}
+  .hc-detail-icon.ic-teal{background:#e6faf8;color:#12a99b}
+  .hc-detail-icon.ic-purple{background:#ede9fe;color:#7c3aed}
+  .hc-detail-label{font-size:0.65rem;color:rgba(16,29,35,0.5);display:block}
+  .hc-detail-value{font-size:0.78rem;color:#101d23;font-weight:600;display:block}
+
+  .hc-actions{display:flex;gap:0.6rem;margin-top:1.5rem;justify-content:center;flex-wrap:wrap}
+  .hc-btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.7rem 1.2rem;border-radius:14px;font-size:0.8rem;font-weight:700;cursor:pointer;border:none;transition:all 0.3s;font-family:'Tajawal',sans-serif}
+  .hc-btn-apple{background:#000;color:#fff;box-shadow:0 4px 15px rgba(0,0,0,0.3)}
+  .hc-btn-apple:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.4)}
+  .hc-btn-apple i{font-size:1.1rem}
+  .hc-btn-download{background:linear-gradient(135deg,#12a99b,#0d8a7f);color:#fff;box-shadow:0 4px 15px rgba(18,169,155,0.3)}
+  .hc-btn-download:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(18,169,155,0.4)}
+  .hc-btn-flip{background:#fff;color:#101d23;border:2px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+  .hc-btn-flip:hover{border-color:#12a99b;color:#12a99b}
+  .hc-btn-print{background:#fff;color:#101d23;border:2px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+  .hc-btn-print:hover{border-color:#2563eb;color:#2563eb}
+
+  .hc-flip-hint{text-align:center;margin-top:0.8rem;font-size:0.68rem;color:rgba(16,29,35,0.4);animation:hcPulse 2s infinite}
+  @keyframes hcPulse{0%,100%{opacity:0.4}50%{opacity:1}}
+
+  @media print{
+    .main-content,.hc-actions,.hc-flip-hint,nav,footer,.bottom-nav{display:none!important}
+    .hc-wrapper{background:#fff!important;padding:0!important;min-height:auto!important}
+    .hc-card{box-shadow:0 0 0 1px #ddd!important;border-radius:12px!important;transform:none!important}
+    .hc-card.flipped{transform:none!important}
+    .hc-back{position:relative!important;transform:none!important;margin-top:1rem;border:1px solid #ddd;border-radius:12px}
+  }
+
+  @media(max-width:440px){
+    .hc-scene{width:100%}
+    .hc-top,.hc-avatar-section,.hc-info-grid,.hc-qr-section,.hc-footer-bar{padding-left:1rem;padding-right:1rem}
+    .hc-name{font-size:1.1rem}
+    .hc-actions{flex-direction:column;align-items:stretch}
+  }
+</style>
+
+<div class="hc-wrapper">
+  <div style="width:100%;max-width:460px">
+    <div class="hc-scene">
+      <div class="hc-card" id="healthCard">
+        <div class="hc-front">
+          <div class="hc-front-inner">
+            <div class="hc-glow"></div>
+            <div class="hc-glow2"></div>
+            <div class="hc-pattern"></div>
+            <div class="hc-stripe"></div>
+
+            <div class="hc-top">
+              <div class="hc-logo">
+                <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M30 8C25 8 20 12 18 16C14 12 8 14 8 22C8 30 18 38 30 48C42 38 52 30 52 22C52 14 46 12 42 16C40 12 35 8 30 8Z" fill="#12a99b" opacity="0.3"/>
+                  <path d="M30 14L33 20H27L30 14Z" fill="#12a99b"/>
+                  <path d="M26 22H34V24H32V30H28V24H26V22Z" fill="#fff"/>
+                </svg>
+                <span class="hc-logo-text">مفاصل</span>
+              </div>
+              <span class="hc-type">بطاقة صحية</span>
+            </div>
+
+            <div class="hc-avatar-section">
+              <div class="hc-avatar-ring">
+                <div class="hc-avatar-inner">
+                  <% if (user.avatar) { %>
+                    <img src="<%= user.avatar %>" alt="<%= user.name %>">
+                  <% } else { %>
+                    <i class="fas fa-user"></i>
+                  <% } %>
+                </div>
+              </div>
+              <div class="hc-name"><%= user.name %></div>
+              <div class="hc-member-id">MFS-<%= user._id.toString().slice(-8).toUpperCase() %></div>
+            </div>
+
+            <div class="hc-info-grid">
+              <div class="hc-info-item">
+                <span class="hc-info-label"><i class="fas fa-tint"></i> فصيلة الدم</span>
+                <span class="hc-info-value blood"><%= user.medicalProfile?.bloodType || '—' %></span>
+              </div>
+              <div class="hc-info-item">
+                <span class="hc-info-label"><i class="fas fa-id-card"></i> رقم الهوية</span>
+                <span class="hc-info-value"><%= user.nationalId ? user.nationalId.slice(0,3) + '****' + user.nationalId.slice(-3) : '—' %></span>
+              </div>
+              <div class="hc-info-item">
+                <span class="hc-info-label"><i class="fas fa-venus-mars"></i> الجنس</span>
+                <span class="hc-info-value"><%= user.gender === 'male' ? 'ذكر' : user.gender === 'female' ? 'أنثى' : '—' %></span>
+              </div>
+              <div class="hc-info-item">
+                <span class="hc-info-label"><i class="fas fa-birthday-cake"></i> العمر</span>
+                <span class="hc-info-value"><%= user.dateOfBirth ? Math.floor((Date.now() - new Date(user.dateOfBirth)) / (365.25*24*60*60*1000)) + ' سنة' : '—' %></span>
+              </div>
+            </div>
+
+            <div class="hc-qr-section">
+              <div class="hc-qr-box">
+                <img src="<%= qrImage %>" alt="QR Code">
+                <span class="hc-qr-label">امسح للتحقق</span>
+              </div>
+            </div>
+
+            <div class="hc-footer-bar">
+              <span class="hc-footer-text">Mafasel Medical Platform</span>
+              <span class="hc-emergency"><i class="fas fa-phone-alt"></i> طوارئ: 911</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hc-back">
+          <div class="hc-back-inner">
+            <div class="hc-back-title"><i class="fas fa-notes-medical"></i> التفاصيل الطبية</div>
+
+            <div class="hc-detail-row">
+              <div class="hc-detail-icon ic-red"><i class="fas fa-allergies"></i></div>
+              <div>
+                <span class="hc-detail-label">الحساسية</span>
+                <span class="hc-detail-value"><%= (user.medicalProfile?.allergies || []).length > 0 ? user.medicalProfile.allergies.join('، ') : 'لا يوجد' %></span>
+              </div>
+            </div>
+
+            <div class="hc-detail-row">
+              <div class="hc-detail-icon ic-amber"><i class="fas fa-heartbeat"></i></div>
+              <div>
+                <span class="hc-detail-label">أمراض مزمنة</span>
+                <span class="hc-detail-value"><%= (user.medicalProfile?.chronicDiseases || []).length > 0 ? user.medicalProfile.chronicDiseases.join('، ') : 'لا يوجد' %></span>
+              </div>
+            </div>
+
+            <div class="hc-detail-row">
+              <div class="hc-detail-icon ic-blue"><i class="fas fa-pills"></i></div>
+              <div>
+                <span class="hc-detail-label">أدوية حالية</span>
+                <span class="hc-detail-value"><%= (user.medicalProfile?.medications || []).length > 0 ? user.medicalProfile.medications.join('، ') : 'لا يوجد' %></span>
+              </div>
+            </div>
+
+            <div class="hc-detail-row">
+              <div class="hc-detail-icon ic-teal"><i class="fas fa-weight"></i></div>
+              <div>
+                <span class="hc-detail-label">الطول / الوزن</span>
+                <span class="hc-detail-value"><%= user.medicalProfile?.height ? user.medicalProfile.height + ' سم' : '—' %> / <%= user.medicalProfile?.weight ? user.medicalProfile.weight + ' كغ' : '—' %></span>
+              </div>
+            </div>
+
+            <div class="hc-detail-row">
+              <div class="hc-detail-icon ic-purple"><i class="fas fa-phone-alt"></i></div>
+              <div>
+                <span class="hc-detail-label">جهة اتصال طوارئ</span>
+                <span class="hc-detail-value"><%= user.medicalProfile?.emergencyContact?.name ? user.medicalProfile.emergencyContact.name + ' (' + (user.medicalProfile.emergencyContact.relation || '') + ') ' + (user.medicalProfile.emergencyContact.phone || '') : 'غير محدد' %></span>
+              </div>
+            </div>
+
+            <div class="hc-detail-row">
+              <div class="hc-detail-icon ic-teal"><i class="fas fa-envelope"></i></div>
+              <div>
+                <span class="hc-detail-label">البريد الإلكتروني</span>
+                <span class="hc-detail-value" style="direction:ltr;text-align:right"><%= user.email || '—' %></span>
+              </div>
+            </div>
+
+            <div class="hc-detail-row">
+              <div class="hc-detail-icon ic-blue"><i class="fas fa-mobile-alt"></i></div>
+              <div>
+                <span class="hc-detail-label">رقم الجوال</span>
+                <span class="hc-detail-value" style="direction:ltr;text-align:right"><%= user.phone || '—' %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hc-flip-hint"><i class="fas fa-sync-alt"></i> اضغط على البطاقة لقلبها</p>
+
+    <div class="hc-actions">
+      <button class="hc-btn hc-btn-apple" onclick="addToAppleWallet()">
+        <i class="fab fa-apple"></i> أضف إلى Wallet
+      </button>
+      <button class="hc-btn hc-btn-download" onclick="downloadCard()">
+        <i class="fas fa-download"></i> تحميل
+      </button>
+      <button class="hc-btn hc-btn-flip" onclick="document.getElementById('healthCard').classList.toggle('flipped')">
+        <i class="fas fa-sync-alt"></i> قلب
+      </button>
+      <button class="hc-btn hc-btn-print" onclick="window.print()">
+        <i class="fas fa-print"></i> طباعة
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById('healthCard');
+  card.addEventListener('click', function(e) {
+    if (e.target.closest('.hc-btn')) return;
+    this.classList.toggle('flipped');
+  });
+
+  let startX = 0;
+  card.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  card.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].clientX - startX;
+    if (Math.abs(diff) > 50) card.classList.toggle('flipped');
+  });
+
+  function addToAppleWallet() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      const overlay = document.createElement('div');
+      overlay.id = 'walletOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;display:flex;align-items:center;justify-content:center';
+      const modal = document.createElement('div');
+      modal.style.cssText = 'background:#fff;border-radius:20px;padding:2rem;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;max-width:320px;font-family:Tajawal';
+      modal.innerHTML = `
+        <div style="width:60px;height:60px;background:#000;border-radius:14px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center">
+          <i class="fab fa-apple" style="color:#fff;font-size:1.8rem"></i>
+        </div>
+        <h3 style="margin:0 0 0.5rem;color:#101d23">إضافة إلى Apple Wallet</h3>
+        <p style="color:#666;font-size:0.8rem;margin-bottom:1rem">سيتم تحميل صورة البطاقة الصحية لإضافتها يدوياً.</p>
+        <div style="display:flex;gap:0.5rem;justify-content:center">
+          <button onclick="document.getElementById('walletOverlay').remove();downloadCard()" style="background:#000;color:#fff;border:none;padding:0.6rem 1.5rem;border-radius:10px;font-family:Tajawal;font-weight:700;cursor:pointer">تحميل البطاقة</button>
+          <button onclick="document.getElementById('walletOverlay').remove()" style="background:#f1f5f9;color:#101d23;border:none;padding:0.6rem 1.5rem;border-radius:10px;font-family:Tajawal;font-weight:700;cursor:pointer">إلغاء</button>
+        </div>
+      `;
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+    } else {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#101d23;color:#fff;padding:0.8rem 1.5rem;border-radius:12px;font-size:0.8rem;z-index:9999;font-family:Tajawal;box-shadow:0 8px 30px rgba(0,0,0,0.3);display:flex;align-items:center;gap:0.5rem';
+      toast.innerHTML = '<i class="fab fa-apple" style="font-size:1.2rem"></i> هذه الميزة متاحة فقط على أجهزة Apple';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  }
+
+  function downloadAsWalletPass() {
+    downloadCard();
+  }
+
+  function downloadCard() {
+    const el = document.querySelector('.hc-front-inner');
+    const canvas = document.createElement('canvas');
+    const scale = 3;
+    canvas.width = el.offsetWidth * scale;
+    canvas.height = el.offsetHeight * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    const grad = ctx.createLinearGradient(0, 0, el.offsetWidth, el.offsetHeight);
+    grad.addColorStop(0, '#101d23');
+    grad.addColorStop(0.4, '#1a2e38');
+    grad.addColorStop(1, '#0d1920');
+    ctx.fillStyle = grad;
+    ctx.roundRect(0, 0, el.offsetWidth, el.offsetHeight, 24);
+    ctx.fill();
+
+    ctx.fillStyle = '#12a99b';
+    ctx.fillRect(0, 0, el.offsetWidth, 4);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 22px Tajawal';
+    ctx.fillText('<%= user.name %>', el.offsetWidth / 2, 90);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '12px monospace';
+    ctx.fillText('MFS-<%= user._id.toString().slice(-8).toUpperCase() %>', el.offsetWidth / 2, 110);
+
+    ctx.font = 'bold 14px Tajawal';
+    ctx.fillStyle = '#12a99b';
+    ctx.fillText('<%= user.medicalProfile?.bloodType || "—" %>', el.offsetWidth * 0.25, 150);
+    ctx.fillStyle = '#fff';
+    ctx.fillText('<%= user.nationalId ? user.nationalId.slice(0,3) + "****" + user.nationalId.slice(-3) : "—" %>', el.offsetWidth * 0.75, 150);
+
+    const qrImg = new Image();
+    qrImg.onload = function() {
+      const qrSize = 100;
+      ctx.drawImage(qrImg, (el.offsetWidth - qrSize) / 2, 170, qrSize, qrSize);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = '10px Tajawal';
+      ctx.fillText('Mafasel Medical Platform', el.offsetWidth / 2, 290);
+
+      const link = document.createElement('a');
+      link.download = 'mafasel-health-card.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+    qrImg.src = '<%= qrImage %>';
+  }
+</script>
+<%- include('../partials/footer') %>

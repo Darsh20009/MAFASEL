@@ -109,6 +109,7 @@ app.use('/medical-profile', medicalProfileRoutes);
 app.use('/email', emailRoutes);
 app.use('/maps', mapsRoutes);
 app.use('/scheduler', schedulerRoutes);
+app.use('/health-card', require('./modules/users/health-card.routes'));
 
 app.get('/presentation', (req, res) => {
   res.render('pages/presentation', { title: 'مفاصل - العرض التقديمي', user: req.session.user || null, success: null, error: null });
@@ -244,6 +245,7 @@ async function startServer() {
         console.log('Default admin created: admin@mafasel.com / admin123');
       }
 
+      if (process.env.NODE_ENV !== 'production') {
       const demoAccounts = [
         { name: 'مريض تجريبي', email: 'patient@mafasel.com', phone: '0500000001', role: 'patient' },
         { name: 'د. أحمد الطبيب', email: 'doctor@mafasel.com', phone: '0500000002', role: 'doctor' },
@@ -264,6 +266,7 @@ async function startServer() {
             console.log('Demo account created: ' + acc.email);
           } catch(e) { console.log('Demo skip: ' + acc.email + ' - ' + e.message); }
         }
+      }
       }
 
       const Banner = require('./modules/admin/banner.model');
