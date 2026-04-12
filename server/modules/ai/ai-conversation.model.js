@@ -11,6 +11,11 @@ const aiMessageSchema = new mongoose.Schema({
     referralSpecialty: { type: String },
     escalated: { type: Boolean, default: false }
   },
+  persona: {
+    name: { type: String },
+    title: { type: String },
+    avatar: { type: String }
+  },
   timestamp: { type: Date, default: Date.now }
 });
 
@@ -27,6 +32,12 @@ const aiConversationSchema = new mongoose.Schema({
     enum: ['active', 'resolved', 'escalated', 'closed'],
     default: 'active'
   },
+  assignedPersona: {
+    name: { type: String },
+    title: { type: String },
+    avatar: { type: String },
+    department: { type: String }
+  },
   messages: [aiMessageSchema],
   escalation: {
     department: { type: String },
@@ -39,6 +50,12 @@ const aiConversationSchema = new mongoose.Schema({
     symptoms: [String],
     analyzedSpecialty: { type: String },
     urgencyLevel: { type: String, enum: ['low', 'medium', 'high', 'emergency'], default: 'low' }
+  },
+  report: {
+    generated: { type: Boolean, default: false },
+    content: { type: String },
+    generatedAt: { type: Date },
+    type: { type: String, enum: ['medical', 'support', 'general'] }
   },
   messageCount: { type: Number, default: 0 },
   lastMessageAt: { type: Date, default: Date.now }

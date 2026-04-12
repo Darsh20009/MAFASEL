@@ -1,60 +1,455 @@
 <%- include('../partials/header') %>
 <div class="main-content">
   <div class="container">
-    <div class="page-header">
-      <h1><i class="fas fa-robot"></i> المساعد الذكي</h1>
-    </div>
-    <div class="ai-chat-container">
-      <div class="ai-messages" id="aiMessages">
-        <div class="ai-msg ai-bot">
-          <div class="ai-avatar"><i class="fas fa-robot"></i></div>
-          <div class="ai-bubble">مرحباً! أنا المساعد الطبي الذكي في منصة مفاصل. كيف يمكنني مساعدتك اليوم؟</div>
+    <div class="care-team-layout">
+      <div class="care-sidebar" id="careSidebar">
+        <div class="care-sidebar-header">
+          <h3><i class="fas fa-comments"></i> المحادثات</h3>
+          <button class="btn-new-chat" id="btnNewChat" title="محادثة جديدة">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        <div class="care-dept-tabs">
+          <button class="dept-tab active" data-type="all">الكل</button>
+          <button class="dept-tab" data-type="medical">طبي</button>
+          <button class="dept-tab" data-type="pharmacy">صيدلة</button>
+          <button class="dept-tab" data-type="insurance">تأمين</button>
+          <button class="dept-tab" data-type="support">دعم</button>
+          <button class="dept-tab" data-type="complaint">شكاوى</button>
+        </div>
+        <div class="care-conv-list" id="convList">
+          <% if (conversations && conversations.length > 0) { %>
+            <% conversations.forEach(conv => { %>
+              <div class="conv-item" data-id="<%= conv._id %>" data-type="<%= conv.type %>">
+                <div class="conv-avatar-small">
+                  <% if (conv.assignedPersona && conv.assignedPersona.avatar) { %>
+                    <% if (conv.assignedPersona.avatar.includes('doctor')) { %>
+                      <i class="fas fa-user-md"></i>
+                    <% } else if (conv.assignedPersona.avatar.includes('pharmacist')) { %>
+                      <i class="fas fa-prescription-bottle-medical"></i>
+                    <% } else { %>
+                      <i class="fas fa-headset"></i>
+                    <% } %>
+                  <% } else { %>
+                    <i class="fas fa-user"></i>
+                  <% } %>
+                </div>
+                <div class="conv-info">
+                  <div class="conv-name"><%= conv.assignedPersona ? conv.assignedPersona.name : 'فريق الرعاية' %></div>
+                  <div class="conv-preview"><%= conv.title %></div>
+                </div>
+                <div class="conv-meta">
+                  <span class="conv-time"><%= conv.lastMessageAt ? new Date(conv.lastMessageAt).toLocaleDateString('ar-SA', {month:'short', day:'numeric'}) : '' %></span>
+                  <% if (conv.status === 'escalated') { %>
+                    <span class="conv-badge escalated">محوّل</span>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
         </div>
       </div>
-      <form class="ai-input" id="aiForm">
-        <input type="text" id="aiText" placeholder="اكتب سؤالك الطبي..." required>
-        <button type="submit" class="btn btn-primary" id="aiSend"><i class="fas fa-paper-plane"></i></button>
-      </form>
+
+      <div class="care-chat-area" id="chatArea">
+        <div class="care-chat-header" id="chatHeader">
+          <button class="btn-toggle-sidebar" id="btnToggleSidebar"><i class="fas fa-bars"></i></button>
+          <div class="staff-profile" id="staffProfile">
+            <div class="staff-avatar" id="staffAvatar">
+              <i class="fas fa-user-md"></i>
+            </div>
+            <div class="staff-info">
+              <div class="staff-name" id="staffName">فريق الرعاية الصحية</div>
+              <div class="staff-status" id="staffStatus">
+                <span class="online-dot"></span> متصل الآن
+              </div>
+            </div>
+          </div>
+          <div class="chat-header-actions">
+            <button class="btn-chat-action" id="btnReport" title="طلب تقرير" style="display:none">
+              <i class="fas fa-file-medical"></i>
+            </button>
+            <button class="btn-chat-action" id="btnDeleteConv" title="حذف المحادثة" style="display:none">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="care-messages" id="careMessages">
+          <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-icon">
+              <i class="fas fa-hand-holding-medical"></i>
+            </div>
+            <h2>مرحباً بك في منصة مفاصل</h2>
+            <p>فريقنا الطبي والإداري جاهز لمساعدتك. اختر نوع الخدمة أو اكتب رسالتك مباشرة.</p>
+            <div class="welcome-services">
+              <button class="service-card" data-type="medical">
+                <div class="service-icon"><i class="fas fa-stethoscope"></i></div>
+                <div class="service-name">استشارة طبية</div>
+                <div class="service-desc">تحدث مع طبيب مختص</div>
+              </button>
+              <button class="service-card" data-type="pharmacy">
+                <div class="service-icon"><i class="fas fa-pills"></i></div>
+                <div class="service-name">الصيدلية</div>
+                <div class="service-desc">استفسارات دوائية</div>
+              </button>
+              <button class="service-card" data-type="insurance">
+                <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="service-name">التأمين</div>
+                <div class="service-desc">تغطيات ومطالبات</div>
+              </button>
+              <button class="service-card" data-type="support">
+                <div class="service-icon"><i class="fas fa-headset"></i></div>
+                <div class="service-name">خدمة العملاء</div>
+                <div class="service-desc">مساعدة واستفسارات</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="care-actions-bar" id="actionsBar" style="display:none"></div>
+
+        <form class="care-input" id="chatForm">
+          <button type="button" class="btn-attach" title="إرفاق ملف"><i class="fas fa-paperclip"></i></button>
+          <input type="text" id="chatInput" placeholder="اكتب رسالتك..." required autocomplete="off">
+          <button type="submit" class="btn-send" id="btnSend"><i class="fas fa-paper-plane"></i></button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
-<script>
-  const aiForm = document.getElementById('aiForm');
-  const aiMessages = document.getElementById('aiMessages');
-  const aiText = document.getElementById('aiText');
-  const aiSend = document.getElementById('aiSend');
 
-  aiForm.addEventListener('submit', async (e) => {
+<div class="report-modal" id="reportModal" style="display:none">
+  <div class="report-modal-content">
+    <div class="report-modal-header">
+      <h3><i class="fas fa-file-medical"></i> التقرير الطبي</h3>
+      <button class="btn-close-modal" id="btnCloseReport"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="report-modal-body" id="reportBody">
+      <div class="report-loading"><i class="fas fa-spinner fa-spin"></i> جاري إعداد التقرير...</div>
+    </div>
+    <div class="report-modal-footer">
+      <button class="btn btn-secondary" id="btnPrintReport"><i class="fas fa-print"></i> طباعة</button>
+      <button class="btn btn-primary" id="btnCloseReport2">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const messagesEl = document.getElementById('careMessages');
+  const chatForm = document.getElementById('chatForm');
+  const chatInput = document.getElementById('chatInput');
+  const btnSend = document.getElementById('btnSend');
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const staffName = document.getElementById('staffName');
+  const staffStatus = document.getElementById('staffStatus');
+  const staffAvatar = document.getElementById('staffAvatar');
+  const actionsBar = document.getElementById('actionsBar');
+  const btnReport = document.getElementById('btnReport');
+  const btnDeleteConv = document.getElementById('btnDeleteConv');
+  const convItems = document.querySelectorAll('.conv-item');
+  const deptTabs = document.querySelectorAll('.dept-tab');
+  const btnNewChat = document.getElementById('btnNewChat');
+  const sidebar = document.getElementById('careSidebar');
+  const btnToggle = document.getElementById('btnToggleSidebar');
+
+  let currentConvId = null;
+  let currentPersona = null;
+  let msgCount = 0;
+
+  function esc(str) {
+    if (!str) return '';
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function nl2br(str) {
+    return esc(str).replace(/\n/g, '<br>');
+  }
+
+  function getAvatarIcon(avatar) {
+    if (!avatar) return 'fa-user';
+    if (avatar.includes('doctor')) return 'fa-user-md';
+    if (avatar.includes('pharmacist')) return 'fa-prescription-bottle-medical';
+    return 'fa-headset';
+  }
+
+  function updateHeader(persona) {
+    if (!persona) return;
+    currentPersona = persona;
+    staffName.textContent = persona.name;
+    staffStatus.innerHTML = '<span class="online-dot"></span> متصل الآن';
+    staffAvatar.innerHTML = '<i class="fas ' + getAvatarIcon(persona.avatar) + '"></i>';
+    btnReport.style.display = 'inline-flex';
+    btnDeleteConv.style.display = 'inline-flex';
+  }
+
+  function addMessage(content, role, persona) {
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+
+    const div = document.createElement('div');
+    div.className = 'care-msg ' + (role === 'user' ? 'msg-user' : 'msg-staff');
+
+    var timeStr = new Date().toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+    if (role === 'assistant' || role === 'staff') {
+      var avatarClass = persona ? getAvatarIcon(persona.avatar) : 'fa-user-md';
+      div.innerHTML =
+        '<div class="msg-avatar"><i class="fas ' + avatarClass + '"></i></div>' +
+        '<div class="msg-content">' +
+          (persona ? '<div class="msg-sender">' + esc(persona.name) + '</div>' : '') +
+          '<div class="msg-bubble">' + nl2br(content) + '</div>' +
+          '<div class="msg-time">' + esc(timeStr) + '</div>' +
+        '</div>';
+    } else {
+      div.innerHTML =
+        '<div class="msg-content">' +
+          '<div class="msg-bubble">' + nl2br(content) + '</div>' +
+          '<div class="msg-time">' + esc(timeStr) + '</div>' +
+        '</div>';
+    }
+
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function addTypingIndicator() {
+    const div = document.createElement('div');
+    div.className = 'care-msg msg-staff';
+    div.id = 'typingIndicator';
+    const avatarClass = currentPersona ? getAvatarIcon(currentPersona.avatar) : 'fa-user-md';
+    div.innerHTML =
+      '<div class="msg-avatar"><i class="fas ' + avatarClass + '"></i></div>' +
+      '<div class="msg-content">' +
+        '<div class="msg-bubble typing-bubble">' +
+          '<div class="typing-dots"><span></span><span></span><span></span></div>' +
+        '</div>' +
+      '</div>';
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return div;
+  }
+
+  function removeTypingIndicator() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  }
+
+  function showActions(actions) {
+    if (!actions || actions.length === 0) {
+      actionsBar.style.display = 'none';
+      return;
+    }
+    actionsBar.style.display = 'flex';
+    var allowedIcons = ['fa-stethoscope','fa-pills','fa-shield-alt','fa-comment-dots','fa-bone','fa-heartbeat','fa-brain','fa-eye','fa-ear-listen','fa-tooth','fa-baby','fa-person-pregnant','fa-droplet','fa-hand-dots','fa-stomach','fa-prescription-bottle-medical'];
+    actionsBar.innerHTML = actions.map(function(a) {
+      var safeUrl = (a.url && (a.url.startsWith('/') || a.url.startsWith('http'))) ? esc(a.url) : '#';
+      var safeIcon = allowedIcons.includes(a.icon) ? a.icon : 'fa-arrow-right';
+      return '<a href="' + safeUrl + '" class="action-btn"><i class="fas ' + safeIcon + '"></i> ' + esc(a.label) + '</a>';
+    }).join('');
+  }
+
+  async function loadConversation(convId) {
+    try {
+      const res = await fetch('/ai/conversation/' + convId);
+      const data = await res.json();
+      if (!data.success) return;
+
+      currentConvId = convId;
+      const conv = data.conversation;
+      msgCount = conv.messageCount || 0;
+
+      messagesEl.innerHTML = '';
+      if (welcomeScreen) welcomeScreen.style.display = 'none';
+
+      if (conv.assignedPersona) {
+        updateHeader(conv.assignedPersona);
+      }
+
+      conv.messages.forEach(function(m) {
+        if (m.role === 'system') return;
+        addMessage(m.content, m.role, m.role === 'assistant' ? (m.persona || conv.assignedPersona) : null);
+      });
+
+      convItems.forEach(function(el) {
+        el.classList.toggle('active', el.dataset.id === convId);
+      });
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  async function startNewConversation(type) {
+    try {
+      const res = await fetch('/ai/conversation/new', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ type: type || 'general' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        currentConvId = data.conversationId;
+        msgCount = 0;
+        messagesEl.innerHTML = '';
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+        if (data.persona) {
+          updateHeader(data.persona);
+        }
+        actionsBar.style.display = 'none';
+
+        const greetings = {
+          medical: 'السلام عليكم، أنا ' + (data.persona ? data.persona.name : 'الطبيب') + '. كيف أقدر أساعدك اليوم؟ اوصف لي الأعراض اللي تحس فيها.',
+          support: 'أهلاً وسهلاً! أنا ' + (data.persona ? data.persona.name : 'خدمة العملاء') + '. كيف أقدر أساعدك؟',
+          insurance: 'مرحباً! أنا ' + (data.persona ? data.persona.name : 'قسم التأمين') + '. كيف أقدر أفيدك بخصوص التأمين الصحي؟',
+          pharmacy: 'أهلاً! أنا ' + (data.persona ? data.persona.name : 'الصيدلي') + '. عندك استفسار عن أدوية أو وصفة طبية؟',
+          complaint: 'مرحباً، أنا ' + (data.persona ? data.persona.name : 'علاقات المرضى') + '. أنا هنا أسمعك وأساعدك. تفضل.',
+          general: 'أهلاً وسهلاً! أنا ' + (data.persona ? data.persona.name : 'منسقة الخدمات') + '. كيف أقدر أخدمك اليوم؟'
+        };
+
+        addMessage(greetings[type] || greetings.general, 'assistant', data.persona);
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  chatForm.addEventListener('submit', async function(e) {
     e.preventDefault();
-    const msg = aiText.value.trim();
+    const msg = chatInput.value.trim();
     if (!msg) return;
 
-    const userDiv = document.createElement('div');
-    userDiv.className = 'ai-msg ai-user';
-    userDiv.innerHTML = '<div class="ai-bubble">' + msg + '</div><div class="ai-avatar"><i class="fas fa-user"></i></div>';
-    aiMessages.appendChild(userDiv);
-    aiText.value = '';
-    aiSend.disabled = true;
+    addMessage(msg, 'user');
+    chatInput.value = '';
+    btnSend.disabled = true;
+    actionsBar.style.display = 'none';
 
-    const loadDiv = document.createElement('div');
-    loadDiv.className = 'ai-msg ai-bot';
-    loadDiv.innerHTML = '<div class="ai-avatar"><i class="fas fa-robot"></i></div><div class="ai-bubble"><i class="fas fa-spinner fa-spin"></i> جاري التفكير...</div>';
-    aiMessages.appendChild(loadDiv);
-    aiMessages.scrollTop = aiMessages.scrollHeight;
+    const typingEl = addTypingIndicator();
 
     try {
       const res = await fetch('/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg })
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ message: msg, conversationId: currentConvId })
       });
       const data = await res.json();
-      loadDiv.querySelector('.ai-bubble').innerHTML = data.reply.replace(/\n/g, '<br>');
+      removeTypingIndicator();
+
+      if (data.success) {
+        if (!currentConvId) currentConvId = data.conversationId;
+        if (data.persona) updateHeader(data.persona);
+        addMessage(data.reply, 'assistant', data.persona || currentPersona);
+        msgCount += 2;
+
+        if (data.routing && data.routing.actions && data.routing.actions.length > 0) {
+          showActions(data.routing.actions);
+        }
+      } else {
+        addMessage('عذراً، حدث خطأ. حاول مرة أخرى.', 'assistant', currentPersona);
+      }
     } catch(err) {
-      loadDiv.querySelector('.ai-bubble').textContent = 'عذراً، حدث خطأ. حاول مرة أخرى.';
+      removeTypingIndicator();
+      addMessage('عذراً، حدث خطأ في الاتصال.', 'assistant', currentPersona);
     }
-    aiSend.disabled = false;
-    aiMessages.scrollTop = aiMessages.scrollHeight;
+    btnSend.disabled = false;
+    chatInput.focus();
   });
+
+  convItems.forEach(function(item) {
+    item.addEventListener('click', function() {
+      loadConversation(this.dataset.id);
+      sidebar.classList.remove('show');
+    });
+  });
+
+  deptTabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      deptTabs.forEach(function(t) { t.classList.remove('active'); });
+      this.classList.add('active');
+      const type = this.dataset.type;
+      convItems.forEach(function(item) {
+        item.style.display = (type === 'all' || item.dataset.type === type) ? 'flex' : 'none';
+      });
+    });
+  });
+
+  document.querySelectorAll('.service-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      startNewConversation(this.dataset.type);
+    });
+  });
+
+  btnNewChat.addEventListener('click', function() {
+    currentConvId = null;
+    currentPersona = null;
+    msgCount = 0;
+    messagesEl.innerHTML = '';
+    if (welcomeScreen) {
+      welcomeScreen.style.display = 'flex';
+      messagesEl.appendChild(welcomeScreen);
+    }
+    staffName.textContent = 'فريق الرعاية الصحية';
+    staffStatus.innerHTML = '<span class="online-dot"></span> متصل الآن';
+    staffAvatar.innerHTML = '<i class="fas fa-user-md"></i>';
+    btnReport.style.display = 'none';
+    btnDeleteConv.style.display = 'none';
+    actionsBar.style.display = 'none';
+    convItems.forEach(function(el) { el.classList.remove('active'); });
+  });
+
+  btnToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('show');
+  });
+
+  btnReport.addEventListener('click', async function() {
+    if (!currentConvId) return;
+    if (msgCount < 4) {
+      alert('المحادثة قصيرة جداً لإنشاء تقرير. تحتاج على الأقل رسالتين من كل طرف.');
+      return;
+    }
+    const modal = document.getElementById('reportModal');
+    const body = document.getElementById('reportBody');
+    modal.style.display = 'flex';
+    body.innerHTML = '<div class="report-loading"><i class="fas fa-spinner fa-spin"></i> جاري إعداد التقرير...</div>';
+
+    try {
+      const res = await fetch('/ai/report/' + currentConvId, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        var header = '';
+        if (data.persona) {
+          header = '<div class="report-header-info"><strong>' + esc(data.persona.name) + '</strong><br>' + esc(data.persona.title) + '</div><hr>';
+        }
+        body.innerHTML = header + '<div class="report-text">' + nl2br(data.report) + '</div>';
+      } else {
+        body.innerHTML = '<p class="text-error">' + esc(data.message || 'لم نتمكن من إنشاء التقرير') + '</p>';
+      }
+    } catch(err) {
+      body.innerHTML = '<p class="text-error">حدث خطأ في الاتصال</p>';
+    }
+  });
+
+  document.getElementById('btnCloseReport').addEventListener('click', function() {
+    document.getElementById('reportModal').style.display = 'none';
+  });
+  document.getElementById('btnCloseReport2').addEventListener('click', function() {
+    document.getElementById('reportModal').style.display = 'none';
+  });
+  document.getElementById('btnPrintReport').addEventListener('click', function() {
+    const content = document.getElementById('reportBody').innerHTML;
+    const win = window.open('', '_blank');
+    win.document.write('<html dir="rtl"><head><title>تقرير طبي - مفاصل</title><style>body{font-family:Arial,sans-serif;padding:40px;direction:rtl;line-height:1.8}hr{margin:20px 0}</style></head><body>' + content + '</body></html>');
+    win.document.close();
+    win.print();
+  });
+
+  btnDeleteConv.addEventListener('click', async function() {
+    if (!currentConvId) return;
+    if (!confirm('هل تريد حذف هذه المحادثة؟')) return;
+    try {
+      await fetch('/ai/conversation/' + currentConvId, { method: 'DELETE' });
+      location.reload();
+    } catch(err) {}
+  });
+})();
 </script>
 <%- include('../partials/footer') %>
