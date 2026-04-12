@@ -128,6 +128,17 @@
 - `client/views/partials/header.ejs` يعرض روابط مختلفة حسب دور المستخدم
 - الأدوار: patient, doctor, pharmacist, admin, moderator, company, employee, insurance_agent
 
+## الخريطة (Maps)
+- نموذج Location: name, type (hospital/pharmacy), lat, lng, address, city, phone, workingHours
+- خريطة تفاعلية باستخدام Leaflet.js مع بلاطات CARTO
+- علامات مخصصة: أزرق للمستشفيات، أخضر للصيدليات
+- حساب المسافة باستخدام صيغة Haversine + تقدير الوقت
+- فتح في خرائط Google للتنقل
+- فلترة حسب النوع (مستشفى/صيدلية) والمدينة
+- إدارة المواقع للمدير: إضافة/حذف مع تحديد الإحداثيات بالنقر على الخريطة
+- 18 موقع مبدئي (مستشفيات وصيدليات في الرياض وجدة ومكة والدمام والخبر والمدينة)
+- المسارات: `/maps`, `/maps/api/locations`, `/maps/add`, `/maps/delete/:id`
+
 ## التسجيل
 - التسجيل للمرضى فقط (لا يوجد اختيار دور)
 - المدير ينشئ الحسابات الأخرى (أطباء، صيادلة، مشرفين، شركات، موظفين)

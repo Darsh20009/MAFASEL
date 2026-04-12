@@ -1,0 +1,503 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container" style="max-width:1200px;">
+    <div class="page-header" style="margin-bottom:1rem;">
+      <h1 style="font-size:1.4rem;"><i class="fas fa-map-marked-alt" style="color:var(--secondary);"></i> الخريطة</h1>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <form method="GET" action="/maps" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <select name="type" class="form-select-sm" onchange="this.form.submit()">
+            <option value="">الكل</option>
+            <option value="hospital" <%= selectedType === 'hospital' ? 'selected' : '' %>>مستشفيات</option>
+            <option value="pharmacy" <%= selectedType === 'pharmacy' ? 'selected' : '' %>>صيدليات</option>
+          </select>
+          <select name="city" class="form-select-sm" onchange="this.form.submit()">
+            <option value="">كل المدن</option>
+            <% cities.forEach(function(c) { %>
+            <option value="<%= c %>" <%= selectedCity === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+        </form>
+        <% if (user && (user.role === 'admin' || user.role === 'moderator')) { %>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('addLocationModal').style.display='flex'"><i class="fas fa-plus"></i> إضافة موقع</button>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="maps-layout">
+      <div class="map-container" id="mapContainer">
+        <div class="map-placeholder" id="mapPlaceholder">
+          <i class="fas fa-map-marked-alt"></i>
+          <p>جاري تحميل الخريطة...</p>
+        </div>
+        <div id="map" style="width:100%;height:100%;border-radius:16px;"></div>
+      </div>
+
+      <div class="locations-sidebar">
+        <div class="locations-list-header">
+          <h3><i class="fas fa-list-ul"></i> المواقع (<%= locations.length %>)</h3>
+        </div>
+        <div class="locations-list" id="locationsList">
+          <% if (locations.length === 0) { %>
+          <div class="empty-state-sm">
+            <i class="fas fa-map-pin"></i>
+            <p>لا توجد مواقع</p>
+          </div>
+          <% } %>
+          <% locations.forEach(function(loc) { %>
+          <div class="location-card" data-lat="<%= loc.lat %>" data-lng="<%= loc.lng %>" data-id="<%= loc._id %>" onclick="focusLocation(<%= loc.lat %>, <%= loc.lng %>, this)">
+            <div class="location-card-icon <%= loc.type === 'hospital' ? 'hospital' : 'pharmacy' %>">
+              <i class="fas fa-<%= loc.type === 'hospital' ? 'hospital' : 'prescription-bottle-alt' %>"></i>
+            </div>
+            <div class="location-card-info">
+              <strong><%= loc.name %></strong>
+              <span class="location-type-badge <%= loc.type %>"><%= loc.type === 'hospital' ? 'مستشفى' : 'صيدلية' %></span>
+              <% if (loc.address) { %><p class="location-address"><i class="fas fa-map-pin"></i> <%= loc.address %></p><% } %>
+              <% if (loc.city) { %><p class="location-city"><i class="fas fa-city"></i> <%= loc.city %></p><% } %>
+              <% if (loc.phone) { %><p class="location-phone"><i class="fas fa-phone"></i> <%= loc.phone %></p><% } %>
+              <% if (loc.workingHours) { %><p class="location-hours"><i class="fas fa-clock"></i> <%= loc.workingHours %></p><% } %>
+            </div>
+            <div class="location-card-actions">
+              <button class="btn-icon" onclick="event.stopPropagation();calcDistance(<%= loc.lat %>, <%= loc.lng %>, '<%= loc.name %>')" title="حساب المسافة"><i class="fas fa-route"></i></button>
+              <button class="btn-icon" onclick="event.stopPropagation();openInMaps(<%= loc.lat %>, <%= loc.lng %>)" title="فتح في الخرائط"><i class="fas fa-external-link-alt"></i></button>
+              <% if (user && (user.role === 'admin' || user.role === 'moderator')) { %>
+              <form method="POST" action="/maps/delete/<%= loc._id %>" style="display:inline;" onsubmit="return confirm('هل أنت متأكد من حذف هذا الموقع؟')">
+                <button type="submit" class="btn-icon danger" title="حذف"><i class="fas fa-trash"></i></button>
+              </form>
+              <% } %>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <div class="distance-result" id="distanceResult" style="display:none;">
+      <div class="distance-card">
+        <button class="distance-close" onclick="document.getElementById('distanceResult').style.display='none'"><i class="fas fa-times"></i></button>
+        <div class="distance-icon"><i class="fas fa-route"></i></div>
+        <h3 id="distanceName"></h3>
+        <div class="distance-value" id="distanceValue"></div>
+        <p id="distanceDuration"></p>
+        <button class="btn btn-primary btn-sm" id="distanceNavigate" onclick=""><i class="fas fa-directions"></i> ابدأ التنقل</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if (user && (user.role === 'admin' || user.role === 'moderator')) { %>
+<div class="modal-overlay" id="addLocationModal" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2><i class="fas fa-map-pin"></i> إضافة موقع جديد</h2>
+      <button class="modal-close" onclick="document.getElementById('addLocationModal').style.display='none'"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" action="/maps/add" class="modal-form">
+      <div class="form-group">
+        <label>اسم الموقع *</label>
+        <input type="text" name="name" required placeholder="مثال: مستشفى المملكة">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>النوع *</label>
+          <select name="type" required>
+            <option value="hospital">مستشفى</option>
+            <option value="pharmacy">صيدلية</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>المدينة</label>
+          <input type="text" name="city" placeholder="الرياض">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>خط العرض (Lat) *</label>
+          <input type="number" name="lat" step="any" required placeholder="24.7136">
+        </div>
+        <div class="form-group">
+          <label>خط الطول (Lng) *</label>
+          <input type="number" name="lng" step="any" required placeholder="46.6753">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>العنوان</label>
+        <input type="text" name="address" placeholder="شارع الملك فهد، حي العليا">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>الهاتف</label>
+          <input type="text" name="phone" placeholder="0112345678">
+        </div>
+        <div class="form-group">
+          <label>ساعات العمل</label>
+          <input type="text" name="workingHours" placeholder="24 ساعة">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:0.5rem;">
+        <p style="font-size:0.8rem;color:var(--text-muted);"><i class="fas fa-info-circle"></i> انقر على الخريطة لتحديد الإحداثيات تلقائياً</p>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-plus"></i> إضافة الموقع</button>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+.maps-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  height: 600px;
+}
+.map-container {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  min-height: 400px;
+}
+.map-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1rem;
+  z-index: 1;
+}
+.map-placeholder i { font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--secondary); }
+.locations-sidebar {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.locations-list-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.locations-list-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.locations-list-header h3 i { color: var(--secondary); }
+.locations-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+.location-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  margin-bottom: 0.35rem;
+}
+.location-card:hover, .location-card.active {
+  background: rgba(18,169,155,0.06);
+  border-color: rgba(18,169,155,0.2);
+}
+.location-card.active {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(18,169,155,0.1);
+}
+.location-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+.location-card-icon.hospital { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.location-card-icon.pharmacy { background: rgba(34,197,94,0.1); color: #22c55e; }
+.location-card-info { flex: 1; min-width: 0; }
+.location-card-info strong {
+  font-size: 0.88rem;
+  display: block;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.location-type-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.location-type-badge.hospital { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.location-type-badge.pharmacy { background: rgba(34,197,94,0.1); color: #22c55e; }
+.location-card-info p {
+  margin: 0.15rem 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.location-card-info p i { font-size: 0.65rem; color: var(--secondary); width: 12px; text-align: center; }
+.location-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+.btn-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+.btn-icon:hover { background: var(--secondary); color: #fff; border-color: var(--secondary); }
+.btn-icon.danger:hover { background: #ef4444; border-color: #ef4444; }
+.form-select-sm {
+  padding: 0.4rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.distance-result {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+.distance-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem 2rem;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+  min-width: 300px;
+}
+.distance-close {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+}
+.distance-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: rgba(18,169,155,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.75rem;
+  color: var(--secondary);
+  font-size: 1.3rem;
+}
+.distance-card h3 { font-size: 0.95rem; margin: 0 0 0.5rem; }
+.distance-value { font-size: 1.8rem; font-weight: 800; color: var(--secondary); margin-bottom: 0.25rem; }
+.distance-card p { font-size: 0.82rem; color: var(--text-muted); margin: 0 0 0.75rem; }
+.empty-state-sm {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+}
+.empty-state-sm i { font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--secondary); opacity: 0.5; }
+.empty-state-sm p { font-size: 0.85rem; }
+
+@media (max-width: 768px) {
+  .maps-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .map-container { min-height: 350px; height: 350px; }
+  .locations-sidebar { max-height: 400px; }
+  .distance-card { min-width: auto; margin: 0 1rem; }
+}
+</style>
+
+<script>
+var locationsData = <%- JSON.stringify(locations) %>;
+var map, markers = [], activeCard = null;
+
+function initMap() {
+  document.getElementById('mapPlaceholder').style.display = 'none';
+  map = L.map('map', { zoomControl: false }).setView([24.7136, 46.6753], 6);
+
+  L.control.zoom({ position: 'topleft' }).addTo(map);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  var hospitalIcon = L.divIcon({
+    className: 'custom-marker',
+    html: '<div class="marker-pin hospital"><i class="fas fa-hospital"></i></div>',
+    iconSize: [36, 44],
+    iconAnchor: [18, 44],
+    popupAnchor: [0, -44]
+  });
+
+  var pharmacyIcon = L.divIcon({
+    className: 'custom-marker',
+    html: '<div class="marker-pin pharmacy"><i class="fas fa-prescription-bottle-alt"></i></div>',
+    iconSize: [36, 44],
+    iconAnchor: [18, 44],
+    popupAnchor: [0, -44]
+  });
+
+  locationsData.forEach(function(loc) {
+    var icon = loc.type === 'hospital' ? hospitalIcon : pharmacyIcon;
+    var typeLabel = loc.type === 'hospital' ? 'مستشفى' : 'صيدلية';
+    var popupContent = '<div style="text-align:right;font-family:Tajawal;min-width:180px;">' +
+      '<strong style="font-size:0.9rem;">' + loc.name + '</strong>' +
+      '<br><span style="font-size:0.75rem;color:#888;">' + typeLabel + '</span>' +
+      (loc.address ? '<br><span style="font-size:0.78rem;"><i class="fas fa-map-pin" style="color:#12a99b;font-size:0.7rem;"></i> ' + loc.address + '</span>' : '') +
+      (loc.phone ? '<br><span style="font-size:0.78rem;"><i class="fas fa-phone" style="color:#12a99b;font-size:0.7rem;"></i> ' + loc.phone + '</span>' : '') +
+      (loc.workingHours ? '<br><span style="font-size:0.78rem;"><i class="fas fa-clock" style="color:#12a99b;font-size:0.7rem;"></i> ' + loc.workingHours + '</span>' : '') +
+      '<br><div style="margin-top:0.5rem;display:flex;gap:0.5rem;">' +
+      '<a href="https://www.google.com/maps/dir/?api=1&destination=' + loc.lat + ',' + loc.lng + '" target="_blank" style="font-size:0.75rem;color:#12a99b;text-decoration:none;"><i class="fas fa-directions"></i> التنقل</a>' +
+      '<a href="#" onclick="calcDistance(' + loc.lat + ',' + loc.lng + ',\'' + loc.name.replace(/'/g, "\\'") + '\');return false;" style="font-size:0.75rem;color:#3b82f6;text-decoration:none;"><i class="fas fa-route"></i> المسافة</a>' +
+      '</div></div>';
+
+    var marker = L.marker([loc.lat, loc.lng], { icon: icon }).addTo(map).bindPopup(popupContent);
+    markers.push({ marker: marker, id: loc._id });
+  });
+
+  if (locationsData.length > 0) {
+    var group = L.featureGroup(markers.map(function(m) { return m.marker; }));
+    map.fitBounds(group.getBounds().pad(0.1));
+  }
+
+  <% if (user && (user.role === 'admin' || user.role === 'moderator')) { %>
+  map.on('click', function(e) {
+    var modal = document.getElementById('addLocationModal');
+    if (modal && modal.style.display === 'flex') {
+      var latInput = modal.querySelector('input[name="lat"]');
+      var lngInput = modal.querySelector('input[name="lng"]');
+      if (latInput && lngInput) {
+        latInput.value = e.latlng.lat.toFixed(6);
+        lngInput.value = e.latlng.lng.toFixed(6);
+      }
+    }
+  });
+  <% } %>
+}
+
+function focusLocation(lat, lng, el) {
+  if (activeCard) activeCard.classList.remove('active');
+  el.classList.add('active');
+  activeCard = el;
+  map.setView([lat, lng], 15, { animate: true });
+  markers.forEach(function(m) {
+    var pos = m.marker.getLatLng();
+    if (Math.abs(pos.lat - lat) < 0.0001 && Math.abs(pos.lng - lng) < 0.0001) {
+      m.marker.openPopup();
+    }
+  });
+}
+
+function openInMaps(lat, lng) {
+  var url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+  window.open(url, '_blank');
+}
+
+function calcDistance(destLat, destLng, name) {
+  if (!navigator.geolocation) {
+    alert('متصفحك لا يدعم تحديد الموقع');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat1 = pos.coords.latitude;
+    var lng1 = pos.coords.longitude;
+    var R = 6371;
+    var dLat = (destLat - lat1) * Math.PI / 180;
+    var dLng = (destLng - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(destLat * Math.PI / 180) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var dist = R * c;
+
+    document.getElementById('distanceName').textContent = name;
+    document.getElementById('distanceValue').textContent = dist < 1 ? (dist * 1000).toFixed(0) + ' متر' : dist.toFixed(1) + ' كم';
+    var durationMin = Math.round((dist / 40) * 60);
+    document.getElementById('distanceDuration').textContent = 'الوقت التقريبي: ' + (durationMin < 60 ? durationMin + ' دقيقة' : Math.floor(durationMin/60) + ' ساعة و ' + (durationMin%60) + ' دقيقة');
+    document.getElementById('distanceNavigate').setAttribute('onclick', 'openInMaps(' + destLat + ',' + destLng + ')');
+    document.getElementById('distanceResult').style.display = 'block';
+
+    if (map) {
+      var bounds = L.latLngBounds([[lat1, lng1], [destLat, destLng]]);
+      map.fitBounds(bounds.pad(0.2));
+    }
+  }, function() {
+    alert('لم يتم السماح بتحديد موقعك. يرجى تفعيل خدمة الموقع.');
+  }, { enableHighAccuracy: true });
+}
+
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+
+<style>
+.marker-pin {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.marker-pin i {
+  transform: rotate(45deg);
+  font-size: 0.85rem;
+  color: #fff;
+}
+.marker-pin.hospital { background: #3b82f6; }
+.marker-pin.pharmacy { background: #22c55e; }
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+}
+.leaflet-popup-content { margin: 10px 14px !important; }
+</style>
+<%- include('../partials/footer') %>

@@ -83,6 +83,7 @@ const supportRoutes = require('./modules/admin/support.routes');
 const meetingsRoutes = require('./modules/meetings/meetings.routes');
 const medicalProfileRoutes = require('./modules/medical/medical-profile.routes');
 const emailRoutes = require('./modules/email/email.routes');
+const mapsRoutes = require('./modules/maps/maps.routes');
 
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
@@ -99,6 +100,7 @@ app.use('/admin/support', supportRoutes);
 app.use('/meetings', meetingsRoutes);
 app.use('/medical-profile', medicalProfileRoutes);
 app.use('/email', emailRoutes);
+app.use('/maps', mapsRoutes);
 
 const connectedUsers = new Map();
 
@@ -197,6 +199,9 @@ async function startServer() {
         await Banner.insertMany(defaultBanners);
         console.log('Default banners seeded (4 banners)');
       }
+
+      const seedLocations = require('./modules/maps/seed-locations');
+      await seedLocations();
 
       const MongoStore = require('connect-mongo');
       const mongoStore = MongoStore.create({
