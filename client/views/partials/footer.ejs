@@ -4,7 +4,91 @@
     <p>&copy; 2026 مفاصل - جميع الحقوق محفوظة</p>
   </div>
 </footer>
+
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <% var currentPath = typeof locals !== 'undefined' && locals.currentPath ? locals.currentPath : ''; %>
+  <% var r = user ? user.role : ''; %>
+  <a href="/dashboard" class="mobile-nav-item <%= (typeof title !== 'undefined' && title && title.includes('الرئيسية')) ? 'active' : '' %>">
+    <i class="fas fa-home"></i>
+    <span>الرئيسية</span>
+  </a>
+  <% if (r === 'patient' || r === 'doctor' || r === 'employee' || r === 'company') { %>
+  <a href="/consultations" class="mobile-nav-item">
+    <i class="fas fa-stethoscope"></i>
+    <span>الاستشارات</span>
+  </a>
+  <% } else if (r === 'pharmacist') { %>
+  <a href="/pharmacy" class="mobile-nav-item">
+    <i class="fas fa-pills"></i>
+    <span>الصيدلية</span>
+  </a>
+  <% } else if (r === 'insurance_agent') { %>
+  <a href="/insurance" class="mobile-nav-item">
+    <i class="fas fa-shield-alt"></i>
+    <span>التأمين</span>
+  </a>
+  <% } else { %>
+  <a href="/consultations" class="mobile-nav-item">
+    <i class="fas fa-stethoscope"></i>
+    <span>الاستشارات</span>
+  </a>
+  <% } %>
+
+  <% if (r === 'patient' || r === 'doctor') { %>
+  <a href="/ai" class="mobile-nav-item mobile-nav-center">
+    <div class="mobile-nav-center-btn">
+      <i class="fas fa-robot"></i>
+    </div>
+    <span>المساعد</span>
+  </a>
+  <% } else { %>
+  <a href="/chat" class="mobile-nav-item mobile-nav-center">
+    <div class="mobile-nav-center-btn">
+      <i class="fas fa-comments"></i>
+    </div>
+    <span>المحادثات</span>
+  </a>
+  <% } %>
+
+  <a href="/notifications" class="mobile-nav-item" id="mobileNotifBtn">
+    <span class="mobile-notif-wrap">
+      <i class="fas fa-bell"></i>
+      <span class="mobile-notif-dot" id="mobileNotifDot" style="display:none"></span>
+    </span>
+    <span>الإشعارات</span>
+  </a>
+
+  <a href="/profile" class="mobile-nav-item">
+    <i class="fas fa-user-circle"></i>
+    <span>حسابي</span>
+  </a>
+</nav>
 <% } %>
+
+<script>
+(function() {
+  var path = window.location.pathname;
+  var items = document.querySelectorAll('.mobile-nav-item');
+  items.forEach(function(item) {
+    item.classList.remove('active');
+    var href = item.getAttribute('href') || '';
+    if (href === '/dashboard' && (path === '/' || path === '/dashboard')) {
+      item.classList.add('active');
+    } else if (href !== '/dashboard' && href !== '/' && path.startsWith(href)) {
+      item.classList.add('active');
+    }
+  });
+
+  var notifBadge = document.getElementById('notifBadge');
+  var mobileDot = document.getElementById('mobileNotifDot');
+  if (notifBadge && mobileDot) {
+    var observer = new MutationObserver(function() {
+      mobileDot.style.display = notifBadge.style.display !== 'none' ? 'block' : 'none';
+    });
+    observer.observe(notifBadge, { attributes: true, attributeFilter: ['style'] });
+  }
+})();
+</script>
 
 <div class="pwa-offline-indicator" id="offlineBar">
   <i class="fas fa-wifi-slash"></i> أنت غير متصل بالإنترنت — بعض المزايا قد لا تعمل

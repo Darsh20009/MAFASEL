@@ -411,7 +411,9 @@ router.get('/api/auth/apple', (req, res) => {
   const callbackURL = process.env.APPLE_CALLBACK_URL ||
     (process.env.NODE_ENV === 'production'
       ? 'https://mafaseltech.com/api/auth/apple/callback'
-      : 'http://localhost:5000/api/auth/apple/callback');
+      : process.env.REPLIT_DEV_DOMAIN
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}/api/auth/apple/callback`
+        : 'http://localhost:5000/api/auth/apple/callback');
 
   const state = require('crypto').randomBytes(16).toString('hex');
   req.session.appleState = state;
@@ -460,7 +462,9 @@ router.post('/api/auth/apple/callback', async (req, res) => {
       const callbackURL = process.env.APPLE_CALLBACK_URL ||
         (process.env.NODE_ENV === 'production'
           ? 'https://mafaseltech.com/api/auth/apple/callback'
-          : 'http://localhost:5000/api/auth/apple/callback');
+          : process.env.REPLIT_DEV_DOMAIN
+            ? `https://${process.env.REPLIT_DEV_DOMAIN}/api/auth/apple/callback`
+            : 'http://localhost:5000/api/auth/apple/callback');
 
       const https = require('https');
       const qs = require('querystring');
