@@ -29,6 +29,7 @@ uZCz740zbLKdkC4PTjQYOK1la6KgCgYIKoZIzj0DAQehRANCAAQjBedeglvvg9VF
 NlCEcNa9xS5Xt0xvbSySgHAcFy4FzwlUnQ1dEg9eYLUxs/2ddOqPMSKm4EJOQsYg
 VPFADSEm
 -----END PRIVATE KEY-----"""
+APPLE_CLIENT_ID = "com.mafaseltech.mafaseltech"
 
 [workflows]
 runButton = "Project"
