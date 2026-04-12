@@ -227,7 +227,7 @@
             <% if (logs.length === 0) { %>
             <div class="empty-state"><i class="fas fa-clipboard-list"></i><p>لا يوجد سجل نشاط بعد</p></div>
             <% } else { %>
-            <% const logTypeMap = {consultation:'استشارة',ai:'مساعد ذكاء',doctor:'طبيب',profile_update:'تحديث ملف',lab:'تحاليل',prescription:'وصفة'}; %>
+            <% const logTypeMap = {consultation:'استشارة',ai:'مساعد ذكاء',doctor:'أخصائي',profile_update:'تحديث ملف',lab:'تحاليل',prescription:'وصفة'}; %>
             <% const logTypeColor = {consultation:'primary',ai:'info',doctor:'success',profile_update:'muted',lab:'warning',prescription:'error'}; %>
             <% logs.forEach(l => { %>
             <div class="log-entry">

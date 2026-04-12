@@ -14,7 +14,7 @@
           <div class="info-row"><span>الأولوية:</span><span class="badge badge-<%= consultation.priority === 'urgent' ? 'error' : 'warning' %>"><%= consultation.priority %></span></div>
           <div class="info-row"><span>الحالة:</span><span class="badge badge-<%= consultation.status === 'completed' ? 'success' : 'primary' %>"><%= consultation.status === 'pending' ? 'معلقة' : consultation.status === 'assigned' ? 'تم التعيين' : consultation.status === 'in_progress' ? 'جارية' : consultation.status === 'completed' ? 'مكتملة' : 'ملغاة' %></span></div>
           <% if (consultation.doctor) { %>
-          <div class="info-row"><span>الطبيب:</span><strong><%= consultation.doctor.name %></strong></div>
+          <div class="info-row"><span>الأخصائي:</span><strong><%= consultation.doctor.name %></strong></div>
           <% } %>
           <div class="info-row"><span>التاريخ:</span><strong><%= new Date(consultation.createdAt).toLocaleDateString('ar-SA') %></strong></div>
           <h4>الأعراض</h4>

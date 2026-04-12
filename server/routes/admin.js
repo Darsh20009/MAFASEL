@@ -52,10 +52,10 @@ router.post('/consultations/:id/assign', isAuthenticated, isAdmin, async (req, r
   await fireNotify(req.app, req.body.doctorId, 'استشارة جديدة', 'تم تعيين استشارة جديدة لك', {
     type: 'info', link: `/consultations/${req.params.id}`
   });
-  await fireNotify(req.app, consultation.patient, 'تم تعيين طبيب', 'تم تعيين طبيب لاستشارتك', {
+  await fireNotify(req.app, consultation.patient, 'تم تعيين أخصائي', 'تم تعيين أخصائي لاستشارتك', {
     type: 'success', link: `/consultations/${req.params.id}`
   });
-  req.session.success = 'تم تعيين الطبيب';
+  req.session.success = 'تم تعيين الأخصائي';
   res.redirect('/admin/consultations');
 });
 

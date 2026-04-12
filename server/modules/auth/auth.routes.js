@@ -408,12 +408,12 @@ router.get('/api/auth/apple', (req, res) => {
     return res.redirect('/login');
   }
 
-  const callbackURL = process.env.APPLE_CALLBACK_URL ||
-    (process.env.NODE_ENV === 'production'
-      ? 'https://mafaseltech.com/api/auth/apple/callback'
-      : process.env.REPLIT_DEV_DOMAIN
-        ? `https://${process.env.REPLIT_DEV_DOMAIN}/api/auth/apple/callback`
-        : 'http://localhost:5000/api/auth/apple/callback');
+  if (process.env.NODE_ENV !== 'production') {
+    req.session.error = 'تسجيل الدخول عبر Apple متاح فقط في بيئة الإنتاج';
+    return res.redirect('/login');
+  }
+
+  const callbackURL = process.env.APPLE_CALLBACK_URL || 'https://mafaseltech.com/api/auth/apple/callback';
 
   const state = require('crypto').randomBytes(16).toString('hex');
   req.session.appleState = state;
@@ -459,12 +459,7 @@ router.post('/api/auth/apple/callback', async (req, res) => {
       const clientSecret = generateAppleClientSecret();
       if (!clientSecret) throw new Error('Apple client secret generation failed');
 
-      const callbackURL = process.env.APPLE_CALLBACK_URL ||
-        (process.env.NODE_ENV === 'production'
-          ? 'https://mafaseltech.com/api/auth/apple/callback'
-          : process.env.REPLIT_DEV_DOMAIN
-            ? `https://${process.env.REPLIT_DEV_DOMAIN}/api/auth/apple/callback`
-            : 'http://localhost:5000/api/auth/apple/callback');
+      const callbackURL = process.env.APPLE_CALLBACK_URL || 'https://mafaseltech.com/api/auth/apple/callback';
 
       const https = require('https');
       const qs = require('querystring');
@@ -842,7 +837,7 @@ router.get('/join/:token', async (req, res) => {
     if (!invitation || !invitation.isValid()) {
       return res.render('pages/join-expired', { title: 'دعوة غير صالحة' });
     }
-    const roleLabels = { doctor: 'طبيب', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
+    const roleLabels = { doctor: 'أخصائي', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
     res.render('pages/join', {
       title: 'سجل حسابك في مفاصل',
       invitation,

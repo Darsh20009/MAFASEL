@@ -69,11 +69,11 @@
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-icon blue"><i class="fas fa-user-injured"></i></div>
-            <div class="admin-stat-info"><h3><%= roleCountsMap.patient || 0 %></h3><p>مرضى</p></div>
+            <div class="admin-stat-info"><h3><%= roleCountsMap.patient || 0 %></h3><p>مستفيدين</p></div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-icon purple"><i class="fas fa-stethoscope"></i></div>
-            <div class="admin-stat-info"><h3><%= roleCountsMap.doctor || 0 %></h3><p>أطباء</p></div>
+            <div class="admin-stat-info"><h3><%= roleCountsMap.doctor || 0 %></h3><p>أخصائيين</p></div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-icon green"><i class="fas fa-pills"></i></div>
@@ -194,7 +194,7 @@
                     <form method="POST" action="/admin/users/<%= u._id %>/role" style="display:inline;">
                       <select name="role" onchange="this.form.submit()" class="select-sm" style="font-size:0.75rem;padding:0.25rem 0.5rem;">
                         <option value="patient" <%= u.role==='patient'?'selected':'' %>>مستفيد</option>
-                        <option value="doctor" <%= u.role==='doctor'?'selected':'' %>>طبيب</option>
+                        <option value="doctor" <%= u.role==='doctor'?'selected':'' %>>أخصائي</option>
                         <option value="pharmacist" <%= u.role==='pharmacist'?'selected':'' %>>صيدلي</option>
                         <option value="company" <%= u.role==='company'?'selected':'' %>>شركة</option>
                         <option value="employee" <%= u.role==='employee'?'selected':'' %>>موظف</option>

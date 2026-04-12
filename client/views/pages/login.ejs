@@ -2,43 +2,43 @@
 <div class="auth-page">
   <div class="auth-card">
     <div class="auth-header">
-      <h1>تسجيل الدخول</h1>
-      <p>مرحباً بعودتك إلى منصة مفاصل</p>
+      <h1><%= typeof t === 'function' ? t('auth.login_title') : 'تسجيل الدخول' %></h1>
+      <p><%= typeof t === 'function' ? t('auth.login_subtitle') : 'مرحباً بعودتك إلى منصة مفاصل' %></p>
     </div>
 
     <div class="auth-tabs">
       <button class="auth-tab active" data-tab="email-tab">
-        <i class="fas fa-envelope"></i> البريد
+        <i class="fas fa-envelope"></i> <%= typeof t === 'function' ? t('auth.tab_email') : 'البريد' %>
       </button>
       <button class="auth-tab" data-tab="phone-tab">
-        <i class="fas fa-mobile-alt"></i> الجوال
+        <i class="fas fa-mobile-alt"></i> <%= typeof t === 'function' ? t('auth.tab_phone') : 'الجوال' %>
       </button>
       <button class="auth-tab" data-tab="nafath-tab">
-        <img src="/icons/nafath-logo.png" class="nafath-tab-icon" alt="نفاذ"> نفاذ
+        <img src="/icons/nafath-logo.png" class="nafath-tab-icon" alt="نفاذ"> <%= typeof t === 'function' ? t('auth.tab_nafath') : 'نفاذ' %>
       </button>
     </div>
 
     <div id="email-tab" class="auth-tab-content active">
       <form method="POST" action="/login" class="auth-form">
         <div class="form-group">
-          <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
-          <input type="email" name="email" required placeholder="أدخل بريدك الإلكتروني" autocomplete="email">
+          <label><i class="fas fa-envelope"></i> <%= typeof t === 'function' ? t('auth.email_label') : 'البريد الإلكتروني' %></label>
+          <input type="email" name="email" required placeholder="<%= typeof t === 'function' ? t('auth.email_placeholder') : 'أدخل بريدك الإلكتروني' %>" autocomplete="email">
         </div>
         <div class="form-group">
-          <label><i class="fas fa-lock"></i> كلمة المرور</label>
+          <label><i class="fas fa-lock"></i> <%= typeof t === 'function' ? t('auth.password_label') : 'كلمة المرور' %></label>
           <div class="password-input-wrap">
-            <input type="password" name="password" required placeholder="أدخل كلمة المرور" autocomplete="current-password" id="loginPass">
+            <input type="password" name="password" required placeholder="<%= typeof t === 'function' ? t('auth.password_placeholder') : 'أدخل كلمة المرور' %>" autocomplete="current-password" id="loginPass">
             <button type="button" class="password-toggle" onclick="togglePassword('loginPass', this)">
               <i class="fas fa-eye"></i>
             </button>
           </div>
         </div>
         <button type="submit" class="btn btn-primary btn-block">
-          <i class="fas fa-sign-in-alt"></i> دخول
+          <i class="fas fa-sign-in-alt"></i> <%= typeof t === 'function' ? t('auth.login_btn') : 'دخول' %>
         </button>
         <div style="text-align:center;margin-top:0.75rem;">
           <a href="#" onclick="showForgotPassword(event)" style="color:var(--accent);font-size:0.85rem;text-decoration:none;">
-            <i class="fas fa-key"></i> نسيت كلمة المرور؟
+            <i class="fas fa-key"></i> <%= typeof t === 'function' ? t('auth.forgot_password') : 'نسيت كلمة المرور؟' %>
           </a>
         </div>
       </form>
@@ -47,24 +47,24 @@
     <div id="phone-tab" class="auth-tab-content">
       <div id="phone-step-1">
         <div class="form-group">
-          <label><i class="fas fa-mobile-alt"></i> رقم الجوال</label>
+          <label><i class="fas fa-mobile-alt"></i> <%= typeof t === 'function' ? t('auth.phone_label') : 'رقم الجوال' %></label>
           <div class="phone-input-wrap">
             <span class="phone-prefix">966+</span>
-            <input type="tel" id="phoneInput" placeholder="5XXXXXXXX" dir="ltr" class="ltr-input phone-with-prefix" maxlength="9">
+            <input type="tel" id="phoneInput" placeholder="<%= typeof t === 'function' ? t('auth.phone_placeholder') : '5XXXXXXXX' %>" dir="ltr" class="ltr-input phone-with-prefix" maxlength="9">
           </div>
-          <small class="field-hint">يجب أن يبدأ بـ 5 ويتكون من 9 أرقام</small>
+          <small class="field-hint"><%= typeof t === 'function' ? t('auth.phone_hint') : 'يجب أن يبدأ بـ 5 ويتكون من 9 أرقام' %></small>
         </div>
         <button class="btn btn-primary btn-block" onclick="sendOTP()">
-          <i class="fas fa-paper-plane"></i> إرسال رمز التحقق
+          <i class="fas fa-paper-plane"></i> <%= typeof t === 'function' ? t('auth.send_otp') : 'إرسال رمز التحقق' %>
         </button>
       </div>
       <div id="phone-step-2" style="display:none">
         <div class="otp-info">
           <i class="fas fa-sms"></i>
-          <p>تم إرسال رمز التحقق إلى <span id="otpPhone"></span></p>
+          <p><%= typeof t === 'function' ? t('auth.otp_sent') : 'تم إرسال رمز التحقق إلى' %> <span id="otpPhone"></span></p>
         </div>
         <div class="form-group">
-          <label><i class="fas fa-key"></i> رمز التحقق</label>
+          <label><i class="fas fa-key"></i> <%= typeof t === 'function' ? t('auth.otp_label') : 'رمز التحقق' %></label>
           <div class="otp-inputs" id="otpInputs">
             <input type="text" maxlength="1" class="otp-digit" data-idx="0" inputmode="numeric">
             <input type="text" maxlength="1" class="otp-digit" data-idx="1" inputmode="numeric">
@@ -76,14 +76,14 @@
         </div>
         <div id="otpDemo" class="otp-demo" style="display:none"></div>
         <button class="btn btn-primary btn-block" onclick="verifyOTP()">
-          <i class="fas fa-check-circle"></i> تحقق
+          <i class="fas fa-check-circle"></i> <%= typeof t === 'function' ? t('auth.verify_btn') : 'تحقق' %>
         </button>
         <div class="otp-timer">
           <span id="otpTimer">02:00</span>
-          <button class="btn-link" id="resendOtp" style="display:none" onclick="sendOTP()">إعادة إرسال</button>
+          <button class="btn-link" id="resendOtp" style="display:none" onclick="sendOTP()"><%= typeof t === 'function' ? t('auth.resend_otp') : 'إعادة إرسال' %></button>
         </div>
         <button class="btn btn-outline btn-block btn-sm" onclick="backToPhone()">
-          <i class="fas fa-arrow-right"></i> تغيير الرقم
+          <i class="fas fa-arrow-right"></i> <%= typeof t === 'function' ? t('auth.change_number') : 'تغيير الرقم' %>
         </button>
       </div>
     </div>
@@ -94,60 +94,72 @@
           <div class="nafath-logo-wrap">
             <img src="/icons/nafath-logo.png" class="nafath-logo-img" alt="نفاذ الوطني">
           </div>
-          <p>تسجيل الدخول عبر نفاذ الوطني</p>
+          <p><%= typeof t === 'function' ? t('auth.nafath_title') : 'تسجيل الدخول عبر نفاذ الوطني' %></p>
         </div>
         <div class="form-group">
-          <label><i class="fas fa-id-card"></i> رقم الهوية الوطنية</label>
-          <input type="text" id="nafathId" placeholder="1XXXXXXXXX أو 2XXXXXXXXX" maxlength="10" dir="ltr" class="ltr-input" inputmode="numeric" pattern="[12][0-9]{9}" title="يبدأ بـ 1 أو 2 ويتكون من 10 أرقام">
-          <small class="field-hint">يبدأ بـ 1 أو 2 ويتكون من 10 أرقام</small>
+          <label><i class="fas fa-id-card"></i> <%= typeof t === 'function' ? t('auth.national_id_label') : 'رقم الهوية الوطنية' %></label>
+          <input type="text" id="nafathId" placeholder="<%= typeof t === 'function' ? t('auth.national_id_placeholder') : '1XXXXXXXXX أو 2XXXXXXXXX' %>" maxlength="10" dir="ltr" class="ltr-input" inputmode="numeric" pattern="[12][0-9]{9}">
+          <small class="field-hint"><%= typeof t === 'function' ? t('auth.national_id_hint') : 'يبدأ بـ 1 أو 2 ويتكون من 10 أرقام' %></small>
         </div>
         <button class="btn btn-primary btn-block" onclick="initNafath()">
-          <i class="fas fa-shield-alt"></i> متابعة عبر نفاذ
+          <i class="fas fa-shield-alt"></i> <%= typeof t === 'function' ? t('auth.continue_nafath') : 'متابعة عبر نفاذ' %>
         </button>
       </div>
       <div id="nafath-step-2" style="display:none">
         <div class="nafath-verify-box">
           <i class="fas fa-mobile-alt nafath-phone-icon"></i>
-          <h3>افتح تطبيق نفاذ</h3>
-          <p>وأكد الرقم التالي في التطبيق:</p>
+          <h3><%= typeof t === 'function' ? t('auth.open_nafath_app') : 'افتح تطبيق نفاذ' %></h3>
+          <p><%= typeof t === 'function' ? t('auth.confirm_number') : 'وأكد الرقم التالي في التطبيق:' %></p>
           <div class="nafath-code" id="nafathCode"></div>
           <div class="nafath-timer">
             <div class="spinner-sm"></div>
-            <span>بانتظار التأكيد... <span id="nafathTimer">02:00</span></span>
+            <span><%= typeof t === 'function' ? t('auth.waiting_confirm') : 'بانتظار التأكيد...' %> <span id="nafathTimer">02:00</span></span>
           </div>
         </div>
         <button class="btn btn-primary btn-block" onclick="verifyNafath()">
-          <i class="fas fa-check"></i> تم التأكيد في التطبيق
+          <i class="fas fa-check"></i> <%= typeof t === 'function' ? t('auth.confirmed_in_app') : 'تم التأكيد في التطبيق' %>
         </button>
       </div>
     </div>
 
     <div class="auth-divider">
-      <span>أو</span>
+      <span><%= typeof t === 'function' ? t('auth.or_divider') : 'أو' %></span>
     </div>
 
     <div class="social-login-btns">
       <a href="/api/auth/google" class="btn-social btn-google">
         <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        <span> تسجيل الدخول عبر Google</span>
+        <span> <%= typeof t === 'function' ? t('auth.login_google') : 'تسجيل الدخول عبر Google' %></span>
       </a>
-      <a href="/api/auth/apple" class="btn-social btn-apple">
+      <a href="#" class="btn-social btn-apple" onclick="handleAppleLogin(event)">
         <i class="fab fa-apple"></i>
-        <span>Apple</span>
+        <span><%= typeof t === 'function' ? t('auth.login_apple') : 'Apple' %></span>
       </a>
       <button id="webauthnBtn" class="btn-social btn-webauthn" onclick="loginWebAuthn()" style="display:none">
         <i class="fas fa-fingerprint"></i>
-        <span>البصمة / الوجه</span>
+        <span><%= typeof t === 'function' ? t('auth.biometric_login') : 'البصمة / الوجه' %></span>
       </button>
     </div>
 
     <div class="auth-footer">
-      <p>ليس لديك حساب؟ <a href="/register">إنشاء حساب جديد</a></p>
+      <p><%= typeof t === 'function' ? t('auth.no_account') : 'ليس لديك حساب؟' %> <a href="/register"><%= typeof t === 'function' ? t('auth.create_account') : 'إنشاء حساب جديد' %></a></p>
     </div>
   </div>
 </div>
 
 <script>
+var isProduction = '<%= typeof process !== "undefined" ? (process.env.NODE_ENV || "development") : "development" %>' === 'production';
+var appleAvailableMsg = '<%= typeof t === "function" ? t("auth.apple_unavailable") : "تسجيل الدخول عبر Apple غير متاح في بيئة التطوير" %>';
+
+function handleAppleLogin(e) {
+  e.preventDefault();
+  if (!isProduction) {
+    alert(appleAvailableMsg);
+    return;
+  }
+  window.location.href = '/api/auth/apple';
+}
+
 document.querySelectorAll('.auth-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
@@ -198,7 +210,7 @@ let otpTimerInterval;
 
 async function sendOTP() {
   const phone = document.getElementById('phoneInput').value.trim();
-  if (!phone || phone.length !== 9 || phone[0] !== '5') return alert('رقم الجوال يجب أن يبدأ بـ 5 ويتكون من 9 أرقام');
+  if (!phone || phone.length !== 9 || phone[0] !== '5') return alert('<%= typeof t === "function" ? t("auth.phone_hint") : "رقم الجوال يجب أن يبدأ بـ 5 ويتكون من 9 أرقام" %>');
   otpPhoneValue = phone;
   try {
     const res = await fetch('/login/phone', {
@@ -277,7 +289,7 @@ nafathInput.addEventListener('input', function() {
 
 async function initNafath() {
   const id = document.getElementById('nafathId').value.trim();
-  if (!id || id.length !== 10 || (id[0] !== '1' && id[0] !== '2')) return alert('رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام');
+  if (!id || id.length !== 10 || (id[0] !== '1' && id[0] !== '2')) return alert('<%= typeof t === "function" ? t("auth.national_id_hint") : "رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام" %>');
   try {
     const res = await fetch('/auth/nafath/init', {
       method: 'POST',
@@ -319,7 +331,6 @@ async function verifyNafath() {
     }
   } catch (e) { alert('حدث خطأ'); }
 }
-
 
 async function loginWebAuthn() {
   try {
@@ -370,46 +381,46 @@ function showForgotPassword(e) {
   var overlay = document.createElement('div');
   overlay.className = 'forgot-overlay';
   overlay.id = 'forgotOverlay';
-  overlay.innerHTML = 
+  overlay.innerHTML =
     '<div class="forgot-modal">' +
       '<div id="forgotStep1" class="forgot-step active">' +
-        '<h2><i class="fas fa-key" style="color:var(--accent);"></i> نسيت كلمة المرور</h2>' +
-        '<p>أدخل بريدك الإلكتروني وسنرسل لك رمز إعادة التعيين</p>' +
+        '<h2><i class="fas fa-key" style="color:var(--accent);"></i> <%= typeof t === "function" ? t("auth.forgot_title") : "نسيت كلمة المرور" %></h2>' +
+        '<p><%= typeof t === "function" ? t("auth.forgot_desc") : "أدخل بريدك الإلكتروني وسنرسل لك رمز إعادة التعيين" %></p>' +
         '<div class="form-group" style="margin-bottom:1rem;">' +
-          '<input type="email" id="forgotEmail" class="form-control" placeholder="البريد الإلكتروني" dir="ltr" style="text-align:center;">' +
+          '<input type="email" id="forgotEmail" class="form-control" placeholder="<%= typeof t === "function" ? t("auth.email_label") : "البريد الإلكتروني" %>" dir="ltr" style="text-align:center;">' +
         '</div>' +
         '<button class="btn btn-primary btn-block" onclick="sendResetCode()" id="sendResetBtn">' +
-          '<i class="fas fa-paper-plane"></i> إرسال الرمز' +
+          '<i class="fas fa-paper-plane"></i> <%= typeof t === "function" ? t("auth.send_code") : "إرسال الرمز" %>' +
         '</button>' +
         '<div id="forgotMsg" style="margin-top:0.75rem;font-size:0.82rem;text-align:center;"></div>' +
       '</div>' +
       '<div id="forgotStep2" class="forgot-step">' +
-        '<h2><i class="fas fa-shield-alt" style="color:var(--accent);"></i> أدخل الرمز</h2>' +
-        '<p>تم إرسال رمز مكون من 6 أرقام إلى بريدك الإلكتروني</p>' +
+        '<h2><i class="fas fa-shield-alt" style="color:var(--accent);"></i> <%= typeof t === "function" ? t("auth.enter_code") : "أدخل الرمز" %></h2>' +
+        '<p><%= typeof t === "function" ? t("auth.code_sent_desc") : "تم إرسال رمز مكون من 6 أرقام إلى بريدك الإلكتروني" %></p>' +
         '<div class="form-group" style="margin-bottom:1rem;">' +
           '<input type="text" id="resetCode" class="form-control" placeholder="000000" maxlength="6" dir="ltr" style="text-align:center;font-size:1.5rem;letter-spacing:8px;font-family:monospace;">' +
         '</div>' +
         '<button class="btn btn-primary btn-block" onclick="verifyResetCode()" id="verifyCodeBtn">' +
-          '<i class="fas fa-check"></i> تحقق' +
+          '<i class="fas fa-check"></i> <%= typeof t === "function" ? t("auth.verify_btn") : "تحقق" %>' +
         '</button>' +
         '<div id="codeMsg" style="margin-top:0.75rem;font-size:0.82rem;text-align:center;"></div>' +
       '</div>' +
       '<div id="forgotStep3" class="forgot-step">' +
-        '<h2><i class="fas fa-lock" style="color:var(--accent);"></i> كلمة مرور جديدة</h2>' +
-        '<p>أدخل كلمة المرور الجديدة</p>' +
+        '<h2><i class="fas fa-lock" style="color:var(--accent);"></i> <%= typeof t === "function" ? t("auth.new_password") : "كلمة مرور جديدة" %></h2>' +
+        '<p><%= typeof t === "function" ? t("auth.new_password_placeholder") : "أدخل كلمة المرور الجديدة" %></p>' +
         '<div class="form-group" style="margin-bottom:0.75rem;">' +
-          '<input type="password" id="newPassword" class="form-control" placeholder="كلمة المرور الجديدة" minlength="6">' +
+          '<input type="password" id="newPassword" class="form-control" placeholder="<%= typeof t === "function" ? t("auth.new_password_placeholder") : "كلمة المرور الجديدة" %>" minlength="6">' +
         '</div>' +
         '<div class="form-group" style="margin-bottom:1rem;">' +
-          '<input type="password" id="confirmNewPassword" class="form-control" placeholder="تأكيد كلمة المرور">' +
+          '<input type="password" id="confirmNewPassword" class="form-control" placeholder="<%= typeof t === "function" ? t("auth.confirm_password_placeholder") : "تأكيد كلمة المرور" %>">' +
         '</div>' +
         '<button class="btn btn-primary btn-block" onclick="resetPassword()" id="resetPassBtn">' +
-          '<i class="fas fa-save"></i> حفظ كلمة المرور' +
+          '<i class="fas fa-save"></i> <%= typeof t === "function" ? t("auth.save_password") : "حفظ كلمة المرور" %>' +
         '</button>' +
         '<div id="resetMsg" style="margin-top:0.75rem;font-size:0.82rem;text-align:center;"></div>' +
       '</div>' +
       '<button class="btn btn-outline btn-block" style="margin-top:0.75rem;" onclick="document.getElementById(\'forgotOverlay\').remove();">' +
-        'إلغاء' +
+        '<%= typeof t === "function" ? t("common.cancel") : "إلغاء" %>' +
       '</button>' +
     '</div>';
   document.body.appendChild(overlay);
@@ -433,9 +444,9 @@ async function sendResetCode() {
       document.getElementById('forgotStep2').classList.add('active');
     } else {
       document.getElementById('forgotMsg').innerHTML = '<span style="color:#ef4444;">' + data.message + '</span>';
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الرمز';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> <%= typeof t === "function" ? t("auth.send_code") : "إرسال الرمز" %>';
     }
-  } catch(e) { document.getElementById('forgotMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الرمز'; }
+  } catch(e) { document.getElementById('forgotMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> <%= typeof t === "function" ? t("auth.send_code") : "إرسال الرمز" %>'; }
 }
 
 async function verifyResetCode() {
@@ -452,9 +463,9 @@ async function verifyResetCode() {
       document.getElementById('forgotStep3').classList.add('active');
     } else {
       document.getElementById('codeMsg').innerHTML = '<span style="color:#ef4444;">' + data.message + '</span>';
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> تحقق';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> <%= typeof t === "function" ? t("auth.verify_btn") : "تحقق" %>';
     }
-  } catch(e) { document.getElementById('codeMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> تحقق'; }
+  } catch(e) { document.getElementById('codeMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> <%= typeof t === "function" ? t("auth.verify_btn") : "تحقق" %>'; }
 }
 
 async function resetPassword() {
@@ -472,9 +483,9 @@ async function resetPassword() {
       setTimeout(function() { document.getElementById('forgotOverlay').remove(); }, 1500);
     } else {
       document.getElementById('resetMsg').innerHTML = '<span style="color:#ef4444;">' + data.message + '</span>';
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ كلمة المرور';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> <%= typeof t === "function" ? t("auth.save_password") : "حفظ كلمة المرور" %>';
     }
-  } catch(e) { document.getElementById('resetMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ كلمة المرور'; }
+  } catch(e) { document.getElementById('resetMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> <%= typeof t === "function" ? t("auth.save_password") : "حفظ كلمة المرور" %>'; }
 }
 </script>
 <%- include('../partials/footer') %>

@@ -46,7 +46,7 @@ async function seed() {
         role: 'doctor',
         specialty: 'طب عام',
         isVerified: true,
-        bio: 'طبيب عام بخبرة 10 سنوات'
+        bio: 'أخصائي علاج طبيعي بخبرة 10 سنوات'
       });
       console.log('Doctor created: doctor@mafasel.com / doctor123');
     }

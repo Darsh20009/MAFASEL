@@ -230,7 +230,7 @@ const templates = {
         <p style="margin:0 0 12px;">يسعدنا انضمامك إلى <strong style="color:#12a99b;">منصة مفاصل</strong> للخدمات الطبية الرقمية.</p>
         <p style="margin:0 0 12px;">الآن يمكنك الاستفادة من جميع خدماتنا:</p>
         <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0;">
-          <tr><td style="padding:6px 0;color:#12a99b;font-size:14px;">✦</td><td style="padding:6px 10px;color:#b0bec5;font-size:14px;">استشارات طبية مع أفضل الأطباء</td></tr>
+          <tr><td style="padding:6px 0;color:#12a99b;font-size:14px;">✦</td><td style="padding:6px 10px;color:#b0bec5;font-size:14px;">استشارات طبية مع أفضل الأخصائيين</td></tr>
           <tr><td style="padding:6px 0;color:#12a99b;font-size:14px;">✦</td><td style="padding:6px 10px;color:#b0bec5;font-size:14px;">صيدلية إلكترونية متكاملة</td></tr>
           <tr><td style="padding:6px 0;color:#12a99b;font-size:14px;">✦</td><td style="padding:6px 10px;color:#b0bec5;font-size:14px;">تأمين صحي رقمي</td></tr>
           <tr><td style="padding:6px 0;color:#12a99b;font-size:14px;">✦</td><td style="padding:6px 10px;color:#b0bec5;font-size:14px;">مساعد ذكي يعمل بالذكاء الاصطناعي</td></tr>
@@ -288,7 +288,7 @@ const templates = {
         <p style="margin:0 0 16px;">تم حجز استشارتك الطبية بنجاح ✅</p>
         <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:rgba(18,169,155,0.06);border-radius:12px;padding:4px;">
           <tr><td style="padding:10px 16px;color:#78909c;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);">التخصص</td><td style="padding:10px 16px;color:#ffffff;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04);">${details.specialty || '—'}</td></tr>
-          <tr><td style="padding:10px 16px;color:#78909c;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);">الطبيب</td><td style="padding:10px 16px;color:#ffffff;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04);">${details.doctorName || 'سيتم تعيينه'}</td></tr>
+          <tr><td style="padding:10px 16px;color:#78909c;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);">الأخصائي</td><td style="padding:10px 16px;color:#ffffff;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04);">${details.doctorName || 'سيتم تعيينه'}</td></tr>
           <tr><td style="padding:10px 16px;color:#78909c;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);">رقم الاستشارة</td><td style="padding:10px 16px;color:#12a99b;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04);">#${details.consultationId || ''}</td></tr>
           <tr><td style="padding:10px 16px;color:#78909c;font-size:13px;">الحالة</td><td style="padding:10px 16px;color:#f59e0b;font-size:14px;font-weight:600;">قيد الانتظار</td></tr>
         </table>

@@ -237,7 +237,7 @@ router.post('/escalate', isAuthenticated, async (req, res) => {
 
       return res.json({
         success: true,
-        message: `تم حجز استشارة في قسم ${specialty}. سيتم تعيين طبيب مختص لمتابعة حالتك.`,
+        message: `تم حجز استشارة في قسم ${specialty}. سيتم تعيين أخصائي مختص لمتابعة حالتك.`,
         consultationId: consultation._id,
         redirectUrl: `/consultations/${consultation._id}`
       });
@@ -318,7 +318,7 @@ router.post('/analyze-symptoms', isAuthenticated, async (req, res) => {
       specialty,
       urgency,
       persona: { name: persona.name, title: persona.title },
-      recommendation: specialty ? `ننصحك بمراجعة ${persona.name} - ${persona.title}` : 'ننصحك بزيارة طبيب عام للتقييم'
+      recommendation: specialty ? `ننصحك بمراجعة ${persona.name} - ${persona.title}` : 'ننصحك بزيارة أخصائي للتقييم'
     });
   } catch (err) {
     res.status(500).json({ success: false });

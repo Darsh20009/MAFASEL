@@ -195,7 +195,7 @@ router.post('/:id/cancel', isAuthenticated, async (req, res) => {
 router.post('/:id/notify', isAuthenticated, async (req, res) => {
   try {
     const meeting = await Meeting.findById(req.params.id).populate('patient', 'name');
-    if (!meeting || !meeting.patient) return res.status(400).json({ error: 'لا يوجد مريض مرتبط' });
+    if (!meeting || !meeting.patient) return res.status(400).json({ error: 'لا يوجد مستفيد مرتبط' });
 
     const dateStr = new Date(meeting.scheduledAt).toLocaleString('ar-SA', { dateStyle: 'long', timeStyle: 'short' });
     await fireNotify(req.app, meeting.patient._id.toString(),

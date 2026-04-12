@@ -150,7 +150,7 @@ async function searchUsers(q) {
     }
     var html = '';
     data.users.forEach(function(u) {
-      var roleLabel = { admin:'مدير', doctor:'طبيب', pharmacist:'صيدلي', patient:'مريض', moderator:'مشرف', employee:'موظف' };
+      var roleLabel = { admin:'مدير', doctor:'أخصائي', pharmacist:'صيدلي', patient:'مستفيد', moderator:'مشرف', employee:'موظف' };
       html += '<div onclick="selectUser(\'' + (u.email||'') + '\',\'' + (u.name||'') + '\',\'' + (u.role||'') + '\')" style="padding:0.75rem 1rem;cursor:pointer;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid var(--border,#2a3a4a)20;transition:background 0.15s;" onmouseover="this.style.background=\'var(--secondary)10\'" onmouseout="this.style.background=\'none\'">';
       html += '<div style="width:36px;height:36px;border-radius:50%;background:var(--secondary)15;display:flex;align-items:center;justify-content:center;">';
       if (u.avatar) {
@@ -175,7 +175,7 @@ function selectUser(email, name, role) {
   toEmail.value = email;
   resultsDiv.style.display = 'none';
   selectedDiv.style.display = 'block';
-  var roleLabel = { admin:'مدير', doctor:'طبيب', pharmacist:'صيدلي', patient:'مريض', moderator:'مشرف', employee:'موظف' };
+  var roleLabel = { admin:'مدير', doctor:'أخصائي', pharmacist:'صيدلي', patient:'مستفيد', moderator:'مشرف', employee:'موظف' };
   selectedDiv.innerHTML = '<div style="display:flex;align-items:center;gap:0.5rem;"><i class="fas fa-user-check" style="color:var(--secondary);"></i><span style="font-size:0.85rem;">سيُرسل إلى: <strong>' + name + '</strong> — <span style="direction:ltr;display:inline;">' + email + '</span> <span style="font-size:0.72rem;color:var(--text-muted);">(' + (roleLabel[role]||'') + ')</span></span><button type="button" onclick="clearRecipient()" style="margin-right:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.9rem;"><i class="fas fa-times"></i></button></div>';
 }
 

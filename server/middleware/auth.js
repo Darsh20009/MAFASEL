@@ -18,7 +18,7 @@ function isDoctor(req, res, next) {
   if (req.session && req.session.user && req.session.user.role === 'doctor') {
     return next();
   }
-  req.session.error = 'هذه الصفحة للأطباء فقط';
+  req.session.error = 'هذه الصفحة للأخصائيين فقط';
   res.redirect('/dashboard');
 }
 

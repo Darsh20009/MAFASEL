@@ -31,6 +31,7 @@ VAPID_PUBLIC_KEY = "BEycBOkyfpLUcEdSqIP9TBFIJf_krICKbdtMoGuwST5x_X6gkqQ6dsMN3BlQ
 VAPID_EMAIL = "mailto:admin@mafasel.com"
 GOOGLE_CALLBACK_URL = "https://mafaseltech.com/api/auth/google/callback"
 QMEET_BASE_URL = "https://qiroxstudio.online/api/qmeet/v1"
+APPLE_CALLBACK_URL = "https://mafaseltech.com/api/auth/apple/callback"
 
 [workflows]
 runButton = "Project"

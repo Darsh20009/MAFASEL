@@ -280,8 +280,8 @@ async function startServer() {
 
       if (process.env.NODE_ENV !== 'production') {
       const demoAccounts = [
-        { name: 'مريض تجريبي', email: 'patient@mafasel.com', phone: '0500000001', role: 'patient' },
-        { name: 'د. أحمد الطبيب', email: 'doctor@mafasel.com', phone: '0500000002', role: 'doctor' },
+        { name: 'مستفيد تجريبي', email: 'patient@mafasel.com', phone: '0500000001', role: 'patient' },
+        { name: 'د. أحمد الأخصائي', email: 'doctor@mafasel.com', phone: '0500000002', role: 'doctor' },
         { name: 'صيدلي تجريبي', email: 'pharmacist@mafasel.com', phone: '0500000003', role: 'pharmacist' },
         { name: 'مشرف تجريبي', email: 'moderator@mafasel.com', phone: '0500000004', role: 'moderator' },
         { name: 'شركة تجريبية', email: 'company@mafasel.com', phone: '0500000005', role: 'company' },

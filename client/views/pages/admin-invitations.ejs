@@ -37,7 +37,7 @@
           <div class="form-group">
             <label>الدور المطلوب *</label>
             <select name="role" class="form-control" required>
-              <option value="doctor">طبيب</option>
+              <option value="doctor">أخصائي</option>
               <option value="pharmacist">صيدلي</option>
               <option value="moderator">مشرف</option>
               <option value="employee">موظف</option>
@@ -130,7 +130,7 @@
             var isExp = new Date(inv.expiresAt) < new Date();
             var statusClass = inv.status === 'used' ? 'color:#22c55e' : inv.status === 'cancelled' ? 'color:#ef4444' : isExp ? 'color:#f59e0b' : 'color:var(--secondary)';
             var statusLabel = inv.status === 'used' ? 'مستخدمة' : inv.status === 'cancelled' ? 'ملغية' : isExp ? 'منتهية' : 'نشطة';
-            var roleLabels = { doctor:'طبيب', pharmacist:'صيدلي', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين', admin:'مدير' };
+            var roleLabels = { doctor:'أخصائي', pharmacist:'صيدلي', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين', admin:'مدير' };
           %>
           <tr>
             <td>

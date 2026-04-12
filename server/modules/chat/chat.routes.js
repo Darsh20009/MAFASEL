@@ -49,7 +49,7 @@ router.post('/new', isAuthenticated, async (req, res) => {
 
       const doctor = await User.findById(targetId);
       if (!doctor) {
-        req.session.error = 'الطبيب غير موجود';
+        req.session.error = 'الأخصائي غير موجود';
         return res.redirect('/chat');
       }
       const room = await ChatRoom.create({
@@ -64,7 +64,7 @@ router.post('/new', isAuthenticated, async (req, res) => {
         text: 'تم بدء المحادثة',
         type: 'system'
       });
-      await fireNotify(req.app, targetId, 'محادثة جديدة', 'لديك محادثة جديدة من مريض', {
+      await fireNotify(req.app, targetId, 'محادثة جديدة', 'لديك محادثة جديدة من مستفيد', {
         type: 'info', link: '/chat/room/' + room._id
       });
       return res.redirect('/chat/room/' + room._id);

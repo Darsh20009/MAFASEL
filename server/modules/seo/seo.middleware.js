@@ -34,7 +34,7 @@ function medicalPlatformSchema(req, res, next) {
         {
           "@type": "MedicalTherapy",
           "name": "استشارات طبية عن بُعد",
-          "description": "استشارات طبية مع أطباء متخصصين عبر الإنترنت"
+          "description": "استشارات طبية مع أخصائيين متخصصين عبر الإنترنت"
         },
         {
           "@type": "MedicalTherapy",
@@ -75,7 +75,7 @@ function pageSchema(type, data) {
         "@context": "https://schema.org",
         "@type": "MedicalClinic",
         "name": "استشارات مفاصل الطبية",
-        "description": "استشارات طبية متخصصة عن بُعد مع أفضل الأطباء",
+        "description": "استشارات طبية متخصصة عن بُعد مع أفضل الأخصائيين",
         "url": baseUrl + "/consultations",
         "image": baseUrl + "/icons/icon-512.png",
         "medicalSpecialty": "GeneralPractice",
@@ -88,8 +88,8 @@ function pageSchema(type, data) {
       res.locals.schemaMarkup = {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        "name": "خريطة المستشفيات والصيدليات",
-        "description": "مواقع المستشفيات والصيدليات في المملكة العربية السعودية",
+        "name": "خريطة المراكز والصيدليات",
+        "description": "مواقع مراكز العلاج الطبيعي والصيدليات في المملكة العربية السعودية",
         "url": baseUrl + "/maps"
       };
     }

@@ -88,7 +88,7 @@
     <form method="POST" action="/meetings/create" class="modal-form">
       <div class="form-group">
         <label><i class="fas fa-heading"></i> عنوان الاجتماع</label>
-        <input type="text" name="title" required placeholder="مثال: جلسة متابعة مع المريض" value="استشارة طبية">
+        <input type="text" name="title" required placeholder="مثال: جلسة متابعة مع المستفيد" value="استشارة طبية">
       </div>
       <div class="form-group">
         <label><i class="fas fa-calendar-alt"></i> تاريخ ووقت الاجتماع</label>
@@ -106,9 +106,9 @@
       </div>
       <% if (patients.length > 0) { %>
       <div class="form-group">
-        <label><i class="fas fa-user"></i> المريض (اختياري)</label>
+        <label><i class="fas fa-user"></i> المستفيد (اختياري)</label>
         <select name="patientId">
-          <option value="">بدون مريض محدد</option>
+          <option value="">بدون مستفيد محدد</option>
           <% patients.forEach(function(p){ %>
           <option value="<%= p._id %>"><%= p.name %> <%= p.phone ? '— '+p.phone : p.email ? '— '+p.email : '' %></option>
           <% }) %>

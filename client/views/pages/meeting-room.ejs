@@ -64,7 +64,7 @@ var statusColor = meeting.status === 'cancelled' ? '#ef4444' : minutesDiff > 0 ?
           <% if (meeting.createdBy.avatar) { %><img src="<%= meeting.createdBy.avatar %>" class="mr-part-avatar" alt=""><% } else { %><div class="mr-part-avatar mr-part-ph"><i class="fas fa-user-md"></i></div><% } %>
           <div>
             <strong><%= meeting.createdBy.name %></strong>
-            <small><%= meeting.createdBy.specialty || ({admin:'مدير',moderator:'مشرف',doctor:'طبيب'}[meeting.createdBy.role]) || 'منشئ الاجتماع' %></small>
+            <small><%= meeting.createdBy.specialty || ({admin:'مدير',moderator:'مشرف',doctor:'أخصائي'}[meeting.createdBy.role]) || 'منشئ الاجتماع' %></small>
           </div>
         </div>
         <% } %>
@@ -74,7 +74,7 @@ var statusColor = meeting.status === 'cancelled' ? '#ef4444' : minutesDiff > 0 ?
           <% if (meeting.patient.avatar) { %><img src="<%= meeting.patient.avatar %>" class="mr-part-avatar" alt=""><% } else { %><div class="mr-part-avatar mr-part-ph" style="background:#6366f1;"><i class="fas fa-user"></i></div><% } %>
           <div>
             <strong><%= meeting.patient.name %></strong>
-            <small>المريض</small>
+            <small>المستفيد</small>
           </div>
         </div>
         <% } %>

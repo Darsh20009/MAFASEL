@@ -12,7 +12,7 @@
 
     <div class="chat-tabs">
       <button class="chat-tab active" data-filter="all">الكل</button>
-      <button class="chat-tab" data-filter="doctor">مع الأطباء</button>
+      <button class="chat-tab" data-filter="doctor">مع الأخصائيين</button>
       <button class="chat-tab" data-filter="support">الدعم الفني</button>
       <% if (['admin','moderator','doctor','pharmacist','employee'].includes(user.role)) { %>
       <button class="chat-tab" data-filter="internal">داخلي</button>
@@ -112,7 +112,7 @@
       </div>
       <% } else { %>
       <div class="empty-state-sm">
-        <p>لا يوجد أطباء مسجلون حالياً</p>
+        <p>لا يوجد أخصائيين مسجلون حالياً</p>
       </div>
       <% } %>
 
