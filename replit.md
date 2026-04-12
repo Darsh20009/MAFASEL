@@ -47,8 +47,8 @@
 │       │   ├── notification.service.js
 │       │   ├── notifications.routes.js
 │       │   └── push-subscription.model.js  # اشتراكات Web Push (VAPID)
-│       ├── email/               # نظام البريد الإلكتروني (SMTP2GO)
-│       │   ├── email.service.js # إرسال + قوالب HTML (welcome, otp, reset, consultation, order, support)
+│       ├── email/               # نظام البريد الإلكتروني (SMTP2GO) - صور مستضافة (hosted URLs, لا CID)
+│       │   ├── email.service.js # إرسال + قوالب HTML + getLogoUrl()/getGifUrl() للصور المستضافة
 │       │   └── email.routes.js  # /email/preview/:template, /email/send-test, /email/templates
 │       ├── ai/                  # المساعد الذكي (Groq)
 │       │   └── ai.routes.js

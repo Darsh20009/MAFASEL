@@ -10,15 +10,15 @@
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --accent:#12a99b;--accent2:#0d8a7e;--primary:#101d23;
+      --accent:#101d23;--accent2:#1a2e38;--teal:#12a99b;--teal2:#0d8a7e;--primary:#101d23;
       --text:#1a1a2e;--muted:#6b7280;--border:#e2e8f0;
-      --bg:#f8fafc;--card:#fff;--shadow:0 4px 24px rgba(0,0,0,0.08);
+      --bg:#f0f4f8;--card:#fff;--shadow:0 4px 24px rgba(0,0,0,0.08);
     }
-    html,body{width:100%;height:100%;font-family:'Tajawal',sans-serif;background:#e8ecf0;overflow:hidden;user-select:none}
+    html,body{width:100%;height:100%;font-family:'Tajawal',sans-serif;background:#fff;overflow:hidden;user-select:none}
 
     .book-wrap{
       width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(135deg,#e8ecf0 0%,#d1d5db 100%);
+      background:#fff;
       position:relative;
     }
 
@@ -42,7 +42,7 @@
     }
     .page::before{
       content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
-      background:linear-gradient(to bottom,var(--accent),var(--accent2));
+      background:linear-gradient(to bottom,var(--teal),var(--primary));
       border-radius:4px 0 0 4px;
     }
     .page::after{
@@ -69,7 +69,7 @@
       cursor:pointer;display:flex;align-items:center;justify-content:center;
       font-size:1.1rem;color:var(--primary);transition:all 0.2s;
     }
-    .nav-btn:hover{background:var(--accent);color:#fff;box-shadow:0 4px 20px rgba(18,169,155,0.3)}
+    .nav-btn:hover{background:var(--teal);color:#fff;box-shadow:0 4px 20px rgba(18,169,155,0.3)}
     .nav-btn:disabled{opacity:0.3;cursor:default;background:var(--card);color:var(--muted)}
     #prevBtn{right:calc(50% + min(48vw,460px) + 16px)}
     #nextBtn{left:calc(50% + min(48vw,460px) + 16px)}
@@ -78,7 +78,7 @@
       position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
       width:min(80vw,700px);height:4px;background:var(--border);border-radius:2px;z-index:50;
     }
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.5s}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--primary));border-radius:2px;transition:width 0.5s}
 
     .page-counter{
       position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:50;
@@ -88,10 +88,10 @@
     h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;color:var(--primary);line-height:1.3;margin-bottom:0.5rem}
     h2{font-size:clamp(1.2rem,3vw,1.6rem);font-weight:800;color:var(--primary);line-height:1.35;margin-bottom:0.4rem}
     h3{font-size:0.95rem;font-weight:700;color:var(--primary);margin-bottom:0.3rem}
-    .accent{color:var(--accent)}
+    .accent{color:var(--teal)}
     .sub{font-size:clamp(0.85rem,2vw,0.95rem);color:var(--muted);line-height:1.75;margin-bottom:1rem}
     .badge{display:inline-flex;align-items:center;gap:0.35rem;font-size:0.72rem;font-weight:700;padding:0.3rem 0.8rem;border-radius:50px;margin-bottom:0.6rem}
-    .b-teal{background:#e6faf8;color:var(--accent);border:1px solid #b2f0ea}
+    .b-teal{background:#e6faf8;color:var(--teal);border:1px solid #b2f0ea}
     .b-blue{background:#dbeafe;color:#2563eb;border:1px solid #bfdbfe}
     .b-purple{background:#ede9fe;color:#7c3aed;border:1px solid #ddd6fe}
     .b-gold{background:#fef3c7;color:#d97706;border:1px solid #fde68a}
@@ -108,7 +108,7 @@
     .card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
 
     .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:0.5rem;flex-shrink:0}
-    .ic-teal{background:#e6faf8;color:var(--accent)}
+    .ic-teal{background:#e6faf8;color:var(--teal)}
     .ic-blue{background:#dbeafe;color:#2563eb}
     .ic-purple{background:#ede9fe;color:#7c3aed}
     .ic-pink{background:#fce7f3;color:#db2777}
@@ -118,10 +118,10 @@
     .ic-orange{background:#ffedd5;color:#ea580c}
 
     .tag{display:inline-block;font-size:0.68rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:4px;margin:0.15rem}
-    .t-teal{background:#e6faf8;color:var(--accent)}
+    .t-teal{background:#e6faf8;color:var(--teal)}
     .t-blue{background:#dbeafe;color:#2563eb}
 
-    .divider{width:50px;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;margin:0.5rem 0 0.8rem}
+    .divider{width:50px;height:3px;background:linear-gradient(90deg,var(--teal),var(--accent2));border-radius:2px;margin:0.5rem 0 0.8rem}
 
     .phone-mock{
       width:160px;height:300px;background:#fff;border-radius:24px;
@@ -139,9 +139,9 @@
     .code-block{background:var(--primary);color:#e6faf8;border-radius:8px;padding:0.7rem 0.9rem;font-size:0.68rem;font-family:monospace;line-height:1.6;direction:ltr;text-align:left;overflow-x:auto}
 
     .tl{position:relative;padding-right:1.5rem}
-    .tl::before{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),#2563eb,#7c3aed);border-radius:1px}
+    .tl::before{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--teal),#2563eb,#7c3aed);border-radius:1px}
     .tl-item{position:relative;padding:0.5rem 1rem 0.8rem 0;margin-bottom:0.3rem}
-    .tl-item::before{content:'';position:absolute;right:-0.35rem;top:0.75rem;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid #fff}
+    .tl-item::before{content:'';position:absolute;right:-0.35rem;top:0.75rem;width:8px;height:8px;border-radius:50%;background:var(--teal);border:2px solid #fff}
     .tl-item:nth-child(2)::before{background:#2563eb}
     .tl-item:nth-child(3)::before{background:#7c3aed}
     .tl-item:nth-child(4)::before{background:#d97706}
@@ -156,7 +156,7 @@
     .method-get{color:#2563eb}
 
     .chat-bubble{padding:0.4rem 0.6rem;border-radius:10px;font-size:0.7rem;max-width:80%;line-height:1.5;margin-bottom:0.3rem}
-    .chat-user{align-self:flex-end;background:var(--accent);color:#fff;border-radius:10px 10px 4px 10px}
+    .chat-user{align-self:flex-end;background:var(--teal);color:#fff;border-radius:10px 10px 4px 10px}
     .chat-bot{align-self:flex-start;background:var(--bg);color:var(--text);border-radius:10px 10px 10px 4px}
 
     @media(max-width:768px){
@@ -215,7 +215,7 @@
               <code style="font-size:0.68rem;color:var(--muted)">#101d23</code>
             </div>
             <div class="card" style="text-align:center;padding:0.7rem">
-              <div style="width:36px;height:36px;border-radius:8px;background:var(--accent);margin:0 auto 0.4rem"></div>
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--teal);margin:0 auto 0.4rem"></div>
               <h3 style="font-size:0.78rem">اللون المميز</h3>
               <code style="font-size:0.68rem;color:var(--muted)">#12a99b</code>
             </div>
@@ -225,7 +225,7 @@
               <code style="font-size:0.68rem;color:var(--muted)">Arabic</code>
             </div>
             <div class="card" style="text-align:center;padding:0.7rem">
-              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg);border:2px solid var(--border);margin:0 auto 0.4rem;display:flex;align-items:center;justify-content:center"><i class="fas fa-arrow-right" style="color:var(--accent);transform:scaleX(-1)"></i></div>
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg);border:2px solid var(--border);margin:0 auto 0.4rem;display:flex;align-items:center;justify-content:center"><i class="fas fa-arrow-right" style="color:var(--teal);transform:scaleX(-1)"></i></div>
               <h3 style="font-size:0.78rem">RTL</h3>
               <code style="font-size:0.68rem;color:var(--muted)">يمين ← يسار</code>
             </div>
@@ -251,7 +251,7 @@
           <h3>الرؤية</h3>
           <p style="font-size:0.78rem;color:var(--muted);line-height:1.7">أن نكون المنصة الطبية الرقمية الرائدة في المملكة والشرق الأوسط — بما يتماشى مع رؤية 2030 في التحول الرقمي الصحي.</p>
         </div>
-        <div class="card" style="border-right:3px solid var(--accent)">
+        <div class="card" style="border-right:3px solid var(--teal)">
           <div class="ic ic-teal" style="margin-bottom:0.4rem"><i class="fas fa-bullseye"></i></div>
           <h3>الرسالة</h3>
           <p style="font-size:0.78rem;color:var(--muted);line-height:1.7">تقديم منصة شاملة تجمع الاستشارات، الصيدلية، التأمين، والذكاء الاصطناعي في تجربة واحدة سلسة وآمنة.</p>
@@ -298,14 +298,14 @@
           </div>
         </div>
         <div style="min-width:200px">
-          <h3 style="font-size:0.8rem;margin-bottom:0.5rem"><i class="fas fa-shield-alt" style="color:var(--accent)"></i> إعدادات النظام</h3>
+          <h3 style="font-size:0.8rem;margin-bottom:0.5rem"><i class="fas fa-shield-alt" style="color:var(--teal)"></i> إعدادات النظام</h3>
           <div style="display:flex;flex-direction:column;gap:0.3rem">
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--accent);font-size:0.6rem"></i> Rate Limiting</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--accent);font-size:0.6rem"></i> CORS Policy</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--accent);font-size:0.6rem"></i> Helmet Security</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--accent);font-size:0.6rem"></i> Error Handling</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--accent);font-size:0.6rem"></i> Logger System</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--accent);font-size:0.6rem"></i> Compression</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Rate Limiting</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> CORS Policy</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Helmet Security</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Error Handling</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Logger System</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Compression</div>
           </div>
         </div>
       </div>
@@ -321,7 +321,7 @@
         <div class="flex-1">
           <div class="g3" style="gap:0.5rem">
             <div class="card" style="padding:0.7rem;text-align:center">
-              <i class="fas fa-mobile-alt" style="color:var(--accent);font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
+              <i class="fas fa-mobile-alt" style="color:var(--teal);font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
               <h3 style="font-size:0.78rem">الجوال + OTP</h3>
               <p style="font-size:0.65rem;color:var(--muted)">رمز تحقق 6 أرقام</p>
             </div>
@@ -467,7 +467,7 @@ Message {<br>
             <div class="chat-bubble chat-bot">من متى بدأ الألم؟ وهل يزيد مع الحركة؟</div>
             <div style="display:flex;gap:0.2rem;margin-top:auto">
               <div style="flex:1;background:var(--bg);border-radius:10px;padding:0.25rem 0.4rem;font-size:0.5rem;color:var(--muted)">اكتب رسالة...</div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center"><i class="fas fa-paper-plane" style="color:#fff;font-size:0.4rem"></i></div>
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center"><i class="fas fa-paper-plane" style="color:#fff;font-size:0.4rem"></i></div>
             </div>
           </div>
         </div>
@@ -516,7 +516,7 @@ Meeting {<br>
             <p style="font-size:0.68rem;color:var(--muted)">HD مع تشفير</p>
           </div>
           <div class="card" style="text-align:center;padding:0.8rem;background:linear-gradient(135deg,#e6faf8,#dcfce7)">
-            <i class="fas fa-microphone" style="font-size:2.5rem;color:var(--accent);margin-bottom:0.4rem;display:block"></i>
+            <i class="fas fa-microphone" style="font-size:2.5rem;color:var(--teal);margin-bottom:0.4rem;display:block"></i>
             <h3 style="font-size:0.85rem">صوت عالي الجودة</h3>
             <p style="font-size:0.68rem;color:var(--muted)">بدون تقطيع</p>
           </div>
@@ -553,20 +553,20 @@ Drug {<br>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:0.3rem">
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-store" style="color:var(--accent);font-size:0.65rem"></i> تصفح الصيدليات</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-search" style="color:var(--accent);font-size:0.65rem"></i> بحث في الأدوية</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-shield-alt" style="color:var(--accent);font-size:0.65rem"></i> شراء بالتأمين / نقد / بطاقة</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-truck" style="color:var(--accent);font-size:0.65rem"></i> توصيل سريع</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-store" style="color:var(--teal);font-size:0.65rem"></i> تصفح الصيدليات</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-search" style="color:var(--teal);font-size:0.65rem"></i> بحث في الأدوية</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-shield-alt" style="color:var(--teal);font-size:0.65rem"></i> شراء بالتأمين / نقد / بطاقة</div>
+            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-truck" style="color:var(--teal);font-size:0.65rem"></i> توصيل سريع</div>
           </div>
         </div>
         <div class="phone-mock" style="height:260px">
           <div class="phone-inner" style="padding-top:1.8rem">
-            <div style="font-weight:700;font-size:0.6rem;text-align:center;margin-bottom:0.3rem;color:var(--accent)">🏥 صيدلية النهدي</div>
-            <div class="phone-item"><i class="fas fa-pills" style="color:var(--accent)"></i> بنادول — 12 ر.س</div>
+            <div style="font-weight:700;font-size:0.6rem;text-align:center;margin-bottom:0.3rem;color:var(--teal)">🏥 صيدلية النهدي</div>
+            <div class="phone-item"><i class="fas fa-pills" style="color:var(--teal)"></i> بنادول — 12 ر.س</div>
             <div class="phone-item"><i class="fas fa-pills" style="color:#2563eb"></i> فولتارين — 28 ر.س</div>
             <div class="phone-item"><i class="fas fa-pills" style="color:#7c3aed"></i> أوجمنتين — 45 ر.س</div>
             <div class="phone-item"><i class="fas fa-pills" style="color:#d97706"></i> موترين — 18 ر.س</div>
-            <div style="margin-top:auto;background:var(--accent);color:#fff;text-align:center;padding:0.35rem;border-radius:6px;font-size:0.55rem;font-weight:700"><i class="fas fa-shopping-cart"></i> طلب (103 ر.س)</div>
+            <div style="margin-top:auto;background:var(--teal);color:#fff;text-align:center;padding:0.35rem;border-radius:6px;font-size:0.55rem;font-weight:700"><i class="fas fa-shopping-cart"></i> طلب (103 ر.س)</div>
           </div>
         </div>
       </div>
@@ -780,7 +780,7 @@ AuditLog {<br>
 }
           </div>
           <div style="display:flex;flex-direction:column;gap:0.25rem">
-            <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-sign-in-alt" style="color:var(--accent);font-size:0.55rem"></i> تسجيل دخول</div>
+            <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-sign-in-alt" style="color:var(--teal);font-size:0.55rem"></i> تسجيل دخول</div>
             <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-edit" style="color:#2563eb;font-size:0.55rem"></i> تغيير بيانات</div>
             <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-trash" style="color:#dc2626;font-size:0.55rem"></i> حذف حساب</div>
             <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-cog" style="color:#d97706;font-size:0.55rem"></i> إجراء إداري</div>
@@ -888,7 +888,7 @@ AuditLog {<br>
         </div>
       </div>
       <div class="card" style="margin-top:0.6rem;padding:0.6rem;display:flex;align-items:center;gap:0.6rem;background:linear-gradient(135deg,#e6faf8,#dbeafe)">
-        <i class="fas fa-check-circle" style="color:var(--accent);font-size:1.2rem;flex-shrink:0"></i>
+        <i class="fas fa-check-circle" style="color:var(--teal);font-size:1.2rem;flex-shrink:0"></i>
         <div>
           <strong style="font-size:0.8rem">Graceful Shutdown</strong>
           <p style="font-size:0.65rem;color:var(--muted)">إيقاف آمن مع حفظ الجلسات — SIGTERM + uncaughtException + unhandledRejection</p>
@@ -917,7 +917,7 @@ AuditLog {<br>
               <p style="font-size:0.6rem;color:var(--muted)">دفع سريع وآمن</p>
             </div>
             <div class="card" style="padding:0.7rem;text-align:center;border-color:rgba(22,163,106,0.2)">
-              <i class="fas fa-shield-alt" style="font-size:1.5rem;color:var(--accent);display:block;margin-bottom:0.3rem"></i>
+              <i class="fas fa-shield-alt" style="font-size:1.5rem;color:var(--teal);display:block;margin-bottom:0.3rem"></i>
               <h3 style="font-size:0.78rem">التأمين</h3>
               <p style="font-size:0.6rem;color:var(--muted)">تغطية تأمينية مباشرة</p>
             </div>
@@ -956,8 +956,8 @@ Order.paymentMethod:<br>
       <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
       <p class="sub" style="font-size:0.78rem">كلمة المرور الموحدة لجميع الحسابات التجريبية: <code style="background:#ede9fe;padding:0.15rem 0.5rem;border-radius:4px;font-weight:800;color:#7c3aed;font-size:0.82rem">demo123</code> &nbsp;|&nbsp; المدير: <code style="background:#fee2e2;padding:0.15rem 0.5rem;border-radius:4px;font-weight:800;color:#dc2626;font-size:0.82rem">admin123</code></p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;font-size:0.72rem">
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid var(--accent)">
-          <div style="width:34px;height:34px;border-radius:50%;background:#e6faf8;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-user-injured" style="color:var(--accent);font-size:0.85rem"></i></div>
+        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid var(--teal)">
+          <div style="width:34px;height:34px;border-radius:50%;background:#e6faf8;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-user-injured" style="color:var(--teal);font-size:0.85rem"></i></div>
           <div><strong>مريض</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">patient@mafasel.com</span></div>
         </div>
         <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #2563eb">
@@ -990,8 +990,8 @@ Order.paymentMethod:<br>
         </div>
       </div>
       <div class="card" style="margin-top:0.5rem;padding:0.5rem 0.8rem;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;gap:0.5rem">
-        <i class="fas fa-info-circle" style="color:var(--accent);font-size:0.9rem;flex-shrink:0"></i>
-        <p style="font-size:0.68rem;color:var(--text);line-height:1.5">جميع الحسابات مفعّلة وجاهزة للاختبار. سجّل الدخول من <a href="/login" style="color:var(--accent);font-weight:700">/login</a> واستكشف كل واجهة حسب الدور.</p>
+        <i class="fas fa-info-circle" style="color:var(--teal);font-size:0.9rem;flex-shrink:0"></i>
+        <p style="font-size:0.68rem;color:var(--text);line-height:1.5">جميع الحسابات مفعّلة وجاهزة للاختبار. سجّل الدخول من <a href="/login" style="color:var(--teal);font-weight:700">/login</a> واستكشف كل واجهة حسب الدور.</p>
       </div>
       <span class="page-num">17</span>
     </div>
@@ -1039,7 +1039,7 @@ Order.paymentMethod:<br>
             <div class="stat-num" style="font-size:1.4rem;color:#7c3aed">8</div>
             <div class="stat-label">أدوار مستخدمين</div>
           </div>
-          <a href="/login" style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.7rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:10px;font-weight:700;font-size:0.85rem;text-decoration:none;box-shadow:0 4px 16px rgba(18,169,155,0.25)">
+          <a href="/login" style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.7rem;background:linear-gradient(135deg,var(--teal),var(--accent2));color:#fff;border-radius:10px;font-weight:700;font-size:0.85rem;text-decoration:none;box-shadow:0 4px 16px rgba(18,169,155,0.25)">
             <i class="fas fa-sign-in-alt"></i> ابدأ الآن
           </a>
         </div>

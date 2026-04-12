@@ -34,6 +34,14 @@ function getGifBase64() {
   } catch (e) { return null; }
 }
 
+function getLogoUrl() {
+  return getBaseUrl() + '/uploads/email/banner-logo.png';
+}
+
+function getGifUrl() {
+  return getBaseUrl() + '/uploads/email/logo-animation.gif';
+}
+
 function buildEmailHTML(options) {
   const {
     title = '',
@@ -46,8 +54,8 @@ function buildEmailHTML(options) {
   } = options;
 
   const baseUrl = getBaseUrl();
-  const logoUrl = 'cid:mafasel-logo';
-  const gifUrl = 'cid:mafasel-banner';
+  const logoUrl = getLogoUrl();
+  const gifUrl = getGifUrl();
 
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
@@ -154,26 +162,6 @@ async function sendEmail({ to, subject, html, text }) {
     return { success: false, error: 'Email service not configured' };
   }
 
-  const inlineImages = [];
-  const logoB64 = getLogoBase64();
-  const gifB64 = getGifBase64();
-  if (logoB64) {
-    inlineImages.push({
-      fileblob: logoB64,
-      filename: 'banner-logo.png',
-      mimetype: 'image/png',
-      content_id: 'mafasel-logo'
-    });
-  }
-  if (gifB64 && html.includes('cid:mafasel-banner')) {
-    inlineImages.push({
-      fileblob: gifB64,
-      filename: 'logo-animation.gif',
-      mimetype: 'image/gif',
-      content_id: 'mafasel-banner'
-    });
-  }
-
   const emailPayload = {
     api_key: apiKey,
     to: Array.isArray(to) ? to : [to],
@@ -182,10 +170,6 @@ async function sendEmail({ to, subject, html, text }) {
     html_body: html,
     text_body: text || subject
   };
-
-  if (inlineImages.length > 0) {
-    emailPayload.inlineimages = inlineImages;
-  }
 
   const payload = JSON.stringify(emailPayload);
 
