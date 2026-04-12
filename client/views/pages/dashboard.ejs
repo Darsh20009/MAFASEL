@@ -21,8 +21,6 @@
         <% }) %>
       </div>
       <% if (banners.length > 1) { %>
-      <button class="banner-arrow banner-prev" onclick="changeBannerSlide(-1)"><i class="fas fa-chevron-right"></i></button>
-      <button class="banner-arrow banner-next" onclick="changeBannerSlide(1)"><i class="fas fa-chevron-left"></i></button>
       <div class="banner-dots">
         <% banners.forEach((b, i) => { %>
         <span class="banner-dot <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)"></span>
