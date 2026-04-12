@@ -57,8 +57,10 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.success = req.session.success || null;
   res.locals.error = req.session.error || null;
+  res.locals.inviteLink = req.session.inviteLink || null;
   req.session.success = null;
   req.session.error = null;
+  req.session.inviteLink = null;
   next();
 });
 

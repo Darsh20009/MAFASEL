@@ -54,6 +54,7 @@
 │       └── admin/               # لوحة الإدارة
 │           ├── admin.routes.js
 │           ├── support.routes.js # لوحة الدعم + /user/:id/full-data + /internal-msg + AI suggest
+│           ├── invitation.model.js # نموذج الدعوات (token, role, expiry, maxUses)
 │           └── banner.model.js  # نموذج البانر (ديناميكي من قاعدة البيانات)
 ├── client/views/                # قوالب EJS
 ├── public/                      # ملفات ثابتة (CSS, JS, Icons)

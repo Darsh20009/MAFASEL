@@ -8,7 +8,9 @@ const Order = require('../orders/order.model');
 const Insurance = require('../medical/insurance.model');
 const Complaint = require('../settings/complaint.model');
 const Banner = require('./banner.model');
+const Invitation = require('./invitation.model');
 const { fireNotify } = require('../notifications/notification.service');
+const { sendEmail, buildEmailHTML } = require('../email/email.service');
 const fs = require('fs');
 const path = require('path');
 
@@ -290,6 +292,94 @@ router.post('/banners/:id/delete', isAuthenticated, isAdmin, async (req, res) =>
     req.session.error = 'حدث خطأ في حذف البانر';
   }
   res.redirect('/admin/banners');
+});
+
+router.get('/invitations', isAuthenticated, isAdmin, async (req, res) => {
+  const invitations = await Invitation.find()
+    .populate('createdBy', 'name')
+    .populate('usedBy', 'name email')
+    .sort({ createdAt: -1 });
+  res.render('pages/admin-invitations', { title: 'روابط الدعوات', invitations });
+});
+
+router.post('/invitations/create', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const { role, name, email, phone, message, maxUses, expiryDays } = req.body;
+    const allowedRoles = ['doctor', 'pharmacist', 'moderator', 'company', 'employee', 'insurance_agent'];
+    if (req.session.user.role === 'admin') allowedRoles.push('admin');
+    if (!allowedRoles.includes(role)) {
+      req.session.error = 'دور غير صالح';
+      return res.redirect('/admin/invitations');
+    }
+
+    const days = parseInt(expiryDays) || 7;
+    const invitation = await Invitation.create({
+      role,
+      name: name ? name.trim() : undefined,
+      email: email ? email.toLowerCase().trim() : undefined,
+      phone: phone ? phone.replace(/\D/g, '') : undefined,
+      message: message || '',
+      maxUses: parseInt(maxUses) || 1,
+      expiresAt: new Date(Date.now() + days * 24 * 60 * 60 * 1000),
+      createdBy: req.session.user._id
+    });
+
+    const baseUrl = process.env.BASE_URL || `https://${process.env.REPLIT_DEV_DOMAIN}`;
+    const inviteLink = `${baseUrl}/join/${invitation.token}`;
+
+    if (email) {
+      const roleLabels = { doctor: 'طبيب', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
+      const html = buildEmailHTML({
+        title: 'دعوة للانضمام إلى مفاصل الطبيه',
+        greeting: name ? `مرحباً ${name}` : 'مرحباً بك',
+        body: `<p style="line-height:1.9;">تمت دعوتك للانضمام إلى منصة مفاصل الطبية بدور <strong>${roleLabels[role] || role}</strong>.</p>${message ? `<p style="line-height:1.9;color:#94a3b8;">${message}</p>` : ''}<p style="line-height:1.9;">الدعوة صالحة لمدة <strong>${days} أيام</strong>.</p>`,
+        ctaText: 'سجل الآن',
+        ctaLink: inviteLink,
+        showVideo: true
+      });
+      await sendEmail({ to: email, subject: 'دعوة للانضمام إلى مفاصل الطبيه', html }).catch(() => {});
+    }
+
+    req.session.success = 'تم إنشاء رابط الدعوة بنجاح';
+    req.session.inviteLink = inviteLink;
+    res.redirect('/admin/invitations');
+  } catch (err) {
+    console.error('Create invitation error:', err);
+    req.session.error = 'حدث خطأ في إنشاء الدعوة';
+    res.redirect('/admin/invitations');
+  }
+});
+
+router.post('/invitations/:id/cancel', isAuthenticated, isAdmin, async (req, res) => {
+  await Invitation.findByIdAndUpdate(req.params.id, { status: 'cancelled' });
+  req.session.success = 'تم إلغاء الدعوة';
+  res.redirect('/admin/invitations');
+});
+
+router.post('/invitations/:id/resend', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const invitation = await Invitation.findById(req.params.id);
+    if (!invitation || !invitation.email) {
+      req.session.error = 'لا يمكن إعادة الإرسال';
+      return res.redirect('/admin/invitations');
+    }
+    const baseUrl = process.env.BASE_URL || `https://${process.env.REPLIT_DEV_DOMAIN}`;
+    const inviteLink = `${baseUrl}/join/${invitation.token}`;
+    const roleLabels = { doctor: 'طبيب', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
+    const html = buildEmailHTML({
+      title: 'تذكير: دعوة للانضمام إلى مفاصل الطبيه',
+      greeting: invitation.name ? `مرحباً ${invitation.name}` : 'مرحباً بك',
+      body: `<p style="line-height:1.9;">هذا تذكير بدعوتك للانضمام إلى منصة مفاصل الطبية بدور <strong>${roleLabels[invitation.role] || invitation.role}</strong>.</p>`,
+      ctaText: 'سجل الآن',
+      ctaLink: inviteLink,
+      showVideo: true
+    });
+    await sendEmail({ to: invitation.email, subject: 'تذكير: دعوة للانضمام إلى مفاصل الطبيه', html });
+    req.session.success = 'تم إعادة إرسال الدعوة';
+  } catch (err) {
+    req.session.error = 'فشل إعادة الإرسال';
+  }
+  res.redirect('/admin/invitations');
 });
 
 module.exports = router;

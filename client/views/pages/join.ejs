@@ -1,0 +1,71 @@
+<%- include('../partials/header') %>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:linear-gradient(135deg,#0a0f18 0%,#0f1923 50%,#0a1628 100%);">
+  <div style="width:100%;max-width:520px;">
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <img src="/uploads/email/banner-logo.png" alt="مفاصل" style="height:60px;margin-bottom:0.75rem;">
+      <h1 style="font-size:1.4rem;margin:0;">انضم إلى مفاصل الطبيه</h1>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin:0.5rem 0 0;">تمت دعوتك للتسجيل بدور <strong style="color:var(--secondary);"><%= roleLabel %></strong></p>
+    </div>
+
+    <% if (error) { %>
+    <div class="alert alert-error" style="margin-bottom:1rem;"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+    <% } %>
+
+    <div class="card" style="padding:1.75rem;border-radius:16px;border:1px solid var(--secondary)15;">
+      <% if (invitation.message) { %>
+      <div style="background:var(--secondary)10;border:1px solid var(--secondary)20;border-radius:10px;padding:0.85rem;margin-bottom:1.25rem;font-size:0.85rem;color:#94a3b8;">
+        <i class="fas fa-comment-dots" style="color:var(--secondary);"></i> <%= invitation.message %>
+      </div>
+      <% } %>
+
+      <form method="POST" action="/join/<%= invitation.token %>">
+        <div style="margin-bottom:1rem;">
+          <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.35rem;">الاسم الكامل *</label>
+          <input type="text" name="name" class="form-control" value="<%= invitation.name || '' %>" placeholder="أدخل اسمك الكامل" required style="padding:0.75rem;">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.35rem;">البريد الإلكتروني</label>
+            <input type="email" name="email" class="form-control" value="<%= invitation.email || '' %>" placeholder="example@email.com" style="padding:0.75rem;" dir="ltr">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.35rem;">رقم الجوال</label>
+            <input type="text" name="phone" class="form-control" value="<%= invitation.phone || '' %>" placeholder="05XXXXXXXX" style="padding:0.75rem;" dir="ltr">
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.35rem;">رقم الهوية الوطنية</label>
+          <input type="text" name="nationalId" class="form-control" placeholder="10 أرقام تبدأ بـ 1 أو 2" maxlength="10" style="padding:0.75rem;" dir="ltr">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
+          <div>
+            <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.35rem;">كلمة المرور *</label>
+            <input type="password" name="password" class="form-control" placeholder="6 أحرف على الأقل" minlength="6" required style="padding:0.75rem;">
+          </div>
+          <div>
+            <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.35rem;">تأكيد كلمة المرور *</label>
+            <input type="password" name="confirmPassword" class="form-control" placeholder="أعد إدخال كلمة المرور" required style="padding:0.75rem;">
+          </div>
+        </div>
+
+        <button type="submit" class="btn" style="width:100%;background:var(--secondary);color:#fff;padding:0.85rem;font-size:1rem;border-radius:12px;">
+          <i class="fas fa-user-plus"></i> إنشاء الحساب
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--text-muted);">
+        لديك حساب بالفعل؟ <a href="/login" style="color:var(--secondary);">تسجيل الدخول</a>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:1rem;font-size:0.75rem;color:var(--text-muted);">
+      الدعوة صالحة حتى <%= new Date(invitation.expiresAt).toLocaleDateString('ar-SA', { year:'numeric', month:'long', day:'numeric' }) %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

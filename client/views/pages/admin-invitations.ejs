@@ -1,0 +1,201 @@
+<%- include('../partials/header') %>
+
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-link" style="color:var(--secondary);"></i> روابط الدعوات</h1>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-primary" onclick="document.getElementById('createInviteModal').style.display='flex'"><i class="fas fa-plus"></i> دعوة جديدة</button>
+        <a href="/admin" class="btn btn-outline">العودة</a>
+      </div>
+    </div>
+
+    <% if (typeof inviteLink !== 'undefined' && inviteLink) { %>
+    <div class="card" style="padding:1.25rem;border-radius:14px;margin-bottom:1.5rem;border:1px solid var(--secondary)30;background:var(--secondary)08;">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--secondary)15;display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-check-circle" style="color:var(--secondary);"></i>
+        </div>
+        <strong style="font-size:0.95rem;">تم إنشاء رابط الدعوة بنجاح!</strong>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <input type="text" value="<%= inviteLink %>" id="inviteLinkInput" class="form-control" readonly dir="ltr" style="font-size:0.82rem;flex:1;">
+        <button class="btn btn-primary" onclick="copyLink()" id="copyBtn" style="white-space:nowrap;">
+          <i class="fas fa-copy"></i> نسخ
+        </button>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="modal-overlay" id="createInviteModal" style="display:none;">
+      <div class="modal-card" style="max-width:560px;">
+        <div class="modal-header">
+          <h2><i class="fas fa-user-plus"></i> إنشاء دعوة جديدة</h2>
+          <button class="modal-close" onclick="document.getElementById('createInviteModal').style.display='none'"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST" action="/admin/invitations/create" class="modal-form">
+          <div class="form-group">
+            <label>الدور المطلوب *</label>
+            <select name="role" class="form-control" required>
+              <option value="doctor">طبيب</option>
+              <option value="pharmacist">صيدلي</option>
+              <option value="moderator">مشرف</option>
+              <option value="employee">موظف</option>
+              <option value="company">شركة</option>
+              <option value="insurance_agent">وكيل تأمين</option>
+              <% if (user && user.role === 'admin') { %>
+              <option value="admin">مدير</option>
+              <% } %>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>اسم المدعو (اختياري)</label>
+              <input type="text" name="name" class="form-control" placeholder="اسم الشخص">
+            </div>
+            <div class="form-group">
+              <label>البريد الإلكتروني (اختياري)</label>
+              <input type="email" name="email" class="form-control" placeholder="سيُرسل له الرابط تلقائياً">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>رقم الجوال (اختياري)</label>
+              <input type="text" name="phone" class="form-control" placeholder="05XXXXXXXX" dir="ltr">
+            </div>
+            <div class="form-group">
+              <label>مدة الصلاحية (أيام)</label>
+              <select name="expiryDays" class="form-control">
+                <option value="1">يوم واحد</option>
+                <option value="3">3 أيام</option>
+                <option value="7" selected>أسبوع</option>
+                <option value="14">أسبوعين</option>
+                <option value="30">شهر</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>عدد مرات الاستخدام</label>
+            <select name="maxUses" class="form-control">
+              <option value="1">مرة واحدة</option>
+              <option value="5">5 مرات</option>
+              <option value="10">10 مرات</option>
+              <option value="50">50 مرة</option>
+              <option value="999">غير محدود</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>رسالة للمدعو (اختياري)</label>
+            <textarea name="message" class="form-control" rows="2" placeholder="مثال: مرحباً، ندعوك للانضمام لفريقنا الطبي..."></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-link"></i> إنشاء الدعوة</button>
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('createInviteModal').style.display='none'">إلغاء</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="margin-bottom:1.5rem;">
+      <% var pending = invitations.filter(i => i.status==='pending').length; var used = invitations.filter(i => i.status==='used').length; var expired = invitations.filter(i => i.status==='expired' || (i.status==='pending' && new Date(i.expiresAt) < new Date())).length; %>
+      <div class="stat-card"><div class="stat-number"><%= invitations.length %></div><div class="stat-label">إجمالي الدعوات</div></div>
+      <div class="stat-card"><div class="stat-number" style="color:var(--secondary);"><%= pending %></div><div class="stat-label">نشطة</div></div>
+      <div class="stat-card"><div class="stat-number" style="color:#22c55e;"><%= used %></div><div class="stat-label">مستخدمة</div></div>
+      <div class="stat-card"><div class="stat-number" style="color:#ef4444;"><%= expired %></div><div class="stat-label">منتهية</div></div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>المدعو</th>
+            <th>الدور</th>
+            <th>الحالة</th>
+            <th>الاستخدام</th>
+            <th>ينتهي</th>
+            <th>أنشأها</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (invitations.length === 0) { %>
+          <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">لا توجد دعوات بعد</td></tr>
+          <% } %>
+          <% invitations.forEach(function(inv) {
+            var isExp = new Date(inv.expiresAt) < new Date();
+            var statusClass = inv.status === 'used' ? 'color:#22c55e' : inv.status === 'cancelled' ? 'color:#ef4444' : isExp ? 'color:#f59e0b' : 'color:var(--secondary)';
+            var statusLabel = inv.status === 'used' ? 'مستخدمة' : inv.status === 'cancelled' ? 'ملغية' : isExp ? 'منتهية' : 'نشطة';
+            var roleLabels = { doctor:'طبيب', pharmacist:'صيدلي', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين', admin:'مدير' };
+          %>
+          <tr>
+            <td>
+              <div>
+                <strong style="font-size:0.88rem;"><%= inv.name || 'غير محدد' %></strong>
+                <% if (inv.email) { %><br><small style="color:var(--text-muted);" dir="ltr"><%= inv.email %></small><% } %>
+                <% if (inv.phone) { %><br><small style="color:var(--text-muted);" dir="ltr"><%= inv.phone %></small><% } %>
+              </div>
+            </td>
+            <td><span class="role-badge role-<%= inv.role %>"><%= roleLabels[inv.role] || inv.role %></span></td>
+            <td><span style="<%= statusClass %>;font-weight:600;font-size:0.85rem;"><%= statusLabel %></span></td>
+            <td style="font-size:0.85rem;"><%= inv.useCount %> / <%= inv.maxUses >= 999 ? '∞' : inv.maxUses %></td>
+            <td style="font-size:0.82rem;color:var(--text-muted);"><%= new Date(inv.expiresAt).toLocaleDateString('ar-SA', { month:'short', day:'numeric', year:'numeric' }) %></td>
+            <td style="font-size:0.85rem;"><%= inv.createdBy ? inv.createdBy.name : '-' %></td>
+            <td>
+              <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                <% if (inv.status === 'pending' && !isExp) { %>
+                <button onclick="copyInvLink('<%= inv.token %>')" class="btn btn-sm btn-outline" title="نسخ الرابط" style="font-size:0.75rem;">
+                  <i class="fas fa-copy"></i>
+                </button>
+                <% if (inv.email) { %>
+                <form method="POST" action="/admin/invitations/<%= inv._id %>/resend" style="display:inline;">
+                  <button type="submit" class="btn btn-sm" style="background:var(--secondary);color:#fff;font-size:0.75rem;" title="إعادة إرسال">
+                    <i class="fas fa-redo"></i>
+                  </button>
+                </form>
+                <% } %>
+                <form method="POST" action="/admin/invitations/<%= inv._id %>/cancel" style="display:inline;">
+                  <button type="submit" class="btn btn-sm" style="background:#ef4444;color:#fff;font-size:0.75rem;" title="إلغاء" onclick="return confirm('إلغاء هذه الدعوة؟')">
+                    <i class="fas fa-ban"></i>
+                  </button>
+                </form>
+                <% } %>
+                <% if (inv.usedBy) { %>
+                <small style="color:#22c55e;font-size:0.75rem;"><i class="fas fa-user-check"></i> <%= inv.usedBy.name || '' %></small>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyLink() {
+  var input = document.getElementById('inviteLinkInput');
+  input.select();
+  document.execCommand('copy');
+  var btn = document.getElementById('copyBtn');
+  btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
+  btn.style.background = '#22c55e';
+  setTimeout(function() { btn.innerHTML = '<i class="fas fa-copy"></i> نسخ'; btn.style.background = ''; }, 2000);
+}
+
+function copyInvLink(token) {
+  var url = window.location.origin + '/join/' + token;
+  navigator.clipboard.writeText(url).then(function() {
+    alert('تم نسخ رابط الدعوة');
+  }).catch(function() {
+    prompt('انسخ الرابط:', url);
+  });
+}
+</script>
+
+<%- include('../partials/footer') %>

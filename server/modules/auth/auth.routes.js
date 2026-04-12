@@ -709,4 +709,112 @@ router.get('/api/session', (req, res) => {
   }
 });
 
+const Invitation = require('../admin/invitation.model');
+
+router.get('/join/:token', async (req, res) => {
+  try {
+    const invitation = await Invitation.findOne({ token: req.params.token });
+    if (!invitation || !invitation.isValid()) {
+      return res.render('pages/join-expired', { title: 'دعوة غير صالحة' });
+    }
+    const roleLabels = { doctor: 'طبيب', pharmacist: 'صيدلي', moderator: 'مشرف', company: 'شركة', employee: 'موظف', insurance_agent: 'وكيل تأمين', admin: 'مدير' };
+    res.render('pages/join', {
+      title: 'سجل حسابك في مفاصل',
+      invitation,
+      roleLabel: roleLabels[invitation.role] || invitation.role
+    });
+  } catch (err) {
+    res.render('pages/join-expired', { title: 'دعوة غير صالحة' });
+  }
+});
+
+router.post('/join/:token', async (req, res) => {
+  try {
+    const invitation = await Invitation.findOne({ token: req.params.token });
+    if (!invitation || !invitation.isValid()) {
+      return res.render('pages/join-expired', { title: 'دعوة غير صالحة' });
+    }
+
+    const { name, email, phone, password, confirmPassword, nationalId } = req.body;
+    if (!name || !password || password.length < 6) {
+      req.session.error = 'الاسم وكلمة المرور (6 أحرف+) مطلوبان';
+      return res.redirect(`/join/${req.params.token}`);
+    }
+    if (password !== confirmPassword) {
+      req.session.error = 'كلمتا المرور غير متطابقتين';
+      return res.redirect(`/join/${req.params.token}`);
+    }
+    if (!email && !phone) {
+      req.session.error = 'يجب إدخال البريد أو رقم الجوال';
+      return res.redirect(`/join/${req.params.token}`);
+    }
+
+    if (email) {
+      const existing = await User.findOne({ email: email.toLowerCase().trim() });
+      if (existing) {
+        req.session.error = 'البريد الإلكتروني مستخدم بالفعل';
+        return res.redirect(`/join/${req.params.token}`);
+      }
+    }
+
+    let cleanPhone = phone ? phone.replace(/\D/g, '') : undefined;
+    if (cleanPhone) {
+      if (cleanPhone.startsWith('966')) cleanPhone = cleanPhone.slice(3);
+      else if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.slice(1);
+      if (!/^5\d{8}$/.test(cleanPhone)) {
+        req.session.error = 'رقم الجوال غير صالح';
+        return res.redirect(`/join/${req.params.token}`);
+      }
+      const existingPhone = await User.findOne({ phone: cleanPhone });
+      if (existingPhone) {
+        req.session.error = 'رقم الجوال مستخدم بالفعل';
+        return res.redirect(`/join/${req.params.token}`);
+      }
+    }
+
+    let cleanId = nationalId ? nationalId.replace(/\D/g, '') : undefined;
+    if (cleanId && !/^[12]\d{9}$/.test(cleanId)) {
+      req.session.error = 'رقم الهوية غير صالح (يجب 10 أرقام يبدأ بـ 1 أو 2)';
+      return res.redirect(`/join/${req.params.token}`);
+    }
+    if (cleanId) {
+      const existingId = await User.findOne({ nationalId: cleanId });
+      if (existingId) {
+        req.session.error = 'رقم الهوية مستخدم بالفعل';
+        return res.redirect(`/join/${req.params.token}`);
+      }
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name: name.trim(),
+      email: email ? email.toLowerCase().trim() : undefined,
+      phone: cleanPhone || undefined,
+      nationalId: cleanId || undefined,
+      password: hash,
+      role: invitation.role,
+      isVerified: true,
+      isActive: true,
+      authProvider: 'local'
+    });
+
+    invitation.useCount += 1;
+    invitation.usedBy = user._id;
+    if (invitation.useCount >= invitation.maxUses) invitation.status = 'used';
+    await invitation.save();
+
+    if (email) {
+      sendTemplateEmail('welcome', email, { userName: name.trim() }).catch(() => {});
+    }
+
+    req.session.user = buildSessionUser(user);
+    req.session.success = 'تم إنشاء حسابك بنجاح! مرحباً بك في مفاصل';
+    res.redirect('/');
+  } catch (err) {
+    console.error('Join error:', err);
+    req.session.error = 'حدث خطأ في التسجيل';
+    res.redirect(`/join/${req.params.token}`);
+  }
+});
+
 module.exports = router;
