@@ -4693,3 +4693,60 @@ html[dir="ltr"] .footer {
   direction: ltr;
   text-align: center;
 }
+
+/* ========== Pay Button – Prominent ========== */
+@keyframes payGlow {
+  0%,100% { box-shadow: 0 6px 24px rgba(18,169,155,0.35), 0 0 0 0 rgba(18,169,155,0.25); }
+  50%      { box-shadow: 0 10px 36px rgba(18,169,155,0.5), 0 0 0 8px rgba(18,169,155,0); }
+}
+.btn-pay-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 1.1rem 1.5rem;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #12a99b 0%, #0d8a7e 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 24px rgba(18,169,155,0.35);
+  animation: payGlow 2.4s infinite;
+  position: relative;
+  overflow: hidden;
+}
+.btn-pay-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn-pay-main:hover::before { opacity: 1; }
+.btn-pay-main:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(18,169,155,0.45); }
+.btn-pay-main:active { transform: translateY(0); }
+.btn-pay-main:disabled {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  box-shadow: none;
+  animation: none;
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+.btn-pay-main.apple { background: linear-gradient(135deg, #1c1c1e 0%, #3a3a3c 100%); box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+.btn-pay-main.card  { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); box-shadow: 0 6px 24px rgba(37,99,235,0.4); }
+
+/* sticky pay bar on mobile */
+.pay-sticky-bar {
+  position: sticky;
+  bottom: 70px;
+  z-index: 100;
+  padding: 0.75rem 0 0;
+  background: linear-gradient(transparent, var(--bg) 30%);
+}
+@media(min-width:601px){ .pay-sticky-bar { position: static; padding: 0; background: none; } }

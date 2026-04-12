@@ -204,9 +204,12 @@
             <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">ملاحظات (اختياري)</label>
             <textarea id="orderNotes" class="form-control" rows="2" placeholder="ملاحظات إضافية..."></textarea>
           </div>
-          <button class="btn" style="width:100%;background:var(--secondary);color:#fff;padding:0.85rem;font-size:1rem;border-radius:12px;" onclick="submitOrder()" id="submitOrderBtn">
-            <i class="fas fa-check-circle"></i> تأكيد الطلب
-          </button>
+          <div class="pay-sticky-bar">
+            <button class="btn-pay-main" onclick="submitOrder()" id="submitOrderBtn">
+              <i class="fas fa-lock"></i>
+              <span id="submitOrderBtnText">تأكيد الطلب ودفع</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -309,18 +312,23 @@ function selectPayment(method, el) {
   el.querySelector('input').checked = true;
   document.getElementById('cardFormSection').style.display = method === 'card' ? 'block' : 'none';
   var btn = document.getElementById('submitOrderBtn');
+  var txt = document.getElementById('submitOrderBtnText');
+  btn.classList.remove('apple','card');
+  btn.style.background = '';
   if (method === 'apple_pay') {
-    btn.innerHTML = '<i class="fab fa-apple"></i> الدفع بـ Apple Pay';
-    btn.style.background = '#000';
+    btn.classList.add('apple');
+    txt.innerHTML = 'الدفع بـ Apple Pay';
+    btn.querySelector('i').className = 'fab fa-apple';
   } else if (method === 'card') {
-    btn.innerHTML = '<i class="fas fa-credit-card"></i> ادفع الآن';
-    btn.style.background = 'var(--secondary)';
+    btn.classList.add('card');
+    txt.innerHTML = 'ادفع الآن بالبطاقة';
+    btn.querySelector('i').className = 'fas fa-credit-card';
   } else if (method === 'health_card') {
-    btn.innerHTML = '<i class="fas fa-id-card"></i> الدفع بالبطاقة الصحية';
-    btn.style.background = 'linear-gradient(135deg,#12a99b,#0d8a7e)';
+    txt.innerHTML = 'الدفع بالبطاقة الصحية';
+    btn.querySelector('i').className = 'fas fa-id-card';
   } else {
-    btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الطلب';
-    btn.style.background = 'var(--secondary)';
+    txt.innerHTML = 'تأكيد الطلب ودفع';
+    btn.querySelector('i').className = 'fas fa-lock';
   }
 }
 

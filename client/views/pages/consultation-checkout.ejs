@@ -83,15 +83,8 @@
   cursor:pointer;font-family:inherit;
 }
 
-.pay-btn{
-  width:100%;padding:1rem;border:none;border-radius:14px;
-  background:linear-gradient(135deg,var(--teal),#0d8a7e);
-  color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;
-  font-family:inherit;transition:all 0.3s;
-  display:flex;align-items:center;justify-content:center;gap:0.5rem;
-}
-.pay-btn:hover{box-shadow:0 6px 24px rgba(18,169,155,0.3);transform:translateY(-2px)}
-.pay-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.pay-btn-wrap{position:sticky;bottom:70px;z-index:100;padding:0.6rem 0 0;background:linear-gradient(transparent,var(--bg,#0f1923) 35%)}
+@media(min-width:601px){.pay-btn-wrap{position:static;padding:0;background:none}}
 
 .success-overlay{
   display:none;position:fixed;inset:0;z-index:999;
@@ -201,10 +194,12 @@
         </div>
       </div>
 
-      <button class="pay-btn" id="payBtn" disabled onclick="processPayment()">
-        <i class="fas fa-lock"></i>
-        <span id="payBtnText">اختر طريقة الدفع</span>
-      </button>
+      <div class="pay-btn-wrap">
+        <button class="btn-pay-main" id="payBtn" disabled onclick="processPayment()">
+          <i class="fas fa-lock"></i>
+          <span id="payBtnText">اختر طريقة الدفع أولاً</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -267,11 +262,24 @@ function selectPayment(method) {
 
   var payBtn = document.getElementById('payBtn');
   payBtn.disabled = false;
+  payBtn.classList.remove('apple','card');
   var btnText = document.getElementById('payBtnText');
-  if (method === 'card') btnText.textContent = 'ادفع ' + consultPrice + ' ر.س بالبطاقة';
-  else if (method === 'apple_pay') btnText.textContent = 'ادفع بـ Apple Pay';
-  else if (method === 'insurance') btnText.textContent = 'ادفع بالتأمين';
-  else btnText.textContent = 'تأكيد — الدفع عند الزيارة';
+  var btnIcon = payBtn.querySelector('i');
+  if (method === 'card') {
+    payBtn.classList.add('card');
+    btnIcon.className = 'fas fa-credit-card';
+    btnText.textContent = 'ادفع ' + consultPrice + ' ر.س بالبطاقة';
+  } else if (method === 'apple_pay') {
+    payBtn.classList.add('apple');
+    btnIcon.className = 'fab fa-apple';
+    btnText.textContent = 'الدفع بـ Apple Pay — ' + consultPrice + ' ر.س';
+  } else if (method === 'insurance') {
+    btnIcon.className = 'fas fa-shield-alt';
+    btnText.textContent = 'ادفع بالتأمين';
+  } else {
+    btnIcon.className = 'fas fa-check-circle';
+    btnText.textContent = 'تأكيد — الدفع عند الزيارة';
+  }
 }
 
 function processPayment() {
