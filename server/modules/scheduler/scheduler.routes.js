@@ -186,7 +186,7 @@ router.post('/reminders/:id/toggle', isAuthenticated, async (req, res) => {
     }
     reminder.isActive = !reminder.isActive;
     await reminder.save();
-    req.session.success = reminder.isActive ? 'تم تفعيل التذكير' : 'تم إيقاف التذكير');
+    req.session.success = reminder.isActive ? 'تم تفعيل التذكير' : 'تم إيقاف التذكير';
     res.redirect('/scheduler?tab=reminders');
   } catch (err) {
     req.session.error = 'حدث خطأ';
