@@ -1,56 +1,118 @@
 <%- include('../partials/header') %>
 <div class="main-content">
-  <div class="container">
-    <div class="page-header">
-      <h1><i class="fas fa-cog"></i> لوحة الإدارة</h1>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-icon bg-primary"><i class="fas fa-users"></i></div><div class="stat-info"><h3><%= stats.users %></h3><p>المستخدمين</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-success"><i class="fas fa-stethoscope"></i></div><div class="stat-info"><h3><%= stats.consultations %></h3><p>الاستشارات</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-warning"><i class="fas fa-pills"></i></div><div class="stat-info"><h3><%= stats.orders %></h3><p>الطلبات</p></div></div>
-      <div class="stat-card"><div class="stat-icon bg-error"><i class="fas fa-exclamation-circle"></i></div><div class="stat-info"><h3><%= stats.complaints %></h3><p>شكاوى مفتوحة</p></div></div>
-    </div>
-
-    <div class="admin-nav">
-      <a href="/admin/users" class="action-card"><i class="fas fa-users"></i><span>المستخدمين</span></a>
-      <a href="/admin/consultations" class="action-card"><i class="fas fa-stethoscope"></i><span>الاستشارات</span></a>
-      <a href="/admin/orders" class="action-card"><i class="fas fa-pills"></i><span>الطلبات</span></a>
-      <a href="/admin/complaints" class="action-card"><i class="fas fa-comment-dots"></i><span>الشكاوى</span></a>
-      <a href="/admin/banners" class="action-card"><i class="fas fa-images"></i><span>البانرات</span></a>
-      <a href="/pharmacy/admin/pharmacies" class="action-card"><i class="fas fa-clinic-medical" style="color:#22c55e;"></i><span>الصيدليات</span></a>
-      <a href="/admin/invitations" class="action-card"><i class="fas fa-link" style="color:#8b5cf6;"></i><span>الدعوات</span></a>
-      <a href="/email/templates" class="action-card"><i class="fas fa-envelope" style="color:#06b6d4;"></i><span>البريد</span></a>
-      <a href="/admin/support" class="action-card" style="border-color:var(--secondary);"><i class="fas fa-headset" style="color:var(--secondary);"></i><span>الدعم الفني</span></a>
-    </div>
-
-    <div class="dashboard-grid">
-      <div class="dashboard-section">
-        <h2>آخر المستخدمين</h2>
-        <div class="list-items">
-          <% recentUsers.forEach(u => { %>
-          <div class="list-item">
-            <div class="list-item-info">
-              <strong><%= u.name %></strong>
-              <p><%= u.email %></p>
-            </div>
-            <span class="badge badge-primary"><%= u.role === 'admin' ? 'مدير' : u.role === 'doctor' ? 'طبيب' : u.role === 'pharmacist' ? 'صيدلي' : 'مريض' %></span>
-          </div>
-          <% }) %>
+  <div class="container" style="max-width:1400px;">
+    <div class="admin-layout">
+      <%- include('../partials/admin-sidebar') %>
+      <div class="admin-main">
+        <div style="margin-bottom:1.25rem;">
+          <h1 style="font-size:1.4rem;margin-bottom:0.25rem;">لوحة التحكم</h1>
+          <p style="font-size:0.82rem;color:var(--text-muted);">مرحباً <%= user.name %>، هذا ملخص النظام</p>
         </div>
-      </div>
-      <div class="dashboard-section">
-        <h2>آخر الاستشارات</h2>
-        <div class="list-items">
-          <% recentConsultations.forEach(c => { %>
-          <div class="list-item">
-            <div class="list-item-info">
-              <strong><%= c.patient ? c.patient.name : 'غير معروف' %></strong>
-              <p><%= c.specialty %></p>
-            </div>
-            <span class="badge badge-<%= c.status === 'pending' ? 'warning' : 'primary' %>"><%= c.status %></span>
+
+        <div class="admin-stats-row">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon teal"><i class="fas fa-users"></i></div>
+            <div class="admin-stat-info"><h3><%= stats.users %></h3><p>المستخدمين</p></div>
           </div>
-          <% }) %>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon blue"><i class="fas fa-stethoscope"></i></div>
+            <div class="admin-stat-info"><h3><%= stats.consultations %></h3><p>الاستشارات</p></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon green"><i class="fas fa-pills"></i></div>
+            <div class="admin-stat-info"><h3><%= stats.orders %></h3><p>طلبات الصيدلية</p></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon red"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="admin-stat-info"><h3><%= stats.complaints %></h3><p>شكاوى مفتوحة</p></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon purple"><i class="fas fa-shield-alt"></i></div>
+            <div class="admin-stat-info"><h3><%= stats.insurances %></h3><p>وثائق التأمين</p></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+          <div class="admin-section">
+            <div class="admin-section-header">
+              <h3><i class="fas fa-user-plus" style="color:var(--secondary);"></i> آخر المستخدمين</h3>
+              <a href="/admin/users" style="font-size:0.78rem;color:var(--secondary);text-decoration:none;">عرض الكل</a>
+            </div>
+            <div class="admin-section-body">
+              <% if (recentUsers.length > 0) { %>
+              <% var roleMap = { admin:'مدير', doctor:'طبيب', pharmacist:'صيدلي', patient:'مريض', moderator:'مشرف', company:'شركة', employee:'موظف', insurance_agent:'وكيل تأمين' };
+                 var roleColor = { admin:'#ef4444', doctor:'#3b82f6', pharmacist:'#22c55e', moderator:'#8b5cf6', company:'#f59e0b', employee:'#06b6d4', insurance_agent:'#ec4899' }; %>
+              <% recentUsers.slice(0, 6).forEach(function(u) { %>
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                <div style="width:36px;height:36px;border-radius:10px;background:rgba(18,169,155,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-user" style="color:var(--secondary);font-size:0.85rem;"></i></div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><%= u.name %></div>
+                  <div style="font-size:0.75rem;color:var(--text-muted);"><%= u.email || u.phone || '' %></div>
+                </div>
+                <span style="font-size:0.7rem;padding:3px 8px;border-radius:6px;font-weight:600;background:<%= roleColor[u.role] || 'var(--secondary)' %>15;color:<%= roleColor[u.role] || 'var(--secondary)' %>;"><%= roleMap[u.role] || u.role %></span>
+              </div>
+              <% }) %>
+              <% } else { %>
+              <p style="text-align:center;color:var(--text-muted);padding:1rem;font-size:0.85rem;">لا يوجد مستخدمين</p>
+              <% } %>
+            </div>
+          </div>
+
+          <div class="admin-section">
+            <div class="admin-section-header">
+              <h3><i class="fas fa-notes-medical" style="color:#3b82f6;"></i> آخر الاستشارات</h3>
+              <a href="/admin/consultations" style="font-size:0.78rem;color:var(--secondary);text-decoration:none;">عرض الكل</a>
+            </div>
+            <div class="admin-section-body">
+              <% if (recentConsultations.length > 0) { %>
+              <% var statusMap = { pending:'معلقة', assigned:'تم التعيين', in_progress:'جارية', completed:'مكتملة', cancelled:'ملغاة' };
+                 var statusColor = { pending:'#f59e0b', assigned:'#3b82f6', in_progress:'var(--secondary)', completed:'#22c55e', cancelled:'#ef4444' }; %>
+              <% recentConsultations.slice(0, 6).forEach(function(c) { %>
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                <div style="width:36px;height:36px;border-radius:10px;background:rgba(59,130,246,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-stethoscope" style="color:#3b82f6;font-size:0.85rem;"></i></div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.88rem;font-weight:600;"><%= c.patient ? c.patient.name : 'غير معروف' %></div>
+                  <div style="font-size:0.75rem;color:var(--text-muted);"><%= c.specialty %> &middot; <%= new Date(c.createdAt).toLocaleDateString('ar-SA') %></div>
+                </div>
+                <span style="font-size:0.7rem;padding:3px 8px;border-radius:6px;font-weight:600;background:<%= statusColor[c.status] || 'var(--secondary)' %>15;color:<%= statusColor[c.status] || 'var(--secondary)' %>;"><%= statusMap[c.status] || c.status %></span>
+              </div>
+              <% }) %>
+              <% } else { %>
+              <p style="text-align:center;color:var(--text-muted);padding:1rem;font-size:0.85rem;">لا توجد استشارات</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-header">
+            <h3><i class="fas fa-shopping-bag" style="color:#22c55e;"></i> آخر الطلبات</h3>
+            <a href="/admin/orders" style="font-size:0.78rem;color:var(--secondary);text-decoration:none;">عرض الكل</a>
+          </div>
+          <div class="admin-section-body">
+            <% if (recentOrders.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table" style="font-size:0.85rem;">
+                <thead><tr><th>الطلب</th><th>المريض</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th></tr></thead>
+                <tbody>
+                <% var oStatusMap = { pending:'معلق', confirmed:'مؤكد', preparing:'تحضير', delivering:'توصيل', delivered:'تم', cancelled:'ملغي' };
+                   var oStatusColor = { pending:'#f59e0b', confirmed:'var(--secondary)', preparing:'#3b82f6', delivering:'#8b5cf6', delivered:'#22c55e', cancelled:'#ef4444' }; %>
+                <% recentOrders.slice(0, 8).forEach(function(o) { %>
+                <tr>
+                  <td><strong><%= o.trackingNumber || '#' + o._id.toString().slice(-6) %></strong></td>
+                  <td><%= o.patient ? o.patient.name : '—' %></td>
+                  <td style="color:var(--secondary);font-weight:600;"><%= o.totalPrice %> ر.س</td>
+                  <td><span style="font-size:0.72rem;padding:2px 8px;border-radius:6px;background:<%= oStatusColor[o.status] || 'var(--secondary)' %>15;color:<%= oStatusColor[o.status] || 'var(--secondary)' %>;font-weight:600;"><%= oStatusMap[o.status] || o.status %></span></td>
+                  <td style="font-size:0.78rem;color:var(--text-muted);"><%= new Date(o.createdAt).toLocaleDateString('ar-SA') %></td>
+                </tr>
+                <% }) %>
+                </tbody>
+              </table>
+            </div>
+            <% } else { %>
+            <p style="text-align:center;color:var(--text-muted);padding:1rem;font-size:0.85rem;">لا توجد طلبات</p>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>

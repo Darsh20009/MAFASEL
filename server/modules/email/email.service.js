@@ -162,7 +162,7 @@ async function sendEmail({ to, subject, html, text }) {
       fileblob: logoB64,
       filename: 'banner-logo.png',
       mimetype: 'image/png',
-      cid: 'mafasel-logo'
+      content_id: 'mafasel-logo'
     });
   }
   if (gifB64 && html.includes('cid:mafasel-banner')) {
@@ -170,7 +170,7 @@ async function sendEmail({ to, subject, html, text }) {
       fileblob: gifB64,
       filename: 'logo-animation.gif',
       mimetype: 'image/gif',
-      cid: 'mafasel-banner'
+      content_id: 'mafasel-banner'
     });
   }
 

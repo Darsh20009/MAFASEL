@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" data-theme="<%= user && user.darkMode ? 'dark' : 'light' %>">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title><%= title %> | مفاصل</title>
   <link rel="icon" href="/icons/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
@@ -22,17 +22,51 @@
     <div class="nav-menu" id="navMenu">
       <a href="/dashboard" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a>
       <% if (user) { %>
-      <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
-      <a href="/medical-profile" class="nav-link"><i class="fas fa-heartbeat"></i> الملف الطبي</a>
-      <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
-      <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
-      <a href="/ai" class="nav-link"><i class="fas fa-user-md"></i> فريق الرعاية</a>
-      <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
-      <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
-      <a href="/complaints" class="nav-link"><i class="fas fa-comment-dots"></i> الشكاوى</a>
-      <% if (user.role === 'admin' || user.role === 'moderator') { %>
-      <a href="/admin" class="nav-link nav-admin"><i class="fas fa-cog"></i> الإدارة</a>
-      <% } %>
+        <% var r = user.role; %>
+        <% if (r === 'patient') { %>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
+          <a href="/medical-profile" class="nav-link"><i class="fas fa-heartbeat"></i> الملف الطبي</a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
+          <a href="/ai" class="nav-link"><i class="fas fa-user-md"></i> فريق الرعاية</a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+        <% } else if (r === 'doctor') { %>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
+          <a href="/ai" class="nav-link"><i class="fas fa-robot"></i> المساعد الذكي</a>
+        <% } else if (r === 'pharmacist') { %>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
+        <% } else if (r === 'employee') { %>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+        <% } else if (r === 'company') { %>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+        <% } else if (r === 'insurance_agent') { %>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
+        <% } else { %>
+          <a href="/consultations" class="nav-link"><i class="fas fa-stethoscope"></i> الاستشارات</a>
+          <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> الصيدلية</a>
+          <a href="/insurance" class="nav-link"><i class="fas fa-shield-alt"></i> التأمين</a>
+          <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> المحادثات</a>
+          <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> الاجتماعات</a>
+          <a href="/complaints" class="nav-link"><i class="fas fa-headset"></i> الدعم</a>
+        <% } %>
+        <% if (r === 'admin' || r === 'moderator') { %>
+        <a href="/admin" class="nav-link nav-admin"><i class="fas fa-shield-halved"></i> الإدارة</a>
+        <% } %>
       <% } %>
     </div>
     <div class="nav-actions">

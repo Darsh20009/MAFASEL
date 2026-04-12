@@ -1,0 +1,26 @@
+<aside class="admin-sidebar">
+  <div class="admin-sidebar-header">
+    <h2><i class="fas fa-shield-halved"></i> لوحة الإدارة</h2>
+    <p><%= user.name %> &middot; <%= user.role === 'admin' ? 'مدير النظام' : 'مشرف' %></p>
+  </div>
+  <nav class="admin-sidebar-nav">
+    <div class="nav-section">عام</div>
+    <a href="/admin"><i class="fas fa-chart-pie"></i> نظرة عامة</a>
+    <a href="/admin/users"><i class="fas fa-users"></i> المستخدمين</a>
+    <a href="/admin/consultations"><i class="fas fa-stethoscope"></i> الاستشارات</a>
+
+    <div class="nav-section">الخدمات</div>
+    <a href="/admin/orders"><i class="fas fa-shopping-bag"></i> الطلبات</a>
+    <a href="/pharmacy/admin/pharmacies"><i class="fas fa-clinic-medical"></i> الصيدليات</a>
+    <a href="/admin/banners"><i class="fas fa-images"></i> البانرات</a>
+
+    <div class="nav-section">التواصل</div>
+    <a href="/admin/complaints"><i class="fas fa-comment-dots"></i> الشكاوى</a>
+    <a href="/admin/support"><i class="fas fa-headset"></i> الدعم الفني</a>
+    <a href="/email/templates"><i class="fas fa-envelope"></i> البريد</a>
+
+    <div class="nav-section">إدارة</div>
+    <a href="/admin/invitations"><i class="fas fa-link"></i> الدعوات</a>
+    <a href="/dashboard"><i class="fas fa-arrow-right"></i> العودة للموقع</a>
+  </nav>
+</aside>

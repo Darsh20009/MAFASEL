@@ -93,7 +93,9 @@
 
 ## حساب المدير الافتراضي
 - البريد: admin@mafasel.com
-- كلمة المرور: admin123
+- كلمة المرور: Mafasel@2026!
+- الجوال: 500000001
+- الهوية: 1000000001
 
 ## الصفحة الرئيسية (Landing)
 - تصميم فاخر مع particles متحركة، gradient overlay، إحصائيات أرقام متحركة
@@ -105,13 +107,26 @@
 ## لوحة التحكم (Dashboard)
 - **دعم الزوار**: يمكن تصفح المنصة بدون تسجيل دخول ("مرحباً، مستخدم")
 - بانر ديناميكي مع gradient blend في الأسفل
-- تبديل تلقائي كل 5 ثوانٍ + أسهم تنقل + نقاط + سحب باللمس
+- تبديل تلقائي كل 5 ثوانٍ + سحب باللمس
 - قسم ترحيب premium مع حالة الحساب والدور
+- **واجهة حسب الدور**: إحصائيات وإجراءات مختلفة لكل دور (مريض/طبيب/صيدلي/مدير/مشرف/شركة/موظف/وكيل تأمين)
 - إحصائيات بتصميم premium (glassmorphism + shine effects)
-- 6 إجراءات سريعة مع glow hover effects
+- إجراءات سريعة مخصصة حسب الدور مع glow hover effects
 - آخر الاستشارات والطلبات مع روابط "عرض الكل"
 - إشعارات مهمة مع تمييز الأولوية (عادي/مرتفع/عاجل)
 - بطاقة فريق الرعاية الصحية مع تأثيرات بصرية متحركة
+
+## لوحة الإدارة (Admin Panel)
+- تصميم sidebar ثابت في جميع صفحات الإدارة (`admin-layout` + `admin-sidebar`)
+- Sidebar partial: `client/views/partials/admin-sidebar.ejs`
+- الصفحات: admin.ejs, admin-users.ejs, admin-consultations.ejs, admin-orders.ejs, admin-complaints.ejs, admin-banners.ejs, admin-invitations.ejs, admin-support.ejs, admin-email-templates.ejs
+- إحصائيات مع أيقونات ملونة (users, consultations, orders, complaints, insurances)
+- آخر المستخدمين والاستشارات والطلبات في لوحة التحكم الرئيسية
+- التنقل: عام، خدمات، تواصل، إدارة
+
+## التنقل حسب الدور (Header Navigation)
+- `client/views/partials/header.ejs` يعرض روابط مختلفة حسب دور المستخدم
+- الأدوار: patient, doctor, pharmacist, admin, moderator, company, employee, insurance_agent
 
 ## التسجيل
 - التسجيل للمرضى فقط (لا يوجد اختيار دور)

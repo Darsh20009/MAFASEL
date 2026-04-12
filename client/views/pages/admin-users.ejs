@@ -1,12 +1,12 @@
 <%- include('../partials/header') %>
 <div class="main-content">
-  <div class="container">
+  <div class="container" style="max-width:1400px;">
+    <div class="admin-layout">
+      <%- include('../partials/admin-sidebar') %>
+      <div class="admin-main">
     <div class="page-header">
       <h1><i class="fas fa-users"></i> إدارة المستخدمين</h1>
-      <div style="display:flex;gap:0.5rem;">
-        <button class="btn btn-primary" onclick="document.getElementById('createUserModal').style.display='flex'"><i class="fas fa-user-plus"></i> إضافة مستخدم</button>
-        <a href="/admin" class="btn btn-outline">العودة</a>
-      </div>
+      <button class="btn btn-primary" onclick="document.getElementById('createUserModal').style.display='flex'"><i class="fas fa-user-plus"></i> إضافة مستخدم</button>
     </div>
 
     <div class="modal-overlay" id="createUserModal" style="display:none">
@@ -119,6 +119,8 @@
           <% }) %>
         </tbody>
       </table>
+    </div>
+      </div>
     </div>
   </div>
 </div>

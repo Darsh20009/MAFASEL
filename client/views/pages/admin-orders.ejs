@@ -1,9 +1,11 @@
 <%- include('../partials/header') %>
 <div class="main-content">
-  <div class="container">
+  <div class="container" style="max-width:1400px;">
+    <div class="admin-layout">
+      <%- include('../partials/admin-sidebar') %>
+      <div class="admin-main">
     <div class="page-header">
       <h1><i class="fas fa-pills"></i> إدارة الطلبات</h1>
-      <a href="/admin" class="btn btn-outline">العودة</a>
     </div>
     <div class="table-responsive">
       <table class="table">
@@ -32,6 +34,8 @@
           <% }) %>
         </tbody>
       </table>
+    </div>
+      </div>
     </div>
   </div>
 </div>

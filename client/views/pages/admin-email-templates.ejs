@@ -1,6 +1,9 @@
 <%- include('../partials/header') %>
-
-<div class="page-container" style="max-width:1000px;margin:0 auto;padding:1.5rem;">
+<div class="main-content">
+  <div class="container" style="max-width:1400px;">
+    <div class="admin-layout">
+      <%- include('../partials/admin-sidebar') %>
+      <div class="admin-main">
   <div class="page-header" style="margin-bottom:1.5rem;">
     <h2 style="margin:0;font-size:1.3rem;"><i class="fas fa-envelope" style="color:var(--secondary);"></i> قوالب البريد الإلكتروني</h2>
     <p style="color:var(--text-muted);font-size:0.85rem;margin:0.25rem 0 0;">معاينة وإرسال تجريبي للقوالب البريدية وإرسال بريد مخصص</p>
@@ -111,7 +114,6 @@
       </button>
     </form>
   </div>
-</div>
 
 <script>
 var searchTimeout = null;
@@ -274,5 +276,8 @@ async function sendCustomTemplate(e) {
   } catch(err) { alert('خطأ'); btn.innerHTML = orig; btn.disabled = false; }
 }
 </script>
-
+      </div>
+    </div>
+  </div>
+</div>
 <%- include('../partials/footer') %>
