@@ -1,0 +1,525 @@
+MongoDB connection failed: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/
+Starting server without MongoDB...
+MAFASEL server running on port 5000 (without DB)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
+Server Error: MongoServerSelectionError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+
+    at Topology.selectServer [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:327:38[90m)[39m
+    at async Topology._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:200:28[90m)[39m
+    at async Topology.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/sdam/topology.js:152:13[90m)[39m
+    at async topologyConnect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:264:17[90m)[39m
+    at async MongoClient._connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:277:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:202:13[90m)[39m
+    at async MongoClient.connect [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/mongo_client.js:446:16[90m)[39m
+    at async [90m/home/runner/workspace/[39mnode_modules/[4mconnect-mongo[24m/build/main/lib/MongoStore.js:278:36 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: [32m'ReplicaSetNoPrimary'[39m,
+    servers: Map(3) {
+      [32m'ac-s304ue0-shard-00-02.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-01.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m,
+      [32m'ac-s304ue0-shard-00-00.iwktcdg.mongodb.net:27017'[39m => [36m[ServerDescription][39m
+    },
+    stale: [33mfalse[39m,
+    compatible: [33mtrue[39m,
+    heartbeatFrequencyMS: [33m10000[39m,
+    localThresholdMS: [33m15[39m,
+    setName: [32m'atlas-nvei3c-shard-0'[39m,
+    maxElectionId: [1mnull[22m,
+    maxSetVersion: [1mnull[22m,
+    commonWireVersion: [33m0[39m,
+    logicalSessionTimeoutMinutes: [1mnull[22m
+  },
+  code: [90mundefined[39m,
+  [cause]: MongoNetworkError: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+  
+      at TLSSocket.<anonymous> [90m(/home/runner/workspace/[39mnode_modules/[4mmongodb[24m/lib/cmap/connect.js:286:44[90m)[39m
+  [90m    at Object.onceWrapper (node:events:639:26)[39m
+  [90m    at TLSSocket.emit (node:events:524:28)[39m
+  [90m    at emitErrorNT (node:internal/streams/destroy:169:8)[39m
+  [90m    at emitErrorCloseNT (node:internal/streams/destroy:128:3)[39m
+  [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+    errorLabelSet: Set(1) { [32m'ResetPool'[39m },
+    beforeHandshake: [33mfalse[39m,
+    [cause]: [Error: C03D9CD0B17F0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:ssl/record/rec_layer_s3.c:916:SSL alert number 80
+    ] {
+      library: [32m'SSL routines'[39m,
+      reason: [32m'tlsv1 alert internal error'[39m,
+      code: [32m'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'[39m
+    }
+  }
+}
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:655:11)
+    at ServerResponse.header (/home/runner/workspace/node_modules/express/lib/response.js:794:10)
+    at ServerResponse.send (/home/runner/workspace/node_modules/express/lib/response.js:174:12)
+    at done (/home/runner/workspace/node_modules/express/lib/response.js:1045:10)
+    at tryHandleCache (/home/runner/workspace/node_modules/ejs/lib/ejs.js:280:5)
+    at exports.renderFile [as engine] (/home/runner/workspace/node_modules/ejs/lib/ejs.js:491:10)
+    at View.render (/home/runner/workspace/node_modules/express/lib/view.js:135:8)
+    at tryRender (/home/runner/workspace/node_modules/express/lib/application.js:657:10)
+    at Function.render (/home/runner/workspace/node_modules/express/lib/application.js:609:3)
+    at ServerResponse.render (/home/runner/workspace/node_modules/express/lib/response.js:1049:7)
