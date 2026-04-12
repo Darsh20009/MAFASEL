@@ -1,4 +1,6 @@
 const https = require('https');
+const fs = require('fs');
+const pathModule = require('path');
 
 const SMTP2GO_API = 'https://api.smtp2go.com/v3/email/send';
 const FROM_NAME = 'مفاصل الطبيه';
@@ -9,6 +11,27 @@ function getBaseUrl() {
     return process.env.BASE_URL || 'https://mafaseltech.com';
   }
   return `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}`;
+}
+
+let _cachedLogoB64 = null;
+let _cachedGifB64 = null;
+
+function getLogoBase64() {
+  if (_cachedLogoB64) return _cachedLogoB64;
+  try {
+    const filePath = pathModule.join(__dirname, '../../../public/uploads/email/banner-logo.png');
+    _cachedLogoB64 = fs.readFileSync(filePath).toString('base64');
+    return _cachedLogoB64;
+  } catch (e) { return null; }
+}
+
+function getGifBase64() {
+  if (_cachedGifB64) return _cachedGifB64;
+  try {
+    const filePath = pathModule.join(__dirname, '../../../public/uploads/email/logo-animation.gif');
+    _cachedGifB64 = fs.readFileSync(filePath).toString('base64');
+    return _cachedGifB64;
+  } catch (e) { return null; }
 }
 
 function buildEmailHTML(options) {
@@ -23,9 +46,8 @@ function buildEmailHTML(options) {
   } = options;
 
   const baseUrl = getBaseUrl();
-  const logoUrl = `${baseUrl}/uploads/email/banner-logo.png`;
-  const videoUrl = `${baseUrl}/uploads/email/logo-animation.mp4`;
-  const gifUrl = `${baseUrl}/uploads/email/logo-animation.gif`;
+  const logoUrl = 'cid:mafasel-logo';
+  const gifUrl = 'cid:mafasel-banner';
 
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
@@ -132,14 +154,40 @@ async function sendEmail({ to, subject, html, text }) {
     return { success: false, error: 'Email service not configured' };
   }
 
-  const payload = JSON.stringify({
+  const inlineImages = [];
+  const logoB64 = getLogoBase64();
+  const gifB64 = getGifBase64();
+  if (logoB64) {
+    inlineImages.push({
+      fileblob: logoB64,
+      filename: 'banner-logo.png',
+      mimetype: 'image/png',
+      cid: 'mafasel-logo'
+    });
+  }
+  if (gifB64 && html.includes('cid:mafasel-banner')) {
+    inlineImages.push({
+      fileblob: gifB64,
+      filename: 'logo-animation.gif',
+      mimetype: 'image/gif',
+      cid: 'mafasel-banner'
+    });
+  }
+
+  const emailPayload = {
     api_key: apiKey,
     to: Array.isArray(to) ? to : [to],
     sender: `${FROM_NAME} <${FROM_EMAIL}>`,
     subject: subject,
     html_body: html,
     text_body: text || subject
-  });
+  };
+
+  if (inlineImages.length > 0) {
+    emailPayload.inlineimages = inlineImages;
+  }
+
+  const payload = JSON.stringify(emailPayload);
 
   return new Promise((resolve) => {
     const url = new URL(SMTP2GO_API);
