@@ -1,0 +1,143 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-images"></i> إدارة البانرات</h1>
+      <a href="/admin" class="btn btn-sm btn-outline"><i class="fas fa-arrow-right"></i> العودة</a>
+    </div>
+
+    <div class="dashboard-section" style="margin-bottom: 2rem;">
+      <h2><i class="fas fa-plus-circle"></i> إضافة بانر جديد</h2>
+      <form method="POST" action="/admin/banners" enctype="multipart/form-data" class="banner-upload-form">
+        <div class="form-row">
+          <div class="form-group" style="flex: 2;">
+            <label><i class="fas fa-heading"></i> عنوان البانر (اختياري)</label>
+            <input type="text" name="title" placeholder="مثال: عرض خاص على الاستشارات">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label><i class="fas fa-sort-numeric-up"></i> الترتيب</label>
+            <input type="number" name="order" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-link"></i> رابط (اختياري) - عند الضغط على البانر</label>
+          <input type="text" name="link" placeholder="/consultations/new" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-cloud-upload-alt"></i> الملف (صورة أو فيديو)</label>
+          <div class="file-upload-area" id="dropZone">
+            <input type="file" name="file" id="bannerFile" accept="image/*,video/*" required>
+            <div class="file-upload-content">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>اسحب الملف هنا أو اضغط للاختيار</p>
+              <span>صور: JPG, PNG, GIF, WebP | فيديو: MP4, WebM</span>
+            </div>
+            <div class="file-preview" id="filePreview" style="display: none;"></div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-upload"></i> رفع البانر
+        </button>
+      </form>
+    </div>
+
+    <div class="dashboard-section">
+      <h2><i class="fas fa-list"></i> البانرات الحالية (<%= banners.length %>)</h2>
+      <% if (banners.length > 0) { %>
+      <div class="banners-admin-list">
+        <% banners.forEach((b, idx) => { %>
+        <div class="banner-admin-item <%= b.isActive ? '' : 'banner-inactive' %>">
+          <div class="banner-admin-preview">
+            <% if (b.type === 'video') { %>
+            <video src="<%= b.filePath %>" muted class="banner-admin-thumb"></video>
+            <div class="banner-type-badge"><i class="fas fa-video"></i></div>
+            <% } else { %>
+            <img src="<%= b.filePath %>" alt="<%= b.title %>" class="banner-admin-thumb">
+            <div class="banner-type-badge"><i class="fas fa-image"></i></div>
+            <% } %>
+          </div>
+          <div class="banner-admin-info">
+            <div class="banner-admin-title"><%= b.title || 'بدون عنوان' %></div>
+            <div class="banner-admin-meta">
+              <span><i class="fas fa-sort"></i> الترتيب: <%= b.order %></span>
+              <span><i class="fas fa-<%= b.isActive ? 'check-circle' : 'times-circle' %>"></i> <%= b.isActive ? 'مفعّل' : 'معطّل' %></span>
+              <% if (b.link) { %><span><i class="fas fa-link"></i> <%= b.link %></span><% } %>
+            </div>
+            <form method="POST" action="/admin/banners/<%= b._id %>/update" class="banner-edit-inline">
+              <div class="form-row" style="gap: 0.5rem; margin-bottom: 0.5rem;">
+                <input type="text" name="title" value="<%= b.title %>" placeholder="العنوان" style="flex: 2;">
+                <input type="text" name="link" value="<%= b.link %>" placeholder="الرابط" dir="ltr" style="flex: 2;">
+                <input type="number" name="order" value="<%= b.order %>" min="0" style="flex: 0.5;">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i></button>
+              </div>
+            </form>
+          </div>
+          <div class="banner-admin-actions">
+            <form method="POST" action="/admin/banners/<%= b._id %>/toggle" style="display:inline;">
+              <button type="submit" class="btn btn-sm <%= b.isActive ? 'btn-warning' : 'btn-success' %>">
+                <i class="fas fa-<%= b.isActive ? 'pause' : 'play' %>"></i>
+              </button>
+            </form>
+            <form method="POST" action="/admin/banners/<%= b._id %>/delete" style="display:inline;" onsubmit="return confirm('هل أنت متأكد من حذف هذا البانر؟')">
+              <button type="submit" class="btn btn-sm btn-error"><i class="fas fa-trash"></i></button>
+            </form>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="empty-state">
+        <i class="fas fa-images"></i>
+        <p>لا توجد بانرات حتى الآن</p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('bannerFile');
+const filePreview = document.getElementById('filePreview');
+
+['dragenter', 'dragover'].forEach(e => {
+  dropZone.addEventListener(e, (ev) => { ev.preventDefault(); dropZone.classList.add('drag-over'); });
+});
+['dragleave', 'drop'].forEach(e => {
+  dropZone.addEventListener(e, (ev) => { ev.preventDefault(); dropZone.classList.remove('drag-over'); });
+});
+dropZone.addEventListener('drop', (e) => {
+  fileInput.files = e.dataTransfer.files;
+  showPreview(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) showPreview(fileInput.files[0]);
+});
+
+function showPreview(file) {
+  const uploadContent = dropZone.querySelector('.file-upload-content');
+  uploadContent.style.display = 'none';
+  filePreview.style.display = 'flex';
+  filePreview.innerHTML = '';
+
+  if (file.type.startsWith('video/')) {
+    const vid = document.createElement('video');
+    vid.src = URL.createObjectURL(file);
+    vid.muted = true;
+    vid.style.maxHeight = '150px';
+    vid.style.borderRadius = '8px';
+    filePreview.appendChild(vid);
+  } else {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.style.maxHeight = '150px';
+    img.style.borderRadius = '8px';
+    filePreview.appendChild(img);
+  }
+  const info = document.createElement('div');
+  info.innerHTML = `<strong>${file.name}</strong><br><span style="color: var(--text-muted);">${(file.size / 1024 / 1024).toFixed(2)} MB</span>`;
+  info.style.marginRight = '1rem';
+  filePreview.appendChild(info);
+}
+</script>
+<%- include('../partials/footer') %>

@@ -44,7 +44,11 @@
       <div id="phone-step-1">
         <div class="form-group">
           <label><i class="fas fa-mobile-alt"></i> رقم الجوال</label>
-          <input type="tel" id="phoneInput" placeholder="05xxxxxxxx" dir="ltr" class="ltr-input">
+          <div class="phone-input-wrap">
+            <span class="phone-prefix">966+</span>
+            <input type="tel" id="phoneInput" placeholder="5XXXXXXXX" dir="ltr" class="ltr-input phone-with-prefix" maxlength="9">
+          </div>
+          <small class="field-hint">يجب أن يبدأ بـ 5 ويتكون من 9 أرقام</small>
         </div>
         <button class="btn btn-primary btn-block" onclick="sendOTP()">
           <i class="fas fa-paper-plane"></i> إرسال رمز التحقق
@@ -90,7 +94,8 @@
         </div>
         <div class="form-group">
           <label><i class="fas fa-id-card"></i> رقم الهوية الوطنية</label>
-          <input type="text" id="nafathId" placeholder="أدخل رقم الهوية (10 أرقام)" maxlength="10" dir="ltr" class="ltr-input" inputmode="numeric">
+          <input type="text" id="nafathId" placeholder="1XXXXXXXXX أو 2XXXXXXXXX" maxlength="10" dir="ltr" class="ltr-input" inputmode="numeric" pattern="[12][0-9]{9}" title="يبدأ بـ 1 أو 2 ويتكون من 10 أرقام">
+          <small class="field-hint">يبدأ بـ 1 أو 2 ويتكون من 10 أرقام</small>
         </div>
         <button class="btn btn-primary btn-block" onclick="initNafath()">
           <i class="fas fa-shield-alt"></i> متابعة عبر نفاذ
@@ -175,12 +180,21 @@ function togglePassword(id, btn) {
   }
 }
 
+const loginPhoneInput = document.getElementById('phoneInput');
+loginPhoneInput.addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9]/g, '');
+  if (this.value.length > 0 && this.value[0] !== '5') {
+    this.value = '5' + this.value.substring(1);
+  }
+  if (this.value.length > 9) this.value = this.value.substring(0, 9);
+});
+
 let otpPhoneValue = '';
 let otpTimerInterval;
 
 async function sendOTP() {
   const phone = document.getElementById('phoneInput').value.trim();
-  if (!phone || phone.length < 9) return alert('أدخل رقم جوال صحيح');
+  if (!phone || phone.length !== 9 || phone[0] !== '5') return alert('رقم الجوال يجب أن يبدأ بـ 5 ويتكون من 9 أرقام');
   otpPhoneValue = phone;
   try {
     const res = await fetch('/login/phone', {
@@ -248,9 +262,18 @@ function backToPhone() {
 
 let nafathTimerInterval;
 
+const nafathInput = document.getElementById('nafathId');
+nafathInput.addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9]/g, '');
+  if (this.value.length > 0 && this.value[0] !== '1' && this.value[0] !== '2') {
+    this.value = '';
+  }
+  if (this.value.length > 10) this.value = this.value.substring(0, 10);
+});
+
 async function initNafath() {
   const id = document.getElementById('nafathId').value.trim();
-  if (!id || id.length !== 10) return alert('أدخل رقم هوية صحيح (10 أرقام)');
+  if (!id || id.length !== 10 || (id[0] !== '1' && id[0] !== '2')) return alert('رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام');
   try {
     const res = await fetch('/auth/nafath/init', {
       method: 'POST',

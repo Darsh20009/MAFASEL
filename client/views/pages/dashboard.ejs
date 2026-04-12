@@ -2,26 +2,35 @@
 <div class="main-content">
   <div class="container">
 
+    <% if (banners && banners.length > 0) { %>
     <section class="hero-banner" id="heroBanner">
       <div class="banner-slides">
-        <div class="banner-slide active">
-          <img src="/icons/banner1.png" alt="وسهلناها عليك - اكتشف الطب التقني مع مفاصل">
+        <% banners.forEach((b, i) => { %>
+        <div class="banner-slide <%= i === 0 ? 'active' : '' %>" <% if (b.link) { %>data-link="<%= b.link %>"<% } %>>
+          <% if (b.type === 'video') { %>
+          <video src="<%= b.filePath %>" muted autoplay loop playsinline class="banner-media"></video>
+          <% } else { %>
+          <img src="<%= b.filePath %>" alt="<%= b.title || 'بانر مفاصل' %>" class="banner-media">
+          <% } %>
+          <% if (b.title) { %>
+          <div class="banner-overlay">
+            <h3><%= b.title %></h3>
+          </div>
+          <% } %>
         </div>
-        <div class="banner-slide">
-          <img src="/icons/banner2.png" alt="حمل التطبيق الآن - مستشفى في البيت">
-        </div>
-        <div class="banner-slide">
-          <img src="/icons/banner3.png" alt="دايماً معاك - متخصص ودعم فني متكامل">
-        </div>
+        <% }) %>
       </div>
+      <% if (banners.length > 1) { %>
       <button class="banner-arrow banner-prev" onclick="changeBannerSlide(-1)"><i class="fas fa-chevron-right"></i></button>
       <button class="banner-arrow banner-next" onclick="changeBannerSlide(1)"><i class="fas fa-chevron-left"></i></button>
       <div class="banner-dots">
-        <span class="banner-dot active" onclick="goToSlide(0)"></span>
-        <span class="banner-dot" onclick="goToSlide(1)"></span>
-        <span class="banner-dot" onclick="goToSlide(2)"></span>
+        <% banners.forEach((b, i) => { %>
+        <span class="banner-dot <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)"></span>
+        <% }) %>
       </div>
+      <% } %>
     </section>
+    <% } %>
 
     <section class="welcome-section">
       <div class="welcome-card">
@@ -226,9 +235,27 @@ const slides = document.querySelectorAll('.banner-slide');
 const dots = document.querySelectorAll('.banner-dot');
 let bannerInterval;
 
+if (slides.length > 0) {
+  slides.forEach(s => {
+    if (s.dataset.link) {
+      s.style.cursor = 'pointer';
+      s.addEventListener('click', (e) => {
+        if (!e.target.closest('.banner-arrow') && !e.target.closest('.banner-dot')) {
+          window.location.href = s.dataset.link;
+        }
+      });
+    }
+  });
+}
+
 function showSlide(index) {
   slides.forEach((s, i) => {
     s.classList.toggle('active', i === index);
+    const video = s.querySelector('video');
+    if (video) {
+      if (i === index) { video.play().catch(() => {}); }
+      else { video.pause(); video.currentTime = 0; }
+    }
   });
   dots.forEach((d, i) => {
     d.classList.toggle('active', i === index);
@@ -251,17 +278,23 @@ function goToSlide(index) {
 
 function resetBannerTimer() {
   clearInterval(bannerInterval);
+  if (slides.length > 1) {
+    bannerInterval = setInterval(() => changeBannerSlide(1), 5000);
+  }
+}
+
+if (slides.length > 1) {
   bannerInterval = setInterval(() => changeBannerSlide(1), 5000);
 }
 
-bannerInterval = setInterval(() => changeBannerSlide(1), 5000);
-
 const banner = document.getElementById('heroBanner');
-let touchStartX = 0;
-banner.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
-banner.addEventListener('touchend', e => {
-  const diff = touchStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 50) changeBannerSlide(diff > 0 ? 1 : -1);
-});
+if (banner) {
+  let touchStartX = 0;
+  banner.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  banner.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) changeBannerSlide(diff > 0 ? 1 : -1);
+  });
+}
 </script>
 <%- include('../partials/footer') %>

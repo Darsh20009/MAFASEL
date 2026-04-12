@@ -1229,11 +1229,28 @@ body {
   transition: opacity 0.8s ease;
 }
 .banner-slide.active { opacity: 1; }
-.banner-slide img {
+.banner-slide img,
+.banner-slide video,
+.banner-media {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+.banner-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff;
+  z-index: 1;
+}
+.banner-overlay h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
 .banner-arrow {
   position: absolute;
@@ -1480,3 +1497,219 @@ body {
   gap: 0.3rem;
 }
 .ai-features i { color: var(--secondary); font-size: 0.7rem; }
+
+.phone-input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.phone-input-wrap:focus-within {
+  border-color: var(--secondary);
+}
+.phone-prefix {
+  padding: 0.7rem 0.8rem;
+  background: rgba(18, 169, 155, 0.1);
+  color: var(--secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  border-left: 1px solid var(--border);
+  direction: ltr;
+  user-select: none;
+}
+.phone-with-prefix {
+  border: none !important;
+  background: transparent !important;
+  flex: 1;
+  padding: 0.7rem;
+}
+.phone-with-prefix:focus {
+  outline: none;
+  box-shadow: none;
+}
+.field-hint {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.admin-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.banner-upload-form .form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.file-upload-area {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s;
+  cursor: pointer;
+  background: var(--input-bg);
+}
+.file-upload-area:hover,
+.file-upload-area.drag-over {
+  border-color: var(--secondary);
+  background: rgba(18, 169, 155, 0.05);
+}
+.file-upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+.file-upload-content {
+  pointer-events: none;
+}
+.file-upload-content i {
+  font-size: 2.5rem;
+  color: var(--secondary);
+  margin-bottom: 0.8rem;
+}
+.file-upload-content p {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.file-upload-content span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.file-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.banners-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.banner-admin-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--input-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.banner-admin-item.banner-inactive {
+  opacity: 0.5;
+}
+.banner-admin-preview {
+  position: relative;
+  width: 120px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.banner-admin-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.banner-type-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+}
+.banner-admin-info {
+  flex: 1;
+  min-width: 0;
+}
+.banner-admin-title {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.banner-admin-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+.banner-admin-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.banner-edit-inline input {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+.banner-admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.btn-warning {
+  background: var(--warning);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.btn-error {
+  background: var(--error);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.btn-success {
+  background: var(--success);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .banner-admin-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .banner-admin-preview {
+    width: 100%;
+    height: 100px;
+  }
+  .banner-edit-inline .form-row {
+    flex-direction: column;
+  }
+  .banner-admin-actions {
+    justify-content: flex-end;
+  }
+  .phone-prefix {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+}

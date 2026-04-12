@@ -22,7 +22,7 @@
       <span>أو أنشئ حساب بالبيانات</span>
     </div>
 
-    <form method="POST" action="/register" class="auth-form">
+    <form method="POST" action="/register" class="auth-form" id="registerForm">
       <div class="form-row">
         <div class="form-group">
           <label><i class="fas fa-user"></i> الاسم الكامل</label>
@@ -45,13 +45,22 @@
       </div>
       <div class="form-group">
         <label><i class="fas fa-phone"></i> رقم الجوال</label>
-        <input type="tel" name="phone" required placeholder="05xxxxxxxx" dir="ltr" class="ltr-input">
+        <div class="phone-input-wrap">
+          <span class="phone-prefix">966+</span>
+          <input type="tel" name="phone" id="phoneInput" required placeholder="5XXXXXXXX" dir="ltr" class="ltr-input phone-with-prefix" maxlength="9" pattern="5[0-9]{8}" title="يجب أن يبدأ الرقم بـ 5 ويتكون من 9 أرقام">
+        </div>
+        <small class="field-hint">يجب أن يبدأ بـ 5 ويتكون من 9 أرقام</small>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-id-card"></i> رقم الهوية الوطنية (اختياري)</label>
+        <input type="text" name="nationalId" id="nationalIdInput" placeholder="1XXXXXXXXX أو 2XXXXXXXXX" dir="ltr" class="ltr-input" maxlength="10" pattern="[12][0-9]{9}" title="يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام">
+        <small class="field-hint">يبدأ بـ 1 أو 2 ويتكون من 10 أرقام</small>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label><i class="fas fa-lock"></i> كلمة المرور</label>
           <div class="password-input-wrap">
-            <input type="password" name="password" id="regPass" required placeholder="أدخل كلمة المرور" minlength="6">
+            <input type="password" name="password" id="regPass" required placeholder="أدخل كلمة المرور" minlength="6" autocomplete="new-password">
             <button type="button" class="password-toggle" onclick="togglePassword('regPass', this)">
               <i class="fas fa-eye"></i>
             </button>
@@ -60,7 +69,7 @@
         <div class="form-group">
           <label><i class="fas fa-lock"></i> تأكيد كلمة المرور</label>
           <div class="password-input-wrap">
-            <input type="password" name="confirmPassword" id="regPassConfirm" required placeholder="أعد إدخال كلمة المرور">
+            <input type="password" name="confirmPassword" id="regPassConfirm" required placeholder="أعد إدخال كلمة المرور" autocomplete="new-password">
             <button type="button" class="password-toggle" onclick="togglePassword('regPassConfirm', this)">
               <i class="fas fa-eye"></i>
             </button>
@@ -90,5 +99,41 @@ function togglePassword(id, btn) {
 function loginApple() {
   alert('سيتم تفعيل التسجيل عبر Apple قريباً عند ربط النطاق في Apple Developer Console');
 }
+
+const phoneInput = document.getElementById('phoneInput');
+phoneInput.addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9]/g, '');
+  if (this.value.length > 0 && this.value[0] !== '5') {
+    this.value = '5' + this.value.substring(1);
+  }
+  if (this.value.length > 9) this.value = this.value.substring(0, 9);
+});
+
+const nationalIdInput = document.getElementById('nationalIdInput');
+nationalIdInput.addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9]/g, '');
+  if (this.value.length > 0 && this.value[0] !== '1' && this.value[0] !== '2') {
+    this.value = '';
+  }
+  if (this.value.length > 10) this.value = this.value.substring(0, 10);
+});
+
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+  const phone = phoneInput.value;
+  if (phone.length !== 9 || phone[0] !== '5') {
+    e.preventDefault();
+    alert('رقم الجوال يجب أن يبدأ بـ 5 ويتكون من 9 أرقام');
+    phoneInput.focus();
+    return;
+  }
+
+  const natId = nationalIdInput.value;
+  if (natId && (natId.length !== 10 || (natId[0] !== '1' && natId[0] !== '2'))) {
+    e.preventDefault();
+    alert('رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام');
+    nationalIdInput.focus();
+    return;
+  }
+});
 </script>
 <%- include('../partials/footer') %>

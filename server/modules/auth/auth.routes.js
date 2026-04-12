@@ -80,11 +80,25 @@ router.get('/register', (req, res) => {
 
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, phone, password, confirmPassword, role } = req.body;
+    const { name, email, phone, password, confirmPassword, role, nationalId } = req.body;
     if (password !== confirmPassword) {
       req.session.error = 'كلمتا المرور غير متطابقتين';
       return res.redirect('/register');
     }
+
+    const cleanPhone = phone ? phone.replace(/[^0-9]/g, '') : '';
+    const cleanId = nationalId ? nationalId.replace(/[^0-9]/g, '') : '';
+
+    if (cleanPhone && (cleanPhone.length !== 9 || cleanPhone[0] !== '5')) {
+      req.session.error = 'رقم الجوال يجب أن يبدأ بـ 5 ويتكون من 9 أرقام';
+      return res.redirect('/register');
+    }
+
+    if (cleanId && (cleanId.length !== 10 || (cleanId[0] !== '1' && cleanId[0] !== '2'))) {
+      req.session.error = 'رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام';
+      return res.redirect('/register');
+    }
+
     if (email) {
       const exists = await User.findOne({ email: email.toLowerCase().trim() });
       if (exists) {
@@ -92,10 +106,17 @@ router.post('/register', async (req, res) => {
         return res.redirect('/register');
       }
     }
-    if (phone) {
-      const phoneExists = await User.findOne({ phone: phone.trim() });
+    if (cleanPhone) {
+      const phoneExists = await User.findOne({ phone: cleanPhone });
       if (phoneExists) {
         req.session.error = 'رقم الجوال مسجل مسبقاً';
+        return res.redirect('/register');
+      }
+    }
+    if (cleanId) {
+      const idExists = await User.findOne({ nationalId: cleanId });
+      if (idExists) {
+        req.session.error = 'رقم الهوية مسجل مسبقاً';
         return res.redirect('/register');
       }
     }
@@ -103,7 +124,8 @@ router.post('/register', async (req, res) => {
     const user = await User.create({
       name: name.trim(),
       email: email ? email.toLowerCase().trim() : undefined,
-      phone: phone ? phone.trim() : undefined,
+      phone: cleanPhone || undefined,
+      nationalId: cleanId || undefined,
       password: hash,
       role: role || 'patient',
       isVerified: true,
@@ -122,7 +144,10 @@ router.post('/register', async (req, res) => {
 router.post('/login/phone', async (req, res) => {
   try {
     const { phone } = req.body;
-    const cleanPhone = phone.replace(/\s/g, '').trim();
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (!cleanPhone || cleanPhone.length !== 9 || cleanPhone[0] !== '5') {
+      return res.status(400).json({ success: false, message: 'رقم الجوال يجب أن يبدأ بـ 5 ويتكون من 9 أرقام' });
+    }
     let user = await User.findOne({ phone: cleanPhone });
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
@@ -298,8 +323,9 @@ router.post('/auth/apple/callback', async (req, res) => {
 router.post('/auth/nafath/init', async (req, res) => {
   try {
     const { nationalId } = req.body;
-    if (!nationalId || nationalId.length !== 10) {
-      return res.status(400).json({ success: false, message: 'رقم الهوية غير صحيح' });
+    const cleanNatId = nationalId ? nationalId.replace(/[^0-9]/g, '') : '';
+    if (!cleanNatId || cleanNatId.length !== 10 || (cleanNatId[0] !== '1' && cleanNatId[0] !== '2')) {
+      return res.status(400).json({ success: false, message: 'رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام' });
     }
     const verificationCode = Math.floor(10 + Math.random() * 90).toString();
     const requestId = 'NAF-' + Date.now().toString(36).toUpperCase();

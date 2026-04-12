@@ -5,15 +5,17 @@ const Consultation = require('../medical/consultation.model');
 const Order = require('../orders/order.model');
 const Notification = require('../notifications/notification.model');
 const Insurance = require('../medical/insurance.model');
+const Banner = require('../admin/banner.model');
 
 router.get('/', isAuthenticated, async (req, res) => {
   try {
     const userId = req.session.user._id;
-    const [consultations, orders, notifications, insurance] = await Promise.all([
+    const [consultations, orders, notifications, insurance, banners] = await Promise.all([
       Consultation.find({ patient: userId }).sort({ createdAt: -1 }).limit(5),
       Order.find({ patient: userId }).sort({ createdAt: -1 }).limit(5),
       Notification.find({ userId, read: false }).sort({ createdAt: -1 }).limit(10),
-      Insurance.findOne({ patient: userId, status: 'active' })
+      Insurance.findOne({ patient: userId, status: 'active' }),
+      Banner.find({ isActive: true }).sort({ order: 1, createdAt: -1 })
     ]);
 
     const stats = {
@@ -25,7 +27,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 
     res.render('pages/dashboard', {
       title: 'لوحة التحكم',
-      consultations, orders, notifications, insurance, stats
+      consultations, orders, notifications, insurance, stats, banners
     });
   } catch (err) {
     req.session.error = 'حدث خطأ في تحميل لوحة التحكم';

@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated, isAdmin } = require('../../middleware/auth');
+const { uploadBanner } = require('../../middleware/upload');
 const User = require('../users/user.model');
 const Consultation = require('../medical/consultation.model');
 const Order = require('../orders/order.model');
 const Insurance = require('../medical/insurance.model');
 const Complaint = require('../settings/complaint.model');
+const Banner = require('./banner.model');
 const { fireNotify } = require('../notifications/notification.service');
+const fs = require('fs');
+const path = require('path');
 
 router.get('/', isAuthenticated, isAdmin, async (req, res) => {
   const [users, consultations, orders, complaints, insurances] = await Promise.all([
@@ -98,6 +102,102 @@ router.post('/complaints/:id/respond', isAuthenticated, isAdmin, async (req, res
   });
   req.session.success = 'تم الرد على الشكوى';
   res.redirect('/admin/complaints');
+});
+
+router.get('/banners', isAuthenticated, isAdmin, async (req, res) => {
+  const banners = await Banner.find().sort({ order: 1, createdAt: -1 });
+  res.render('pages/admin-banners', { title: 'إدارة البانرات', banners });
+});
+
+function sanitizeBannerLink(link) {
+  if (!link) return '';
+  const trimmed = link.trim();
+  if (trimmed.startsWith('/')) return trimmed;
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+  return '';
+}
+
+router.post('/banners', isAuthenticated, isAdmin, (req, res, next) => {
+  uploadBanner.single('file')(req, res, (err) => {
+    if (err) {
+      req.session.error = err.message || 'حدث خطأ في رفع الملف';
+      return res.redirect('/admin/banners');
+    }
+    next();
+  });
+}, async (req, res) => {
+  try {
+    if (!req.file) {
+      req.session.error = 'يرجى اختيار ملف';
+      return res.redirect('/admin/banners');
+    }
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const isVideo = ['.mp4', '.webm', '.ogg', '.mov'].includes(ext);
+
+    const bannerCount = await Banner.countDocuments();
+    await Banner.create({
+      title: req.body.title || '',
+      type: isVideo ? 'video' : 'image',
+      filePath: '/uploads/banners/' + req.file.filename,
+      link: sanitizeBannerLink(req.body.link),
+      order: req.body.order ? parseInt(req.body.order) : bannerCount,
+      isActive: true,
+      createdBy: req.session.user._id
+    });
+
+    req.session.success = 'تم إضافة البانر بنجاح';
+    res.redirect('/admin/banners');
+  } catch (err) {
+    console.error('Banner upload error:', err);
+    req.session.error = 'حدث خطأ في رفع البانر';
+    res.redirect('/admin/banners');
+  }
+});
+
+router.post('/banners/:id/toggle', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const banner = await Banner.findById(req.params.id);
+    if (banner) {
+      banner.isActive = !banner.isActive;
+      await banner.save();
+      req.session.success = banner.isActive ? 'تم تفعيل البانر' : 'تم إيقاف البانر';
+    }
+  } catch (err) {
+    req.session.error = 'حدث خطأ في تحديث البانر';
+  }
+  res.redirect('/admin/banners');
+});
+
+router.post('/banners/:id/update', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    await Banner.findByIdAndUpdate(req.params.id, {
+      title: req.body.title || '',
+      link: sanitizeBannerLink(req.body.link),
+      order: req.body.order ? parseInt(req.body.order) : 0
+    });
+    req.session.success = 'تم تحديث البانر';
+  } catch (err) {
+    req.session.error = 'حدث خطأ في تحديث البانر';
+  }
+  res.redirect('/admin/banners');
+});
+
+router.post('/banners/:id/delete', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const banner = await Banner.findById(req.params.id);
+    if (banner) {
+      const relativePath = banner.filePath.replace(/^\//, '');
+      const filePath = path.join(__dirname, '../../..', relativePath);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      await Banner.findByIdAndDelete(req.params.id);
+      req.session.success = 'تم حذف البانر';
+    }
+  } catch (err) {
+    req.session.error = 'حدث خطأ في حذف البانر';
+  }
+  res.redirect('/admin/banners');
 });
 
 module.exports = router;
