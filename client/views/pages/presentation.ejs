@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مفاصل | العرض التقديمي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" href="/icons/logo.png">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --accent: #12a99b;
+      --accent2: #0d8a7e;
+      --primary: #101d23;
+      --primary-light: #1a2e38;
+      --text: #e8ecf0;
+      --text-muted: #8899a6;
+      --gold: #f5c542;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --pink: #ec4899;
+      --red: #ef4444;
+      --green: #22c55e;
+      --orange: #f59e0b;
+    }
+
+    html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; overflow-x: hidden; }
+    body { font-family: 'Tajawal', sans-serif; background: var(--primary); color: var(--text); }
+
+    .slide {
+      min-height: 100vh;
+      min-height: 100dvh;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-inner {
+      max-width: 1100px;
+      width: 100%;
+      z-index: 2;
+      position: relative;
+    }
+
+    .bg-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .slide-num {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      opacity: 0.5;
+      letter-spacing: 2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.3px;
+    }
+    .badge-accent { background: rgba(18,169,155,0.15); color: var(--accent); border: 1px solid rgba(18,169,155,0.25); }
+    .badge-blue { background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
+    .badge-purple { background: rgba(139,92,246,0.12); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
+    .badge-gold { background: rgba(245,197,66,0.12); color: var(--gold); border: 1px solid rgba(245,197,66,0.2); }
+    .badge-pink { background: rgba(236,72,153,0.12); color: var(--pink); border: 1px solid rgba(236,72,153,0.2); }
+    .badge-green { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+    .badge-orange { background: rgba(245,158,11,0.12); color: var(--orange); border: 1px solid rgba(245,158,11,0.2); }
+    .badge-red { background: rgba(239,68,68,0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1.25; margin-bottom: 1rem; }
+    h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; line-height: 1.3; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .subtitle { font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--text-muted); line-height: 1.8; max-width: 700px; }
+    .accent { color: var(--accent); }
+    .blue { color: var(--blue); }
+    .purple { color: var(--purple); }
+    .gold { color: var(--gold); }
+    .pink { color: var(--pink); }
+    .green { color: var(--green); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .card:hover { transform: translateY(-4px); border-color: rgba(18,169,155,0.3); }
+
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; }
+
+    .mockup-phone {
+      width: 260px;
+      height: 520px;
+      background: var(--primary-light);
+      border-radius: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .mockup-phone::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 12px;
+      z-index: 5;
+    }
+    .mockup-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5rem 1rem 1rem;
+    }
+    .mockup-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 0.75rem;
+    }
+    .mockup-header img { width: 24px; height: 24px; }
+    .mockup-header span { font-weight: 700; font-size: 0.9rem; }
+    .mockup-item {
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 0.65rem 0.8rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+    }
+    .mockup-item-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .mockup-btn {
+      margin-top: auto;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.7rem;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .stat-big {
+      text-align: center;
+      padding: 1.25rem;
+    }
+    .stat-big-num {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900;
+      line-height: 1;
+    }
+    .stat-big-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    .timeline {
+      position: relative;
+      padding-right: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, var(--accent), var(--purple), var(--blue));
+      border-radius: 2px;
+    }
+    .timeline-item {
+      position: relative;
+      padding: 1rem 1.5rem 1.5rem 0;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      right: -0.45rem;
+      top: 1.3rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      background: var(--primary);
+    }
+    .timeline-item:nth-child(2)::before { border-color: var(--purple); }
+    .timeline-item:nth-child(3)::before { border-color: var(--blue); }
+    .timeline-item:nth-child(4)::before { border-color: var(--gold); }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .tech-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: border-color 0.2s;
+    }
+    .tech-tag:hover { border-color: var(--accent); }
+
+    .nav-dots {
+      position: fixed;
+      left: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 100;
+    }
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+    .nav-dot.active { background: var(--accent); height: 24px; border-radius: 5px; }
+    .nav-dot:hover { background: rgba(255,255,255,0.3); }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 2rem;
+      background: rgba(16,29,35,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .top-bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .top-bar-brand img { width: 28px; height: 28px; }
+    .top-bar-brand span { font-weight: 800; font-size: 1.1rem; }
+    .top-bar-links { display: flex; gap: 0.75rem; }
+    .top-bar-links a {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .top-bar-links a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .top-bar-links .cta {
+      background: var(--accent);
+      color: #fff;
+    }
+    .top-bar-links .cta:hover { background: var(--accent2); }
+
+    .divider-line {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      border-radius: 2px;
+      margin: 1rem 0 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+      .grid-4 { grid-template-columns: 1fr 1fr; }
+      .nav-dots { display: none; }
+      .slide { padding: 2rem 1.25rem; }
+      .hero-flex { flex-direction: column !important; }
+      .mockup-phone { width: 200px; height: 400px; }
+    }
+    @media (max-width: 600px) {
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .top-bar-links { display: none; }
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-brand">
+    <img src="/icons/logo.png" alt="مفاصل">
+    <span>مفاصل <span class="accent">Mafasel</span></span>
+  </div>
+  <div class="top-bar-links">
+    <a href="/dashboard">الرئيسية</a>
+    <a href="/login" class="cta"><i class="fas fa-sign-in-alt"></i> دخول</a>
+  </div>
+</div>
+
+<div class="nav-dots" id="navDots"></div>
+
+<!-- ══════════ SLIDE 1: COVER ══════════ -->
+<section class="slide" id="s1">
+  <div class="bg-glow" style="width:500px;height:500px;background:var(--accent);top:-100px;right:-100px;"></div>
+  <div class="bg-glow" style="width:400px;height:400px;background:var(--purple);bottom:-80px;left:-80px;"></div>
+  <div class="slide-num">01 / 12</div>
+  <div class="slide-inner" style="text-align:center;">
+    <div class="fade-up">
+      <img src="/icons/logo.png" alt="مفاصل" style="width:90px;height:90px;margin-bottom:1.5rem;filter:drop-shadow(0 8px 32px rgba(18,169,155,0.3));">
+      <h1 style="font-size:clamp(2.5rem,6vw,4rem);">
+        <span class="accent">مفاصل</span>
+        <br>
+        <span style="font-size:0.6em;font-weight:600;color:var(--text-muted);">منصة طبية رقمية متكاملة</span>
+      </h1>
+      <p class="subtitle" style="margin:0 auto 2rem;max-width:600px;">
+        نُعيد تعريف تجربة الرعاية الصحية الرقمية في المملكة العربية السعودية — من الاستشارة إلى التوصيل، من التأمين إلى الذكاء الاصطناعي.
+      </p>
+      <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+        <span class="badge badge-accent"><i class="fas fa-heartbeat"></i> رعاية صحية رقمية</span>
+        <span class="badge badge-blue"><i class="fas fa-robot"></i> ذكاء اصطناعي</span>
+        <span class="badge badge-purple"><i class="fas fa-shield-alt"></i> حماية وأمان</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 2: BRAND IDENTITY ══════════ -->
+<section class="slide" id="s2">
+  <div class="bg-glow" style="width:450px;height:450px;background:var(--accent);bottom:-80px;right:10%;"></div>
+  <div class="slide-num">02 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-gold"><i class="fas fa-palette"></i> الهوية البصرية</span>
+    <h2>براند <span class="gold">مفاصل</span></h2>
+    <div class="divider-line"></div>
+    <div class="grid-2" style="margin-top:1.5rem;">
+      <div>
+        <p class="subtitle" style="margin-bottom:1.5rem;">
+          اسم "مفاصل" مستوحى من المفاصل في الجسم — النقاط التي تربط الأجزاء وتمنح الحركة. كذلك منصتنا تربط المرضى بالأطباء والصيدليات وشركات التأمين في نظام واحد متصل.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="card" style="text-align:center;">
+            <div style="width:50px;height:50px;border-radius:12px;background:#101d23;display:inline-flex;align-items:center;justify-content:center;margin-bottom:0.5rem;">
+              <div style="width:30px;height:30px;background:var(--primary);border-radius:6px;"></div>
+            </div>
+            <h3 style="font-size:0.82rem;">اللون الأساسي</h3>
+            <code style="font-size:0.75rem;color:var(--text-muted);">#101d23</code>
+            <p style="font-size:0.78rem;">داكن أنيق — يُعبّر عن الاحترافية والثقة الطبية</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="width:50px;height:50px;border-radius:12px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;margin-bottom:0.5rem;">
+              <i class="fas fa-tint" style="color:#fff;font-size:1.2rem;"></i>
+            </div>
+            <h3 style="font-size:0.82rem;">اللون المميّز</h3>
+            <code style="font-size:0.75rem;color:var(--text-muted);">#12a99b</code>
+            <p style="font-size:0.78rem;">تيل طبي — يوحي بالصحة والنقاء والتجدد</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="width:50px;height:50px;border-radius:12px;background:rgba(18,169,155,0.1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:0.5rem;">
+              <span style="font-family:'Tajawal';font-weight:900;font-size:1.2rem;color:var(--accent);">ت</span>
+            </div>
+            <h3 style="font-size:0.82rem;">الخط</h3>
+            <code style="font-size:0.75rem;color:var(--text-muted);">Tajawal</code>
+            <p style="font-size:0.78rem;">خط عربي عصري يدعم جميع الأوزان</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="width:50px;height:50px;border-radius:12px;background:rgba(139,92,246,0.1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:0.5rem;">
+              <i class="fas fa-arrow-right" style="color:var(--purple);font-size:1rem;transform:scaleX(-1);"></i>
+            </div>
+            <h3 style="font-size:0.82rem;">الاتجاه</h3>
+            <code style="font-size:0.75rem;color:var(--text-muted);">RTL</code>
+            <p style="font-size:0.78rem;">تصميم كامل من اليمين لليسار</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;">
+        <div style="position:relative;">
+          <div style="width:220px;height:220px;border-radius:50%;background:linear-gradient(135deg,rgba(18,169,155,0.2),rgba(139,92,246,0.1));display:flex;align-items:center;justify-content:center;border:2px solid rgba(18,169,155,0.2);">
+            <img src="/icons/logo.png" alt="مفاصل" style="width:120px;height:120px;filter:drop-shadow(0 10px 40px rgba(18,169,155,0.4));">
+          </div>
+          <div style="position:absolute;top:-10px;right:-30px;background:rgba(245,197,66,0.1);border:1px solid rgba(245,197,66,0.2);border-radius:10px;padding:0.4rem 0.8rem;font-size:0.72rem;font-weight:700;color:var(--gold);">
+            <i class="fas fa-gem"></i> Premium
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 3: VISION & MISSION ══════════ -->
+<section class="slide" id="s3">
+  <div class="bg-glow" style="width:400px;height:400px;background:var(--blue);top:10%;left:-100px;"></div>
+  <div class="slide-num">03 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-blue"><i class="fas fa-bullseye"></i> الرؤية والرسالة</span>
+    <h2>نحو مستقبل <span class="blue">صحي رقمي</span></h2>
+    <div class="divider-line" style="background:linear-gradient(90deg,var(--blue),transparent);"></div>
+    <div class="grid-2" style="margin-top:1.5rem;">
+      <div class="card" style="border-color:rgba(59,130,246,0.15);">
+        <div class="card-icon" style="background:rgba(59,130,246,0.12);color:var(--blue);"><i class="fas fa-eye"></i></div>
+        <h3>الرؤية</h3>
+        <p>أن نكون المنصة الطبية الرقمية الرائدة في المملكة العربية السعودية والشرق الأوسط — تُحدث تحولاً حقيقياً في كيفية وصول المرضى للرعاية الصحية، بما يتماشى مع أهداف رؤية 2030 في التحول الرقمي الصحي.</p>
+      </div>
+      <div class="card" style="border-color:rgba(18,169,155,0.15);">
+        <div class="card-icon" style="background:rgba(18,169,155,0.12);color:var(--accent);"><i class="fas fa-bullseye"></i></div>
+        <h3>الرسالة</h3>
+        <p>تقديم منصة صحية شاملة تجمع بين الاستشارات الطبية المتخصصة، الصيدلية الإلكترونية، إدارة التأمين الصحي، والذكاء الاصطناعي — في تجربة واحدة سلسة وآمنة تُبسّط الرعاية الصحية للجميع.</p>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-top:1.5rem;">
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <div class="stat-big-num accent">10+</div>
+        <div class="stat-big-label">خدمات رقمية متكاملة</div>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <div class="stat-big-num blue">24/7</div>
+        <div class="stat-big-label">دعم فني ومساعد ذكي</div>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <div class="stat-big-num purple">100%</div>
+        <div class="stat-big-label">عربي وآمن</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 4: PROBLEM & SOLUTION ══════════ -->
+<section class="slide" id="s4">
+  <div class="bg-glow" style="width:350px;height:350px;background:var(--red);top:20%;right:-80px;"></div>
+  <div class="slide-num">04 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-red"><i class="fas fa-exclamation-triangle"></i> المشكلة والحل</span>
+    <h2>لماذا <span style="color:var(--red);">نحتاج</span> مفاصل؟</h2>
+    <div class="divider-line" style="background:linear-gradient(90deg,var(--red),transparent);"></div>
+    <div class="grid-2" style="margin-top:1.5rem;">
+      <div>
+        <h3 style="color:var(--red);margin-bottom:1rem;"><i class="fas fa-times-circle"></i> المشكلة</h3>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div class="card" style="border-color:rgba(239,68,68,0.15);padding:1rem;display:flex;align-items:center;gap:0.75rem;">
+            <i class="fas fa-clock" style="color:var(--red);font-size:1.2rem;flex-shrink:0;"></i>
+            <div><strong style="font-size:0.9rem;">أوقات انتظار طويلة</strong><p style="font-size:0.78rem;">ساعات في المستشفيات لمجرد استشارة بسيطة</p></div>
+          </div>
+          <div class="card" style="border-color:rgba(239,68,68,0.15);padding:1rem;display:flex;align-items:center;gap:0.75rem;">
+            <i class="fas fa-puzzle-piece" style="color:var(--red);font-size:1.2rem;flex-shrink:0;"></i>
+            <div><strong style="font-size:0.9rem;">خدمات مفرّقة</strong><p style="font-size:0.78rem;">تطبيق للطبيب، آخر للصيدلية، ثالث للتأمين</p></div>
+          </div>
+          <div class="card" style="border-color:rgba(239,68,68,0.15);padding:1rem;display:flex;align-items:center;gap:0.75rem;">
+            <i class="fas fa-file-alt" style="color:var(--red);font-size:1.2rem;flex-shrink:0;"></i>
+            <div><strong style="font-size:0.9rem;">سجلات ورقية</strong><p style="font-size:0.78rem;">ملفات مبعثرة بدون تتبع رقمي شامل</p></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--green);margin-bottom:1rem;"><i class="fas fa-check-circle"></i> الحل — مفاصل</h3>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div class="card" style="border-color:rgba(34,197,94,0.15);padding:1rem;display:flex;align-items:center;gap:0.75rem;">
+            <i class="fas fa-video" style="color:var(--green);font-size:1.2rem;flex-shrink:0;"></i>
+            <div><strong style="font-size:0.9rem;">استشارات فورية</strong><p style="font-size:0.78rem;">تواصل مع طبيبك بالفيديو أو النص في دقائق</p></div>
+          </div>
+          <div class="card" style="border-color:rgba(34,197,94,0.15);padding:1rem;display:flex;align-items:center;gap:0.75rem;">
+            <i class="fas fa-th-large" style="color:var(--green);font-size:1.2rem;flex-shrink:0;"></i>
+            <div><strong style="font-size:0.9rem;">منصة واحدة شاملة</strong><p style="font-size:0.78rem;">طبيب + صيدلية + تأمين + ذكاء اصطناعي</p></div>
+          </div>
+          <div class="card" style="border-color:rgba(34,197,94,0.15);padding:1rem;display:flex;align-items:center;gap:0.75rem;">
+            <i class="fas fa-cloud" style="color:var(--green);font-size:1.2rem;flex-shrink:0;"></i>
+            <div><strong style="font-size:0.9rem;">ملف طبي سحابي</strong><p style="font-size:0.78rem;">سجلك الطبي الكامل في مكان واحد آمن</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 5: FEATURES OVERVIEW + MOCKUP ══════════ -->
+<section class="slide" id="s5">
+  <div class="bg-glow" style="width:500px;height:500px;background:var(--accent);bottom:-120px;left:10%;"></div>
+  <div class="slide-num">05 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-accent"><i class="fas fa-th-large"></i> نظرة شاملة</span>
+    <h2>جميع <span class="accent">الخدمات</span> في تطبيق واحد</h2>
+    <div class="divider-line"></div>
+    <div class="hero-flex" style="display:flex;gap:3rem;align-items:center;margin-top:1.5rem;">
+      <div style="flex:1;">
+        <div class="grid-2" style="gap:1rem;">
+          <div class="card" style="padding:1rem;"><div class="card-icon" style="background:rgba(18,169,155,0.12);color:var(--accent);width:40px;height:40px;font-size:1rem;margin-bottom:0.6rem;"><i class="fas fa-stethoscope"></i></div><h3 style="font-size:0.9rem;">الاستشارات</h3><p>استشارات مع أطباء متخصصين عبر النص والفيديو</p></div>
+          <div class="card" style="padding:1rem;"><div class="card-icon" style="background:rgba(59,130,246,0.12);color:var(--blue);width:40px;height:40px;font-size:1rem;margin-bottom:0.6rem;"><i class="fas fa-pills"></i></div><h3 style="font-size:0.9rem;">الصيدلية</h3><p>طلب الأدوية إلكترونياً بتوصيل سريع</p></div>
+          <div class="card" style="padding:1rem;"><div class="card-icon" style="background:rgba(139,92,246,0.12);color:var(--purple);width:40px;height:40px;font-size:1rem;margin-bottom:0.6rem;"><i class="fas fa-shield-alt"></i></div><h3 style="font-size:0.9rem;">التأمين</h3><p>إدارة وثائق التأمين الصحي ومتابعة التغطية</p></div>
+          <div class="card" style="padding:1rem;"><div class="card-icon" style="background:rgba(236,72,153,0.12);color:var(--pink);width:40px;height:40px;font-size:1rem;margin-bottom:0.6rem;"><i class="fas fa-robot"></i></div><h3 style="font-size:0.9rem;">المساعد الذكي</h3><p>ذكاء اصطناعي يُجيب أسئلتك الطبية فوراً</p></div>
+          <div class="card" style="padding:1rem;"><div class="card-icon" style="background:rgba(245,158,11,0.12);color:var(--orange);width:40px;height:40px;font-size:1rem;margin-bottom:0.6rem;"><i class="fas fa-calendar-check"></i></div><h3 style="font-size:0.9rem;">المواعيد</h3><p>جدولة مواعيدك الطبية وتذكيرات الأدوية</p></div>
+          <div class="card" style="padding:1rem;"><div class="card-icon" style="background:rgba(34,197,94,0.12);color:var(--green);width:40px;height:40px;font-size:1rem;margin-bottom:0.6rem;"><i class="fas fa-comments"></i></div><h3 style="font-size:0.9rem;">المحادثات</h3><p>دردشة مباشرة مع الأطباء والدعم الفني</p></div>
+        </div>
+      </div>
+      <div class="mockup-phone">
+        <div class="mockup-screen">
+          <div class="mockup-header">
+            <img src="/icons/logo.png" alt="">
+            <span>مفاصل</span>
+          </div>
+          <div class="mockup-item">
+            <div class="mockup-item-icon" style="background:rgba(18,169,155,0.15);color:var(--accent);"><i class="fas fa-stethoscope"></i></div>
+            <span>استشارة طبية جديدة</span>
+          </div>
+          <div class="mockup-item">
+            <div class="mockup-item-icon" style="background:rgba(59,130,246,0.15);color:var(--blue);"><i class="fas fa-pills"></i></div>
+            <span>طلب أدوية</span>
+          </div>
+          <div class="mockup-item">
+            <div class="mockup-item-icon" style="background:rgba(139,92,246,0.15);color:var(--purple);"><i class="fas fa-shield-alt"></i></div>
+            <span>التأمين الصحي</span>
+          </div>
+          <div class="mockup-item">
+            <div class="mockup-item-icon" style="background:rgba(236,72,153,0.15);color:var(--pink);"><i class="fas fa-robot"></i></div>
+            <span>المساعد الذكي</span>
+          </div>
+          <div class="mockup-item">
+            <div class="mockup-item-icon" style="background:rgba(245,158,11,0.15);color:var(--orange);"><i class="fas fa-map-marker-alt"></i></div>
+            <span>الخريطة الصحية</span>
+          </div>
+          <div class="mockup-item">
+            <div class="mockup-item-icon" style="background:rgba(34,197,94,0.15);color:var(--green);"><i class="fas fa-bell"></i></div>
+            <span>الإشعارات</span>
+          </div>
+          <div class="mockup-btn"><i class="fas fa-plus"></i> ابدأ الآن</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 6: CONSULTATIONS ══════════ -->
+<section class="slide" id="s6">
+  <div class="bg-glow" style="width:400px;height:400px;background:var(--accent);top:-50px;left:20%;"></div>
+  <div class="slide-num">06 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-accent"><i class="fas fa-stethoscope"></i> الاستشارات الطبية</span>
+    <h2>طبيبك <span class="accent">أقرب</span> مما تتصور</h2>
+    <div class="divider-line"></div>
+    <p class="subtitle" style="margin-bottom:2rem;">نظام استشارات متكامل يربطك بأطباء متخصصين عبر النصوص أو مكالمات الفيديو، مع متابعة كاملة لحالتك الصحية.</p>
+    <div class="grid-4">
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <i class="fas fa-user-md" style="font-size:2rem;color:var(--accent);margin-bottom:0.75rem;display:block;"></i>
+        <h3 style="font-size:0.88rem;">أطباء متخصصين</h3>
+        <p style="font-size:0.78rem;">أطباء مرخّصين في جميع التخصصات</p>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <i class="fas fa-video" style="font-size:2rem;color:var(--blue);margin-bottom:0.75rem;display:block;"></i>
+        <h3 style="font-size:0.88rem;">مكالمات فيديو</h3>
+        <p style="font-size:0.78rem;">اجتماعات مرئية عالية الجودة</p>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <i class="fas fa-file-prescription" style="font-size:2rem;color:var(--purple);margin-bottom:0.75rem;display:block;"></i>
+        <h3 style="font-size:0.88rem;">وصفات إلكترونية</h3>
+        <p style="font-size:0.78rem;">ربط مباشر مع الصيدلية للتنفيذ</p>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <i class="fas fa-history" style="font-size:2rem;color:var(--orange);margin-bottom:0.75rem;display:block;"></i>
+        <h3 style="font-size:0.88rem;">سجل كامل</h3>
+        <p style="font-size:0.78rem;">جميع استشاراتك محفوظة ومتاحة</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 7: AI & CHAT ══════════ -->
+<section class="slide" id="s7">
+  <div class="bg-glow" style="width:400px;height:400px;background:var(--pink);bottom:-80px;right:10%;"></div>
+  <div class="slide-num">07 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-pink"><i class="fas fa-brain"></i> الذكاء الاصطناعي</span>
+    <h2>مساعد طبي <span class="pink">ذكي</span> يعمل لأجلك</h2>
+    <div class="divider-line" style="background:linear-gradient(90deg,var(--pink),transparent);"></div>
+    <div class="hero-flex" style="display:flex;gap:3rem;align-items:center;margin-top:1.5rem;">
+      <div style="flex:1;">
+        <p class="subtitle" style="margin-bottom:1.5rem;">
+          مدعوم بنماذج LLaMA عبر Groq — يُجيب أسئلتك الصحية فوراً بلغة عربية طبيعية، يفهم السياق الطبي، ويُقدّم إرشادات أولية قبل زيارة الطبيب.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(236,72,153,0.12);color:var(--pink);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-comments"></i></div>
+            <span style="font-size:0.9rem;">محادثة طبيعية باللغة العربية</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(236,72,153,0.12);color:var(--pink);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-bolt"></i></div>
+            <span style="font-size:0.9rem;">ردود فورية بدون انتظار</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(236,72,153,0.12);color:var(--pink);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-headset"></i></div>
+            <span style="font-size:0.9rem;">ردود ذكية في الدعم الفني للمشرفين</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(236,72,153,0.12);color:var(--pink);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-user-shield"></i></div>
+            <span style="font-size:0.9rem;">يُنبّه بأهمية استشارة الطبيب</span>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-phone" style="height:460px;">
+        <div class="mockup-screen">
+          <div class="mockup-header"><img src="/icons/logo.png" alt=""><span style="color:var(--pink);">المساعد الذكي</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:0.5rem;overflow:hidden;">
+            <div style="align-self:flex-end;background:var(--accent);color:#fff;padding:0.5rem 0.8rem;border-radius:12px 12px 4px 12px;font-size:0.75rem;max-width:80%;">أحس بصداع من يومين</div>
+            <div style="align-self:flex-start;background:rgba(255,255,255,0.06);padding:0.5rem 0.8rem;border-radius:12px 12px 12px 4px;font-size:0.75rem;max-width:85%;line-height:1.6;">
+              أهلاً بك! الصداع المستمر قد يكون بسبب الإجهاد أو الجفاف. أنصحك بشرب الماء والراحة. إذا استمر أكثر من 3 أيام، يُفضّل استشارة طبيب.
+            </div>
+            <div style="align-self:flex-end;background:var(--accent);color:#fff;padding:0.5rem 0.8rem;border-radius:12px 12px 4px 12px;font-size:0.75rem;max-width:80%;">هل ممكن آخذ بنادول؟</div>
+            <div style="align-self:flex-start;background:rgba(255,255,255,0.06);padding:0.5rem 0.8rem;border-radius:12px 12px 12px 4px;font-size:0.75rem;max-width:85%;line-height:1.6;">
+              البنادول آمن عموماً. الجرعة: حبة كل 6 ساعات. لكن تأكد من عدم وجود حساسية.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 8: ROLES & USERS ══════════ -->
+<section class="slide" id="s8">
+  <div class="bg-glow" style="width:400px;height:400px;background:var(--purple);top:10%;left:-50px;"></div>
+  <div class="slide-num">08 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-purple"><i class="fas fa-users-cog"></i> الأدوار والمستخدمين</span>
+    <h2>نظام <span class="purple">متعدد الأدوار</span></h2>
+    <div class="divider-line" style="background:linear-gradient(90deg,var(--purple),transparent);"></div>
+    <p class="subtitle" style="margin-bottom:1.5rem;">كل مستخدم يرى واجهة مخصّصة حسب دوره — بصلاحيات دقيقة وتجربة مُصمّمة لاحتياجاته.</p>
+    <div class="grid-4">
+      <div class="card" style="text-align:center;padding:1.25rem;border-color:rgba(18,169,155,0.15);">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(18,169,155,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;"><i class="fas fa-user-injured" style="color:var(--accent);font-size:1.4rem;"></i></div>
+        <h3 style="font-size:0.9rem;">مريض</h3>
+        <p style="font-size:0.75rem;">استشارات، ملف طبي، طلب أدوية، تأمين</p>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;border-color:rgba(59,130,246,0.15);">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(59,130,246,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;"><i class="fas fa-user-md" style="color:var(--blue);font-size:1.4rem;"></i></div>
+        <h3 style="font-size:0.9rem;">طبيب</h3>
+        <p style="font-size:0.75rem;">إدارة المواعيد، الاستشارات، كتابة وصفات</p>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;border-color:rgba(34,197,94,0.15);">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;"><i class="fas fa-pills" style="color:var(--green);font-size:1.4rem;"></i></div>
+        <h3 style="font-size:0.9rem;">صيدلي</h3>
+        <p style="font-size:0.75rem;">تنفيذ الطلبات، إدارة المخزون والأسعار</p>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;border-color:rgba(245,158,11,0.15);">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;"><i class="fas fa-building" style="color:var(--orange);font-size:1.4rem;"></i></div>
+        <h3 style="font-size:0.9rem;">شركة</h3>
+        <p style="font-size:0.75rem;">إدارة الموظفين، عقود التأمين الجماعية</p>
+      </div>
+    </div>
+    <div class="grid-4" style="margin-top:1rem;">
+      <div class="card" style="text-align:center;padding:1rem;border-color:rgba(236,72,153,0.15);">
+        <i class="fas fa-shield-alt" style="color:var(--pink);font-size:1.2rem;margin-bottom:0.4rem;display:block;"></i>
+        <h3 style="font-size:0.82rem;">وكيل تأمين</h3>
+      </div>
+      <div class="card" style="text-align:center;padding:1rem;border-color:rgba(139,92,246,0.15);">
+        <i class="fas fa-user-tie" style="color:var(--purple);font-size:1.2rem;margin-bottom:0.4rem;display:block;"></i>
+        <h3 style="font-size:0.82rem;">موظف</h3>
+      </div>
+      <div class="card" style="text-align:center;padding:1rem;border-color:rgba(59,130,246,0.15);">
+        <i class="fas fa-eye" style="color:var(--blue);font-size:1.2rem;margin-bottom:0.4rem;display:block;"></i>
+        <h3 style="font-size:0.82rem;">مشرف</h3>
+      </div>
+      <div class="card" style="text-align:center;padding:1rem;border-color:rgba(239,68,68,0.15);">
+        <i class="fas fa-crown" style="color:var(--red);font-size:1.2rem;margin-bottom:0.4rem;display:block;"></i>
+        <h3 style="font-size:0.82rem;">مدير النظام</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 9: TECH STACK ══════════ -->
+<section class="slide" id="s9">
+  <div class="bg-glow" style="width:450px;height:450px;background:var(--blue);bottom:-80px;left:-50px;"></div>
+  <div class="slide-num">09 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-blue"><i class="fas fa-code"></i> البنية التقنية</span>
+    <h2>تقنيات <span class="blue">حديثة</span> وقابلة للتوسع</h2>
+    <div class="divider-line" style="background:linear-gradient(90deg,var(--blue),transparent);"></div>
+    <div class="grid-2" style="margin-top:1.5rem;">
+      <div>
+        <h3 style="margin-bottom:1rem;color:var(--blue);"><i class="fas fa-server"></i> Backend</h3>
+        <div class="tech-stack">
+          <span class="tech-tag"><i class="fab fa-node-js" style="color:#68A063;"></i> Node.js</span>
+          <span class="tech-tag"><i class="fas fa-bolt" style="color:var(--orange);"></i> Express.js</span>
+          <span class="tech-tag"><i class="fas fa-database" style="color:var(--green);"></i> MongoDB Atlas</span>
+          <span class="tech-tag"><i class="fas fa-plug" style="color:var(--purple);"></i> Socket.io</span>
+          <span class="tech-tag"><i class="fas fa-key" style="color:var(--accent);"></i> Passport.js</span>
+          <span class="tech-tag"><i class="fas fa-shield-alt" style="color:var(--blue);"></i> Helmet</span>
+          <span class="tech-tag"><i class="fas fa-compress" style="color:var(--pink);"></i> Compression</span>
+          <span class="tech-tag"><i class="fas fa-brain" style="color:var(--gold);"></i> Groq / LLaMA</span>
+        </div>
+        <h3 style="margin-top:1.5rem;margin-bottom:1rem;color:var(--accent);"><i class="fas fa-paint-brush"></i> Frontend</h3>
+        <div class="tech-stack">
+          <span class="tech-tag"><i class="fas fa-file-code" style="color:var(--orange);"></i> EJS Templates</span>
+          <span class="tech-tag"><i class="fas fa-css3-alt" style="color:var(--blue);"></i> CSS3 Custom</span>
+          <span class="tech-tag"><i class="fas fa-mobile-alt" style="color:var(--green);"></i> Responsive / PWA</span>
+          <span class="tech-tag"><i class="fas fa-font" style="color:var(--purple);"></i> Tajawal Font</span>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:1rem;color:var(--purple);"><i class="fas fa-lock"></i> المصادقة</h3>
+        <div class="tech-stack">
+          <span class="tech-tag"><i class="fas fa-envelope" style="color:var(--accent);"></i> بريد + OTP</span>
+          <span class="tech-tag"><i class="fab fa-google" style="color:#DB4437;"></i> Google OAuth</span>
+          <span class="tech-tag"><i class="fab fa-apple" style="color:#fff;"></i> Apple Sign-In</span>
+          <span class="tech-tag"><i class="fas fa-fingerprint" style="color:var(--green);"></i> نفاذ الوطني</span>
+          <span class="tech-tag"><i class="fas fa-key" style="color:var(--gold);"></i> WebAuthn</span>
+          <span class="tech-tag"><i class="fas fa-mobile-alt" style="color:var(--blue);"></i> SMS OTP</span>
+        </div>
+        <h3 style="margin-top:1.5rem;margin-bottom:1rem;color:var(--green);"><i class="fas fa-cogs"></i> الخدمات</h3>
+        <div class="tech-stack">
+          <span class="tech-tag"><i class="fas fa-bell" style="color:var(--orange);"></i> Push Notifications</span>
+          <span class="tech-tag"><i class="fas fa-envelope" style="color:var(--accent);"></i> SMTP2GO</span>
+          <span class="tech-tag"><i class="fas fa-video" style="color:var(--blue);"></i> QMeet API</span>
+          <span class="tech-tag"><i class="fas fa-map" style="color:var(--green);"></i> خرائط تفاعلية</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 10: SECURITY ══════════ -->
+<section class="slide" id="s10">
+  <div class="bg-glow" style="width:400px;height:400px;background:var(--green);top:-50px;right:-50px;"></div>
+  <div class="slide-num">10 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-green"><i class="fas fa-lock"></i> الأمان والحماية</span>
+    <h2>أمان <span class="green">بمعايير عالمية</span></h2>
+    <div class="divider-line" style="background:linear-gradient(90deg,var(--green),transparent);"></div>
+    <div class="grid-3" style="margin-top:1.5rem;">
+      <div class="card" style="text-align:center;border-color:rgba(34,197,94,0.15);">
+        <i class="fas fa-shield-alt" style="font-size:2.5rem;color:var(--green);margin-bottom:1rem;display:block;"></i>
+        <h3>تشفير كامل</h3>
+        <p>جميع البيانات مشفّرة بـ HTTPS/TLS في النقل وBcrypt في التخزين. كلمات المرور لا تُحفظ كنص عادي.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(34,197,94,0.15);">
+        <i class="fas fa-user-shield" style="font-size:2.5rem;color:var(--green);margin-bottom:1rem;display:block;"></i>
+        <h3>صلاحيات دقيقة</h3>
+        <p>نظام RBAC متعدد الأدوار. كل مستخدم يصل فقط للبيانات المسموح بها. Middleware تتحقق في كل طلب.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(34,197,94,0.15);">
+        <i class="fas fa-clipboard-list" style="font-size:2.5rem;color:var(--green);margin-bottom:1rem;display:block;"></i>
+        <h3>سجل نشاطات</h3>
+        <p>Audit Log شامل يُسجّل كل إجراء: تسجيل دخول، تغيير بيانات، إجراءات إدارية — مع IP والجهاز.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(34,197,94,0.15);">
+        <i class="fas fa-fingerprint" style="font-size:2.5rem;color:var(--green);margin-bottom:1rem;display:block;"></i>
+        <h3>WebAuthn</h3>
+        <p>دعم مصادقة بيومترية بدون كلمة مرور — بصمة الإصبع أو Face ID مباشرة من المتصفح.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(34,197,94,0.15);">
+        <i class="fas fa-helmet-safety" style="font-size:2.5rem;color:var(--green);margin-bottom:1rem;display:block;"></i>
+        <h3>Helmet + CSP</h3>
+        <p>حماية HTTP Headers ضد XSS, Clickjacking, MIME Sniffing. مع Rate Limiting لمنع الهجمات.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(34,197,94,0.15);">
+        <i class="fas fa-laptop" style="font-size:2.5rem;color:var(--green);margin-bottom:1rem;display:block;"></i>
+        <h3>إدارة الأجهزة</h3>
+        <p>تتبع جميع الأجهزة المتصلة لكل مستخدم — مع القدرة على إلغاء جلسات محددة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 11: ADMIN PANEL ══════════ -->
+<section class="slide" id="s11">
+  <div class="bg-glow" style="width:400px;height:400px;background:var(--orange);bottom:-80px;left:20%;"></div>
+  <div class="slide-num">11 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-orange"><i class="fas fa-tachometer-alt"></i> لوحة الإدارة</span>
+    <h2>تحكّم <span style="color:var(--orange);">كامل</span> من مكان واحد</h2>
+    <div class="divider-line" style="background:linear-gradient(90deg,var(--orange),transparent);"></div>
+    <div class="grid-3" style="margin-top:1.5rem;">
+      <div class="card" style="padding:1.25rem;">
+        <div class="card-icon" style="background:rgba(245,158,11,0.12);color:var(--orange);"><i class="fas fa-users"></i></div>
+        <h3>إدارة المستخدمين</h3>
+        <p>بحث، فلاتر، تعليق/تفعيل الحسابات، تغيير الأدوار، حذف مع سجل كامل.</p>
+      </div>
+      <div class="card" style="padding:1.25rem;">
+        <div class="card-icon" style="background:rgba(245,158,11,0.12);color:var(--orange);"><i class="fas fa-building"></i></div>
+        <h3>إدارة الشركات</h3>
+        <p>عرض الشركات المسجّلة، تفاصيل السجل التجاري، إدارة الموظفين والحالة.</p>
+      </div>
+      <div class="card" style="padding:1.25rem;">
+        <div class="card-icon" style="background:rgba(245,158,11,0.12);color:var(--orange);"><i class="fas fa-server"></i></div>
+        <h3>مراقبة النظام</h3>
+        <p>ذاكرة الخادم، وقت التشغيل، Socket.io المتصلين، إحصائيات الطلبات — حية كل 15 ثانية.</p>
+      </div>
+      <div class="card" style="padding:1.25rem;">
+        <div class="card-icon" style="background:rgba(245,158,11,0.12);color:var(--orange);"><i class="fas fa-stethoscope"></i></div>
+        <h3>الاستشارات</h3>
+        <p>تعيين أطباء، متابعة الحالات، إدارة الاستشارات المعلقة والمكتملة.</p>
+      </div>
+      <div class="card" style="padding:1.25rem;">
+        <div class="card-icon" style="background:rgba(245,158,11,0.12);color:var(--orange);"><i class="fas fa-headset"></i></div>
+        <h3>الدعم الفني</h3>
+        <p>نظام تذاكر مع أولويات، ملاحظات داخلية، ردود مقترحة بالذكاء الاصطناعي.</p>
+      </div>
+      <div class="card" style="padding:1.25rem;">
+        <div class="card-icon" style="background:rgba(245,158,11,0.12);color:var(--orange);"><i class="fas fa-clipboard-list"></i></div>
+        <h3>سجل النشاطات</h3>
+        <p>فلاتر متقدمة حسب الفئة والتاريخ والمستخدم، مع تصدير CSV.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SLIDE 12: ROADMAP ══════════ -->
+<section class="slide" id="s12">
+  <div class="bg-glow" style="width:500px;height:500px;background:var(--accent);top:-100px;left:30%;"></div>
+  <div class="bg-glow" style="width:300px;height:300px;background:var(--purple);bottom:0;right:0;"></div>
+  <div class="slide-num">12 / 12</div>
+  <div class="slide-inner fade-up">
+    <span class="badge badge-accent"><i class="fas fa-road"></i> خارطة الطريق</span>
+    <h2>المستقبل <span class="accent">يبدأ الآن</span></h2>
+    <div class="divider-line"></div>
+    <div class="grid-2" style="margin-top:1.5rem;">
+      <div class="timeline">
+        <div class="timeline-item">
+          <span class="badge badge-accent" style="margin-bottom:0.5rem;"><i class="fas fa-check"></i> مكتمل</span>
+          <h3>المنصة الأساسية</h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.7;">الاستشارات، الصيدلية، التأمين، المساعد الذكي، المحادثات، الخرائط، المواعيد، الإشعارات، لوحة الإدارة الكاملة، نظام المصادقة المتعدد.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="badge badge-purple" style="margin-bottom:0.5rem;"><i class="fas fa-code"></i> قيد التطوير</span>
+          <h3>تطبيق الجوال الأصلي</h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.7;">تطبيق React Native لنظامي iOS و Android مع إشعارات أصلية وتجربة سلسة.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="badge badge-blue" style="margin-bottom:0.5rem;"><i class="fas fa-flask"></i> مخطط</span>
+          <h3>بوابة الدفع</h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.7;">تكامل مع Stripe/Tap لدفع الاستشارات والأدوية إلكترونياً، مع فواتير إلكترونية متوافقة مع ZATCA.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="badge badge-gold" style="margin-bottom:0.5rem;"><i class="fas fa-star"></i> رؤية مستقبلية</span>
+          <h3>التوسع والتكامل</h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.7;">ربط مع أنظمة المستشفيات (HL7/FHIR)، تشخيص بالذكاء الاصطناعي من الصور، أجهزة IoT الصحية القابلة للارتداء، التوسع لدول الخليج.</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="card" style="background:linear-gradient(135deg,rgba(18,169,155,0.08),rgba(139,92,246,0.05));border-color:rgba(18,169,155,0.2);padding:1.5rem;text-align:center;">
+          <i class="fas fa-rocket" style="font-size:3rem;color:var(--accent);margin-bottom:1rem;display:block;"></i>
+          <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">جاهزون للانطلاق</h3>
+          <p style="line-height:1.8;">مفاصل جاهز للنشر والاستخدام الفعلي. المنصة مبنية بمعايير إنتاجية عالية مع مراقبة حية وأمان متقدم.</p>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <h3 style="font-size:0.95rem;margin-bottom:0.75rem;"><i class="fas fa-chart-bar" style="color:var(--accent);"></i> أرقام المنصة</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+            <div style="text-align:center;padding:0.6rem;background:rgba(18,169,155,0.06);border-radius:10px;"><strong style="color:var(--accent);font-size:1.3rem;">20+</strong><br><span style="font-size:0.72rem;color:var(--text-muted);">صفحة</span></div>
+            <div style="text-align:center;padding:0.6rem;background:rgba(59,130,246,0.06);border-radius:10px;"><strong style="color:var(--blue);font-size:1.3rem;">15+</strong><br><span style="font-size:0.72rem;color:var(--text-muted);">وحدة برمجية</span></div>
+            <div style="text-align:center;padding:0.6rem;background:rgba(139,92,246,0.06);border-radius:10px;"><strong style="color:var(--purple);font-size:1.3rem;">8</strong><br><span style="font-size:0.72rem;color:var(--text-muted);">أدوار مستخدمين</span></div>
+            <div style="text-align:center;padding:0.6rem;background:rgba(245,158,11,0.06);border-radius:10px;"><strong style="color:var(--orange);font-size:1.3rem;">6</strong><br><span style="font-size:0.72rem;color:var(--text-muted);">طرق مصادقة</span></div>
+          </div>
+        </div>
+        <a href="/login" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;padding:1rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:14px;font-weight:700;font-size:1.05rem;text-decoration:none;box-shadow:0 6px 24px rgba(18,169,155,0.3);transition:box-shadow 0.2s;">
+          <i class="fas fa-sign-in-alt"></i> ابدأ استخدام مفاصل الآن
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+var slideEls = document.querySelectorAll('.slide');
+var totalSlides = slideEls.length;
+var dotsContainer = document.getElementById('navDots');
+
+for (var i = 0; i < totalSlides; i++) {
+  var dot = document.createElement('button');
+  dot.className = 'nav-dot';
+  dot.dataset.index = i;
+  dot.onclick = function() {
+    slideEls[this.dataset.index].scrollIntoView({ behavior: 'smooth' });
+  };
+  dotsContainer.appendChild(dot);
+}
+
+var allDots = document.querySelectorAll('.nav-dot');
+
+function revealVisible() {
+  document.querySelectorAll('.fade-up').forEach(function(el) {
+    var rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 1.1 && rect.bottom > -50) {
+      el.classList.add('visible');
+    }
+  });
+  slideEls.forEach(function(s, idx) {
+    var rect = s.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.3) {
+      allDots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+    }
+  });
+}
+
+document.addEventListener('scroll', revealVisible, { passive: true });
+window.addEventListener('load', revealVisible);
+revealVisible();
+setTimeout(revealVisible, 100);
+setTimeout(revealVisible, 500);
+
+document.addEventListener('keydown', function(e) {
+  var currentIdx = 0;
+  allDots.forEach(function(d, i) { if (d.classList.contains('active')) currentIdx = i; });
+  if (e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    if (currentIdx < totalSlides - 1) slideEls[currentIdx + 1].scrollIntoView({ behavior: 'smooth' });
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (currentIdx > 0) slideEls[currentIdx - 1].scrollIntoView({ behavior: 'smooth' });
+  }
+});
+</script>
+</body>
+</html>

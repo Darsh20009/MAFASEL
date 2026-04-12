@@ -110,6 +110,10 @@ app.use('/email', emailRoutes);
 app.use('/maps', mapsRoutes);
 app.use('/scheduler', schedulerRoutes);
 
+app.get('/presentation', (req, res) => {
+  res.render('pages/presentation', { title: 'مفاصل - العرض التقديمي', user: req.session.user || null, success: null, error: null });
+});
+
 app.get('/offline', (req, res) => {
   res.render('pages/offline', { title: 'غير متصل', user: req.session.user || null, success: null, error: null });
 });
