@@ -148,19 +148,33 @@ router.get('/room/:id', isAuthenticated, async (req, res) => {
       return res.redirect('/chat');
     }
 
-    const messages = await ChatMessage.find({ room: room._id })
+    const isStaff = ['admin', 'moderator', 'doctor', 'pharmacist', 'employee'].includes(req.session.user.role);
+    const msgFilter = { room: room._id };
+    if (!isStaff) msgFilter.isInternal = { $ne: true };
+
+    const messages = await ChatMessage.find(msgFilter)
       .populate('sender', 'name role avatar')
       .sort({ createdAt: 1 })
       .limit(200);
 
-    await ChatMessage.updateMany(
-      { room: room._id, sender: { $ne: userId }, read: false },
+    const readResult = await ChatMessage.updateMany(
+      { room: room._id, sender: { $ne: userId }, read: false, isInternal: { $ne: true } },
       { read: true, readAt: new Date() }
     );
 
     if (room.unreadCount) {
       room.unreadCount.set(userId.toString(), 0);
       await room.save();
+    }
+
+    if (readResult.modifiedCount > 0) {
+      const io = req.app.locals.io;
+      room.participants.forEach(p => {
+        const pid = (p._id ? p._id : p).toString();
+        if (pid !== userId.toString()) {
+          io.to(`user_${pid}`).emit('chat_read', { roomId: room._id, readBy: userId });
+        }
+      });
     }
 
     const otherParticipant = room.participants.find(p => p._id.toString() !== userId.toString());
@@ -315,6 +329,40 @@ router.post('/room/:id/upload', isAuthenticated, (req, res, next) => {
   } catch (err) {
     console.error('Chat upload error:', err);
     res.status(500).json({ error: 'خطأ في رفع الملفات' });
+  }
+});
+
+router.post('/room/:id/mark-read', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const room = await ChatRoom.findById(req.params.id);
+    if (!room || !room.participants.some(p => p.toString() === userId.toString())) {
+      return res.status(403).json({ error: 'غير مصرح' });
+    }
+
+    const result = await ChatMessage.updateMany(
+      { room: room._id, sender: { $ne: userId }, read: false, isInternal: { $ne: true } },
+      { read: true, readAt: new Date() }
+    );
+
+    if (room.unreadCount) {
+      room.unreadCount.set(userId.toString(), 0);
+      await room.save();
+    }
+
+    if (result.modifiedCount > 0) {
+      const io = req.app.locals.io;
+      room.participants.forEach(pId => {
+        if (pId.toString() !== userId.toString()) {
+          io.to(`user_${pId}`).emit('chat_read', { roomId: room._id, readBy: userId });
+        }
+      });
+    }
+
+    res.json({ success: true, count: result.modifiedCount });
+  } catch (err) {
+    console.error('Mark read error:', err);
+    res.status(500).json({ error: 'خطأ' });
   }
 });
 

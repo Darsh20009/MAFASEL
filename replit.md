@@ -35,9 +35,9 @@
 │       ├── orders/              # نظام الطلبات (الصيدلية)
 │       │   ├── order.model.js
 │       │   └── orders.routes.js
-│       ├── chat/                # نظام الشات
-│       │   ├── chat.model.js
-│       │   └── chat.routes.js
+│       ├── chat/                # نظام الشات (real-time WebSocket, typing, seen, internal msgs)
+│       │   ├── chat.model.js    # ChatMessage (isInternal, read, readAt), ChatRoom (internalNotes, priority)
+│       │   └── chat.routes.js   # /chat/room/:id/send, /mark-read, /upload, /close
 │       ├── notifications/       # نظام الإشعارات (3 طبقات: DB + WebSocket + Web Push)
 │       │   ├── notification.model.js
 │       │   ├── notification.service.js
@@ -50,6 +50,7 @@
 │       │   └── settings.routes.js
 │       └── admin/               # لوحة الإدارة
 │           ├── admin.routes.js
+│           ├── support.routes.js # لوحة الدعم + /user/:id/full-data + /internal-msg + AI suggest
 │           └── banner.model.js  # نموذج البانر (ديناميكي من قاعدة البيانات)
 ├── client/views/                # قوالب EJS
 ├── public/                      # ملفات ثابتة (CSS, JS, Icons)

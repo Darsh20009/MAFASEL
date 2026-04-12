@@ -11,6 +11,7 @@ const chatMessageSchema = new mongoose.Schema({
     type: { type: String },
     size: { type: Number }
   }],
+  isInternal: { type: Boolean, default: false },
   read: { type: Boolean, default: false },
   readAt: { type: Date }
 }, { timestamps: true });

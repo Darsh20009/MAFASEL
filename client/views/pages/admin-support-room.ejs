@@ -42,7 +42,16 @@ var roleMap = { patient:'مريض', doctor:'طبيب', pharmacist:'صيدلي', 
       <% var isAdmin = msg.sender && ['admin','moderator'].includes(msg.sender.role); %>
       <% var isMe = msg.sender && msg.sender._id && msg.sender._id.toString() === user._id.toString(); %>
 
-      <% if (msg.type === 'system') { %>
+      <% if (msg.isInternal) { %>
+      <div class="chat-internal-msg">
+        <i class="fas fa-lock"></i>
+        <div>
+          <strong><%= msg.sender ? msg.sender.name : '' %></strong>
+          <p><%= msg.text %></p>
+          <small><%= new Date(msg.createdAt).toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit'}) %></small>
+        </div>
+      </div>
+      <% } else if (msg.type === 'system') { %>
       <div class="chat-system-msg">
         <span><%= msg.text %></span>
         <small><%= new Date(msg.createdAt).toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit'}) %></small>
@@ -101,6 +110,7 @@ var roleMap = { patient:'مريض', doctor:'طبيب', pharmacist:'صيدلي', 
     <div class="support-input-area">
       <div class="sia-tools">
         <button class="sia-tool-btn" onclick="aiSuggest()" title="اقتراح AI"><i class="fas fa-robot"></i> AI</button>
+        <button class="sia-tool-btn" onclick="toggleInternalMode()" id="internalToggle" title="ملاحظة داخلية"><i class="fas fa-lock"></i> ملاحظة داخلية</button>
       </div>
       <div class="sia-form-wrap">
         <textarea id="supportReplyInput" placeholder="اكتب ردك هنا..." rows="2"></textarea>
@@ -380,7 +390,6 @@ var roleMap = { patient:'مريض', doctor:'طبيب', pharmacist:'صيدلي', 
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  scroll-behavior: smooth;
 }
 
 /* ── AI Suggestion Bar ─────────────────── */
@@ -448,6 +457,25 @@ var roleMap = { patient:'مريض', doctor:'طبيب', pharmacist:'صيدلي', 
   transition: opacity 0.2s;
 }
 .sia-send-btn:hover { opacity: 0.85; }
+/* ── Internal message ── */
+.chat-internal-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px dashed rgba(251, 191, 36, 0.4);
+  border-radius: 10px;
+  align-self: center;
+  max-width: 85%;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+.chat-internal-msg > i { color: #f59e0b; margin-top: 2px; flex-shrink: 0; }
+.chat-internal-msg strong { color: #f59e0b; font-size: 0.78rem; display: block; margin-bottom: 2px; }
+.chat-internal-msg p { margin: 0; line-height: 1.5; }
+.chat-internal-msg small { color: var(--text-muted); font-size: 0.7rem; }
+
 .support-closed-notice {
   padding: 1rem;
   text-align: center;
@@ -640,17 +668,29 @@ async function sendReply() {
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
   try {
-    var res = await fetch('/admin/support/room/' + roomId + '/reply', {
+    var url, body;
+    if (internalMode) {
+      url = '/admin/support/room/' + roomId + '/internal-msg';
+      body = JSON.stringify({ text: text });
+    } else {
+      url = '/admin/support/room/' + roomId + '/reply';
+      body = JSON.stringify({ text: text });
+    }
+    var res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text })
+      body: body
     });
     var data = await res.json();
     if (data.success) {
       input.value = '';
       input.style.height = 'auto';
-      addAdminMsg(data.message);
-      closeSuggestion();
+      if (internalMode) {
+        addInternalMsg(data.message);
+      } else {
+        addAdminMsg(data.message);
+        closeSuggestion();
+      }
     } else {
       alert(data.error || 'خطأ في الإرسال');
     }
@@ -752,6 +792,41 @@ async function setPriority(p) {
   } catch(err) { console.error(err); }
 }
 
+/* ── Internal message mode ── */
+var internalMode = false;
+function toggleInternalMode() {
+  internalMode = !internalMode;
+  var btn = document.getElementById('internalToggle');
+  var input = document.getElementById('supportReplyInput');
+  if (internalMode) {
+    btn.classList.add('active');
+    btn.style.background = 'rgba(251,191,36,0.2)';
+    btn.style.borderColor = '#f59e0b';
+    btn.style.color = '#f59e0b';
+    input.placeholder = 'اكتب ملاحظة داخلية... (لا يراها العميل)';
+    input.style.borderColor = '#f59e0b';
+  } else {
+    btn.classList.remove('active');
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    input.placeholder = 'اكتب ردك هنا...';
+    input.style.borderColor = '';
+  }
+}
+
+function addInternalMsg(data) {
+  var div = document.createElement('div');
+  div.className = 'chat-internal-msg';
+  div.innerHTML = '<i class="fas fa-lock"></i><div><strong>' + escHtml(data.sender ? data.sender.name : '') +
+    '</strong><p>' + escHtml(data.text) + '</p><small>' +
+    new Date(data.createdAt||Date.now()).toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit'}) +
+    '</small></div>';
+  var typi = document.getElementById('typingIndicator');
+  chatArea.insertBefore(div, typi || null);
+  scrollBottom(true);
+}
+
 /* ── Socket.io real-time ── */
 if (typeof io !== 'undefined') {
   var socket = io();
@@ -762,7 +837,23 @@ if (typeof io !== 'undefined') {
       if (data.message.sender && !['admin','moderator'].includes(data.message.sender.role)) {
         hideTyping();
         addUserMsg(data.message);
+        fetch('/chat/room/' + roomId + '/mark-read', { method: 'POST' }).catch(function(){});
       }
+    }
+  });
+
+  socket.on('chat_read', function(data) {
+    if (data.roomId.toString() === roomId) {
+      document.querySelectorAll('.chat-msg-me .fa-check').forEach(function(el) {
+        el.className = 'fas fa-check-double';
+        el.style.opacity = '0.9';
+      });
+    }
+  });
+
+  socket.on('chat_internal', function(data) {
+    if (data.roomId.toString() === roomId && data.message.sender._id !== myId) {
+      addInternalMsg(data.message);
     }
   });
 
@@ -775,8 +866,13 @@ if (typeof io !== 'undefined') {
   });
 
   if (replyInput) {
+    var lastTypingEmit = 0;
     replyInput.addEventListener('input', function(){
-      socket.emit('typing', { roomId: roomId });
+      var now = Date.now();
+      if (now - lastTypingEmit > 2000) {
+        socket.emit('typing', { roomId: roomId });
+        lastTypingEmit = now;
+      }
     });
   }
 }

@@ -262,6 +262,61 @@ router.post('/room/:id/reopen', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
+router.post('/room/:id/internal-msg', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const room = await ChatRoom.findById(req.params.id);
+    if (!room) return res.status(404).json({ error: 'المحادثة غير موجودة' });
+
+    const { text } = req.body;
+    if (!text || !text.trim()) return res.status(400).json({ error: 'الرسالة فارغة' });
+
+    const userId = req.session.user._id;
+    const msg = await ChatMessage.create({
+      room: room._id,
+      sender: userId,
+      text: esc(text.trim()),
+      type: 'text',
+      isInternal: true
+    });
+
+    const io = req.app.locals.io;
+    const staffRoles = ['admin', 'moderator', 'doctor', 'pharmacist', 'employee'];
+    const staffParticipants = await User.find({
+      _id: { $in: room.participants },
+      role: { $in: staffRoles }
+    }).select('_id');
+
+    staffParticipants.forEach(sp => {
+      if (sp._id.toString() !== userId.toString()) {
+        io.to(`user_${sp._id}`).emit('chat_internal', {
+          roomId: room._id,
+          message: {
+            _id: msg._id,
+            text: msg.text,
+            isInternal: true,
+            sender: { _id: userId, name: req.session.user.name, role: req.session.user.role },
+            createdAt: msg.createdAt
+          }
+        });
+      }
+    });
+
+    res.json({
+      success: true,
+      message: {
+        _id: msg._id,
+        text: msg.text,
+        isInternal: true,
+        createdAt: msg.createdAt,
+        sender: { name: req.session.user.name, role: req.session.user.role }
+      }
+    });
+  } catch (err) {
+    console.error('Internal msg error:', err);
+    res.status(500).json({ error: 'خطأ' });
+  }
+});
+
 router.post('/room/:id/ai-suggest', isAuthenticated, isAdmin, async (req, res) => {
   try {
     const groqKey = process.env.GROQ_API_KEY;
@@ -300,6 +355,46 @@ ${patient && patient.medicalProfile && patient.medicalProfile.chronicDiseases &&
   } catch (err) {
     console.error('AI suggest error:', err.message);
     res.json({ suggestion: '' });
+  }
+});
+
+router.get('/user/:id/full-data', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId).select('-password -__v').lean();
+    if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
+
+    const MedicalProfile = require('../medical/medical-profile.model').MedicalProfile;
+
+    const [medicalProfile, consultations, orders, chatRooms] = await Promise.all([
+      MedicalProfile.findOne({ user: userId }).lean(),
+      Consultation.find({ patient: userId }).sort({ createdAt: -1 }).limit(20).lean(),
+      Order.find({ patient: userId }).sort({ createdAt: -1 }).limit(20).lean(),
+      ChatRoom.find({ participants: userId }).sort({ lastMessageAt: -1 }).limit(10)
+        .populate('participants', 'name role avatar').lean()
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        user,
+        medicalProfile: medicalProfile || null,
+        consultations,
+        orders,
+        chatRooms,
+        stats: {
+          totalConsultations: consultations.length,
+          totalOrders: orders.length,
+          totalChats: chatRooms.length,
+          allergiesCount: medicalProfile ? (medicalProfile.allergies || []).length : 0,
+          chronicDiseasesCount: medicalProfile ? (medicalProfile.chronicDiseases || []).length : 0,
+          activeMedicationsCount: medicalProfile ? (medicalProfile.medications || []).filter(m => m.isActive).length : 0
+        }
+      }
+    });
+  } catch (err) {
+    console.error('Full data error:', err);
+    res.status(500).json({ error: 'خطأ في جلب البيانات' });
   }
 });
 

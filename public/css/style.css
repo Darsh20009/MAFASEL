@@ -3633,7 +3633,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  scroll-behavior: smooth;
 }
 
 .chat-system-msg {

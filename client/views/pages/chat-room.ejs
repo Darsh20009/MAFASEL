@@ -41,7 +41,17 @@
     <% messages.forEach(function(msg) { %>
     <% var isMe = msg.sender && msg.sender._id && msg.sender._id.toString() === user._id.toString(); %>
 
-    <% if (msg.type === 'system') { %>
+    <% if (msg.isInternal) { %>
+    <div class="chat-internal-msg">
+      <i class="fas fa-lock"></i>
+      <div>
+        <strong><%= msg.sender ? msg.sender.name : '' %></strong>
+        <p><%= msg.text %></p>
+        <small><%= new Date(msg.createdAt).toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></small>
+      </div>
+    </div>
+
+    <% } else if (msg.type === 'system') { %>
     <div class="chat-system-msg">
       <span><%= msg.text %></span>
       <small><%= new Date(msg.createdAt).toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></small>
@@ -257,6 +267,25 @@
   padding: 0;
 }
 #chatTextInput::placeholder { color: var(--text-muted); }
+
+/* ── Internal message style ── */
+.chat-internal-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px dashed rgba(251, 191, 36, 0.4);
+  border-radius: 10px;
+  align-self: center;
+  max-width: 85%;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+.chat-internal-msg > i { color: #f59e0b; margin-top: 2px; flex-shrink: 0; }
+.chat-internal-msg strong { color: #f59e0b; font-size: 0.78rem; display: block; margin-bottom: 2px; }
+.chat-internal-msg p { margin: 0; line-height: 1.5; }
+.chat-internal-msg small { color: var(--text-muted); font-size: 0.7rem; }
 
 /* ── min-height fix for flex scroll ── */
 .chat-messages-area { min-height: 0; }
@@ -474,6 +503,23 @@ if (typeof io !== 'undefined') {
     if (data.roomId.toString() === roomId && data.message.sender._id !== myId) {
       hideTyping();
       addMsg(data.message, false);
+      fetch('/chat/room/' + roomId + '/mark-read', { method: 'POST' }).catch(function(){});
+    }
+  });
+
+  socket.on('chat_read', function(data) {
+    if (data.roomId.toString() === roomId) {
+      document.querySelectorAll('.chat-msg-me .fa-check').forEach(function(el) {
+        el.className = 'fas fa-check-double';
+        el.style.opacity = '1';
+        el.style.color = 'rgba(255,255,255,0.9)';
+      });
+    }
+  });
+
+  socket.on('chat_internal', function(data) {
+    if (data.roomId.toString() === roomId) {
+      addInternalMsg(data.message);
     }
   });
 
@@ -485,12 +531,28 @@ if (typeof io !== 'undefined') {
     }
   });
 
-  /* emit typing when user types */
   if (chatInput) {
+    var lastTypingEmit = 0;
     chatInput.addEventListener('input', function() {
-      socket.emit('typing', { roomId: roomId });
+      var now = Date.now();
+      if (now - lastTypingEmit > 2000) {
+        socket.emit('typing', { roomId: roomId });
+        lastTypingEmit = now;
+      }
     });
   }
+}
+
+function addInternalMsg(data) {
+  var div = document.createElement('div');
+  div.className = 'chat-internal-msg';
+  div.innerHTML = '<i class="fas fa-lock"></i><div><strong>' + escHtml(data.sender ? data.sender.name : '') +
+    '</strong><p>' + escHtml(data.text) + '</p><small>' +
+    new Date(data.createdAt).toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit'}) +
+    '</small></div>';
+  var typingEl = document.getElementById('typingIndicator');
+  chatArea.insertBefore(div, typingEl || null);
+  if (isNearBottom) scrollBottom(true);
 }
 
 function showTyping() {
