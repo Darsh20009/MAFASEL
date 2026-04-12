@@ -4,122 +4,235 @@
     <div class="admin-layout">
       <%- include('../partials/admin-sidebar') %>
       <div class="admin-main">
-    <div class="page-header">
-      <h1><i class="fas fa-users"></i> إدارة المستخدمين</h1>
-      <button class="btn btn-primary" onclick="document.getElementById('createUserModal').style.display='flex'"><i class="fas fa-user-plus"></i> إضافة مستخدم</button>
-    </div>
+        <% if (success) { %><div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= success %></div><% } %>
+        <% if (error) { %><div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error %></div><% } %>
 
-    <div class="modal-overlay" id="createUserModal" style="display:none">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2><i class="fas fa-user-plus"></i> إضافة مستخدم جديد</h2>
-          <button class="modal-close" onclick="document.getElementById('createUserModal').style.display='none'"><i class="fas fa-times"></i></button>
+        <div class="page-header">
+          <h1><i class="fas fa-users"></i> إدارة المستخدمين</h1>
+          <button class="btn btn-primary" onclick="document.getElementById('createUserModal').style.display='flex'"><i class="fas fa-user-plus"></i> إضافة مستخدم</button>
         </div>
-        <form method="POST" action="/admin/users/create" class="modal-form">
-          <div class="form-group">
-            <label>الاسم الكامل</label>
-            <input type="text" name="name" required placeholder="أدخل الاسم">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>البريد الإلكتروني</label>
-              <input type="email" name="email" placeholder="example@email.com">
-            </div>
-            <div class="form-group">
-              <label>رقم الجوال</label>
-              <input type="text" name="phone" placeholder="05XXXXXXXX" dir="ltr">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>كلمة المرور</label>
-              <input type="password" name="password" required placeholder="أدخل كلمة المرور" minlength="6">
-            </div>
-            <div class="form-group">
-              <label>الدور</label>
-              <select name="role">
-                <option value="doctor">طبيب</option>
-                <option value="pharmacist">صيدلي</option>
-                <option value="moderator">مشرف</option>
-                <option value="company">شركة</option>
-                <option value="employee">موظف</option>
-                <option value="insurance_agent">وكيل تأمين</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>رقم الهوية الوطنية (اختياري)</label>
-            <input type="text" name="nationalId" placeholder="10 أرقام" dir="ltr">
-          </div>
-          <div class="modal-actions">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> إنشاء المستخدم</button>
-            <button type="button" class="btn btn-outline" onclick="document.getElementById('createUserModal').style.display='none'">إلغاء</button>
-          </div>
-        </form>
-      </div>
-    </div>
 
-    <div class="stats-grid" style="margin-bottom: 1.5rem;">
-      <% const roleCounts = {}; users.forEach(u => { roleCounts[u.role] = (roleCounts[u.role]||0)+1; }); %>
-      <div class="stat-card"><div class="stat-number"><%= users.length %></div><div class="stat-label">إجمالي المستخدمين</div></div>
-      <div class="stat-card"><div class="stat-number"><%= roleCounts.patient || 0 %></div><div class="stat-label">مرضى</div></div>
-      <div class="stat-card"><div class="stat-number"><%= roleCounts.doctor || 0 %></div><div class="stat-label">أطباء</div></div>
-      <div class="stat-card"><div class="stat-number"><%= roleCounts.company || 0 %></div><div class="stat-label">شركات</div></div>
-    </div>
-
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>المستخدم</th>
-            <th>الجوال</th>
-            <th>الهوية</th>
-            <th>الدور</th>
-            <th>طريقة التسجيل</th>
-            <th>آخر دخول</th>
-            <th>الأجهزة</th>
-            <th>إجراء</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% users.forEach(u => { %>
-          <tr>
-            <td>
-              <div style="display:flex;align-items:center;gap:0.5rem;">
-                <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;flex-shrink:0;">
-                  <% if (u.avatar) { %><img src="<%= u.avatar %>" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"><% } else { %><%= u.name.charAt(0) %><% } %>
+        <div class="modal-overlay" id="createUserModal" style="display:none">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h2><i class="fas fa-user-plus"></i> إضافة مستخدم جديد</h2>
+              <button class="modal-close" onclick="document.getElementById('createUserModal').style.display='none'"><i class="fas fa-times"></i></button>
+            </div>
+            <form method="POST" action="/admin/users/create" class="modal-form">
+              <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" name="name" required placeholder="أدخل الاسم">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>البريد الإلكتروني</label>
+                  <input type="email" name="email" placeholder="example@email.com">
                 </div>
-                <div>
-                  <strong><%= u.name %></strong>
-                  <br><small class="text-muted"><%= u.email || '-' %></small>
+                <div class="form-group">
+                  <label>رقم الجوال</label>
+                  <input type="text" name="phone" placeholder="05XXXXXXXX" dir="ltr">
                 </div>
               </div>
-            </td>
-            <td dir="ltr"><%= u.phone || '-' %></td>
-            <td dir="ltr"><%= u.nationalId || u.nafathId || '-' %></td>
-            <td><span class="role-badge role-<%= u.role %>"><%= {patient:'مريض',doctor:'طبيب',pharmacist:'صيدلي',company:'شركة',employee:'موظف',admin:'مدير',moderator:'مشرف',insurance_agent:'وكيل تأمين'}[u.role] || u.role %></span></td>
-            <td><%= {local:'بريد',google:'Google',apple:'Apple',nafath:'نفاذ',phone:'جوال'}[u.authProvider] || u.authProvider || 'بريد' %></td>
-            <td><%= u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('ar-SA', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : 'لم يسجل' %></td>
-            <td><%= u.devices ? u.devices.filter(d => d.isActive).length : 0 %></td>
-            <td>
-              <form method="POST" action="/admin/users/<%= u._id %>/role" style="display:inline">
-                <select name="role" onchange="this.form.submit()" class="select-sm">
-                  <option value="patient" <%= u.role==='patient'?'selected':'' %>>مريض</option>
-                  <option value="doctor" <%= u.role==='doctor'?'selected':'' %>>طبيب</option>
-                  <option value="pharmacist" <%= u.role==='pharmacist'?'selected':'' %>>صيدلي</option>
-                  <option value="company" <%= u.role==='company'?'selected':'' %>>شركة</option>
-                  <option value="employee" <%= u.role==='employee'?'selected':'' %>>موظف</option>
-                  <option value="insurance_agent" <%= u.role==='insurance_agent'?'selected':'' %>>وكيل تأمين</option>
-                  <option value="moderator" <%= u.role==='moderator'?'selected':'' %>>مشرف</option>
-                  <option value="admin" <%= u.role==='admin'?'selected':'' %>>مدير</option>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>كلمة المرور</label>
+                  <input type="password" name="password" required placeholder="أدخل كلمة المرور" minlength="6">
+                </div>
+                <div class="form-group">
+                  <label>الدور</label>
+                  <select name="role">
+                    <option value="doctor">طبيب</option>
+                    <option value="pharmacist">صيدلي</option>
+                    <option value="moderator">مشرف</option>
+                    <option value="company">شركة</option>
+                    <option value="employee">موظف</option>
+                    <option value="insurance_agent">وكيل تأمين</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>رقم الهوية الوطنية (اختياري)</label>
+                <input type="text" name="nationalId" placeholder="10 أرقام" dir="ltr">
+              </div>
+              <div class="modal-actions">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> إنشاء المستخدم</button>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('createUserModal').style.display='none'">إلغاء</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="admin-stats-row" style="margin-bottom:1.5rem;">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon teal"><i class="fas fa-users"></i></div>
+            <div class="admin-stat-info"><h3><%= Object.values(roleCountsMap).reduce((a,b)=>a+b,0) %></h3><p>إجمالي</p></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon blue"><i class="fas fa-user-injured"></i></div>
+            <div class="admin-stat-info"><h3><%= roleCountsMap.patient || 0 %></h3><p>مرضى</p></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon purple"><i class="fas fa-stethoscope"></i></div>
+            <div class="admin-stat-info"><h3><%= roleCountsMap.doctor || 0 %></h3><p>أطباء</p></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon green"><i class="fas fa-pills"></i></div>
+            <div class="admin-stat-info"><h3><%= roleCountsMap.pharmacist || 0 %></h3><p>صيادلة</p></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon orange"><i class="fas fa-building"></i></div>
+            <div class="admin-stat-info"><h3><%= roleCountsMap.company || 0 %></h3><p>شركات</p></div>
+          </div>
+        </div>
+
+        <div class="admin-section" style="margin-bottom:1.25rem;">
+          <div class="admin-section-body" style="padding:1rem;">
+            <form method="GET" action="/admin/users" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:flex-end;" id="filterForm">
+              <div style="flex:2;min-width:200px;">
+                <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">بحث</label>
+                <div style="position:relative;">
+                  <i class="fas fa-search" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.85rem;"></i>
+                  <input type="text" name="q" value="<%= query.q || '' %>" placeholder="الاسم، البريد، الجوال..." style="width:100%;padding:0.5rem 2rem 0.5rem 0.75rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;">
+                </div>
+              </div>
+              <div style="flex:1;min-width:130px;">
+                <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">الدور</label>
+                <select name="role" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;" onchange="document.getElementById('filterForm').submit()">
+                  <option value="all" <%= !query.role || query.role === 'all' ? 'selected' : '' %>>الكل</option>
+                  <option value="patient" <%= query.role === 'patient' ? 'selected' : '' %>>مريض</option>
+                  <option value="doctor" <%= query.role === 'doctor' ? 'selected' : '' %>>طبيب</option>
+                  <option value="pharmacist" <%= query.role === 'pharmacist' ? 'selected' : '' %>>صيدلي</option>
+                  <option value="company" <%= query.role === 'company' ? 'selected' : '' %>>شركة</option>
+                  <option value="employee" <%= query.role === 'employee' ? 'selected' : '' %>>موظف</option>
+                  <option value="insurance_agent" <%= query.role === 'insurance_agent' ? 'selected' : '' %>>وكيل تأمين</option>
+                  <option value="moderator" <%= query.role === 'moderator' ? 'selected' : '' %>>مشرف</option>
+                  <option value="admin" <%= query.role === 'admin' ? 'selected' : '' %>>مدير</option>
                 </select>
-              </form>
-            </td>
-          </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
+              </div>
+              <div style="flex:1;min-width:120px;">
+                <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">الحالة</label>
+                <select name="status" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;" onchange="document.getElementById('filterForm').submit()">
+                  <option value="" <%= !query.status ? 'selected' : '' %>>الكل</option>
+                  <option value="active" <%= query.status === 'active' ? 'selected' : '' %>>نشط</option>
+                  <option value="suspended" <%= query.status === 'suspended' ? 'selected' : '' %>>موقوف</option>
+                </select>
+              </div>
+              <div style="flex:1;min-width:120px;">
+                <label style="display:block;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">التسجيل</label>
+                <select name="provider" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-family:inherit;font-size:0.85rem;" onchange="document.getElementById('filterForm').submit()">
+                  <option value="all" <%= !query.provider || query.provider === 'all' ? 'selected' : '' %>>الكل</option>
+                  <option value="local" <%= query.provider === 'local' ? 'selected' : '' %>>بريد</option>
+                  <option value="google" <%= query.provider === 'google' ? 'selected' : '' %>>Google</option>
+                  <option value="apple" <%= query.provider === 'apple' ? 'selected' : '' %>>Apple</option>
+                  <option value="nafath" <%= query.provider === 'nafath' ? 'selected' : '' %>>نفاذ</option>
+                  <option value="phone" <%= query.provider === 'phone' ? 'selected' : '' %>>جوال</option>
+                </select>
+              </div>
+              <div style="display:flex;gap:0.5rem;">
+                <button type="submit" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.82rem;"><i class="fas fa-search"></i> بحث</button>
+                <a href="/admin/users" class="btn btn-outline" style="padding:0.5rem 1rem;font-size:0.82rem;">مسح</a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
+          عرض <%= users.length %> من أصل <%= total %> مستخدم
+          <% if (totalPages > 1) { %> &middot; صفحة <%= page %> من <%= totalPages %><% } %>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>المستخدم</th>
+                <th>الجوال</th>
+                <th>الهوية</th>
+                <th>الدور</th>
+                <th>الحالة</th>
+                <th>التسجيل</th>
+                <th>آخر دخول</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% const roleMap = {admin:'مدير',doctor:'طبيب',pharmacist:'صيدلي',patient:'مريض',moderator:'مشرف',company:'شركة',employee:'موظف',insurance_agent:'وكيل تأمين'};
+                 const roleColor = {admin:'#ef4444',doctor:'#3b82f6',pharmacist:'#22c55e',moderator:'#8b5cf6',company:'#f59e0b',employee:'#06b6d4',insurance_agent:'#ec4899',patient:'var(--secondary)'}; %>
+              <% users.forEach(u => { %>
+              <% const isActive = u.isActive !== false; %>
+              <tr style="opacity:<%= isActive ? '1' : '0.65' %>;">
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.82rem;flex-shrink:0;overflow:hidden;">
+                      <% if (u.avatar) { %><img src="<%= u.avatar %>" style="width:100%;height:100%;object-fit:cover;"><% } else { %><%= u.name.charAt(0) %><% } %>
+                    </div>
+                    <div>
+                      <strong style="font-size:0.88rem;"><%= u.name %></strong>
+                      <% if (!isActive) { %><span style="font-size:0.68rem;color:#ef4444;margin-right:4px;"><i class="fas fa-ban"></i> موقوف</span><% } %>
+                      <br><small class="text-muted" style="font-size:0.75rem;"><%= u.email || '—' %></small>
+                    </div>
+                  </div>
+                </td>
+                <td dir="ltr" style="font-size:0.85rem;"><%= u.phone || '—' %></td>
+                <td dir="ltr" style="font-size:0.85rem;"><%= u.nationalId || u.nafathId || '—' %></td>
+                <td>
+                  <span style="font-size:0.72rem;padding:3px 9px;border-radius:6px;font-weight:600;background:<%= roleColor[u.role] || 'var(--secondary)' %>15;color:<%= roleColor[u.role] || 'var(--secondary)' %>;">
+                    <%= roleMap[u.role] || u.role %>
+                  </span>
+                </td>
+                <td>
+                  <span style="font-size:0.72rem;padding:3px 9px;border-radius:6px;font-weight:600;background:<%= isActive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)' %>;color:<%= isActive ? '#22c55e' : '#ef4444' %>;">
+                    <i class="fas fa-<%= isActive ? 'check-circle' : 'ban' %>"></i> <%= isActive ? 'نشط' : 'موقوف' %>
+                  </span>
+                </td>
+                <td style="font-size:0.82rem;"><%= {local:'بريد',google:'Google',apple:'Apple',nafath:'نفاذ',phone:'جوال'}[u.authProvider] || 'بريد' %></td>
+                <td style="font-size:0.78rem;color:var(--text-muted);">
+                  <%= u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('ar-SA', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : 'لم يسجل' %>
+                </td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap;">
+                    <form method="POST" action="/admin/users/<%= u._id %>/role" style="display:inline;">
+                      <select name="role" onchange="this.form.submit()" class="select-sm" style="font-size:0.75rem;padding:0.25rem 0.5rem;">
+                        <option value="patient" <%= u.role==='patient'?'selected':'' %>>مريض</option>
+                        <option value="doctor" <%= u.role==='doctor'?'selected':'' %>>طبيب</option>
+                        <option value="pharmacist" <%= u.role==='pharmacist'?'selected':'' %>>صيدلي</option>
+                        <option value="company" <%= u.role==='company'?'selected':'' %>>شركة</option>
+                        <option value="employee" <%= u.role==='employee'?'selected':'' %>>موظف</option>
+                        <option value="insurance_agent" <%= u.role==='insurance_agent'?'selected':'' %>>وكيل تأمين</option>
+                        <option value="moderator" <%= u.role==='moderator'?'selected':'' %>>مشرف</option>
+                        <option value="admin" <%= u.role==='admin'?'selected':'' %>>مدير</option>
+                      </select>
+                    </form>
+                    <% if (u.role !== 'admin') { %>
+                    <form method="POST" action="/admin/users/<%= u._id %>/toggle" style="display:inline;" onsubmit="return confirm('<%= isActive ? 'تعليق الحساب؟' : 'تفعيل الحساب؟' %>')">
+                      <button type="submit" title="<%= isActive ? 'تعليق' : 'تفعيل' %>" style="width:28px;height:28px;border-radius:6px;border:1px solid <%= isActive ? 'rgba(245,158,11,0.3)' : 'rgba(34,197,94,0.3)' %>;background:<%= isActive ? 'rgba(245,158,11,0.08)' : 'rgba(34,197,94,0.08)' %>;color:<%= isActive ? '#f59e0b' : '#22c55e' %>;cursor:pointer;font-size:0.75rem;display:inline-flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-<%= isActive ? 'ban' : 'check' %>"></i>
+                      </button>
+                    </form>
+                    <form method="POST" action="/admin/users/<%= u._id %>/delete" style="display:inline;" onsubmit="return confirm('تحذير! سيتم حذف المستخدم <%= u.name %> نهائياً!')">
+                      <button type="submit" title="حذف" style="width:28px;height:28px;border-radius:6px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.08);color:#ef4444;cursor:pointer;font-size:0.75rem;display:inline-flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <% if (totalPages > 1) { %>
+        <div style="display:flex;justify-content:center;gap:0.5rem;margin-top:1.5rem;flex-wrap:wrap;">
+          <% for (let p = 1; p <= totalPages; p++) { %>
+          <a href="?<%= Object.entries(query).filter(([k]) => k !== 'page').map(([k,v]) => k+'='+encodeURIComponent(v)).join('&') %>&page=<%= p %>"
+             style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:600;text-decoration:none;background:<%= p === page ? 'var(--secondary)' : 'var(--card-bg)' %>;color:<%= p === page ? '#fff' : 'var(--text)' %>;border:1px solid <%= p === page ? 'var(--secondary)' : 'var(--border)' %>;">
+            <%= p %>
+          </a>
+          <% } %>
+        </div>
+        <% } %>
       </div>
     </div>
   </div>

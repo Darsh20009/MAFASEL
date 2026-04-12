@@ -36,8 +36,26 @@ router.get('/', isAuthenticated, isAdmin, async (req, res) => {
 });
 
 router.get('/users', isAuthenticated, isAdmin, async (req, res) => {
-  const users = await User.find().sort({ createdAt: -1 });
-  res.render('pages/admin-users', { title: 'إدارة المستخدمين', users });
+  const filter = {};
+  if (req.query.role && req.query.role !== 'all') filter.role = req.query.role;
+  if (req.query.status === 'active') filter.isActive = true;
+  if (req.query.status === 'suspended') filter.isActive = false;
+  if (req.query.provider && req.query.provider !== 'all') filter.authProvider = req.query.provider;
+  if (req.query.q) {
+    const regex = { $regex: req.query.q, $options: 'i' };
+    filter.$or = [{ name: regex }, { email: regex }, { phone: regex }];
+  }
+  const page = parseInt(req.query.page) || 1;
+  const limit = 50;
+  const [users, total, roleCounts] = await Promise.all([
+    User.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+    User.countDocuments(filter),
+    User.aggregate([{ $group: { _id: '$role', count: { $sum: 1 } } }])
+  ]);
+  const totalPages = Math.ceil(total / limit);
+  const roleCountsMap = {};
+  roleCounts.forEach(r => { roleCountsMap[r._id] = r.count; });
+  res.render('pages/admin-users', { title: 'إدارة المستخدمين', users, total, page, totalPages, query: req.query, roleCountsMap });
 });
 
 router.post('/users/create', isAuthenticated, isAdmin, async (req, res) => {
@@ -139,6 +157,131 @@ router.post('/users/:id/role', isAuthenticated, isAdmin, async (req, res) => {
   logAudit({ req, action: 'تغيير دور مستخدم', category: 'admin', details: `${targetUser.name}: ${targetUser.role} → ${newRole}`, targetId: targetUser._id, targetType: 'User' });
   req.session.success = 'تم تحديث الدور';
   res.redirect('/admin/users');
+});
+
+router.post('/users/:id/toggle', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const targetUser = await User.findById(req.params.id);
+    if (!targetUser) { req.session.error = 'المستخدم غير موجود'; return res.redirect('/admin/users'); }
+    if (targetUser.role === 'admin') { req.session.error = 'لا يمكن تعليق حساب المدير'; return res.redirect('/admin/users'); }
+    targetUser.isActive = !targetUser.isActive;
+    await targetUser.save();
+    const action = targetUser.isActive ? 'تفعيل حساب' : 'تعليق حساب';
+    logAudit({ req, action, category: 'admin', details: `${targetUser.name} (${targetUser.role})`, targetId: targetUser._id, targetType: 'User' });
+    req.session.success = targetUser.isActive ? 'تم تفعيل الحساب' : 'تم تعليق الحساب';
+  } catch (err) {
+    req.session.error = 'حدث خطأ';
+  }
+  const redirect = req.query.from === 'companies' ? '/admin/companies' : '/admin/users';
+  res.redirect(redirect);
+});
+
+router.post('/users/:id/delete', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const targetUser = await User.findById(req.params.id);
+    if (!targetUser) { req.session.error = 'المستخدم غير موجود'; return res.redirect('/admin/users'); }
+    if (targetUser.role === 'admin') { req.session.error = 'لا يمكن حذف حساب المدير'; return res.redirect('/admin/users'); }
+    if (targetUser._id.toString() === req.session.user._id.toString()) { req.session.error = 'لا يمكنك حذف حسابك الخاص'; return res.redirect('/admin/users'); }
+    await User.findByIdAndDelete(req.params.id);
+    logAudit({ req, action: 'حذف مستخدم', category: 'admin', details: `${targetUser.name} (${targetUser.role})`, targetId: targetUser._id, targetType: 'User' });
+    req.session.success = 'تم حذف المستخدم';
+  } catch (err) {
+    req.session.error = 'حدث خطأ في الحذف';
+  }
+  const redirect = req.query.from === 'companies' ? '/admin/companies' : '/admin/users';
+  res.redirect(redirect);
+});
+
+router.get('/companies', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const filter = { role: 'company' };
+    if (req.query.status === 'active') filter.isActive = true;
+    if (req.query.status === 'suspended') filter.isActive = false;
+    if (req.query.q) {
+      const regex = { $regex: req.query.q, $options: 'i' };
+      filter.$or = [{ name: regex }, { email: regex }, { 'companyProfile.companyName': regex }, { 'companyProfile.sector': regex }];
+    }
+    const companies = await User.find(filter).sort({ createdAt: -1 });
+    const companyIds = companies.map(c => c._id);
+    const employees = await User.find({ role: 'employee' }).select('name email phone isActive createdAt lastLogin').lean();
+    res.render('pages/admin-companies', { title: 'إدارة الشركات', companies, employees, query: req.query });
+  } catch (err) {
+    console.error('Admin companies error:', err);
+    req.session.error = 'حدث خطأ في تحميل الشركات';
+    res.redirect('/admin');
+  }
+});
+
+router.get('/monitor', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const mem = process.memoryUsage();
+    const uptime = process.uptime();
+    const [totalUsers, totalConsultations, totalOrders, totalAuditLogs, activeUsers, suspendedUsers] = await Promise.all([
+      User.countDocuments(),
+      Consultation.countDocuments(),
+      Order.countDocuments(),
+      AuditLog.countDocuments(),
+      User.countDocuments({ isActive: true }),
+      User.countDocuments({ isActive: false })
+    ]);
+    const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+    const [todayLogins, todayOrders, recentLogs] = await Promise.all([
+      AuditLog.countDocuments({ category: 'auth', action: { $regex: 'دخول', $options: 'i' }, createdAt: { $gte: todayStart } }),
+      Order.countDocuments({ createdAt: { $gte: todayStart } }),
+      AuditLog.find().sort({ createdAt: -1 }).limit(15).lean()
+    ]);
+    const io = req.app.locals.io;
+    const connectedSockets = io ? io.engine.clientsCount : 0;
+    const uptimeH = Math.floor(uptime / 3600);
+    const uptimeM = Math.floor((uptime % 3600) / 60);
+    const uptimeS = Math.floor(uptime % 60);
+    res.render('pages/admin-monitor', {
+      title: 'مراقبة النظام',
+      mem: {
+        heapUsed: Math.round(mem.heapUsed / 1024 / 1024),
+        heapTotal: Math.round(mem.heapTotal / 1024 / 1024),
+        rss: Math.round(mem.rss / 1024 / 1024),
+        heapPercent: Math.round((mem.heapUsed / mem.heapTotal) * 100)
+      },
+      uptimeH, uptimeM, uptimeS,
+      connectedSockets,
+      stats: { totalUsers, totalConsultations, totalOrders, totalAuditLogs, activeUsers, suspendedUsers, todayLogins, todayOrders },
+      recentLogs,
+      nodeVersion: process.version,
+      platform: process.platform,
+      env: process.env.NODE_ENV || 'development'
+    });
+  } catch (err) {
+    console.error('Monitor page error:', err);
+    req.session.error = 'حدث خطأ في تحميل لوحة المراقبة';
+    res.redirect('/admin');
+  }
+});
+
+router.get('/monitor/api/stats', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const mem = process.memoryUsage();
+    const io = req.app.locals.io;
+    const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+    const [totalUsers, todayLogins] = await Promise.all([
+      User.countDocuments(),
+      AuditLog.countDocuments({ category: 'auth', createdAt: { $gte: todayStart } })
+    ]);
+    res.json({
+      memory: {
+        heapUsed: Math.round(mem.heapUsed / 1024 / 1024),
+        heapTotal: Math.round(mem.heapTotal / 1024 / 1024),
+        rss: Math.round(mem.rss / 1024 / 1024),
+        heapPercent: Math.round((mem.heapUsed / mem.heapTotal) * 100)
+      },
+      uptime: Math.round(process.uptime()),
+      connectedSockets: io ? io.engine.clientsCount : 0,
+      totalUsers,
+      todayLogins
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'خطأ في جلب البيانات' });
+  }
 });
 
 router.get('/consultations', isAuthenticated, isAdmin, async (req, res) => {

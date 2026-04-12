@@ -1,0 +1,221 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container" style="max-width:1400px;">
+    <div class="admin-layout">
+      <%- include('../partials/admin-sidebar') %>
+      <div class="admin-main">
+        <div class="page-header">
+          <div>
+            <h1><i class="fas fa-server"></i> مراقبة النظام</h1>
+            <p style="color:var(--text-muted);margin-top:0.25rem;font-size:0.85rem;">حالة الخادم والموارد في الوقت الفعلي</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div id="live-indicator" style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--secondary);">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--secondary);display:inline-block;animation:pulse 2s infinite;"></span>
+              مباشر
+            </div>
+            <button class="btn btn-outline" style="padding:0.4rem 0.9rem;font-size:0.82rem;" onclick="refreshStats()">
+              <i class="fas fa-sync-alt" id="refresh-icon"></i> تحديث
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-stats-row" style="margin-bottom:1.5rem;">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon teal"><i class="fas fa-clock"></i></div>
+            <div class="admin-stat-info">
+              <h3 id="uptime-display"><%= uptimeH %>س <%= uptimeM %>د</h3>
+              <p>وقت التشغيل</p>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon blue"><i class="fas fa-plug"></i></div>
+            <div class="admin-stat-info">
+              <h3 id="sockets-display"><%= connectedSockets %></h3>
+              <p>متصلون الآن</p>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon purple"><i class="fas fa-memory"></i></div>
+            <div class="admin-stat-info">
+              <h3 id="heap-display"><%= mem.heapUsed %> MB</h3>
+              <p>الذاكرة المستخدمة</p>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon green"><i class="fas fa-database"></i></div>
+            <div class="admin-stat-info">
+              <h3 style="color:#22c55e;">متصل</h3>
+              <p>قاعدة البيانات</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+
+          <div class="admin-section">
+            <div class="admin-section-header">
+              <h3><i class="fas fa-memory" style="color:#a855f7;"></i> استخدام الذاكرة</h3>
+              <span id="heap-percent-badge" style="font-size:0.75rem;padding:3px 10px;border-radius:20px;background:rgba(168,85,247,0.1);color:#a855f7;"><%= mem.heapPercent %>%</span>
+            </div>
+            <div class="admin-section-body" style="padding:1.25rem;">
+              <div style="margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                  <span style="font-size:0.82rem;color:var(--text-muted);">Heap Used</span>
+                  <span id="heap-used-val" style="font-size:0.82rem;font-weight:600;"><%= mem.heapUsed %> / <%= mem.heapTotal %> MB</span>
+                </div>
+                <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;">
+                  <div id="heap-bar" style="height:100%;width:<%= mem.heapPercent %>%;background:linear-gradient(90deg,#a855f7,#7c3aed);border-radius:5px;transition:width 0.5s;"></div>
+                </div>
+              </div>
+              <div style="margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                  <span style="font-size:0.82rem;color:var(--text-muted);">RSS (الذاكرة الكلية)</span>
+                  <span id="rss-val" style="font-size:0.82rem;font-weight:600;"><%= mem.rss %> MB</span>
+                </div>
+                <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;">
+                  <div id="rss-bar" style="height:100%;width:<%= Math.min(100, Math.round(mem.rss / 512 * 100)) %>%;background:linear-gradient(90deg,#3b82f6,#2563eb);border-radius:5px;transition:width 0.5s;"></div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">
+                <div style="padding:0.75rem;background:rgba(168,85,247,0.06);border-radius:8px;text-align:center;">
+                  <div style="font-size:1.1rem;font-weight:700;color:#a855f7;" id="heap-used-num"><%= mem.heapUsed %> MB</div>
+                  <div style="font-size:0.72rem;color:var(--text-muted);">Heap Used</div>
+                </div>
+                <div style="padding:0.75rem;background:rgba(59,130,246,0.06);border-radius:8px;text-align:center;">
+                  <div style="font-size:1.1rem;font-weight:700;color:#3b82f6;" id="rss-num"><%= mem.rss %> MB</div>
+                  <div style="font-size:0.72rem;color:var(--text-muted);">RSS Total</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-section">
+            <div class="admin-section-header">
+              <h3><i class="fas fa-info-circle" style="color:var(--secondary);"></i> معلومات الخادم</h3>
+            </div>
+            <div class="admin-section-body" style="padding:1.25rem;">
+              <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                  <span style="font-size:0.82rem;color:var(--text-muted);"><i class="fas fa-code-branch"></i> Node.js</span>
+                  <span style="font-size:0.82rem;font-weight:600;font-family:monospace;" dir="ltr"><%= nodeVersion %></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                  <span style="font-size:0.82rem;color:var(--text-muted);"><i class="fas fa-linux"></i> المنصة</span>
+                  <span style="font-size:0.82rem;font-weight:600;" dir="ltr"><%= platform %></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                  <span style="font-size:0.82rem;color:var(--text-muted);"><i class="fas fa-cog"></i> البيئة</span>
+                  <span style="font-size:0.82rem;padding:2px 10px;border-radius:6px;font-weight:600;background:<%= env === 'production' ? 'rgba(34,197,94,0.1)' : 'rgba(245,158,11,0.1)' %>;color:<%= env === 'production' ? '#22c55e' : '#f59e0b' %>;"><%= env %></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                  <span style="font-size:0.82rem;color:var(--text-muted);"><i class="fas fa-plug"></i> Socket.io</span>
+                  <span style="font-size:0.82rem;font-weight:600;color:var(--secondary);" id="sockets-info"><%= connectedSockets %> متصل</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+                  <span style="font-size:0.82rem;color:var(--text-muted);"><i class="fas fa-clock"></i> وقت التشغيل</span>
+                  <span style="font-size:0.82rem;font-weight:600;" id="uptime-info"><%= uptimeH %>h <%= uptimeM %>m <%= uptimeS %>s</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;">
+                  <span style="font-size:0.82rem;color:var(--text-muted);"><i class="fas fa-database"></i> MongoDB</span>
+                  <span style="font-size:0.82rem;font-weight:600;color:#22c55e;"><i class="fas fa-circle" style="font-size:0.6rem;"></i> متصل</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.25rem;">
+          <div style="padding:1rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+            <div style="font-size:1.6rem;font-weight:700;color:var(--secondary);"><%= stats.totalUsers %></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.2rem;">إجمالي المستخدمين</div>
+          </div>
+          <div style="padding:1rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+            <div style="font-size:1.6rem;font-weight:700;color:#22c55e;"><%= stats.activeUsers %></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.2rem;">حسابات نشطة</div>
+          </div>
+          <div style="padding:1rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+            <div style="font-size:1.6rem;font-weight:700;color:#3b82f6;" id="today-logins"><%= stats.todayLogins %></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.2rem;">دخول اليوم</div>
+          </div>
+          <div style="padding:1rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;text-align:center;">
+            <div style="font-size:1.6rem;font-weight:700;color:#f59e0b;"><%= stats.totalAuditLogs %></div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.2rem;">إجمالي السجلات</div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="admin-section-header">
+            <h3><i class="fas fa-stream" style="color:#3b82f6;"></i> آخر النشاطات</h3>
+            <a href="/admin/audit" style="font-size:0.78rem;color:var(--secondary);text-decoration:none;">عرض الكل</a>
+          </div>
+          <div class="admin-section-body" style="padding:0;">
+            <% const catColors = { auth:'#a855f7', admin:'#ef4444', user:'#3b82f6', consultation:'var(--secondary)', pharmacy:'#22c55e', system:'#f59e0b', chat:'#06b6d4', default:'var(--text-muted)' }; %>
+            <% if (recentLogs.length === 0) { %>
+            <p style="text-align:center;color:var(--text-muted);padding:1.5rem;font-size:0.85rem;">لا توجد سجلات</p>
+            <% } else { %>
+            <% recentLogs.forEach((log, i) => {
+              const color = catColors[log.category] || catColors.default;
+            %> 
+            <div style="display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1rem;border-bottom:<%= i < recentLogs.length-1 ? '1px solid var(--border)' : 'none' %>;">
+              <div style="width:32px;height:32px;border-radius:8px;background:<%= color %>15;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="fas fa-<%= log.success === false ? 'times' : 'check' %>" style="color:<%= log.success === false ? '#ef4444' : color %>;font-size:0.75rem;"></i>
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.83rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><%= log.action %></div>
+                <div style="font-size:0.73rem;color:var(--text-muted);"><%= log.userName %> &middot; <span dir="ltr"><%= log.ip %></span></div>
+              </div>
+              <div style="text-align:left;flex-shrink:0;">
+                <span style="font-size:0.7rem;padding:2px 8px;border-radius:6px;background:<%= color %>15;color:<%= color %>;font-weight:600;"><%= log.category %></span>
+                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem;" dir="ltr"><%= new Date(log.createdAt).toLocaleTimeString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></div>
+              </div>
+            </div>
+            <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+</style>
+
+<script>
+let autoRefreshTimer;
+
+async function refreshStats() {
+  const icon = document.getElementById('refresh-icon');
+  icon.style.animation = 'spin 0.8s linear infinite';
+  try {
+    const res = await fetch('/admin/monitor/api/stats');
+    const data = await res.json();
+    if (data.error) return;
+    document.getElementById('heap-display').textContent = data.memory.heapUsed + ' MB';
+    document.getElementById('heap-used-val').textContent = data.memory.heapUsed + ' / ' + data.memory.heapTotal + ' MB';
+    document.getElementById('heap-bar').style.width = data.memory.heapPercent + '%';
+    document.getElementById('heap-percent-badge').textContent = data.memory.heapPercent + '%';
+    document.getElementById('heap-used-num').textContent = data.memory.heapUsed + ' MB';
+    document.getElementById('rss-val').textContent = data.memory.rss + ' MB';
+    document.getElementById('rss-bar').style.width = Math.min(100, Math.round(data.memory.rss / 512 * 100)) + '%';
+    document.getElementById('rss-num').textContent = data.memory.rss + ' MB';
+    document.getElementById('sockets-display').textContent = data.connectedSockets;
+    document.getElementById('sockets-info').textContent = data.connectedSockets + ' متصل';
+    const h = Math.floor(data.uptime / 3600);
+    const m = Math.floor((data.uptime % 3600) / 60);
+    const s = Math.floor(data.uptime % 60);
+    document.getElementById('uptime-display').textContent = h + 'س ' + m + 'د';
+    document.getElementById('uptime-info').textContent = h + 'h ' + m + 'm ' + s + 's';
+    if (document.getElementById('today-logins')) document.getElementById('today-logins').textContent = data.todayLogins;
+  } catch (e) {}
+  icon.style.animation = '';
+}
+
+autoRefreshTimer = setInterval(refreshStats, 15000);
+</script>
+<%- include('../partials/footer') %>
