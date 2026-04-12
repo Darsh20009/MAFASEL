@@ -42,9 +42,9 @@
   <% if (r === 'patient' || r === 'doctor') { %>
   <a href="/ai" class="mobile-nav-item mobile-nav-center">
     <div class="mobile-nav-center-btn">
-      <i class="fas fa-robot"></i>
+      <img src="/icons/logo.png" alt="" style="width:22px;height:22px;object-fit:contain;">
     </div>
-    <span><%= typeof t === 'function' ? t('nav.ai_assistant') : 'المساعد' %></span>
+    <span><%= typeof t === 'function' ? t('nav.ai_assistant') : 'مساعد مفاصل' %></span>
   </a>
   <% } else { %>
   <a href="/chat" class="mobile-nav-item mobile-nav-center">

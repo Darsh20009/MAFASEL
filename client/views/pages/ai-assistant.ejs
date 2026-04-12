@@ -22,17 +22,7 @@
             <% conversations.forEach(conv => { %>
               <div class="conv-item" data-id="<%= conv._id %>" data-type="<%= conv.type %>">
                 <div class="conv-avatar-small">
-                  <% if (conv.assignedPersona && conv.assignedPersona.avatar) { %>
-                    <% if (conv.assignedPersona.avatar.includes('doctor')) { %>
-                      <i class="fas fa-user-md"></i>
-                    <% } else if (conv.assignedPersona.avatar.includes('pharmacist')) { %>
-                      <i class="fas fa-prescription-bottle-medical"></i>
-                    <% } else { %>
-                      <i class="fas fa-headset"></i>
-                    <% } %>
-                  <% } else { %>
-                    <i class="fas fa-user"></i>
-                  <% } %>
+                  <img src="/icons/logo.png" alt="" style="width:24px;height:24px;object-fit:contain;">
                 </div>
                 <div class="conv-info">
                   <div class="conv-name"><%= conv.assignedPersona ? conv.assignedPersona.name : 'فريق الرعاية' %></div>
@@ -55,10 +45,10 @@
           <button class="btn-toggle-sidebar" id="btnToggleSidebar"><i class="fas fa-bars"></i></button>
           <div class="staff-profile" id="staffProfile">
             <div class="staff-avatar" id="staffAvatar">
-              <i class="fas fa-user-md"></i>
+              <img src="/icons/logo.png" alt="مساعد مفاصل" style="width:32px;height:32px;object-fit:contain;">
             </div>
             <div class="staff-info">
-              <div class="staff-name" id="staffName">فريق مفاصل</div>
+              <div class="staff-name" id="staffName">مساعد مفاصل</div>
               <div class="staff-status" id="staffStatus">
                 <span class="online-dot"></span> متصل الآن
               </div>
@@ -77,10 +67,10 @@
         <div class="care-messages" id="careMessages">
           <div class="welcome-screen" id="welcomeScreen">
             <div class="welcome-icon">
-              <i class="fas fa-hand-holding-medical"></i>
+              <img src="/icons/logo.png" alt="مساعد مفاصل" style="width:56px;height:56px;object-fit:contain;">
             </div>
-            <h2>مرحباً بك في منصة مفاصل</h2>
-            <p>فريقنا الطبي والإداري جاهز لمساعدتك. اختر نوع الخدمة أو اكتب رسالتك مباشرة.</p>
+            <h2>مساعد مفاصل</h2>
+            <p>فريقنا جاهز لمساعدتك. اختر نوع الخدمة أو اكتب رسالتك مباشرة.</p>
             <div class="welcome-services">
               <button class="service-card" data-type="medical">
                 <div class="service-icon"><i class="fas fa-stethoscope"></i></div>
@@ -168,11 +158,8 @@
     return esc(str).replace(/\n/g, '<br>');
   }
 
-  function getAvatarIcon(avatar) {
-    if (!avatar) return 'fa-user';
-    if (avatar.includes('doctor')) return 'fa-user-md';
-    if (avatar.includes('pharmacist')) return 'fa-prescription-bottle-medical';
-    return 'fa-headset';
+  function getAvatarHtml() {
+    return '<img src="/icons/logo.png" alt="" style="width:28px;height:28px;object-fit:contain;">';
   }
 
   function updateHeader(persona) {
@@ -180,7 +167,7 @@
     currentPersona = persona;
     staffName.textContent = persona.name;
     staffStatus.innerHTML = '<span class="online-dot"></span> متصل الآن';
-    staffAvatar.innerHTML = '<i class="fas ' + getAvatarIcon(persona.avatar) + '"></i>';
+    staffAvatar.innerHTML = '<img src="/icons/logo.png" alt="مساعد مفاصل" style="width:32px;height:32px;object-fit:contain;">';
     btnReport.style.display = 'inline-flex';
     btnDeleteConv.style.display = 'inline-flex';
   }
@@ -193,9 +180,8 @@
 
     var timeStr = new Date().toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
     if (role === 'assistant' || role === 'staff') {
-      var avatarClass = persona ? getAvatarIcon(persona.avatar) : 'fa-user-md';
       div.innerHTML =
-        '<div class="msg-avatar"><i class="fas ' + avatarClass + '"></i></div>' +
+        '<div class="msg-avatar">' + getAvatarHtml() + '</div>' +
         '<div class="msg-content">' +
           (persona ? '<div class="msg-sender">' + esc(persona.name) + '</div>' : '') +
           '<div class="msg-bubble">' + nl2br(content) + '</div>' +
@@ -217,9 +203,8 @@
     const div = document.createElement('div');
     div.className = 'care-msg msg-staff';
     div.id = 'typingIndicator';
-    const avatarClass = currentPersona ? getAvatarIcon(currentPersona.avatar) : 'fa-user-md';
     div.innerHTML =
-      '<div class="msg-avatar"><i class="fas ' + avatarClass + '"></i></div>' +
+      '<div class="msg-avatar">' + getAvatarHtml() + '</div>' +
       '<div class="msg-content">' +
         '<div class="msg-bubble typing-bubble">' +
           '<div class="typing-dots"><span></span><span></span><span></span></div>' +
@@ -390,9 +375,9 @@
       welcomeScreen.style.display = 'flex';
       messagesEl.appendChild(welcomeScreen);
     }
-    staffName.textContent = 'فريق مفاصل';
+    staffName.textContent = 'مساعد مفاصل';
     staffStatus.innerHTML = '<span class="online-dot"></span> متصل الآن';
-    staffAvatar.innerHTML = '<i class="fas fa-user-md"></i>';
+    staffAvatar.innerHTML = '<img src="/icons/logo.png" alt="مساعد مفاصل" style="width:32px;height:32px;object-fit:contain;">';
     btnReport.style.display = 'none';
     btnDeleteConv.style.display = 'none';
     actionsBar.style.display = 'none';

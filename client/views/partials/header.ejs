@@ -67,7 +67,7 @@
           <a href="/meetings" class="nav-link"><i class="fas fa-video"></i> <%= typeof t === 'function' ? t('nav.meetings') : 'الاجتماعات' %></a>
           <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
           <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> <%= typeof t === 'function' ? t('nav.pharmacy') : 'الصيدلية' %></a>
-          <a href="/ai" class="nav-link"><i class="fas fa-robot"></i> <%= typeof t === 'function' ? t('nav.ai_assistant') : 'المساعد الذكي' %></a>
+          <a href="/ai" class="nav-link"><img src="/icons/logo.png" alt="" style="width:16px;height:16px;vertical-align:middle;margin-left:4px;"> <%= typeof t === 'function' ? t('nav.ai_assistant') : 'مساعد مفاصل' %></a>
         <% } else if (r === 'pharmacist') { %>
           <a href="/pharmacy" class="nav-link"><i class="fas fa-pills"></i> <%= typeof t === 'function' ? t('nav.pharmacy') : 'الصيدلية' %></a>
           <a href="/chat" class="nav-link"><i class="fas fa-comments"></i> <%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></a>
