@@ -334,27 +334,37 @@ async function verifyNafath() {
 
 async function loginWebAuthn() {
   try {
-    const optRes = await fetch('/auth/webauthn/login-options', { method: 'POST' });
-    const optData = await optRes.json();
+    var optRes = await fetch('/auth/webauthn/login-options', { method: 'POST' });
+    var optData = await optRes.json();
     if (!optData.success) return alert(optData.message);
 
-    const { startAuthentication } = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13.3.0/+esm');
-    const authResp = await startAuthentication({ optionsJSON: optData.options });
+    var startAuthentication;
+    try {
+      var mod = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13.3.0/+esm');
+      startAuthentication = mod.startAuthentication;
+    } catch (importErr) {
+      return alert('فشل تحميل مكتبة البصمة. تأكد من اتصالك بالإنترنت.');
+    }
+    var authResp = await startAuthentication({ optionsJSON: optData.options });
 
-    const verRes = await fetch('/auth/webauthn/login-verify', {
+    var verRes = await fetch('/auth/webauthn/login-verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(authResp)
     });
-    const verData = await verRes.json();
+    var verData = await verRes.json();
     if (verData.success) {
       window.location.href = verData.redirect || '/dashboard';
     } else {
       alert(verData.message);
     }
   } catch (e) {
+    console.error('WebAuthn login error:', e);
     if (e.name === 'NotAllowedError') return;
-    alert('المتصفح لا يدعم تسجيل الدخول بالبصمة أو الحساب غير مسجل');
+    if (e.name === 'SecurityError') {
+      return alert('لا يمكن استخدام البصمة من داخل الإطار المضمن. افتح الموقع في تبويب جديد.');
+    }
+    alert('حدث خطأ في تسجيل الدخول بالبصمة. تأكد أن البصمة مسجلة مسبقاً.');
   }
 }
 

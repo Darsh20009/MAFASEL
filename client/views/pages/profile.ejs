@@ -340,22 +340,42 @@ async function loadHistory() {
 
 async function registerWebAuthn() {
   try {
-    const optRes = await fetch('/auth/webauthn/register-options', { method: 'POST' });
-    const optData = await optRes.json();
+    if (!window.PublicKeyCredential) {
+      return alert('متصفحك لا يدعم تسجيل الدخول بالبصمة');
+    }
+    var isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if (!isAvailable) {
+      return alert('جهازك لا يدعم البصمة أو التعرف على الوجه');
+    }
+    var optRes = await fetch('/auth/webauthn/register-options', { method: 'POST' });
+    var optData = await optRes.json();
     if (!optData.success) return alert(optData.message);
-    const { startRegistration } = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13.3.0/+esm');
-    const regResp = await startRegistration({ optionsJSON: optData.options });
-    const verRes = await fetch('/auth/webauthn/register-verify', {
+    var startRegistration;
+    try {
+      var mod = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13.3.0/+esm');
+      startRegistration = mod.startRegistration;
+    } catch (importErr) {
+      return alert('فشل تحميل مكتبة البصمة. تأكد من اتصالك بالإنترنت.');
+    }
+    var regResp = await startRegistration({ optionsJSON: optData.options });
+    var verRes = await fetch('/auth/webauthn/register-verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(regResp)
     });
-    const verData = await verRes.json();
-    alert(verData.success ? 'تم تسجيل البصمة بنجاح' : verData.message);
+    var verData = await verRes.json();
+    alert(verData.success ? 'تم تسجيل البصمة بنجاح ✅' : verData.message);
     if (verData.success) location.reload();
   } catch (e) {
+    console.error('WebAuthn register error:', e);
     if (e.name === 'NotAllowedError') return;
-    alert('المتصفح لا يدعم هذه الميزة');
+    if (e.name === 'SecurityError') {
+      return alert('لا يمكن استخدام البصمة من داخل الإطار المضمن. افتح الموقع في تبويب جديد.');
+    }
+    if (e.name === 'InvalidStateError') {
+      return alert('هذه البصمة مسجلة مسبقاً على هذا الحساب');
+    }
+    alert('حدث خطأ: ' + (e.message || 'المتصفح لا يدعم هذه الميزة'));
   }
 }
 </script>

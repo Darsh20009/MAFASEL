@@ -634,7 +634,13 @@ router.post('/auth/webauthn/register-options', async (req, res) => {
     const user = await User.findById(req.session.user._id);
 
     const rpName = 'منصة مفاصل';
-    const rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
+    const requestOrigin = req.get('origin') || req.get('referer') || '';
+    let rpID;
+    try {
+      rpID = new URL(requestOrigin).hostname;
+    } catch (e) {
+      rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
+    }
 
     const userIdStr = user._id.toString();
     const userIdBytes = new TextEncoder().encode(userIdStr);
@@ -663,7 +669,7 @@ router.post('/auth/webauthn/register-options', async (req, res) => {
     res.json({ success: true, options });
   } catch (err) {
     console.error('WebAuthn register options error:', err);
-    res.status(500).json({ success: false, message: 'حدث خطأ' });
+    res.status(500).json({ success: false, message: 'حدث خطأ في إعداد البصمة: ' + err.message });
   }
 });
 
@@ -675,13 +681,25 @@ router.post('/auth/webauthn/register-verify', async (req, res) => {
     const { verifyRegistrationResponse } = require('@simplewebauthn/server');
     const user = await User.findById(req.session.user._id);
 
-    const rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
-    const origin = `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost'}`;
+    const requestOrigin = req.get('origin') || `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost'}`;
+    let rpID;
+    try {
+      rpID = new URL(requestOrigin).hostname;
+    } catch (e) {
+      rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
+    }
+
+    const devDomain = process.env.REPLIT_DEV_DOMAIN || 'localhost';
+    const expectedOrigins = [
+      requestOrigin,
+      `https://${devDomain}`,
+      `https://${devDomain}:5000`
+    ];
 
     const verification = await verifyRegistrationResponse({
       response: req.body,
       expectedChallenge: user.webauthnChallenge,
-      expectedOrigin: origin,
+      expectedOrigin: expectedOrigins,
       expectedRPID: rpID
     });
 
@@ -711,7 +729,7 @@ router.post('/auth/webauthn/register-verify', async (req, res) => {
     }
   } catch (err) {
     console.error('WebAuthn register verify error:', err);
-    res.status(500).json({ success: false, message: 'حدث خطأ' });
+    res.status(500).json({ success: false, message: 'فشل التحقق من البصمة: ' + err.message });
   }
 });
 
@@ -727,7 +745,13 @@ router.post('/auth/webauthn/has-credentials', async (req, res) => {
 router.post('/auth/webauthn/login-options', async (req, res) => {
   try {
     const { generateAuthenticationOptions } = require('@simplewebauthn/server');
-    const rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
+    const requestOrigin = req.get('origin') || req.get('referer') || '';
+    let rpID;
+    try {
+      rpID = new URL(requestOrigin).hostname;
+    } catch (e) {
+      rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
+    }
 
     const options = await generateAuthenticationOptions({
       rpID,
@@ -746,8 +770,20 @@ router.post('/auth/webauthn/login-options', async (req, res) => {
 router.post('/auth/webauthn/login-verify', async (req, res) => {
   try {
     const { verifyAuthenticationResponse } = require('@simplewebauthn/server');
-    const rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
-    const origin = `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost'}`;
+    const requestOrigin = req.get('origin') || `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost'}`;
+    let rpID;
+    try {
+      rpID = new URL(requestOrigin).hostname;
+    } catch (e) {
+      rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
+    }
+
+    const devDomain = process.env.REPLIT_DEV_DOMAIN || 'localhost';
+    const expectedOrigins = [
+      requestOrigin,
+      `https://${devDomain}`,
+      `https://${devDomain}:5000`
+    ];
 
     const credentialIdB64 = req.body.id;
     const users = await User.find({ 'webauthnCredentials.credentialId': credentialIdB64 });
@@ -761,7 +797,7 @@ router.post('/auth/webauthn/login-verify', async (req, res) => {
     const verification = await verifyAuthenticationResponse({
       response: req.body,
       expectedChallenge: req.session.webauthnChallenge,
-      expectedOrigin: origin,
+      expectedOrigin: expectedOrigins,
       expectedRPID: rpID,
       credential: {
         id: cred.credentialId,
