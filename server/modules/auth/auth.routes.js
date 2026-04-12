@@ -404,16 +404,13 @@ function generateAppleClientSecret() {
 router.get('/api/auth/apple', (req, res) => {
   const clientId = process.env.APPLE_CLIENT_ID;
   if (!clientId || !process.env.APPLE_TEAM_ID || !process.env.APPLE_KEY_ID || !process.env.APPLE_PRIVATE_KEY) {
-    req.session.error = 'تسجيل الدخول عبر Apple غير متاح حالياً';
+    req.session.error = 'تسجيل الدخول عبر Apple غير مُهيأ بعد. يرجى التواصل مع الدعم الفني.';
     return res.redirect('/login');
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    req.session.error = 'تسجيل الدخول عبر Apple متاح فقط في بيئة الإنتاج';
-    return res.redirect('/login');
-  }
-
-  const callbackURL = process.env.APPLE_CALLBACK_URL || 'https://mafaseltech.com/api/auth/apple/callback';
+  const host = req.get('host') || 'mafaseltech.com';
+  const protocol = req.secure || host.includes('replit') ? 'https' : 'http';
+  const callbackURL = process.env.APPLE_CALLBACK_URL || `${protocol}://${host}/api/auth/apple/callback`;
 
   const state = require('crypto').randomBytes(16).toString('hex');
   req.session.appleState = state;
@@ -459,7 +456,9 @@ router.post('/api/auth/apple/callback', async (req, res) => {
       const clientSecret = generateAppleClientSecret();
       if (!clientSecret) throw new Error('Apple client secret generation failed');
 
-      const callbackURL = process.env.APPLE_CALLBACK_URL || 'https://mafaseltech.com/api/auth/apple/callback';
+      const host = req.get('host') || 'mafaseltech.com';
+      const protocol = req.secure || host.includes('replit') ? 'https' : 'http';
+      const callbackURL = process.env.APPLE_CALLBACK_URL || `${protocol}://${host}/api/auth/apple/callback`;
 
       const https = require('https');
       const qs = require('querystring');
