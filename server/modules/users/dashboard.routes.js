@@ -7,23 +7,38 @@ const Notification = require('../notifications/notification.model');
 const Insurance = require('../medical/insurance.model');
 const Banner = require('../admin/banner.model');
 
-router.get('/', async (req, res) => {
+const STATIC_BANNERS = [
+  { type: 'image', filePath: '/uploads/banners/banner1.png', title: '', link: '', isActive: true, order: 0 },
+  { type: 'image', filePath: '/uploads/banners/banner2.png', title: '', link: '', isActive: true, order: 1 },
+  { type: 'image', filePath: '/uploads/banners/banner3.png', title: '', link: '', isActive: true, order: 2 }
+];
+
+async function getBanners() {
   try {
     const banners = await Banner.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
+    return banners && banners.length > 0 ? banners : STATIC_BANNERS;
+  } catch (e) {
+    return STATIC_BANNERS;
+  }
+}
 
-    if (!req.session || !req.session.user) {
-      return res.render('pages/dashboard', {
-        title: 'الرئيسية',
-        banners,
-        consultations: [],
-        orders: [],
-        notifications: [],
-        insurance: null,
-        stats: { consultations: 0, orders: 0, unreadNotifs: 0, activeInsurance: false },
-        isGuest: true
-      });
-    }
+router.get('/', async (req, res) => {
+  const banners = await getBanners();
 
+  if (!req.session || !req.session.user) {
+    return res.render('pages/dashboard', {
+      title: 'الرئيسية',
+      banners,
+      consultations: [],
+      orders: [],
+      notifications: [],
+      insurance: null,
+      stats: { consultations: 0, orders: 0, unreadNotifs: 0, activeInsurance: false },
+      isGuest: true
+    });
+  }
+
+  try {
     const userId = req.session.user._id;
     const [consultations, orders, notifications, insurance] = await Promise.all([
       Consultation.find({ patient: userId }).sort({ createdAt: -1 }).limit(5),
@@ -46,8 +61,16 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error('Dashboard error:', err);
-    req.session.error = 'حدث خطأ في تحميل الصفحة';
-    res.redirect('/');
+    res.render('pages/dashboard', {
+      title: 'الرئيسية',
+      banners,
+      consultations: [],
+      orders: [],
+      notifications: [],
+      insurance: null,
+      stats: { consultations: 0, orders: 0, unreadNotifs: 0, activeInsurance: false },
+      isGuest: false
+    });
   }
 });
 
