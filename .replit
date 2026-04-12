@@ -13,6 +13,12 @@ NODE_ENV = "development"
 VAPID_PUBLIC_KEY = "BEycBOkyfpLUcEdSqIP9TBFIJf_krICKbdtMoGuwST5x_X6gkqQ6dsMN3BlQqubWNCNCLXAH1kmZtFLtMJVVCwI"
 VAPID_PRIVATE_KEY = "PVr3ZjgEXZMk1k4WJ4lsS4YPBojNmVheqi5rHf8dRE0"
 VAPID_EMAIL = "mailto:admin@mafasel.com"
+MONGODB_URI = "mongodb+srv://mafaseltec_12478:ASDqwe123@mafasel.iwktcdg.mongodb.net/?appName=mafasel"
+GROQ_API_KEY = "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"
+GOOGLE_CLIENT_SECRET = "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"
+GOOGLE_CLIENT_ID = "982269596237-4d8rrm0jbsq14dll6u6d1ocebhem13c8.apps.googleusercontent.com"
+APPLE_TEAM_ID = "V4K6RM59LS"
+APPLE_KEY_ID = "G292Z8L5SW"
 
 [workflows]
 runButton = "Project"
