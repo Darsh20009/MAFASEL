@@ -1,0 +1,411 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container" style="max-width:1100px;">
+    <div class="page-header" style="margin-bottom:1rem;">
+      <h1 style="font-size:1.4rem;"><i class="fas fa-calendar-alt" style="color:var(--secondary);"></i> المواعيد والتذكيرات</h1>
+    </div>
+
+    <div class="scheduler-tabs">
+      <button class="sched-tab <%= tab === 'appointments' ? 'active' : '' %>" onclick="switchTab('appointments')"><i class="fas fa-calendar-check"></i> المواعيد <span class="tab-count"><%= upcoming.length %></span></button>
+      <button class="sched-tab <%= tab === 'reminders' ? 'active' : '' %>" onclick="switchTab('reminders')"><i class="fas fa-pills"></i> تذكيرات الأدوية <span class="tab-count"><%= reminders.length %></span></button>
+    </div>
+
+    <div class="sched-panel" id="panelAppointments" style="<%= tab !== 'appointments' ? 'display:none' : '' %>">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <h2 style="font-size:1.05rem;margin:0;"><i class="fas fa-clock" style="color:var(--secondary);"></i> المواعيد القادمة</h2>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('addAppointmentModal').style.display='flex'"><i class="fas fa-plus"></i> موعد جديد</button>
+      </div>
+
+      <% if (upcoming.length > 0) { %>
+      <div class="appt-list">
+        <% upcoming.forEach(function(a) {
+          var d = new Date(a.date);
+          var statusMap = { scheduled:'مجدول', confirmed:'مؤكد', completed:'مكتمل', cancelled:'ملغي', missed:'فائت' };
+          var statusColor = { scheduled:'#f59e0b', confirmed:'#22c55e', completed:'var(--secondary)', cancelled:'#ef4444', missed:'#6b7280' };
+          var statusIcon = { scheduled:'clock', confirmed:'check-circle', completed:'check-double', cancelled:'times-circle', missed:'exclamation-circle' };
+        %>
+        <div class="appt-card">
+          <div class="appt-date-col">
+            <div class="appt-day"><%= d.getDate() %></div>
+            <div class="appt-month"><%= d.toLocaleDateString('ar-SA', { month: 'short' }) %></div>
+            <div class="appt-weekday"><%= d.toLocaleDateString('ar-SA', { weekday: 'short' }) %></div>
+          </div>
+          <div class="appt-info">
+            <div class="appt-title">
+              <strong><%= a.doctorName || (a.doctor ? a.doctor.name : 'طبيب غير محدد') %></strong>
+              <% if (a.specialty) { %><span class="appt-spec"><%= a.specialty %></span><% } %>
+            </div>
+            <div class="appt-meta">
+              <span><i class="fas fa-clock"></i> <%= a.time %></span>
+              <span><i class="fas fa-hourglass-half"></i> <%= a.duration %> دقيقة</span>
+              <% if (a.location) { %><span><i class="fas fa-map-pin"></i> <%= a.location %></span><% } %>
+            </div>
+            <% if (a.notes) { %><p class="appt-notes"><%= a.notes %></p><% } %>
+            <div class="appt-reminders-tags">
+              <% if (a.reminders && a.reminders.length > 0) { %>
+              <% var reminderLabels = { '15min':'قبل 15 دقيقة', '30min':'قبل 30 دقيقة', '1hour':'قبل ساعة', '1day':'قبل يوم' }; %>
+              <% a.reminders.forEach(function(r) { %>
+              <span class="reminder-tag"><i class="fas fa-bell"></i> <%= reminderLabels[r.type] || r.type %></span>
+              <% }) %>
+              <% } %>
+            </div>
+          </div>
+          <div class="appt-actions">
+            <span class="appt-status" style="color:<%= statusColor[a.status] || 'var(--secondary)' %>;"><i class="fas fa-<%= statusIcon[a.status] || 'circle' %>"></i> <%= statusMap[a.status] || a.status %></span>
+            <div class="appt-btns">
+              <% if (a.status === 'scheduled') { %>
+              <form method="POST" action="/scheduler/appointments/<%= a._id %>/status" style="display:inline;">
+                <input type="hidden" name="status" value="confirmed">
+                <button type="submit" class="btn-icon-sm success" title="تأكيد"><i class="fas fa-check"></i></button>
+              </form>
+              <% } %>
+              <% if (a.status !== 'cancelled' && a.status !== 'completed') { %>
+              <form method="POST" action="/scheduler/appointments/<%= a._id %>/status" style="display:inline;">
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="btn-icon-sm danger" title="إلغاء"><i class="fas fa-times"></i></button>
+              </form>
+              <% } %>
+              <form method="POST" action="/scheduler/appointments/<%= a._id %>/delete" style="display:inline;" onsubmit="return confirm('حذف هذا الموعد؟')">
+                <button type="submit" class="btn-icon-sm muted" title="حذف"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="sched-empty">
+        <div class="sched-empty-icon"><i class="fas fa-calendar-day"></i></div>
+        <h3>لا توجد مواعيد قادمة</h3>
+        <p>أضف موعداً جديداً للبدء في تنظيم جدولك الطبي</p>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('addAppointmentModal').style.display='flex'"><i class="fas fa-plus"></i> إضافة موعد</button>
+      </div>
+      <% } %>
+
+      <% if (past.length > 0) { %>
+      <details class="past-appts" style="margin-top:1.5rem;">
+        <summary style="cursor:pointer;font-size:0.9rem;color:var(--text-muted);font-weight:600;"><i class="fas fa-history"></i> المواعيد السابقة (<%= past.length %>)</summary>
+        <div class="appt-list" style="margin-top:0.75rem;">
+          <% past.forEach(function(a) {
+            var d = new Date(a.date);
+            var statusMap = { scheduled:'مجدول', confirmed:'مؤكد', completed:'مكتمل', cancelled:'ملغي', missed:'فائت' };
+            var statusColor = { scheduled:'#f59e0b', confirmed:'#22c55e', completed:'var(--secondary)', cancelled:'#ef4444', missed:'#6b7280' };
+          %>
+          <div class="appt-card past">
+            <div class="appt-date-col">
+              <div class="appt-day"><%= d.getDate() %></div>
+              <div class="appt-month"><%= d.toLocaleDateString('ar-SA', { month: 'short' }) %></div>
+            </div>
+            <div class="appt-info">
+              <strong style="font-size:0.88rem;"><%= a.doctorName || (a.doctor ? a.doctor.name : 'طبيب') %></strong>
+              <div class="appt-meta"><span><i class="fas fa-clock"></i> <%= a.time %></span></div>
+            </div>
+            <span class="appt-status" style="color:<%= statusColor[a.status] %>;font-size:0.78rem;"><%= statusMap[a.status] || a.status %></span>
+          </div>
+          <% }) %>
+        </div>
+      </details>
+      <% } %>
+    </div>
+
+    <div class="sched-panel" id="panelReminders" style="<%= tab !== 'reminders' ? 'display:none' : '' %>">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <h2 style="font-size:1.05rem;margin:0;"><i class="fas fa-pills" style="color:#22c55e;"></i> تذكيرات الأدوية</h2>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('addReminderModal').style.display='flex'"><i class="fas fa-plus"></i> تذكير جديد</button>
+      </div>
+
+      <% if (reminders.length > 0) { %>
+      <div class="reminder-grid">
+        <% var dayLabels = { sat:'السبت', sun:'الأحد', mon:'الإثنين', tue:'الثلاثاء', wed:'الأربعاء', thu:'الخميس', fri:'الجمعة' }; %>
+        <% reminders.forEach(function(r) { %>
+        <div class="reminder-card <%= r.isActive ? '' : 'inactive' %>">
+          <div class="reminder-header">
+            <div class="reminder-drug-icon"><i class="fas fa-capsules"></i></div>
+            <div class="reminder-drug-info">
+              <strong><%= r.drug %></strong>
+              <% if (r.dosage) { %><span class="reminder-dosage"><%= r.dosage %></span><% } %>
+            </div>
+            <div class="reminder-toggle-wrap">
+              <form method="POST" action="/scheduler/reminders/<%= r._id %>/toggle" style="display:inline;">
+                <button type="submit" class="reminder-toggle-btn <%= r.isActive ? 'on' : 'off' %>" title="<%= r.isActive ? 'إيقاف' : 'تفعيل' %>">
+                  <i class="fas fa-<%= r.isActive ? 'toggle-on' : 'toggle-off' %>"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="reminder-times">
+            <% r.times.forEach(function(t) { %>
+            <div class="reminder-time-chip">
+              <i class="fas fa-bell"></i> <%= t %>
+              <button class="taken-btn" onclick="markTaken('<%= r._id %>', '<%= t %>', this)" title="تم تناوله"><i class="fas fa-check"></i></button>
+            </div>
+            <% }) %>
+          </div>
+          <div class="reminder-days">
+            <% ['sat','sun','mon','tue','wed','thu','fri'].forEach(function(d) { %>
+            <span class="day-chip <%= r.days.includes(d) ? 'active' : '' %>"><%= dayLabels[d].slice(0,3) %></span>
+            <% }) %>
+          </div>
+          <% if (r.notes) { %><p class="reminder-notes"><i class="fas fa-sticky-note"></i> <%= r.notes %></p><% } %>
+          <div class="reminder-footer">
+            <% if (r.endDate) { %><span class="reminder-end"><i class="fas fa-calendar-times"></i> ينتهي: <%= new Date(r.endDate).toLocaleDateString('ar-SA') %></span><% } %>
+            <form method="POST" action="/scheduler/reminders/<%= r._id %>/delete" style="display:inline;margin-right:auto;" onsubmit="return confirm('حذف هذا التذكير؟')">
+              <button type="submit" class="btn-icon-sm danger" title="حذف"><i class="fas fa-trash"></i></button>
+            </form>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="sched-empty">
+        <div class="sched-empty-icon"><i class="fas fa-prescription-bottle-alt"></i></div>
+        <h3>لا توجد تذكيرات</h3>
+        <p>أضف تذكيراً لأدويتك حتى لا تنسى مواعيدها</p>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('addReminderModal').style.display='flex'"><i class="fas fa-plus"></i> إضافة تذكير</button>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addAppointmentModal" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2><i class="fas fa-calendar-plus"></i> موعد جديد</h2>
+      <button class="modal-close" onclick="document.getElementById('addAppointmentModal').style.display='none'"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" action="/scheduler/appointments/add" class="modal-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>الطبيب</label>
+          <% if (doctors.length > 0) { %>
+          <select name="doctorId" id="doctorSelect" onchange="var opt=this.options[this.selectedIndex];document.getElementById('doctorNameInput').value=opt.text;">
+            <option value="">-- اختر طبيب --</option>
+            <% doctors.forEach(function(d) { %>
+            <option value="<%= d._id %>"><%= d.name %></option>
+            <% }) %>
+          </select>
+          <% } else { %>
+          <input type="text" name="doctorName" id="doctorNameInput" placeholder="اسم الطبيب">
+          <% } %>
+        </div>
+        <div class="form-group">
+          <label>التخصص</label>
+          <input type="text" name="specialty" placeholder="مثال: باطنية">
+        </div>
+      </div>
+      <% if (doctors.length > 0) { %>
+      <input type="hidden" name="doctorName" id="doctorNameInput" value="">
+      <% } %>
+      <div class="form-row">
+        <div class="form-group">
+          <label>التاريخ *</label>
+          <input type="date" name="date" required min="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+        <div class="form-group">
+          <label>الوقت *</label>
+          <input type="time" name="time" required>
+        </div>
+        <div class="form-group">
+          <label>المدة (دقيقة)</label>
+          <select name="duration">
+            <option value="15">15 دقيقة</option>
+            <option value="30" selected>30 دقيقة</option>
+            <option value="45">45 دقيقة</option>
+            <option value="60">ساعة</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>المكان</label>
+        <input type="text" name="location" placeholder="مثال: مستشفى الملك فيصل التخصصي">
+      </div>
+      <div class="form-group">
+        <label>ملاحظات</label>
+        <textarea name="notes" rows="2" placeholder="أي ملاحظات إضافية..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>التذكيرات</label>
+        <div class="reminder-checks">
+          <label class="check-item"><input type="checkbox" name="reminders" value="15min"> قبل 15 دقيقة</label>
+          <label class="check-item"><input type="checkbox" name="reminders" value="30min"> قبل 30 دقيقة</label>
+          <label class="check-item"><input type="checkbox" name="reminders" value="1hour" checked> قبل ساعة</label>
+          <label class="check-item"><input type="checkbox" name="reminders" value="1day"> قبل يوم</label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-calendar-plus"></i> حجز الموعد</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addReminderModal" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2><i class="fas fa-pills"></i> تذكير دواء جديد</h2>
+      <button class="modal-close" onclick="document.getElementById('addReminderModal').style.display='none'"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" action="/scheduler/reminders/add" class="modal-form">
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
+          <label>اسم الدواء *</label>
+          <input type="text" name="drug" required placeholder="مثال: بنادول">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>الجرعة</label>
+          <input type="text" name="dosage" placeholder="مثال: 500mg">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>أوقات التذكير *</label>
+        <div id="timesContainer">
+          <div class="time-row">
+            <input type="time" name="times" required>
+            <button type="button" class="btn-icon-sm" onclick="addTimeRow()" title="إضافة وقت"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>أيام التكرار</label>
+        <div class="days-checks">
+          <% var dayLabelsAll = { sat:'السبت', sun:'الأحد', mon:'الإثنين', tue:'الثلاثاء', wed:'الأربعاء', thu:'الخميس', fri:'الجمعة' }; %>
+          <% ['sat','sun','mon','tue','wed','thu','fri'].forEach(function(d) { %>
+          <label class="day-check"><input type="checkbox" name="days" value="<%= d %>" checked> <%= dayLabelsAll[d] %></label>
+          <% }) %>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>تاريخ البدء</label>
+          <input type="date" name="startDate" value="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+        <div class="form-group">
+          <label>تاريخ الانتهاء (اختياري)</label>
+          <input type="date" name="endDate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ملاحظات</label>
+        <textarea name="notes" rows="2" placeholder="تعليمات خاصة..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-bell"></i> إضافة التذكير</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.scheduler-tabs { display:flex; gap:0.5rem; margin-bottom:1.25rem; border-bottom:2px solid var(--border); padding-bottom:0; }
+.sched-tab { background:none; border:none; padding:0.75rem 1.25rem; font-size:0.9rem; font-weight:600; color:var(--text-muted); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; font-family:inherit; display:flex; align-items:center; gap:0.5rem; }
+.sched-tab:hover { color:var(--text-color); }
+.sched-tab.active { color:var(--secondary); border-bottom-color:var(--secondary); }
+.tab-count { background:rgba(18,169,155,0.1); color:var(--secondary); font-size:0.72rem; padding:2px 7px; border-radius:10px; font-weight:700; }
+.sched-tab.active .tab-count { background:var(--secondary); color:#fff; }
+
+.appt-list { display:flex; flex-direction:column; gap:0.6rem; }
+.appt-card { display:flex; gap:1rem; padding:1rem 1.25rem; background:var(--card-bg); border:1px solid var(--border); border-radius:14px; transition:all 0.2s; align-items:flex-start; }
+.appt-card:hover { border-color:rgba(18,169,155,0.3); box-shadow:0 2px 12px rgba(18,169,155,0.06); }
+.appt-card.past { opacity:0.6; }
+.appt-date-col { text-align:center; min-width:55px; flex-shrink:0; }
+.appt-day { font-size:1.6rem; font-weight:800; color:var(--secondary); line-height:1; }
+.appt-month { font-size:0.72rem; color:var(--text-muted); margin-top:2px; }
+.appt-weekday { font-size:0.68rem; color:var(--text-muted); }
+.appt-info { flex:1; min-width:0; }
+.appt-title { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.3rem; }
+.appt-title strong { font-size:0.95rem; }
+.appt-spec { font-size:0.72rem; background:rgba(18,169,155,0.08); color:var(--secondary); padding:2px 8px; border-radius:8px; }
+.appt-meta { display:flex; gap:0.75rem; flex-wrap:wrap; font-size:0.78rem; color:var(--text-muted); margin-bottom:0.25rem; }
+.appt-meta span { display:flex; align-items:center; gap:0.25rem; }
+.appt-meta i { font-size:0.7rem; color:var(--secondary); }
+.appt-notes { font-size:0.78rem; color:var(--text-muted); margin:0.25rem 0 0; }
+.appt-reminders-tags { display:flex; gap:0.3rem; flex-wrap:wrap; margin-top:0.3rem; }
+.reminder-tag { font-size:0.68rem; background:rgba(245,158,11,0.1); color:#f59e0b; padding:2px 6px; border-radius:6px; display:flex; align-items:center; gap:0.2rem; }
+.reminder-tag i { font-size:0.6rem; }
+.appt-actions { display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; flex-shrink:0; }
+.appt-status { font-size:0.78rem; font-weight:600; display:flex; align-items:center; gap:0.3rem; white-space:nowrap; }
+.appt-btns { display:flex; gap:0.3rem; }
+.btn-icon-sm { width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.7rem; transition:all 0.2s; }
+.btn-icon-sm.success:hover { background:#22c55e; color:#fff; border-color:#22c55e; }
+.btn-icon-sm.danger:hover { background:#ef4444; color:#fff; border-color:#ef4444; }
+.btn-icon-sm.muted:hover { background:var(--text-muted); color:#fff; border-color:var(--text-muted); }
+
+.reminder-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1rem; }
+.reminder-card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:1.25rem; transition:all 0.2s; }
+.reminder-card:hover { border-color:rgba(34,197,94,0.3); }
+.reminder-card.inactive { opacity:0.5; }
+.reminder-header { display:flex; gap:0.75rem; align-items:center; margin-bottom:0.75rem; }
+.reminder-drug-icon { width:42px; height:42px; border-radius:12px; background:rgba(34,197,94,0.1); display:flex; align-items:center; justify-content:center; color:#22c55e; font-size:1.1rem; flex-shrink:0; }
+.reminder-drug-info { flex:1; }
+.reminder-drug-info strong { display:block; font-size:0.95rem; }
+.reminder-dosage { font-size:0.78rem; color:var(--text-muted); }
+.reminder-toggle-btn { background:none; border:none; font-size:1.5rem; cursor:pointer; }
+.reminder-toggle-btn.on { color:#22c55e; }
+.reminder-toggle-btn.off { color:var(--text-muted); }
+.reminder-times { display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+.reminder-time-chip { display:flex; align-items:center; gap:0.3rem; background:rgba(18,169,155,0.08); color:var(--secondary); padding:0.3rem 0.6rem; border-radius:8px; font-size:0.82rem; font-weight:600; }
+.reminder-time-chip i { font-size:0.7rem; }
+.taken-btn { background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:0.7rem; margin-right:0.2rem; transition:color 0.2s; }
+.taken-btn:hover { color:#22c55e; }
+.taken-btn.done { color:#22c55e; }
+.reminder-days { display:flex; gap:0.3rem; margin-bottom:0.5rem; }
+.day-chip { font-size:0.68rem; padding:3px 6px; border-radius:6px; background:var(--bg-color); color:var(--text-muted); font-weight:600; }
+.day-chip.active { background:rgba(18,169,155,0.1); color:var(--secondary); }
+.reminder-notes { font-size:0.78rem; color:var(--text-muted); margin:0 0 0.5rem; display:flex; align-items:center; gap:0.3rem; }
+.reminder-notes i { color:#f59e0b; font-size:0.7rem; }
+.reminder-footer { display:flex; align-items:center; gap:0.5rem; }
+.reminder-end { font-size:0.75rem; color:var(--text-muted); display:flex; align-items:center; gap:0.3rem; }
+.reminder-end i { color:var(--secondary); font-size:0.7rem; }
+
+.sched-empty { text-align:center; padding:3rem 1rem; }
+.sched-empty-icon { width:70px; height:70px; border-radius:20px; background:rgba(18,169,155,0.08); display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; font-size:1.8rem; color:var(--secondary); }
+.sched-empty h3 { font-size:1rem; margin:0 0 0.3rem; }
+.sched-empty p { font-size:0.85rem; color:var(--text-muted); margin:0 0 1rem; }
+
+.reminder-checks, .days-checks { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.check-item, .day-check { display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; cursor:pointer; }
+.check-item input, .day-check input { accent-color:var(--secondary); }
+.time-row { display:flex; gap:0.5rem; align-items:center; margin-bottom:0.4rem; }
+.time-row input { flex:1; }
+
+@media (max-width:640px) {
+  .appt-card { flex-wrap:wrap; }
+  .appt-date-col { flex-direction:row; display:flex; gap:0.5rem; align-items:baseline; min-width:auto; }
+  .reminder-grid { grid-template-columns:1fr; }
+}
+</style>
+
+<script>
+function switchTab(tab) {
+  document.getElementById('panelAppointments').style.display = tab === 'appointments' ? '' : 'none';
+  document.getElementById('panelReminders').style.display = tab === 'reminders' ? '' : 'none';
+  document.querySelectorAll('.sched-tab').forEach(function(t, i) {
+    t.classList.toggle('active', (i === 0 && tab === 'appointments') || (i === 1 && tab === 'reminders'));
+  });
+  var url = new URL(window.location);
+  url.searchParams.set('tab', tab);
+  history.replaceState(null, '', url);
+}
+
+function addTimeRow() {
+  var container = document.getElementById('timesContainer');
+  var row = document.createElement('div');
+  row.className = 'time-row';
+  row.innerHTML = '<input type="time" name="times" required><button type="button" class="btn-icon-sm danger" onclick="this.parentElement.remove()" title="إزالة"><i class="fas fa-minus"></i></button>';
+  container.appendChild(row);
+}
+
+function markTaken(id, time, btn) {
+  fetch('/scheduler/reminders/' + id + '/taken', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ time: time })
+  }).then(function(r) { return r.json(); }).then(function(data) {
+    if (data.success) {
+      btn.classList.add('done');
+      btn.innerHTML = '<i class="fas fa-check-double"></i>';
+      btn.disabled = true;
+    }
+  });
+}
+</script>
+<%- include('../partials/footer') %>

@@ -84,6 +84,7 @@ const meetingsRoutes = require('./modules/meetings/meetings.routes');
 const medicalProfileRoutes = require('./modules/medical/medical-profile.routes');
 const emailRoutes = require('./modules/email/email.routes');
 const mapsRoutes = require('./modules/maps/maps.routes');
+const schedulerRoutes = require('./modules/scheduler/scheduler.routes');
 
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
@@ -101,6 +102,7 @@ app.use('/meetings', meetingsRoutes);
 app.use('/medical-profile', medicalProfileRoutes);
 app.use('/email', emailRoutes);
 app.use('/maps', mapsRoutes);
+app.use('/scheduler', schedulerRoutes);
 
 const connectedUsers = new Map();
 
