@@ -36,7 +36,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     });
   } catch (err) {
     console.error('Scheduler error:', err);
-    req.flash('error', 'حدث خطأ في تحميل المواعيد');
+    req.session.error = 'حدث خطأ في تحميل المواعيد';
     res.redirect('/dashboard');
   }
 });
@@ -46,13 +46,13 @@ router.post('/appointments/add', isAuthenticated, async (req, res) => {
     const { doctorId, doctorName, specialty, date, time, duration, location, notes, reminders } = req.body;
 
     if (!date || !time) {
-      req.flash('error', 'يرجى تحديد التاريخ والوقت');
+      req.session.error = 'يرجى تحديد التاريخ والوقت';
       return res.redirect('/scheduler');
     }
 
     const appointmentDate = new Date(date);
     if (appointmentDate < new Date(new Date().setHours(0, 0, 0, 0))) {
-      req.flash('error', 'لا يمكن حجز موعد في تاريخ سابق');
+      req.session.error = 'لا يمكن حجز موعد في تاريخ سابق';
       return res.redirect('/scheduler');
     }
 
@@ -79,11 +79,11 @@ router.post('/appointments/add', isAuthenticated, async (req, res) => {
       reminders: remindersList
     });
 
-    req.flash('success', 'تم إضافة الموعد بنجاح');
+    req.session.success = 'تم إضافة الموعد بنجاح';
     res.redirect('/scheduler');
   } catch (err) {
     console.error('Add appointment error:', err);
-    req.flash('error', 'حدث خطأ في إضافة الموعد');
+    req.session.error = 'حدث خطأ في إضافة الموعد';
     res.redirect('/scheduler');
   }
 });
@@ -93,28 +93,28 @@ router.post('/appointments/:id/status', isAuthenticated, async (req, res) => {
     const { status } = req.body;
     const validStatuses = ['scheduled', 'confirmed', 'completed', 'cancelled', 'missed'];
     if (!validStatuses.includes(status)) {
-      req.flash('error', 'حالة غير صحيحة');
+      req.session.error = 'حالة غير صحيحة';
       return res.redirect('/scheduler');
     }
 
     const appt = await Appointment.findById(req.params.id);
     if (!appt) {
-      req.flash('error', 'الموعد غير موجود');
+      req.session.error = 'الموعد غير موجود';
       return res.redirect('/scheduler');
     }
 
     const userId = req.session.user._id;
     if (appt.patient.toString() !== userId && (!appt.doctor || appt.doctor.toString() !== userId) && req.session.user.role !== 'admin') {
-      req.flash('error', 'غير مصرح');
+      req.session.error = 'غير مصرح';
       return res.redirect('/scheduler');
     }
 
     appt.status = status;
     await appt.save();
-    req.flash('success', 'تم تحديث حالة الموعد');
+    req.session.success = 'تم تحديث حالة الموعد';
     res.redirect('/scheduler');
   } catch (err) {
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ';
     res.redirect('/scheduler');
   }
 });
@@ -123,19 +123,19 @@ router.post('/appointments/:id/delete', isAuthenticated, async (req, res) => {
   try {
     const appt = await Appointment.findById(req.params.id);
     if (!appt) {
-      req.flash('error', 'الموعد غير موجود');
+      req.session.error = 'الموعد غير موجود';
       return res.redirect('/scheduler');
     }
     const userId = req.session.user._id;
     if (appt.patient.toString() !== userId && req.session.user.role !== 'admin') {
-      req.flash('error', 'غير مصرح');
+      req.session.error = 'غير مصرح';
       return res.redirect('/scheduler');
     }
     await Appointment.findByIdAndDelete(req.params.id);
-    req.flash('success', 'تم حذف الموعد');
+    req.session.success = 'تم حذف الموعد';
     res.redirect('/scheduler');
   } catch (err) {
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ';
     res.redirect('/scheduler');
   }
 });
@@ -145,7 +145,7 @@ router.post('/reminders/add', isAuthenticated, async (req, res) => {
     const { drug, dosage, times, days, startDate, endDate, notes } = req.body;
 
     if (!drug || !times) {
-      req.flash('error', 'يرجى إدخال اسم الدواء وأوقات التذكير');
+      req.session.error = 'يرجى إدخال اسم الدواء وأوقات التذكير';
       return res.redirect('/scheduler?tab=reminders');
     }
 
@@ -153,7 +153,7 @@ router.post('/reminders/add', isAuthenticated, async (req, res) => {
     const daysArr = days ? (Array.isArray(days) ? days : [days]) : ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
 
     if (timesArr.length === 0) {
-      req.flash('error', 'يرجى تحديد وقت واحد على الأقل');
+      req.session.error = 'يرجى تحديد وقت واحد على الأقل';
       return res.redirect('/scheduler?tab=reminders');
     }
 
@@ -168,11 +168,11 @@ router.post('/reminders/add', isAuthenticated, async (req, res) => {
       notes: (notes || '').trim()
     });
 
-    req.flash('success', 'تم إضافة التذكير بنجاح');
+    req.session.success = 'تم إضافة التذكير بنجاح';
     res.redirect('/scheduler?tab=reminders');
   } catch (err) {
     console.error('Add reminder error:', err);
-    req.flash('error', 'حدث خطأ في إضافة التذكير');
+    req.session.error = 'حدث خطأ في إضافة التذكير';
     res.redirect('/scheduler?tab=reminders');
   }
 });
@@ -181,15 +181,15 @@ router.post('/reminders/:id/toggle', isAuthenticated, async (req, res) => {
   try {
     const reminder = await Reminder.findOne({ _id: req.params.id, user: req.session.user._id });
     if (!reminder) {
-      req.flash('error', 'التذكير غير موجود');
+      req.session.error = 'التذكير غير موجود';
       return res.redirect('/scheduler?tab=reminders');
     }
     reminder.isActive = !reminder.isActive;
     await reminder.save();
-    req.flash('success', reminder.isActive ? 'تم تفعيل التذكير' : 'تم إيقاف التذكير');
+    req.session.success = reminder.isActive ? 'تم تفعيل التذكير' : 'تم إيقاف التذكير');
     res.redirect('/scheduler?tab=reminders');
   } catch (err) {
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ';
     res.redirect('/scheduler?tab=reminders');
   }
 });
@@ -197,10 +197,10 @@ router.post('/reminders/:id/toggle', isAuthenticated, async (req, res) => {
 router.post('/reminders/:id/delete', isAuthenticated, async (req, res) => {
   try {
     await Reminder.findOneAndDelete({ _id: req.params.id, user: req.session.user._id });
-    req.flash('success', 'تم حذف التذكير');
+    req.session.success = 'تم حذف التذكير';
     res.redirect('/scheduler?tab=reminders');
   } catch (err) {
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ';
     res.redirect('/scheduler?tab=reminders');
   }
 });

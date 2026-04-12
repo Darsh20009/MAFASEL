@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error('Physiotherapy page error:', err);
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ في تحميل الصفحة';
     res.redirect('/dashboard');
   }
 });
@@ -77,7 +77,7 @@ router.get('/specialist/:id', async (req, res) => {
   try {
     const specialist = await Specialist.findById(req.params.id).populate('center').populate('reviews.patient', 'name avatar');
     if (!specialist) {
-      req.flash('error', 'الأخصائي غير موجود');
+      req.session.error = 'الأخصائي غير موجود';
       return res.redirect('/physiotherapy/specialists');
     }
     res.render('pages/physio-specialist-profile', {
@@ -94,19 +94,35 @@ router.post('/request', isAuthenticated, async (req, res) => {
   try {
     const { specialistId, specialization, symptoms, sessionType, priority } = req.body;
 
+    if (!symptoms || !symptoms.trim()) {
+      req.session.error = 'يرجى وصف الأعراض';
+      return res.redirect('back');
+    }
+
+    let price = 30;
+    if (specialistId) {
+      try {
+        const specialist = await Specialist.findById(specialistId);
+        if (specialist) {
+          price = sessionType === 'consultation' ? (specialist.consultationFee || 30) : (specialist.sessionFee || 30);
+        }
+      } catch (e) {}
+    }
+
     const consultation = await Consultation.create({
       patient: req.session.user._id,
-      specialty: specialization || 'علاج طبيعي',
-      symptoms: symptoms,
+      specialty: specialization || 'علاج طبيعي عام',
+      symptoms: symptoms.trim(),
       priority: priority || 'medium',
+      price,
+      paymentStatus: 'unpaid',
       status: 'pending'
     });
 
-    req.flash('success', 'تم إرسال طلب الأخصائي بنجاح! سيتم التواصل معك قريباً.');
-    res.redirect('/consultations');
+    res.redirect('/consultations/' + consultation._id + '/checkout');
   } catch (err) {
     console.error('Request specialist error:', err);
-    req.flash('error', 'حدث خطأ في إرسال الطلب');
+    req.session.error = 'حدث خطأ في إرسال الطلب';
     res.redirect('/physiotherapy');
   }
 });
@@ -128,10 +144,10 @@ router.post('/specialist/:id/review', isAuthenticated, async (req, res) => {
     specialist.reviewCount = specialist.reviews.length;
     await specialist.save();
 
-    req.flash('success', 'تم إضافة تقييمك بنجاح');
+    req.session.success = 'تم إضافة تقييمك بنجاح';
     res.redirect('/physiotherapy/specialist/' + req.params.id);
   } catch (err) {
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ في إضافة التقييم';
     res.redirect('/physiotherapy/specialists');
   }
 });

@@ -176,14 +176,9 @@
         <% } %>
       </div>
       <% } %>
-      <p>تواصل مع الأخصائي واحجز موعدك الآن</p>
+      <p>اختر نوع الخدمة وأدخل بياناتك لإتمام الحجز</p>
       <% if (user) { %>
-      <form method="POST" action="/physiotherapy/request" style="display:inline">
-        <input type="hidden" name="specialistId" value="<%= specialist._id %>">
-        <input type="hidden" name="specialization" value="<%= (specialist.specializations || [])[0] || 'علاج طبيعي' %>">
-        <input type="hidden" name="symptoms" value="طلب حجز جلسة مع الأخصائي <%= specialist.name %>">
-        <button type="submit" class="sp-book-btn"><i class="fas fa-paper-plane"></i> طلب حجز</button>
-      </form>
+      <button class="sp-book-btn" onclick="openBookingModal()"><i class="fas fa-calendar-plus"></i> احجز الآن</button>
       <% } else { %>
       <a href="/login" class="sp-book-btn"><i class="fas fa-sign-in-alt"></i> سجّل دخولك للحجز</a>
       <% } %>
@@ -236,4 +231,89 @@
     </div>
   </div>
 </div>
+
+<% if (user) { %>
+<div id="bookingModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:20px;padding:1.8rem;width:min(92vw,440px);max-height:90vh;overflow-y:auto;animation:sheetUp 0.3s ease">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+      <h3 style="font-size:1rem;font-weight:800;color:#101d23"><i class="fas fa-calendar-check" style="color:#12a99b"></i> تفاصيل الحجز</h3>
+      <button onclick="closeBookingModal()" style="background:none;border:none;font-size:1.2rem;color:#999;cursor:pointer">×</button>
+    </div>
+
+    <form method="POST" action="/physiotherapy/request" id="bookingForm">
+      <input type="hidden" name="specialistId" value="<%= specialist._id %>">
+      <input type="hidden" name="specialization" value="<%= (specialist.specializations || [])[0] || 'علاج طبيعي عام' %>">
+
+      <% if (specialist.consultationFee > 0 && specialist.sessionFee > 0) { %>
+      <div style="margin-bottom:1rem">
+        <label style="font-size:0.82rem;font-weight:700;color:#101d23;display:block;margin-bottom:0.5rem">نوع الخدمة</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem">
+          <label style="border:2px solid #e2e8f0;border-radius:12px;padding:0.8rem;cursor:pointer;text-align:center;transition:all 0.2s" id="optConsult">
+            <input type="radio" name="sessionType" value="consultation" style="display:none" onchange="updatePrice()" required>
+            <div style="font-size:1.1rem;font-weight:800;color:#12a99b"><%= specialist.consultationFee %> ر.س</div>
+            <div style="font-size:0.72rem;color:#666">استشارة</div>
+          </label>
+          <label style="border:2px solid #e2e8f0;border-radius:12px;padding:0.8rem;cursor:pointer;text-align:center;transition:all 0.2s" id="optSession">
+            <input type="radio" name="sessionType" value="session" style="display:none" onchange="updatePrice()" required>
+            <div style="font-size:1.1rem;font-weight:800;color:#12a99b"><%= specialist.sessionFee %> ر.س</div>
+            <div style="font-size:0.72rem;color:#666">جلسة علاج</div>
+          </label>
+        </div>
+      </div>
+      <% } else { %>
+      <input type="hidden" name="sessionType" value="<%= specialist.consultationFee > 0 ? 'consultation' : 'session' %>">
+      <% } %>
+
+      <div style="margin-bottom:1rem">
+        <label style="font-size:0.82rem;font-weight:700;color:#101d23;display:block;margin-bottom:0.4rem">الشكوى أو سبب الحجز</label>
+        <textarea name="symptoms" required rows="4" placeholder="اشرح حالتك أو سبب الحجز بالتفصيل..." style="width:100%;padding:0.7rem;border:1px solid #e2e8f0;border-radius:10px;font-size:0.85rem;font-family:Tajawal;resize:vertical;box-sizing:border-box"></textarea>
+      </div>
+
+      <div style="margin-bottom:1rem">
+        <label style="font-size:0.82rem;font-weight:700;color:#101d23;display:block;margin-bottom:0.4rem">الأولوية</label>
+        <select name="priority" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:10px;font-family:Tajawal;font-size:0.85rem">
+          <option value="low">منخفضة</option>
+          <option value="medium" selected>متوسطة</option>
+          <option value="high">مرتفعة</option>
+          <option value="urgent">عاجلة</option>
+        </select>
+      </div>
+
+      <div style="background:#e6faf8;border-radius:10px;padding:0.8rem;margin-bottom:1rem;font-size:0.8rem;color:#0d8a7f">
+        <i class="fas fa-info-circle"></i> سيتم توجيهك لصفحة الدفع بعد تأكيد الطلب
+      </div>
+
+      <button type="submit" style="width:100%;padding:0.9rem;border:none;border-radius:12px;background:linear-gradient(135deg,#12a99b,#0d8a7e);color:#fff;font-size:1rem;font-weight:800;cursor:pointer;font-family:Tajawal">
+        <i class="fas fa-arrow-left"></i> متابعة للدفع
+      </button>
+    </form>
+  </div>
+</div>
+<style>
+@keyframes sheetUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+</style>
+<script>
+function openBookingModal() {
+  var m = document.getElementById('bookingModal');
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeBookingModal() {
+  document.getElementById('bookingModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function updatePrice() {
+  var radios = document.querySelectorAll('input[name="sessionType"]');
+  radios.forEach(function(r) {
+    var lbl = r.closest('label');
+    if (lbl) lbl.style.borderColor = r.checked ? '#12a99b' : '#e2e8f0';
+    if (lbl) lbl.style.background = r.checked ? '#e6faf8' : '#fff';
+  });
+}
+document.getElementById('bookingModal').addEventListener('click', function(e) {
+  if (e.target === this) closeBookingModal();
+});
+</script>
+<% } %>
+
 <%- include('../partials/footer') %>

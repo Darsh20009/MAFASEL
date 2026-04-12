@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error('Maps error:', err);
-    req.flash('error', 'حدث خطأ في تحميل الخريطة');
+    req.session.error = 'حدث خطأ في تحميل الخريطة';
     res.redirect('/dashboard');
   }
 });
@@ -48,11 +48,11 @@ router.post('/add', isAuthenticated, isAdmin, async (req, res) => {
   try {
     const { name, type, lat, lng, address, city, phone, workingHours, description, services } = req.body;
     if (!name || !type || !lat || !lng) {
-      req.flash('error', 'يرجى تعبئة جميع الحقول المطلوبة');
+      req.session.error = 'يرجى تعبئة جميع الحقول المطلوبة';
       return res.redirect('/maps');
     }
     if (!['hospital', 'pharmacy', 'physiotherapy_center'].includes(type)) {
-      req.flash('error', 'نوع الموقع غير صحيح');
+      req.session.error = 'نوع الموقع غير صحيح';
       return res.redirect('/maps');
     }
     await Location.create({
@@ -68,11 +68,11 @@ router.post('/add', isAuthenticated, isAdmin, async (req, res) => {
       services: services ? services.split(',').map(s => s.trim()).filter(Boolean) : [],
       addedBy: req.session.user._id
     });
-    req.flash('success', 'تمت إضافة الموقع بنجاح');
+    req.session.success = 'تمت إضافة الموقع بنجاح';
     res.redirect('/maps');
   } catch (err) {
     console.error('Add location error:', err);
-    req.flash('error', 'حدث خطأ في إضافة الموقع');
+    req.session.error = 'حدث خطأ في إضافة الموقع';
     res.redirect('/maps');
   }
 });
@@ -80,10 +80,10 @@ router.post('/add', isAuthenticated, isAdmin, async (req, res) => {
 router.post('/delete/:id', isAuthenticated, isAdmin, async (req, res) => {
   try {
     await Location.findByIdAndDelete(req.params.id);
-    req.flash('success', 'تم حذف الموقع');
+    req.session.success = 'تم حذف الموقع';
     res.redirect('/maps');
   } catch (err) {
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ';
     res.redirect('/maps');
   }
 });
@@ -95,10 +95,10 @@ router.post('/toggle/:id', isAuthenticated, isAdmin, async (req, res) => {
       loc.isActive = !loc.isActive;
       await loc.save();
     }
-    req.flash('success', 'تم تحديث حالة الموقع');
+    req.session.success = 'تم تحديث حالة الموقع';
     res.redirect('/maps');
   } catch (err) {
-    req.flash('error', 'حدث خطأ');
+    req.session.error = 'حدث خطأ';
     res.redirect('/maps');
   }
 });

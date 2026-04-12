@@ -1,0 +1,7 @@
+Google OAuth configured successfully
+Callback URL: https://b057e40f-ef56-4c03-9828-c5b0fdd4c504-00-1m91106f5aern.janeway.replit.dev/api/auth/google/callback
+MongoDB connected successfully
+Demo skip: doctor@mafasel.com - E11000 duplicate key error collection: test.users index: phone_1 dup key: { phone: "0500000002" }
+MAFASEL server running on port 5000
+[NAFATH-DEV] طلب نفاذ - الهوية: 2277131963 - رمز التحقق: 49
+SIGTERM received, shutting down gracefully...
