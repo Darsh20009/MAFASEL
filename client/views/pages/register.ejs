@@ -75,15 +75,8 @@
 </div>
 
 <script>
-var isProduction = '<%= typeof process !== "undefined" ? (process.env.NODE_ENV || "development") : "development" %>' === 'production';
-var appleAvailableMsg = '<%= typeof t === "function" ? t("auth.apple_unavailable") : "التسجيل عبر Apple غير متاح في بيئة التطوير" %>';
-
 function handleAppleRegister(e) {
   e.preventDefault();
-  if (!isProduction) {
-    alert(appleAvailableMsg);
-    return;
-  }
   window.location.href = '/api/auth/apple';
 }
 
