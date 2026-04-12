@@ -30,6 +30,7 @@ NlCEcNa9xS5Xt0xvbSySgHAcFy4FzwlUnQ1dEg9eYLUxs/2ddOqPMSKm4EJOQsYg
 VPFADSEm
 -----END PRIVATE KEY-----"""
 APPLE_CLIENT_ID = "com.mafaseltech.mafaseltech"
+SMTP2GO_API_KEY = "api-9185601B31184187B68AAE7A0C0952C5"
 
 [workflows]
 runButton = "Project"

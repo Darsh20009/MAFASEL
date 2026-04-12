@@ -7,6 +7,7 @@ const Consultation = require('../medical/consultation.model');
 const Order = require('../orders/order.model');
 const { fireNotify } = require('../notifications/notification.service');
 const Groq = require('groq-sdk');
+const { templates, sendEmail } = require('../email/email.service');
 
 function esc(str) {
   if (!str) return '';
@@ -140,6 +141,18 @@ router.post('/room/:id/reply', isAuthenticated, isAdmin, async (req, res) => {
         });
         fireNotify(req.app, pId.toString(), 'رد من الدعم الفني', text.trim().substring(0, 80), {
           type: 'info', link: '/chat/room/' + room._id
+        }).catch(() => {});
+
+        User.findById(pId).select('email name role').then(u => {
+          if (u && u.email && !['admin', 'moderator', 'doctor', 'pharmacist', 'employee'].includes(u.role)) {
+            const { html, subject } = templates.supportReply({
+              userName: u.name || '',
+              message: text.trim(),
+              agentName: req.session.user.name,
+              roomId: room._id
+            });
+            sendEmail({ to: u.email, subject, html }).catch(() => {});
+          }
         }).catch(() => {});
       }
     });

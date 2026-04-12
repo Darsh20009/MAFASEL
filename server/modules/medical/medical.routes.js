@@ -24,7 +24,7 @@ router.get('/new', isAuthenticated, (req, res) => {
 router.post('/new', isAuthenticated, async (req, res) => {
   try {
     const { specialty, symptoms, priority } = req.body;
-    await Consultation.create({
+    const consultation = await Consultation.create({
       patient: req.session.user._id,
       specialty,
       symptoms,
@@ -33,6 +33,18 @@ router.post('/new', isAuthenticated, async (req, res) => {
     await fireNotifyAdmins(req.app, 'استشارة جديدة', `طلب استشارة جديدة من ${req.session.user.name}`, {
       type: 'info', link: '/admin/consultations'
     });
+
+    if (req.session.user.email) {
+      const { templates, sendEmail } = require('../email/email.service');
+      const { html, subject } = templates.consultationBooked({
+        patientName: req.session.user.name,
+        specialty,
+        doctorName: '',
+        consultationId: consultation._id.toString().slice(-8).toUpperCase()
+      });
+      sendEmail({ to: req.session.user.email, subject, html }).catch(() => {});
+    }
+
     req.session.success = 'تم إرسال طلب الاستشارة بنجاح';
     res.redirect('/consultations');
   } catch (err) {

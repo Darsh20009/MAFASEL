@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../users/user.model');
+const { sendTemplateEmail, templates, sendEmail } = require('../email/email.service');
 
 function buildSessionUser(user) {
   return {
@@ -134,6 +135,13 @@ router.post('/register', async (req, res) => {
     await logLogin(user, 'register', req);
     req.session.user = buildSessionUser(user);
     req.session.success = 'تم إنشاء حسابك بنجاح';
+
+    if (user.email) {
+      sendTemplateEmail('welcome', user.email, user.name).catch(err => {
+        console.error('Welcome email error:', err);
+      });
+    }
+
     res.redirect('/dashboard');
   } catch (err) {
     req.session.error = 'حدث خطأ في إنشاء الحساب';
@@ -171,6 +179,13 @@ router.post('/login/phone', async (req, res) => {
 
     if (process.env.NODE_ENV !== 'production') {
       console.log(`[OTP-DEV] رمز التحقق لـ ${cleanPhone}: ${otp}`);
+    }
+
+    if (user.email) {
+      const { html, subject } = templates.otp(otp, user.name || '');
+      sendEmail({ to: user.email, subject, html }).catch(err => {
+        console.error('OTP email error:', err);
+      });
     }
 
     res.json({
