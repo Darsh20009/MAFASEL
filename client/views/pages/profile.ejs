@@ -343,8 +343,8 @@ async function registerWebAuthn() {
     const optRes = await fetch('/auth/webauthn/register-options', { method: 'POST' });
     const optData = await optRes.json();
     if (!optData.success) return alert(optData.message);
-    const { startRegistration } = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@10.0.0/+esm');
-    const regResp = await startRegistration(optData.options);
+    const { startRegistration } = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13.3.0/+esm');
+    const regResp = await startRegistration({ optionsJSON: optData.options });
     const verRes = await fetch('/auth/webauthn/register-verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

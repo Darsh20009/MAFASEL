@@ -327,8 +327,8 @@ async function loginWebAuthn() {
     const optData = await optRes.json();
     if (!optData.success) return alert(optData.message);
 
-    const { startAuthentication } = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@10.0.0/+esm');
-    const authResp = await startAuthentication(optData.options);
+    const { startAuthentication } = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13.3.0/+esm');
+    const authResp = await startAuthentication({ optionsJSON: optData.options });
 
     const verRes = await fetch('/auth/webauthn/login-verify', {
       method: 'POST',
@@ -351,8 +351,15 @@ if (window.PublicKeyCredential) {
   window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
     .then(function(available) {
       if (available) {
-        var btn = document.getElementById('webauthnBtn');
-        if (btn) btn.style.display = '';
+        fetch('/auth/webauthn/has-credentials', { method: 'POST' })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.hasCredentials) {
+              var btn = document.getElementById('webauthnBtn');
+              if (btn) btn.style.display = '';
+            }
+          })
+          .catch(function() {});
       }
     })
     .catch(function() {});

@@ -641,10 +641,13 @@ router.post('/auth/webauthn/register-options', async (req, res) => {
     const rpName = 'منصة مفاصل';
     const rpID = (process.env.REPLIT_DEV_DOMAIN || 'localhost').split(':')[0];
 
+    const userIdStr = user._id.toString();
+    const userIdBytes = new TextEncoder().encode(userIdStr);
+
     const options = await generateRegistrationOptions({
       rpName,
       rpID,
-      userID: user._id.toString(),
+      userID: userIdBytes,
       userName: user.email || user.phone || user.name,
       userDisplayName: user.name,
       attestationType: 'none',
@@ -688,15 +691,21 @@ router.post('/auth/webauthn/register-verify', async (req, res) => {
     });
 
     if (verification.verified && verification.registrationInfo) {
-      const { credentialID, credentialPublicKey, counter, credentialDeviceType, credentialBackedUp } = verification.registrationInfo;
+      const regInfo = verification.registrationInfo;
+      const credential = regInfo.credential || regInfo;
+
+      const credId = credential.id || (credential.credentialID ? Buffer.from(credential.credentialID).toString('base64url') : null);
+      const pubKey = credential.publicKey
+        ? (typeof credential.publicKey === 'string' ? credential.publicKey : Buffer.from(credential.publicKey).toString('base64url'))
+        : (credential.credentialPublicKey ? Buffer.from(credential.credentialPublicKey).toString('base64url') : null);
 
       user.webauthnCredentials.push({
-        credentialId: Buffer.from(credentialID).toString('base64url'),
-        publicKey: Buffer.from(credentialPublicKey).toString('base64url'),
-        counter,
-        deviceType: credentialDeviceType,
-        backedUp: credentialBackedUp,
-        transports: req.body.response?.transports || []
+        credentialId: credId,
+        publicKey: pubKey,
+        counter: credential.counter || regInfo.counter || 0,
+        deviceType: regInfo.credentialDeviceType || credential.deviceType || 'singleDevice',
+        backedUp: regInfo.credentialBackedUp || credential.backedUp || false,
+        transports: req.body.response?.transports || credential.transports || []
       });
       user.webauthnChallenge = undefined;
       await user.save();
@@ -708,6 +717,15 @@ router.post('/auth/webauthn/register-verify', async (req, res) => {
   } catch (err) {
     console.error('WebAuthn register verify error:', err);
     res.status(500).json({ success: false, message: 'حدث خطأ' });
+  }
+});
+
+router.post('/auth/webauthn/has-credentials', async (req, res) => {
+  try {
+    const count = await User.countDocuments({ 'webauthnCredentials.0': { $exists: true } });
+    res.json({ success: true, hasCredentials: count > 0 });
+  } catch (err) {
+    res.json({ success: true, hasCredentials: false });
   }
 });
 
@@ -750,9 +768,9 @@ router.post('/auth/webauthn/login-verify', async (req, res) => {
       expectedChallenge: req.session.webauthnChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
-      authenticator: {
-        credentialID: Buffer.from(cred.credentialId, 'base64url'),
-        credentialPublicKey: Buffer.from(cred.publicKey, 'base64url'),
+      credential: {
+        id: cred.credentialId,
+        publicKey: Buffer.from(cred.publicKey, 'base64url'),
         counter: cred.counter,
         transports: cred.transports || []
       }
