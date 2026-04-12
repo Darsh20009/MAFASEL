@@ -1,0 +1,374 @@
+<%- include('../partials/header') %>
+<%
+var schedDate = new Date(meeting.scheduledAt);
+var now = new Date();
+var minutesDiff = (schedDate - now) / 60000;
+var canJoin = meeting.status !== 'cancelled' && minutesDiff < 30;
+var statusLabel = meeting.status === 'cancelled' ? 'ملغي' : minutesDiff > 0 ? 'مجدول' : 'قابل للانضمام';
+var statusColor = meeting.status === 'cancelled' ? '#ef4444' : minutesDiff > 0 ? '#f59e0b' : '#22c55e';
+%>
+
+<div class="main-content">
+  <div class="container" style="max-width:900px;">
+
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <a href="/meetings" class="btn btn-outline btn-sm"><i class="fas fa-arrow-right"></i></a>
+        <div>
+          <h1 style="margin:0;font-size:1.2rem;"><%= meeting.title %></h1>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.2rem;">
+            <span style="width:8px;height:8px;border-radius:50%;background:<%= statusColor %>;display:inline-block;"></span>
+            <span style="font-size:0.8rem;color:var(--text-muted);"><%= statusLabel %></span>
+          </div>
+        </div>
+      </div>
+      <% if (isCreator && meeting.status !== 'cancelled') { %>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-outline btn-sm" onclick="sendNotification()" id="notifyBtn">
+          <i class="fas fa-bell"></i> إرسال تذكير
+        </button>
+        <form method="POST" action="/meetings/<%= meeting._id %>/cancel" onsubmit="return confirm('هل تريد إلغاء هذا الاجتماع؟')">
+          <button class="btn btn-sm" style="background:#ef4444;color:#fff;"><i class="fas fa-times-circle"></i> إلغاء الاجتماع</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Meeting Info Card -->
+    <div class="mr-info-card">
+      <div class="mr-info-grid">
+        <div class="mr-info-item">
+          <div class="mr-info-icon" style="background:rgba(18,169,155,0.1);color:var(--secondary);"><i class="fas fa-calendar-alt"></i></div>
+          <div><small>الموعد</small><strong><%= schedDate.toLocaleDateString('ar-SA', {weekday:'long',day:'numeric',month:'long',year:'numeric'}) %></strong></div>
+        </div>
+        <div class="mr-info-item">
+          <div class="mr-info-icon" style="background:rgba(99,102,241,0.1);color:#6366f1;"><i class="fas fa-clock"></i></div>
+          <div><small>الوقت</small><strong><%= schedDate.toLocaleTimeString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></strong></div>
+        </div>
+        <div class="mr-info-item">
+          <div class="mr-info-icon" style="background:rgba(249,115,22,0.1);color:#f97316;"><i class="fas fa-hourglass-half"></i></div>
+          <div><small>المدة</small><strong><%= meeting.durationMinutes %> دقيقة</strong></div>
+        </div>
+        <% if (meeting.joinCode) { %>
+        <div class="mr-info-item">
+          <div class="mr-info-icon" style="background:rgba(234,179,8,0.1);color:#ca8a04;"><i class="fas fa-key"></i></div>
+          <div><small>رمز الانضمام</small><strong class="join-code" id="joinCodeEl"><%= meeting.joinCode %></strong></div>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- Participants -->
+      <div class="mr-participants">
+        <% if (meeting.createdBy) { %>
+        <div class="mr-part-card">
+          <% if (meeting.createdBy.avatar) { %><img src="<%= meeting.createdBy.avatar %>" class="mr-part-avatar" alt=""><% } else { %><div class="mr-part-avatar mr-part-ph"><i class="fas fa-user-md"></i></div><% } %>
+          <div>
+            <strong><%= meeting.createdBy.name %></strong>
+            <small><%= meeting.createdBy.specialty || ({admin:'مدير',moderator:'مشرف',doctor:'طبيب'}[meeting.createdBy.role]) || 'منشئ الاجتماع' %></small>
+          </div>
+        </div>
+        <% } %>
+        <% if (meeting.patient) { %>
+        <div class="mr-part-sep"><i class="fas fa-arrows-alt-h"></i></div>
+        <div class="mr-part-card">
+          <% if (meeting.patient.avatar) { %><img src="<%= meeting.patient.avatar %>" class="mr-part-avatar" alt=""><% } else { %><div class="mr-part-avatar mr-part-ph" style="background:#6366f1;"><i class="fas fa-user"></i></div><% } %>
+          <div>
+            <strong><%= meeting.patient.name %></strong>
+            <small>المريض</small>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <% if (meeting.notes) { %>
+      <div class="mr-notes">
+        <i class="fas fa-sticky-note"></i> <em><%= meeting.notes %></em>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Join section -->
+    <% if (meeting.status === 'cancelled') { %>
+    <div class="mr-cancelled-box">
+      <i class="fas fa-times-circle" style="font-size:2.5rem;color:#ef4444;"></i>
+      <h3>تم إلغاء هذا الاجتماع</h3>
+      <a href="/meetings" class="btn btn-outline">العودة للاجتماعات</a>
+    </div>
+
+    <% } else if (canJoin) { %>
+    <!-- Video room embed -->
+    <div class="mr-video-section">
+      <div class="mr-video-header">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="live-dot"></span>
+          <strong>غرفة الاجتماع</strong>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="btn btn-sm" style="background:var(--secondary);color:#fff;" onclick="openExternal()">
+            <i class="fas fa-external-link-alt"></i> فتح في نافذة جديدة
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="copyLink()">
+            <i class="fas fa-copy"></i> نسخ الرابط
+          </button>
+        </div>
+      </div>
+      <div class="mr-iframe-wrap">
+        <iframe
+          src="<%= meeting.meetingLink %>"
+          allow="camera; microphone; display-capture; fullscreen; autoplay; clipboard-write"
+          allowfullscreen
+          class="mr-iframe"
+          id="meetIframe"
+          title="<%= meeting.title %>"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- Share links -->
+    <div class="mr-share-card">
+      <div class="mr-share-title"><i class="fas fa-share-alt"></i> مشاركة رابط الاجتماع</div>
+      <div class="mr-share-options">
+        <div class="mr-link-box">
+          <span class="mr-link-label">رابط مباشر</span>
+          <div class="mr-link-row">
+            <span class="mr-link-text" id="meetLinkEl"><%= meeting.meetingLink %></span>
+            <button class="btn btn-sm btn-outline" onclick="copyText('<%= meeting.meetingLink %>')"><i class="fas fa-copy"></i></button>
+          </div>
+        </div>
+        <div class="mr-link-box">
+          <span class="mr-link-label">رابط الانضمام برمز</span>
+          <div class="mr-link-row">
+            <span class="mr-link-text"><%= meeting.joinUrl %></span>
+            <button class="btn btn-sm btn-outline" onclick="copyText('<%= meeting.joinUrl %>')"><i class="fas fa-copy"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% } else { %>
+    <!-- Countdown / Join early -->
+    <div class="mr-countdown-box">
+      <div class="mr-countdown-icon"><i class="fas fa-clock"></i></div>
+      <h3>الاجتماع لم يبدأ بعد</h3>
+      <p>سيكون الاجتماع متاحاً للانضمام قبل 30 دقيقة من الموعد المحدد</p>
+      <div class="mr-countdown" id="countdownEl"></div>
+      <div class="mr-share-card" style="margin-top:1.5rem;">
+        <div class="mr-share-title"><i class="fas fa-share-alt"></i> شارك الرابط مسبقاً</div>
+        <div class="mr-share-options">
+          <div class="mr-link-box">
+            <span class="mr-link-label">رابط مباشر</span>
+            <div class="mr-link-row">
+              <span class="mr-link-text"><%= meeting.meetingLink %></span>
+              <button class="btn btn-sm btn-outline" onclick="copyText('<%= meeting.meetingLink %>')"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+          <div class="mr-link-box">
+            <span class="mr-link-label">رمز الانضمام</span>
+            <div class="mr-link-row">
+              <span class="mr-link-text" style="font-size:1.4rem;font-weight:800;letter-spacing:4px;color:var(--secondary);"><%= meeting.joinCode %></span>
+              <button class="btn btn-sm btn-outline" onclick="copyText('<%= meeting.joinCode %>')"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="<%= meeting.meetingLink %>" target="_blank" class="btn btn-primary" style="margin-top:1rem;">
+        <i class="fas fa-video"></i> فتح الاجتماع الآن على أي حال
+      </a>
+    </div>
+    <% } %>
+
+  </div>
+</div>
+
+<style>
+.mr-info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.mr-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.mr-info-item {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.mr-info-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.mr-info-item small { display: block; font-size: 0.72rem; color: var(--text-muted); }
+.mr-info-item strong { font-size: 0.88rem; }
+.join-code { font-size: 1.1rem; letter-spacing: 3px; color: var(--secondary); }
+
+.mr-participants {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+.mr-part-card { display: flex; align-items: center; gap: 0.75rem; }
+.mr-part-avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; }
+.mr-part-ph { background: var(--secondary); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; }
+.mr-part-card strong { display: block; font-size: 0.9rem; }
+.mr-part-card small { font-size: 0.75rem; color: var(--text-muted); }
+.mr-part-sep { color: var(--text-muted); font-size: 1.2rem; }
+
+.mr-notes { font-size: 0.83rem; color: var(--text-muted); display: flex; align-items: flex-start; gap: 0.5rem; }
+
+/* Video section */
+.mr-video-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.mr-video-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap; gap: 0.5rem;
+}
+.live-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+  animation: blink-live 1.5s infinite;
+}
+@keyframes blink-live { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.mr-iframe-wrap {
+  position: relative;
+  padding-bottom: 60%;
+  height: 0;
+}
+.mr-iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+
+/* Share card */
+.mr-share-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.mr-share-title { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+.mr-share-options { display: flex; flex-direction: column; gap: 0.75rem; }
+.mr-link-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.65rem 1rem; }
+.mr-link-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 0.3rem; }
+.mr-link-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.mr-link-text { font-size: 0.8rem; word-break: break-all; flex: 1; font-family: monospace; direction: ltr; text-align: left; }
+
+/* Countdown box */
+.mr-countdown-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.mr-countdown-icon { font-size: 3rem; color: var(--secondary); margin-bottom: 1rem; }
+.mr-countdown-box h3 { margin: 0 0 0.5rem; }
+.mr-countdown-box p { color: var(--text-muted); font-size: 0.87rem; margin-bottom: 1.5rem; }
+.mr-countdown {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--secondary);
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cancelled box */
+.mr-cancelled-box {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: var(--card-bg);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+</style>
+
+<script>
+var meetingLink = '<%= meeting.meetingLink %>';
+var scheduledAt = new Date('<%= meeting.scheduledAt %>');
+
+function openExternal() {
+  window.open(meetingLink, '_blank');
+}
+
+function copyLink() {
+  copyText(meetingLink);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(function() {
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-success';
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;';
+    toast.innerHTML = '<i class="fas fa-check-circle"></i> <span>تم النسخ</span>';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 2000);
+  }).catch(function(){
+    prompt('انسخ الرابط:', text);
+  });
+}
+
+async function sendNotification() {
+  var btn = document.getElementById('notifyBtn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+  try {
+    var res = await fetch('/meetings/<%= meeting._id %>/notify', { method: 'POST', headers: {'Content-Type':'application/json'} });
+    var data = await res.json();
+    if (data.success) {
+      btn.innerHTML = '<i class="fas fa-check"></i> تم الإرسال';
+      setTimeout(function(){ btn.disabled=false; btn.innerHTML='<i class="fas fa-bell"></i> إرسال تذكير'; }, 3000);
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-bell"></i> إرسال تذكير';
+  }
+}
+
+/* Countdown timer */
+var countdownEl = document.getElementById('countdownEl');
+if (countdownEl) {
+  function updateCountdown() {
+    var diff = scheduledAt - new Date();
+    if (diff <= 0) {
+      countdownEl.textContent = 'حان الوقت!';
+      setTimeout(function(){ location.reload(); }, 2000);
+      return;
+    }
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    countdownEl.textContent =
+      String(h).padStart(2,'0') + ':' +
+      String(m).padStart(2,'0') + ':' +
+      String(s).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+}
+</script>
+<%- include('../partials/footer') %>

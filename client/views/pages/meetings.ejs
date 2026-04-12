@@ -1,0 +1,246 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1 style="margin:0;"><i class="fas fa-video" style="color:var(--secondary);"></i> الاجتماعات</h1>
+        <p style="color:var(--text-muted);margin:0.25rem 0 0;font-size:0.9rem;">اجتماعات الفيديو مع فريقك الطبي</p>
+      </div>
+      <% if (canCreate) { %>
+      <button class="btn btn-primary" onclick="document.getElementById('createModal').style.display='flex'">
+        <i class="fas fa-plus"></i> إنشاء اجتماع
+      </button>
+      <% } %>
+    </div>
+
+    <% if (meetings.length === 0) { %>
+    <div class="empty-state" style="text-align:center;padding:4rem 1rem;color:var(--text-muted);">
+      <i class="fas fa-video" style="font-size:3.5rem;opacity:0.3;"></i>
+      <h3 style="margin:1rem 0 0.5rem;">لا توجد اجتماعات بعد</h3>
+      <p><% if (canCreate) { %>ابدأ بإنشاء أول اجتماع من الزر أعلاه<% } else { %>سيتم إشعارك عند جدولة موعد اجتماع<% } %></p>
+    </div>
+    <% } else { %>
+
+    <!-- Stats strip -->
+    <div class="meet-stats">
+      <% var upcoming = meetings.filter(function(m){ return m.status==='scheduled' && new Date(m.scheduledAt) > new Date(); }); %>
+      <% var today = meetings.filter(function(m){ var d=new Date(m.scheduledAt); var n=new Date(); return d.toDateString()===n.toDateString() && m.status==='scheduled'; }); %>
+      <div class="meet-stat"><span class="ms-num"><%= upcoming.length %></span><span class="ms-lbl">قادمة</span></div>
+      <div class="meet-stat" style="border-color:#22c55e;"><span class="ms-num" style="color:#22c55e;"><%= today.length %></span><span class="ms-lbl">اليوم</span></div>
+      <div class="meet-stat" style="border-color:#94a3b8;"><span class="ms-num" style="color:#94a3b8;"><%= meetings.filter(function(m){return m.status==='cancelled';}).length %></span><span class="ms-lbl">ملغية</span></div>
+    </div>
+
+    <div class="meetings-list">
+      <% meetings.forEach(function(m) { %>
+      <%
+        var isUpcoming = m.status === 'scheduled' && new Date(m.scheduledAt) > new Date();
+        var isPast = new Date(m.scheduledAt) < new Date() && m.status === 'scheduled';
+        var isCancelled = m.status === 'cancelled';
+        var statusLabel = isCancelled ? 'ملغي' : isPast ? 'منتهي' : 'مجدول';
+        var statusClass = isCancelled ? 'badge-error' : isPast ? 'badge-secondary' : 'badge-success';
+        var schedDate = new Date(m.scheduledAt);
+        var isToday = schedDate.toDateString() === new Date().toDateString();
+      %>
+      <a href="/meetings/<%= m._id %>" class="meeting-card <%= isCancelled?'meeting-cancelled':'' %>">
+        <div class="mc-icon-wrap <%= isToday&&!isCancelled?'mc-today':'' %>">
+          <i class="fas fa-video"></i>
+        </div>
+        <div class="mc-body">
+          <div class="mc-top">
+            <strong class="mc-title"><%= m.title %></strong>
+            <span class="badge <%= statusClass %>"><%= statusLabel %></span>
+          </div>
+          <div class="mc-meta">
+            <span><i class="fas fa-calendar"></i> <%= schedDate.toLocaleDateString('ar-SA', {weekday:'short',day:'numeric',month:'long'}) %></span>
+            <span><i class="fas fa-clock"></i> <%= schedDate.toLocaleTimeString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></span>
+            <span><i class="fas fa-hourglass-half"></i> <%= m.durationMinutes %> دقيقة</span>
+          </div>
+          <div class="mc-participants">
+            <% if (m.createdBy) { %>
+            <span class="mc-part"><i class="fas fa-user-md"></i> <%= m.createdBy.name %></span>
+            <% } %>
+            <% if (m.patient) { %>
+            <span class="mc-part"><i class="fas fa-user"></i> <%= m.patient.name %></span>
+            <% } %>
+            <% if (m.joinCode && !isCancelled) { %>
+            <span class="mc-code"><i class="fas fa-key"></i> <%= m.joinCode %></span>
+            <% } %>
+          </div>
+        </div>
+        <div class="mc-arrow"><i class="fas fa-chevron-left"></i></div>
+      </a>
+      <% }) %>
+    </div>
+    <% } %>
+
+  </div>
+</div>
+
+<!-- Create Meeting Modal -->
+<% if (canCreate) { %>
+<div id="createModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3><i class="fas fa-plus-circle" style="color:var(--secondary);"></i> إنشاء اجتماع جديد</h3>
+      <button class="modal-close" onclick="document.getElementById('createModal').style.display='none'"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" action="/meetings/create" class="modal-form">
+      <div class="form-group">
+        <label><i class="fas fa-heading"></i> عنوان الاجتماع</label>
+        <input type="text" name="title" required placeholder="مثال: جلسة متابعة مع المريض" value="استشارة طبية">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-calendar-alt"></i> تاريخ ووقت الاجتماع</label>
+        <input type="datetime-local" name="scheduledAt" required id="schedInput">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-hourglass-half"></i> مدة الاجتماع (بالدقائق)</label>
+        <select name="durationMinutes">
+          <option value="15">15 دقيقة</option>
+          <option value="30" selected>30 دقيقة</option>
+          <option value="45">45 دقيقة</option>
+          <option value="60">ساعة كاملة</option>
+          <option value="90">90 دقيقة</option>
+        </select>
+      </div>
+      <% if (patients.length > 0) { %>
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> المريض (اختياري)</label>
+        <select name="patientId">
+          <option value="">بدون مريض محدد</option>
+          <% patients.forEach(function(p){ %>
+          <option value="<%= p._id %>"><%= p.name %> <%= p.phone ? '— '+p.phone : p.email ? '— '+p.email : '' %></option>
+          <% }) %>
+        </select>
+      </div>
+      <% } %>
+      <div class="form-group">
+        <label><i class="fas fa-sticky-note"></i> ملاحظات (اختياري)</label>
+        <textarea name="notes" rows="2" placeholder="أي معلومات إضافية..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">
+        <i class="fas fa-video"></i> إنشاء الاجتماع وإرسال الرابط
+      </button>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<style>
+.meet-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.meet-stat {
+  flex: 1;
+  min-width: 80px;
+  background: var(--card-bg);
+  border: 1px solid var(--secondary);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+.ms-num { font-size: 1.6rem; font-weight: 800; color: var(--secondary); }
+.ms-lbl { font-size: 0.75rem; color: var(--text-muted); }
+
+.meetings-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.meeting-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  border-right: 4px solid var(--secondary);
+}
+.meeting-card:hover { box-shadow: 0 4px 20px rgba(18,169,155,0.15); transform: translateY(-2px); }
+.meeting-cancelled { opacity: 0.5; border-right-color: #ef4444; }
+.meeting-cancelled:hover { transform: none; }
+
+.mc-icon-wrap {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: rgba(18,169,155,0.1);
+  color: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.mc-today {
+  background: var(--secondary);
+  color: #fff;
+  animation: pulse-meet 2s infinite;
+}
+@keyframes pulse-meet {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(18,169,155,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(18,169,155,0); }
+}
+
+.mc-body { flex: 1; min-width: 0; }
+.mc-top { display: flex; align-items: center; gap: 0.75rem; justify-content: space-between; margin-bottom: 0.35rem; }
+.mc-title { font-size: 0.95rem; font-weight: 700; }
+.mc-meta { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+.mc-meta span { display: flex; align-items: center; gap: 0.3rem; }
+.mc-participants { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.mc-part { font-size: 0.78rem; background: var(--bg); padding: 0.15rem 0.6rem; border-radius: 20px; display: flex; align-items: center; gap: 0.3rem; border: 1px solid var(--border); }
+.mc-code { font-size: 0.78rem; background: rgba(18,169,155,0.1); color: var(--secondary); padding: 0.15rem 0.6rem; border-radius: 20px; font-weight: 700; display: flex; align-items: center; gap: 0.3rem; }
+.mc-arrow { color: var(--text-muted); font-size: 0.8rem; flex-shrink: 0; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 1rem;
+}
+.modal-box {
+  background: var(--card-bg);
+  border-radius: 20px;
+  width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h3 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.modal-close { border: none; background: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; padding: 0.25rem; }
+.modal-form { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.modal-form .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+.modal-form label { font-size: 0.83rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; }
+.modal-form input, .modal-form select, .modal-form textarea {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.9rem;
+}
+.modal-form input:focus, .modal-form select:focus, .modal-form textarea:focus { outline: none; border-color: var(--secondary); }
+</style>
+
+<script>
+// Set min datetime to now
+var schedInput = document.getElementById('schedInput');
+if (schedInput) {
+  var now = new Date();
+  now.setMinutes(now.getMinutes() + 30);
+  schedInput.min = now.toISOString().slice(0,16);
+  schedInput.value = now.toISOString().slice(0,16);
+}
+</script>
+<%- include('../partials/footer') %>
