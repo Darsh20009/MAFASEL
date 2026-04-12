@@ -2,10 +2,10 @@
 <html lang="<%= typeof lang !== 'undefined' ? lang : 'ar' %>" dir="<%= typeof dir !== 'undefined' ? dir : 'rtl' %>">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %> | <%= typeof t === 'function' ? t('site_desc') : 'منصة طبية رقمية متكاملة' %></title>
   <meta name="description" content="<%= typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'منصة مفاصل الطبية الرقمية المتكاملة - استشارات طبية، صيدلية إلكترونية، تأمين صحي، مساعد ذكي بالذكاء الاصطناعي' %>">
-  <meta name="keywords" content="مفاصل, منصة طبية, استشارات طبية, صيدلية إلكترونية, تأمين صحي, مواعيد طبية, تذكير أدوية, طبيب, صيدلي, السعودية, رعاية صحية رقمية">
+  <meta name="keywords" content="مفاصل, منصة طبية, استشارات طبية, صيدلية إلكترونية, تأمين صحي, مواعيد طبية, تذكير أدوية, أخصائي, صيدلي, السعودية, رعاية صحية رقمية">
   <meta name="author" content="مفاصل">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' && canonicalUrl ? canonicalUrl : '' %>">
@@ -19,7 +19,7 @@
   <meta name="twitter:title" content="مفاصل | منصة طبية رقمية متكاملة">
   <meta name="twitter:description" content="منصة مفاصل الطبية الرقمية المتكاملة - استشارات طبية، صيدلية إلكترونية، تأمين صحي">
   <meta name="twitter:image" content="/icons/icon-512.png">
-  <meta name="theme-color" content="#12a99b">
+  <meta name="theme-color" content="#101d23">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="icon" href="/icons/logo.png">
@@ -33,444 +33,568 @@
 
     :root {
       --accent: #12a99b;
-      --accent2: #0d7a6e;
+      --accent2: #0d8a7e;
       --primary: #101d23;
-      --text: #1a1a2e;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --bg-light: #f8fafc;
+      --card: #152028;
+      --surface: #1a2a34;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: rgba(255,255,255,0.06);
+      --glow: rgba(18,169,155,0.15);
     }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      height: 100dvh;
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+    body {
       font-family: 'Tajawal', sans-serif;
-      background: #fff;
-      overflow: hidden;
-      overscroll-behavior: none;
+      background: var(--primary);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
+    html[dir="ltr"] body { font-family: 'Inter', 'Segoe UI', sans-serif; }
 
-    /* ── WRAPPER ───────────────────────────────────────── */
-    #splash {
-      position: fixed;
-      inset: 0;
-      height: 100dvh;
-    }
-
-    /* ── SLIDES ────────────────────────────────────────── */
-    .slide {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.55s ease, transform 0.55s ease;
-      transform: translateX(-24px);
-      overflow: hidden;
-    }
-    .slide.active {
-      opacity: 1;
-      pointer-events: all;
-      transform: translateX(0);
-    }
-    .slide.exit {
-      opacity: 0;
-      transform: translateX(24px);
-      pointer-events: none;
-    }
-
-    /* ── SHARED TOP BAR (logo on every slide) ──────────── */
-    .slide-topbar {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 1rem 1.5rem 0.75rem;
-      background: #fff;
+    .landing-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 2rem;
+      background: rgba(16,29,35,0.7);
+      backdrop-filter: blur(20px) saturate(1.4);
       border-bottom: 1px solid var(--border);
-      z-index: 10;
+      transition: background 0.3s;
     }
-    .slide-topbar img {
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
+    .nav-brand { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+    .nav-brand img { width: 34px; height: 34px; }
+    .nav-brand span { font-size: 1.2rem; font-weight: 800; color: #fff; }
+    .nav-links { display: flex; align-items: center; gap: 0.5rem; }
+    .nav-links a, .nav-links button {
+      font-family: inherit; font-size: 0.82rem; font-weight: 600; padding: 0.45rem 1.1rem; border-radius: 8px;
+      text-decoration: none; cursor: pointer; border: none; transition: all 0.2s;
     }
-    .slide-topbar span {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
-    .slide-topbar .topbar-accent { color: var(--accent); }
+    .nav-link-ghost { background: transparent; color: var(--muted); }
+    .nav-link-ghost:hover { color: #fff; }
+    .nav-link-primary { background: var(--accent); color: #fff; }
+    .nav-link-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .nav-link-outline { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #fff; }
+    .nav-link-outline:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ── VIDEO SLIDE ───────────────────────────────────── */
-    #slide-video {
-      background: #fff;
-    }
-    #slide-video .slide-topbar {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
+    .hero {
       position: relative;
-      z-index: 5;
-    }
-    #slide-video .slide-topbar span { color: var(--primary); }
-    .video-wrap {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    #splash-video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      background: #fff;
+    .hero-video-bg {
+      position: absolute; inset: 0; z-index: 0;
     }
-    .video-fallback-logo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      z-index: 1;
+    .hero-video-bg video {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.25; filter: brightness(0.6);
     }
-    .video-fallback-logo img {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-      animation: logoPulse 2s ease-in-out infinite;
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(180deg, rgba(16,29,35,0.5) 0%, rgba(16,29,35,0.85) 60%, var(--primary) 100%);
     }
-    .video-fallback-logo p {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--primary);
+    .hero-grid-pattern {
+      position: absolute; inset: 0; z-index: 1;
+      background-image:
+        linear-gradient(rgba(18,169,155,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18,169,155,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
     }
-    .video-fallback-logo p span { color: var(--accent); }
-    @keyframes logoPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.8; }
+    .hero-content {
+      position: relative; z-index: 2;
+      text-align: center; padding: 8rem 1.5rem 4rem;
+      max-width: 720px;
     }
-    .video-progress {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 3px;
-      background: rgba(255,255,255,0.15);
-      z-index: 6;
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(18,169,155,0.1); border: 1px solid rgba(18,169,155,0.2);
+      color: var(--accent); font-size: 0.78rem; font-weight: 700;
+      padding: 0.35rem 1rem; border-radius: 50px; margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s ease both;
     }
-    .video-progress-bar {
-      height: 100%;
-      background: var(--accent);
-      width: 0%;
-      transition: width 0.1s linear;
+    .hero-logo {
+      width: 90px; height: 90px; margin: 0 auto 1.5rem;
+      animation: floatLogo 4s ease-in-out infinite, fadeInUp 0.8s ease 0.15s both;
+      filter: drop-shadow(0 10px 30px rgba(18,169,155,0.3));
     }
+    .hero-title {
+      font-size: clamp(2rem, 5.5vw, 3.2rem);
+      font-weight: 900; line-height: 1.25;
+      margin-bottom: 1rem;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+    .hero-title .accent { color: var(--accent); }
+    .hero-desc {
+      font-size: clamp(0.95rem, 2vw, 1.12rem);
+      color: var(--muted); line-height: 1.8;
+      max-width: 560px; margin: 0 auto 2rem;
+      animation: fadeInUp 0.8s ease 0.45s both;
+    }
+    .hero-actions {
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.6s both;
+    }
+    .btn-hero {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: inherit; font-size: 1rem; font-weight: 700;
+      padding: 0.85rem 2rem; border-radius: 12px;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.25s;
+    }
+    .btn-hero-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; box-shadow: 0 6px 24px rgba(18,169,155,0.35);
+    }
+    .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(18,169,155,0.45); }
+    .btn-hero-outline {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff;
+    }
+    .btn-hero-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 3;
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      color: var(--muted); font-size: 0.72rem; animation: bounceDown 2s ease infinite;
+    }
+    .hero-scroll-hint .scroll-line { width: 1px; height: 28px; background: linear-gradient(to bottom, var(--accent), transparent); }
 
-    /* ── SKIP BUTTON ───────────────────────────────────── */
-    #skip-btn {
-      position: fixed;
-      bottom: 1.8rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      background: rgba(16,29,35,0.08);
-      border: 1px solid rgba(16,29,35,0.15);
-      color: #101d23;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 0.6rem 2rem;
-      border-radius: 50px;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: background 0.2s;
-    }
-    #skip-btn:hover { background: rgba(16,29,35,0.14); }
+    @keyframes floatLogo { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes bounceDown { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
 
-    /* ── ONBOARDING SLIDE BODY ─────────────────────────── */
-    .onboard-body {
-      flex: 1;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 1.8rem 1.5rem 7rem;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      text-align: center;
+    section { padding: 5rem 1.5rem; position: relative; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.75rem; font-weight: 700; color: var(--accent);
+      padding: 0.3rem 0.85rem; border-radius: 50px;
+      background: rgba(18,169,155,0.08); border: 1px solid rgba(18,169,155,0.15);
+      margin-bottom: 1rem;
     }
-
-    /* Illustration circle */
-    .onboard-icon-wrap {
-      width: 88px;
-      height: 88px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.4rem;
-      flex-shrink: 0;
-    }
-    .onboard-icon-wrap.teal {
-      background: linear-gradient(135deg, #e6faf8, #b2f0ea);
-      box-shadow: 0 8px 30px rgba(18,169,155,0.18);
-    }
-    .onboard-icon-wrap.blue {
-      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-      box-shadow: 0 8px 30px rgba(59,130,246,0.18);
-    }
-    .onboard-icon-wrap.purple {
-      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
-      box-shadow: 0 8px 30px rgba(139,92,246,0.18);
-    }
-    .onboard-icon-wrap i {
-      font-size: 2.2rem;
-    }
-    .icon-teal { color: var(--accent); }
-    .icon-blue { color: #3b82f6; }
-    .icon-purple { color: #8b5cf6; }
-
-    /* Tag */
-    .onboard-tag {
-      display: inline-block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 0.28rem 0.9rem;
-      border-radius: 50px;
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 900; line-height: 1.3;
       margin-bottom: 0.75rem;
-      letter-spacing: 0.3px;
     }
-    .tag-teal { background: #e6faf8; color: var(--accent2); border: 1px solid #b2f0ea; }
-    .tag-blue { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
-    .tag-purple { background: #ede9fe; color: #7c3aed; border: 1px solid #ddd6fe; }
-
-    /* Title */
-    .onboard-title {
-      font-size: clamp(1.5rem, 5vw, 2.2rem);
-      font-weight: 900;
-      color: var(--primary);
-      line-height: 1.3;
-      margin-bottom: 0.9rem;
-    }
-    .onboard-title .acc-teal { color: var(--accent); }
-    .onboard-title .acc-blue { color: #3b82f6; }
-    .onboard-title .acc-purple { color: #8b5cf6; }
-
-    /* Desc */
-    .onboard-desc {
-      font-size: clamp(0.92rem, 2.4vw, 1.05rem);
-      color: var(--muted);
-      line-height: 1.75;
-      max-width: 440px;
-      margin-bottom: 1.6rem;
+    .section-title .accent { color: var(--accent); }
+    .section-desc {
+      font-size: 1rem; color: var(--muted);
+      line-height: 1.8; max-width: 600px; margin-bottom: 2.5rem;
     }
 
-    /* Feature pills */
-    .onboard-features {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      width: 100%;
-      max-width: 400px;
+    .features-section { background: var(--primary); }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
     }
-    .onboard-feature-item {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      background: var(--bg-light);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.8rem 1rem;
-      text-align: right;
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 1.75rem 1.5rem;
+      transition: all 0.3s; position: relative; overflow: hidden;
     }
-    .onboard-feature-item .feat-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 1rem;
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.3s;
     }
-    .feat-teal { background: #e6faf8; color: var(--accent); }
-    .feat-blue { background: #dbeafe; color: #3b82f6; }
-    .feat-purple { background: #ede9fe; color: #8b5cf6; }
-    .onboard-feature-item span {
-      color: var(--text);
-      font-size: 0.93rem;
-      font-weight: 600;
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(18,169,155,0.2); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.1rem; font-size: 1.3rem;
+    }
+    .fi-teal { background: rgba(18,169,155,0.1); color: var(--accent); }
+    .fi-blue { background: rgba(59,130,246,0.1); color: #60a5fa; }
+    .fi-purple { background: rgba(139,92,246,0.1); color: #a78bfa; }
+    .fi-amber { background: rgba(245,158,11,0.1); color: #fbbf24; }
+    .fi-rose { background: rgba(244,63,94,0.1); color: #fb7185; }
+    .fi-emerald { background: rgba(16,185,129,0.1); color: #34d399; }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .feature-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+    .banner-section {
+      background: linear-gradient(135deg, rgba(18,169,155,0.05), transparent);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .banner-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;
+    }
+    .banner-visual {
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .banner-img-stack {
+      position: relative; width: 100%; max-width: 420px;
+    }
+    .banner-img-stack img {
+      width: 100%; border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .banner-float-logo {
+      position: absolute; top: -20px; right: -15px;
+      width: 56px; height: 56px;
+      background: var(--card); border: 2px solid rgba(18,169,155,0.3);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+    .banner-float-logo img { width: 36px; height: 36px; }
+    .banner-text h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 900; line-height: 1.3; margin-bottom: 1rem; }
+    .banner-text h2 .accent { color: var(--accent); }
+    .banner-text p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+    .banner-stats {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 1.6rem; font-weight: 900; color: var(--accent); }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    .pharmacies-section { background: var(--primary); }
+    .pharmacy-scroll {
+      display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 1rem;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .pharmacy-scroll::-webkit-scrollbar { display: none; }
+    .pharmacy-card {
+      flex: 0 0 220px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 1.5rem 1.25rem; text-align: center;
+      transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit;
+    }
+    .pharmacy-card:hover { transform: translateY(-4px); border-color: rgba(18,169,155,0.2); }
+    .pharmacy-card img {
+      width: 64px; height: 64px; border-radius: 16px; object-fit: cover;
+      margin-bottom: 0.85rem; border: 2px solid var(--border);
+    }
+    .pharmacy-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .pharmacy-card p { font-size: 0.75rem; color: var(--muted); }
+
+    .ai-section {
+      background: linear-gradient(180deg, var(--primary), #0c171d);
+      overflow: hidden;
+    }
+    .ai-showcase {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+    .ai-visual {
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .ai-orb {
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(18,169,155,0.2), transparent 70%);
+      display: flex; align-items: center; justify-content: center;
+      animation: orbPulse 4s ease-in-out infinite;
+      position: relative;
+    }
+    .ai-orb::before {
+      content: ''; position: absolute; inset: -20px;
+      border-radius: 50%; border: 1px solid rgba(18,169,155,0.1);
+      animation: orbPulse 4s ease-in-out infinite reverse;
+    }
+    .ai-orb::after {
+      content: ''; position: absolute; inset: -40px;
+      border-radius: 50%; border: 1px dashed rgba(18,169,155,0.06);
+    }
+    .ai-orb img { width: 80px; height: 80px; filter: drop-shadow(0 0 20px rgba(18,169,155,0.4)); }
+    @keyframes orbPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.05);opacity:0.85} }
+    .ai-text h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 900; line-height: 1.3; margin-bottom: 0.75rem; }
+    .ai-text h2 .accent { color: var(--accent); }
+    .ai-text p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.25rem; }
+    .ai-features { display: flex; flex-direction: column; gap: 0.65rem; }
+    .ai-feat {
+      display: flex; align-items: center; gap: 0.65rem;
+      background: rgba(18,169,155,0.04); border: 1px solid rgba(18,169,155,0.08);
+      border-radius: 10px; padding: 0.7rem 1rem;
+    }
+    .ai-feat i { color: var(--accent); font-size: 0.85rem; flex-shrink: 0; }
+    .ai-feat span { font-size: 0.88rem; font-weight: 500; }
+
+    .cta-section {
+      padding: 5rem 1.5rem; text-align: center;
+      background: linear-gradient(180deg, #0c171d, var(--primary));
+      position: relative;
+    }
+    .cta-glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(18,169,155,0.08), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-logo { width: 56px; height: 56px; margin: 0 auto 1.25rem; opacity: 0.8; }
+    .cta-title {
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 900; margin-bottom: 0.75rem;
+    }
+    .cta-title .accent { color: var(--accent); }
+    .cta-desc { font-size: 1rem; color: var(--muted); line-height: 1.8; max-width: 480px; margin: 0 auto 2rem; }
+    .cta-actions { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
+
+    .landing-footer {
+      background: #0a1218; border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem; text-align: center;
+    }
+    .footer-brand { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.75rem; }
+    .footer-brand img { width: 28px; height: 28px; opacity: 0.6; }
+    .footer-brand span { font-size: 1rem; font-weight: 700; color: var(--muted); }
+    .footer-copy { font-size: 0.75rem; color: rgba(255,255,255,0.25); }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .banner-grid, .ai-showcase { grid-template-columns: 1fr; text-align: center; }
+      .banner-visual { order: -1; }
+      .ai-visual { order: -1; }
+      .banner-stats { justify-content: center; }
+      .ai-features { align-items: center; }
+      .ai-feat { width: 100%; max-width: 360px; }
+      .hero-content { padding: 7rem 1.25rem 3rem; }
+      .landing-nav { padding: 0.75rem 1rem; }
     }
 
-    /* ── LOGIN SLIDE ───────────────────────────────────── */
-    .login-body {
-      flex: 1;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem 1.5rem 6rem;
+    @media (max-width: 420px) {
+      .hero-logo { width: 70px; height: 70px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .nav-link-outline { display: none; }
     }
-    .login-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1.8rem 1.5rem;
-      width: 100%;
-      max-width: 380px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-      margin-top: 1.2rem;
-    }
-    .login-card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--muted);
-      margin-bottom: 1.1rem;
-      text-align: center;
-    }
-    .login-btns { display: flex; flex-direction: column; gap: 0.7rem; }
-    .btn-sp {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      padding: 0.9rem 1.5rem;
-      border-radius: 12px;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      text-decoration: none;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .btn-sp:active { transform: scale(0.97); }
-    .btn-sp-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      box-shadow: 0 4px 18px rgba(18,169,155,0.3);
-    }
-    .btn-sp-primary:hover { box-shadow: 0 6px 24px rgba(18,169,155,0.45); }
-    .btn-sp-outline {
-      background: #fff;
-      border: 1.5px solid var(--border);
-      color: var(--text);
-    }
-    .btn-sp-outline:hover { background: var(--bg-light); }
-    .btn-sp-ghost {
-      background: transparent;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-    .btn-sp-ghost:hover { color: var(--primary); }
-    .login-divider {
-      display: flex; align-items: center; gap: 0.75rem; margin: 0.1rem 0;
-    }
-    .login-divider-line { flex: 1; height: 1px; background: var(--border); }
-    .login-divider-text { font-size: 0.8rem; color: var(--muted); }
-
-    /* ── DOTS NAV ──────────────────────────────────────── */
-    #dots-nav {
-      position: fixed;
-      bottom: 4.8rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 0.45rem;
-      z-index: 9999;
-      transition: opacity 0.3s;
-    }
-    #dots-nav.hidden { opacity: 0; pointer-events: none; }
-    .dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--border);
-      cursor: pointer;
-      transition: background 0.3s, width 0.3s;
-    }
-    .dot.active { background: var(--accent); width: 22px; border-radius: 4px; }
-
-    /* ── NEXT BUTTON ───────────────────────────────────── */
-    #next-btn {
-      position: fixed;
-      bottom: 1.6rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      padding: 0.8rem 3.2rem;
-      border-radius: 50px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 18px rgba(18,169,155,0.35);
-      display: none;
-      white-space: nowrap;
-      transition: box-shadow 0.2s;
-    }
-    #next-btn:hover { box-shadow: 0 6px 24px rgba(18,169,155,0.5); }
-
-    /* ── RESPONSIVE ────────────────────────────────────── */
-    @media (min-width: 600px) {
-      .onboard-features { flex-direction: row; flex-wrap: wrap; max-width: 520px; }
-      .onboard-feature-item { flex: 1 1 45%; }
-    }
-    @media (max-width: 380px) {
-      .onboard-icon-wrap { width: 74px; height: 74px; }
-      .onboard-icon-wrap i { font-size: 1.9rem; }
-      .onboard-body { padding: 1.2rem 1rem 7rem; }
-    }
-
-    html[dir="ltr"] body { font-family: 'Inter', 'Segoe UI', sans-serif; text-align: left; }
-    html[dir="ltr"] .slide-topbar { direction: ltr; }
-    html[dir="ltr"] .onboard-body { text-align: left; }
-    html[dir="ltr"] .login-body { text-align: left; }
-
-    .landing-lang-toggle {
-      position: fixed;
-      top: 0.8rem;
-      left: 0.8rem;
-      z-index: 9999;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 50px;
-      padding: 0.35rem 0.8rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--primary);
-      transition: background 0.2s;
-    }
-    html[dir="rtl"] .landing-lang-toggle { left: auto; right: 0.8rem; }
-    .landing-lang-toggle:hover { background: rgba(255,255,255,1); }
-    .landing-lang-toggle i { font-size: 0.75rem; color: var(--accent); }
   </style>
 </head>
 <body>
-<button class="landing-lang-toggle" onclick="toggleLandingLang()">
-  <i class="fas fa-globe"></i>
-  <span><%= (typeof lang !== 'undefined' && lang === 'en') ? 'العربية' : 'English' %></span>
-</button>
+
+<nav class="landing-nav">
+  <a href="/" class="nav-brand">
+    <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
+    <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
+  </a>
+  <div class="nav-links">
+    <button class="nav-link-ghost" onclick="toggleLandingLang()">
+      <i class="fas fa-globe" style="margin-inline-end:3px;"></i>
+      <%= (typeof lang !== 'undefined' && lang === 'en') ? 'العربية' : 'EN' %>
+    </button>
+    <a href="/login" class="nav-link-outline"><%= typeof t === 'function' ? t('landing.login_btn') : 'تسجيل الدخول' %></a>
+    <a href="/register" class="nav-link-primary"><%= typeof t === 'function' ? t('landing.register_btn') : 'إنشاء حساب' %></a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-video-bg">
+    <video autoplay muted loop playsinline preload="auto" id="heroVideo">
+      <source src="/splash-video.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-grid-pattern"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <i class="fas fa-sparkles"></i>
+      <%= (typeof lang !== 'undefined' && lang === 'en') ? 'The Future of Healthcare in Saudi Arabia' : 'مستقبل الرعاية الصحية في السعودية' %>
+    </div>
+    <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>" class="hero-logo">
+    <h1 class="hero-title">
+      <% if (typeof lang !== 'undefined' && lang === 'en') { %>
+        All Your Health Care<br><span class="accent">In One Place</span>
+      <% } else { %>
+        كل رعايتك الصحية<br><span class="accent">في مكان واحد</span>
+      <% } %>
+    </h1>
+    <p class="hero-desc">
+      <% if (typeof lang !== 'undefined' && lang === 'en') { %>
+        An integrated digital platform that combines specialist consultations, e-pharmacy, health insurance, and an AI assistant — all at your fingertips.
+      <% } else { %>
+        منصة رقمية متكاملة تجمع بين استشارات الأخصائيين، الصيدلية الإلكترونية، التأمين الصحي، والمساعد الذكي — كل ذلك بلمسة واحدة.
+      <% } %>
+    </p>
+    <div class="hero-actions">
+      <a href="/register" class="btn-hero btn-hero-primary">
+        <i class="fas fa-rocket"></i>
+        <%= typeof t === 'function' ? t('landing.register_btn') : 'ابدأ مجاناً' %>
+      </a>
+      <a href="/login" class="btn-hero btn-hero-outline">
+        <i class="fas fa-sign-in-alt"></i>
+        <%= typeof t === 'function' ? t('landing.login_btn') : 'تسجيل الدخول' %>
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Scroll down' : 'اسحب للأسفل' %></span>
+    <div class="scroll-line"></div>
+    <i class="fas fa-chevron-down" style="font-size:0.65rem;"></i>
+  </div>
+</section>
+
+<section class="features-section" id="features">
+  <div class="section-inner reveal">
+    <div class="section-label"><i class="fas fa-grid-2"></i> <%= (typeof lang !== 'undefined' && lang === 'en') ? 'Platform Features' : 'خدمات المنصة' %></div>
+    <h2 class="section-title"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Everything you need for your' : 'كل ما تحتاجه لـ' %> <span class="accent"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'health' : 'صحتك' %></span></h2>
+    <p class="section-desc"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'An integrated digital platform that brings together medical consultations, pharmacy, insurance, and AI assistant — all in one place.' : 'منصة رقمية متكاملة تجمع بين الاستشارات الطبية والصيدلية الإلكترونية وإدارة التأمين والمساعد الذكي — كلها في مكان واحد.' %></p>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon fi-teal"><i class="fas fa-stethoscope"></i></div>
+        <h3><%= typeof t === 'function' ? t('landing.feat_sessions') : 'استشارات الأخصائيين' %></h3>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Book sessions with certified specialists in physiotherapy and rehabilitation from anywhere.' : 'احجز جلسات مع أخصائيين معتمدين في العلاج الطبيعي والتأهيل من أي مكان.' %></p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon fi-blue"><i class="fas fa-pills"></i></div>
+        <h3><%= typeof t === 'function' ? t('landing.feat_pharmacy') : 'صيدلية إلكترونية' %></h3>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Order medications from top pharmacies with fast delivery and insurance coverage.' : 'اطلب أدويتك من أفضل الصيدليات بتوصيل سريع وتغطية تأمينية.' %></p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon fi-purple"><i class="fas fa-shield-alt"></i></div>
+        <h3><%= typeof t === 'function' ? t('landing.feat_insurance') : 'إدارة التأمين' %></h3>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Track your insurance balance, coverage, and claims — all connected to your health profile.' : 'تابع رصيد التأمين، التغطية، والمطالبات — كلها مرتبطة بملفك الصحي.' %></p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon fi-amber"><i class="fas fa-id-card"></i></div>
+        <h3><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Digital Health Card' : 'البطاقة الصحية الذكية' %></h3>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Your digital health card with QR code — scan to share your medical file instantly.' : 'بطاقتك الصحية الرقمية بـ QR — امسح لمشاركة ملفك الطبي فوراً.' %></p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon fi-rose"><i class="fas fa-map-marked-alt"></i></div>
+        <h3><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Centers Map' : 'خريطة المراكز' %></h3>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Find the nearest therapy centers and pharmacies on an interactive map.' : 'اكتشف أقرب مراكز العلاج الطبيعي والصيدليات على خريطة تفاعلية.' %></p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon fi-emerald"><i class="fas fa-calendar-check"></i></div>
+        <h3><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Smart Scheduler' : 'جدولة المواعيد' %></h3>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Book, reschedule, and get smart reminders for your appointments.' : 'احجز، عدّل، واستقبل تنبيهات ذكية بمواعيدك الصحية.' %></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="banner-section" id="about">
+  <div class="section-inner">
+    <div class="banner-grid reveal">
+      <div class="banner-visual">
+        <div class="banner-img-stack">
+          <img src="/icons/banner1.png" alt="Mafasel Platform">
+          <div class="banner-float-logo">
+            <img src="/icons/logo.png" alt="Logo">
+          </div>
+        </div>
+      </div>
+      <div class="banner-text">
+        <div class="section-label"><i class="fas fa-chart-bar"></i> <%= (typeof lang !== 'undefined' && lang === 'en') ? 'Why Mafasel?' : 'لماذا مفاصل؟' %></div>
+        <h2><%= (typeof lang !== 'undefined' && lang === 'en') ? 'A platform designed for the' : 'منصة صُممت لـ' %> <span class="accent"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'future' : 'المستقبل' %></span></h2>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Built with the latest technologies to provide the best healthcare experience in Saudi Arabia — from smart consultations to instant pharmacy delivery.' : 'بُنيت بأحدث التقنيات لتقديم أفضل تجربة رعاية صحية في المملكة — من الاستشارات الذكية إلى توصيل الأدوية الفوري.' %></p>
+        <div class="banner-stats">
+          <div class="stat-item">
+            <div class="stat-num">4+</div>
+            <div class="stat-label"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Pharmacies' : 'صيدليات' %></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">70+</div>
+            <div class="stat-label"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Medications' : 'دواء متوفر' %></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">24/7</div>
+            <div class="stat-label"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'AI Assistant' : 'مساعد ذكي' %></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">5</div>
+            <div class="stat-label"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Payment Methods' : 'طرق دفع' %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pharmacies-section">
+  <div class="section-inner reveal">
+    <div class="section-label"><i class="fas fa-store"></i> <%= (typeof lang !== 'undefined' && lang === 'en') ? 'Our Pharmacies' : 'صيدلياتنا' %></div>
+    <h2 class="section-title"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Trusted' : 'صيدليات' %> <span class="accent"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'pharmacies' : 'موثوقة' %></span></h2>
+    <p class="section-desc"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Order your medications from the most trusted pharmacy chains in Saudi Arabia.' : 'اطلب أدويتك من أشهر سلاسل الصيدليات في المملكة العربية السعودية.' %></p>
+    <div class="pharmacy-scroll">
+      <a class="pharmacy-card reveal" href="/login">
+        <img src="/uploads/pharmacy/nahdi-logo.png" alt="النهدي">
+        <h4><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Nahdi Pharmacy' : 'صيدلية النهدي' %></h4>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? '1100+ branches — Free delivery' : '+1100 فرع — توصيل مجاني' %></p>
+      </a>
+      <a class="pharmacy-card reveal" href="/login">
+        <img src="/uploads/pharmacy/aldawaa-logo.png" alt="الدواء">
+        <h4><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Al-Dawaa Pharmacy' : 'صيدلية الدواء' %></h4>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? '900+ branches — Full insurance' : '+900 فرع — تغطية تأمينية شاملة' %></p>
+      </a>
+      <a class="pharmacy-card reveal" href="/login">
+        <img src="/uploads/pharmacy/lemon-logo.png" alt="ليمون">
+        <h4><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Lemon Pharmacy' : 'صيدلية ليمون' %></h4>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Natural products & supplements' : 'منتجات طبيعية ومكملات' %></p>
+      </a>
+      <a class="pharmacy-card reveal" href="/login">
+        <img src="/uploads/pharmacy/orange-logo.png" alt="أورانج">
+        <h4><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Orange Pharmacy' : 'صيدلية أورانج' %></h4>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Personal service & free consultations' : 'خدمة شخصية واستشارات مجانية' %></p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="ai-section" id="ai">
+  <div class="section-inner">
+    <div class="ai-showcase reveal">
+      <div class="ai-visual">
+        <div class="ai-orb">
+          <img src="/icons/logo.png" alt="AI Assistant">
+        </div>
+      </div>
+      <div class="ai-text">
+        <div class="section-label"><i class="fas fa-microchip"></i> <%= (typeof lang !== 'undefined' && lang === 'en') ? 'AI Assistant' : 'المساعد الذكي' %></div>
+        <h2><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Your personal' : 'مساعدك الصحي' %> <span class="accent"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'health assistant' : 'الشخصي' %></span></h2>
+        <p><%= (typeof lang !== 'undefined' && lang === 'en') ? 'An AI-powered assistant that speaks Saudi dialect, understands your health needs, and guides you to the right specialist.' : 'مساعد ذكي يتحدث اللهجة السعودية، يفهم احتياجاتك الصحية، ويوجهك للأخصائي المناسب.' %></p>
+        <div class="ai-features">
+          <div class="ai-feat">
+            <i class="fas fa-comments"></i>
+            <span><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Natural conversation in Saudi dialect' : 'محادثة طبيعية باللهجة السعودية' %></span>
+          </div>
+          <div class="ai-feat">
+            <i class="fas fa-user-md"></i>
+            <span><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Smart specialist recommendations' : 'توصيات ذكية بالأخصائي المناسب' %></span>
+          </div>
+          <div class="ai-feat">
+            <i class="fas fa-clock"></i>
+            <span><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Available 24/7 for your questions' : 'متاح ٢٤/٧ لاستفساراتك الصحية' %></span>
+          </div>
+          <div class="ai-feat">
+            <i class="fas fa-lock"></i>
+            <span><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Fully encrypted and private' : 'مشفر بالكامل وخصوصية تامة' %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="join">
+  <div class="cta-glow"></div>
+  <div class="cta-content reveal">
+    <img src="/icons/logo.png" alt="Logo" class="cta-logo">
+    <h2 class="cta-title"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Ready to start your' : 'مستعد تبدأ رحلتك' %> <span class="accent"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'health journey?' : 'الصحية؟' %></span></h2>
+    <p class="cta-desc"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Join thousands of users who trust Mafasel for their healthcare needs. Create your free account now.' : 'انضم لآلاف المستفيدين اللي يثقون بمفاصل لاحتياجاتهم الصحية. أنشئ حسابك المجاني الآن.' %></p>
+    <div class="cta-actions">
+      <a href="/register" class="btn-hero btn-hero-primary">
+        <i class="fas fa-user-plus"></i>
+        <%= typeof t === 'function' ? t('landing.register_btn') : 'إنشاء حساب مجاني' %>
+      </a>
+      <a href="/dashboard" class="btn-hero btn-hero-outline">
+        <i class="fas fa-eye"></i>
+        <%= typeof t === 'function' ? t('landing.browse_btn') : 'تصفح المنصة' %>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="landing-footer">
+  <div class="footer-brand">
+    <img src="/icons/logo.png" alt="Logo">
+    <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
+  </div>
+  <p class="footer-copy">© 2025 <%= typeof t === 'function' ? t('site_name') : 'مفاصل' %> — <%= (typeof lang !== 'undefined' && lang === 'en') ? 'All rights reserved' : 'جميع الحقوق محفوظة' %></p>
+</footer>
+
 <script>
 function toggleLandingLang() {
   var currentLang = document.documentElement.getAttribute('lang') || 'ar';
@@ -480,240 +604,19 @@ function toggleLandingLang() {
   url.searchParams.set('lang', newLang);
   window.location.href = url.toString();
 }
-</script>
-<div id="splash">
 
-  <!-- ══ SLIDE 0: VIDEO ══════════════════════════════ -->
-  <div class="slide active" id="slide-video">
-    <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
-      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
-    </div>
-    <div class="video-wrap">
-      <div class="video-fallback-logo" id="videoFallback">
-        <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
-        <p><span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span></p>
-      </div>
-      <video id="splash-video" autoplay muted playsinline preload="auto" style="position:relative;z-index:2;opacity:0;transition:opacity 0.3s;">
-        <source src="/splash-video.mp4" type="video/mp4">
-      </video>
-      <div class="video-progress">
-        <div class="video-progress-bar" id="videoProgressBar"></div>
-      </div>
-    </div>
-  </div>
+var heroVideo = document.getElementById('heroVideo');
+if (heroVideo) { heroVideo.playbackRate = 0.8; }
 
-  <!-- ══ SLIDE 1: ABOUT PLATFORM ════════════════════ -->
-  <div class="slide" id="slide-about">
-    <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
-      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
-    </div>
-    <div class="onboard-body">
-      <div class="onboard-icon-wrap teal">
-        <i class="fas fa-heartbeat icon-teal"></i>
-      </div>
-      <span class="onboard-tag tag-teal"><%= typeof t === 'function' ? t('landing.tagline') : 'منصة مفاصل الطبية' %></span>
-      <h1 class="onboard-title">
-        <%= typeof t === 'function' ? t('landing.hero_title') : 'كل رعايتك الصحية في مكان واحد' %>
-      </h1>
-      <p class="onboard-desc">
-        <%= typeof t === 'function' ? t('landing.hero_desc') : 'منصة رقمية متكاملة تجمع بين الاستشارات الطبية والصيدلية الإلكترونية وإدارة التأمين الصحي — بسهولة وأمان تام.' %>
-      </p>
-      <div class="onboard-features">
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-teal"><i class="fas fa-stethoscope"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_sessions') : 'جلسات مع أخصائيين متميزين' %></span>
-        </div>
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-teal"><i class="fas fa-pills"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_pharmacy') : 'صيدلية إلكترونية بتوصيل سريع' %></span>
-        </div>
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-teal"><i class="fas fa-shield-alt"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_insurance') : 'إدارة التأمين الصحي' %></span>
-        </div>
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-teal"><i class="fas fa-robot"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_ai') : 'مساعد ذكاء اصطناعي طبي' %></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ SLIDE 2: HEALTH TRACKING ═══════════════════ -->
-  <div class="slide" id="slide-tracking">
-    <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
-      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
-    </div>
-    <div class="onboard-body">
-      <div class="onboard-icon-wrap blue">
-        <i class="fas fa-house icon-blue"></i>
-      </div>
-      <span class="onboard-tag tag-blue"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Smart Health Tracking' : 'تتبع صحي ذكي' %></span>
-      <h1 class="onboard-title">
-        <%= typeof t === 'function' ? t('landing.tracking_title') : 'صحتك تحت إشرافك من المنزل' %>
-      </h1>
-      <p class="onboard-desc">
-        <%= typeof t === 'function' ? t('landing.tracking_desc') : 'تابع ملفك الطبي الشامل، سجّل قياساتك اليومية، واستقبل تنبيهات صحية ذكية.' %>
-      </p>
-      <div class="onboard-features">
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-blue"><i class="fas fa-file-medical"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_record') : 'ملف طبي شامل ومحمي' %></span>
-        </div>
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-blue"><i class="fas fa-bell"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_alerts') : 'تنبيهات ومواعيد صحية' %></span>
-        </div>
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-blue"><i class="fas fa-chart-line"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_tracking') : 'متابعة مؤشراتك الصحية' %></span>
-        </div>
-        <div class="onboard-feature-item">
-          <div class="feat-icon feat-blue"><i class="fas fa-comments"></i></div>
-          <span><%= typeof t === 'function' ? t('landing.feat_contact') : 'تواصل مباشر مع أخصائيك' %></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ SLIDE 3: LOGIN ══════════════════════════════ -->
-  <div class="slide" id="slide-login">
-    <div class="slide-topbar">
-      <img src="/icons/logo.png" alt="<%= typeof t === 'function' ? t('site_name') : 'مفاصل' %>">
-      <span><%= typeof t === 'function' ? t('site_name') : 'مفاصل' %></span>
-    </div>
-    <div class="login-body">
-      <div class="onboard-icon-wrap purple">
-        <i class="fas fa-user-shield icon-purple"></i>
-      </div>
-      <span class="onboard-tag tag-purple"><%= (typeof lang !== 'undefined' && lang === 'en') ? 'Start Your Health Journey' : 'ابدأ رحلتك الصحية' %></span>
-      <h1 class="onboard-title">
-        <%= typeof t === 'function' ? t('landing.join_title') : 'انضم إلى مفاصل اليوم' %>
-      </h1>
-      <p class="onboard-desc" style="margin-bottom:0;">
-        <%= typeof t === 'function' ? t('landing.join_desc') : 'سجّل دخولك أو أنشئ حساباً جديداً مجاناً وابدأ بالوصول لأفضل الخدمات الطبية.' %>
-      </p>
-      <div class="login-card">
-        <p class="login-card-title"><%= typeof t === 'function' ? t('landing.login_method') : 'اختر طريقة الدخول' %></p>
-        <div class="login-btns">
-          <a href="/login" class="btn-sp btn-sp-primary">
-            <i class="fas fa-sign-in-alt"></i> <%= typeof t === 'function' ? t('landing.login_btn') : 'تسجيل الدخول' %>
-          </a>
-          <div class="login-divider">
-            <div class="login-divider-line"></div>
-            <span class="login-divider-text"><%= typeof t === 'function' ? t('common.or') : 'أو' %></span>
-            <div class="login-divider-line"></div>
-          </div>
-          <a href="/register" class="btn-sp btn-sp-outline">
-            <i class="fas fa-user-plus"></i> <%= typeof t === 'function' ? t('landing.register_btn') : 'إنشاء حساب جديد' %>
-          </a>
-          <a href="/dashboard" class="btn-sp btn-sp-ghost">
-            <i class="fas fa-eye"></i> <%= typeof t === 'function' ? t('landing.browse_btn') : 'تصفح بدون تسجيل' %>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Skip (video slide only) -->
-<button id="skip-btn" onclick="skipVideo()">
-  <%= typeof t === 'function' ? t('landing.skip') : 'تخطي' %> <i class="fas fa-forward"></i>
-</button>
-
-<!-- Dots -->
-<div id="dots-nav" class="hidden">
-  <div class="dot" onclick="goToSlide(1)"></div>
-  <div class="dot" onclick="goToSlide(2)"></div>
-  <div class="dot" onclick="goToSlide(3)"></div>
-</div>
-
-<!-- Next -->
-<button id="next-btn" onclick="nextSlide()">
-  <%= typeof t === 'function' ? t('common.next') : 'التالي' %> <i class="fas fa-arrow-<%= (typeof lang !== 'undefined' && lang === 'en') ? 'right' : 'left' %>"></i>
-</button>
-
-<script>
-  var slides = ['slide-video','slide-about','slide-tracking','slide-login'];
-  var current = 0;
-  var video = document.getElementById('splash-video');
-  var progressBar = document.getElementById('videoProgressBar');
-  var skipBtn = document.getElementById('skip-btn');
-  var dotsNav = document.getElementById('dots-nav');
-  var nextBtn = document.getElementById('next-btn');
-  var dots = document.querySelectorAll('.dot');
-
-  video.playbackRate = 1.8;
-  video.addEventListener('playing', function() {
-    video.style.opacity = '1';
-    var fb = document.getElementById('videoFallback');
-    if (fb) fb.style.display = 'none';
-  });
-  video.addEventListener('timeupdate', function() {
-    if (video.duration) {
-      progressBar.style.width = (video.currentTime / video.duration * 100) + '%';
+var revealEls = document.querySelectorAll('.reveal');
+var revealObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
     }
   });
-  video.addEventListener('ended', function() { goToSlide(1); });
-  video.addEventListener('error', function() { setTimeout(function(){ goToSlide(1); }, 300); });
-  setTimeout(function() { if (current === 0) goToSlide(1); }, 7000);
-
-  function skipVideo() { goToSlide(1); }
-
-  function goToSlide(idx) {
-    var prev = document.getElementById(slides[current]);
-    prev.classList.remove('active');
-    prev.classList.add('exit');
-    setTimeout(function(){ prev.classList.remove('exit'); }, 600);
-    current = idx;
-    document.getElementById(slides[current]).classList.add('active');
-    updateUI();
-  }
-
-  function nextSlide() {
-    if (current < slides.length - 1) goToSlide(current + 1);
-  }
-
-  function updateUI() {
-    if (current === 0) {
-      skipBtn.style.display = 'flex';
-      dotsNav.classList.add('hidden');
-      nextBtn.style.display = 'none';
-    } else if (current === slides.length - 1) {
-      skipBtn.style.display = 'none';
-      dotsNav.classList.remove('hidden');
-      nextBtn.style.display = 'none';
-      updateDots();
-    } else {
-      skipBtn.style.display = 'none';
-      dotsNav.classList.remove('hidden');
-      nextBtn.style.display = 'block';
-      updateDots();
-    }
-  }
-
-  function updateDots() {
-    dots.forEach(function(d, i) {
-      d.classList.toggle('active', i === current - 1);
-    });
-  }
-
-  // Swipe support
-  var tx = 0, ty = 0;
-  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
-  document.addEventListener('touchend', function(e){
-    if (current === 0) return;
-    var dx = e.changedTouches[0].clientX - tx;
-    var dy = Math.abs(e.changedTouches[0].clientY - ty);
-    if (Math.abs(dx) > 50 && dy < 70) {
-      if (dx < 0 && current < slides.length - 1) goToSlide(current + 1);
-      if (dx > 0 && current > 1) goToSlide(current - 1);
-    }
-  }, { passive: true });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(function(el) { revealObserver.observe(el); });
 </script>
 </body>
 </html>
