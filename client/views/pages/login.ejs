@@ -130,7 +130,7 @@
         <i class="fab fa-apple"></i>
         <span>Apple</span>
       </a>
-      <button class="btn-social btn-webauthn" onclick="loginWebAuthn()">
+      <button id="webauthnBtn" class="btn-social btn-webauthn" onclick="loginWebAuthn()" style="display:none">
         <i class="fas fa-fingerprint"></i>
         <span>البصمة / الوجه</span>
       </button>
@@ -340,6 +340,17 @@ async function loginWebAuthn() {
     if (e.name === 'NotAllowedError') return;
     alert('المتصفح لا يدعم تسجيل الدخول بالبصمة أو الحساب غير مسجل');
   }
+}
+
+if (window.PublicKeyCredential) {
+  window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+    .then(function(available) {
+      if (available) {
+        var btn = document.getElementById('webauthnBtn');
+        if (btn) btn.style.display = '';
+      }
+    })
+    .catch(function() {});
 }
 </script>
 <%- include('../partials/footer') %>
