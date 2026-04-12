@@ -73,29 +73,105 @@
       <% } %>
     </div>
 
+    <% if (insurance) { %>
+    <div class="card" style="padding:1rem 1.25rem;border-radius:14px;margin-bottom:1.25rem;border:1px solid rgba(18,169,155,0.15);background:linear-gradient(135deg,rgba(18,169,155,0.05),transparent);">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="width:38px;height:38px;border-radius:10px;background:var(--secondary)15;display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-shield-alt" style="color:var(--secondary);"></i>
+        </div>
+        <div style="flex:1;">
+          <strong style="font-size:0.9rem;"><%= insurance.company %></strong>
+          <div style="font-size:0.72rem;color:var(--text-muted);">بوليصة: <%= insurance.policyNumber %> &middot; <%= insurance.type === 'vip' ? 'VIP' : insurance.type === 'premium' ? 'بريميوم' : 'أساسي' %></div>
+        </div>
+        <span style="background:#22c55e15;color:#22c55e;font-size:0.7rem;padding:3px 8px;border-radius:6px;font-weight:600;">فعّال</span>
+      </div>
+      <div style="margin-bottom:0.5rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-muted);margin-bottom:4px;">
+          <span>المستخدم: <strong style="color:var(--secondary);"><%= insurance.usedAmount.toFixed(0) %> ر.س</strong></span>
+          <span>الحد: <strong><%= insurance.coverageAmount.toFixed(0) %> ر.س</strong></span>
+        </div>
+        <div style="height:6px;border-radius:3px;background:rgba(255,255,255,0.08);overflow:hidden;">
+          <div style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--secondary),#0d8a7e);width:<%= Math.min(100, (insurance.usedAmount / insurance.coverageAmount * 100)).toFixed(0) %>%;transition:width 0.5s;"></div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;text-align:center;">
+          المتبقي: <strong style="color:var(--secondary);"><%= (insurance.coverageAmount - insurance.usedAmount).toFixed(0) %> ر.س</strong>
+          (<%= (100 - insurance.usedAmount / insurance.coverageAmount * 100).toFixed(0) %>%)
+        </div>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;">
+        <% if (insurance.coverageDetails.medications) { %><span style="font-size:0.65rem;background:var(--secondary)10;color:var(--secondary);padding:2px 6px;border-radius:4px;"><i class="fas fa-pills"></i> أدوية</span><% } %>
+        <% if (insurance.coverageDetails.consultations) { %><span style="font-size:0.65rem;background:var(--secondary)10;color:var(--secondary);padding:2px 6px;border-radius:4px;"><i class="fas fa-stethoscope"></i> استشارات</span><% } %>
+        <% if (insurance.coverageDetails.dental) { %><span style="font-size:0.65rem;background:var(--secondary)10;color:var(--secondary);padding:2px 6px;border-radius:4px;"><i class="fas fa-tooth"></i> أسنان</span><% } %>
+        <% if (insurance.coverageDetails.optical) { %><span style="font-size:0.65rem;background:var(--secondary)10;color:var(--secondary);padding:2px 6px;border-radius:4px;"><i class="fas fa-eye"></i> بصريات</span><% } %>
+      </div>
+    </div>
+    <% } %>
+
     <div id="tab-orders" class="tab-content">
       <% if (orders.length > 0) { %>
       <div style="display:flex;flex-direction:column;gap:0.75rem;">
         <% orders.forEach(function(o) {
           var statusMap = { pending:'معلق', confirmed:'مؤكد', preparing:'قيد التحضير', delivering:'في الطريق', delivered:'تم التوصيل', cancelled:'ملغي' };
           var statusColor = { pending:'#f59e0b', confirmed:'var(--secondary)', preparing:'#3b82f6', delivering:'#8b5cf6', delivered:'#22c55e', cancelled:'#ef4444' };
+          var statusIcon = { pending:'fa-clock', confirmed:'fa-check-circle', preparing:'fa-mortar-pestle', delivering:'fa-shipping-fast', delivered:'fa-check-double', cancelled:'fa-times-circle' };
+          var payMethodMap = { cash:'نقد', insurance:'تأمين', card:'بطاقة', apple_pay:'Apple Pay', health_card:'البطاقة الصحية' };
+          var payMethodIcon = { cash:'fa-money-bill-wave', insurance:'fa-shield-alt', card:'fa-credit-card', apple_pay:'fab fa-apple', health_card:'fa-id-card' };
+          var steps = ['pending','confirmed','preparing','delivering','delivered'];
+          var currentStep = steps.indexOf(o.status);
+          var isCancelled = o.status === 'cancelled';
+          var phLogo = o.pharmacyId && o.pharmacyId.logo ? o.pharmacyId.logo : '';
         %>
-        <div class="card" style="padding:1rem;border-radius:14px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem;">
-            <div>
-              <strong style="font-size:0.9rem;"><%= o.trackingNumber %></strong>
-              <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;"><%= o.pharmacy %> &middot; <%= new Date(o.createdAt).toLocaleDateString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) %></div>
+        <div class="card" style="padding:1.15rem;border-radius:14px;border:1px solid rgba(255,255,255,0.04);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.65rem;">
+            <div style="display:flex;align-items:center;gap:0.65rem;">
+              <% if (phLogo) { %>
+              <img src="<%= phLogo %>" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">
+              <% } else { %>
+              <div style="width:36px;height:36px;border-radius:10px;background:var(--secondary)12;display:flex;align-items:center;justify-content:center;"><i class="fas fa-prescription-bottle-alt" style="color:var(--secondary);font-size:0.9rem;"></i></div>
+              <% } %>
+              <div>
+                <strong style="font-size:0.88rem;"><%= o.pharmacy %></strong>
+                <div style="font-size:0.72rem;color:var(--text-muted);margin-top:1px;"><%= o.trackingNumber %> &middot; <%= new Date(o.createdAt).toLocaleDateString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) %></div>
+              </div>
             </div>
-            <span style="background:<%= statusColor[o.status] || 'var(--secondary)' %>15;color:<%= statusColor[o.status] || 'var(--secondary)' %>;font-size:0.75rem;padding:4px 10px;border-radius:8px;font-weight:600;"><%= statusMap[o.status] || o.status %></span>
+            <span style="background:<%= isCancelled ? '#ef4444' : (statusColor[o.status] || 'var(--secondary)') %>15;color:<%= isCancelled ? '#ef4444' : (statusColor[o.status] || 'var(--secondary)') %>;font-size:0.72rem;padding:4px 10px;border-radius:8px;font-weight:600;">
+              <i class="fas <%= statusIcon[o.status] || 'fa-circle' %>"></i> <%= statusMap[o.status] || o.status %>
+            </span>
           </div>
-          <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;"><%= o.items.map(function(i){ return i.name + ' ×' + i.quantity; }).join('، ') %></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div>
-              <% if (o.paymentMethod === 'insurance') { %>
-              <span style="font-size:0.72rem;background:var(--secondary)15;color:var(--secondary);padding:2px 8px;border-radius:6px;"><i class="fas fa-shield-alt"></i> تأمين</span>
+
+          <% if (!isCancelled) { %>
+          <div style="display:flex;align-items:center;gap:0;margin:0.75rem 0;padding:0 0.5rem;">
+            <% steps.forEach(function(step, idx) {
+              var done = idx <= currentStep;
+              var isActive = idx === currentStep;
+            %>
+            <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;">
+              <div style="width:<%= isActive ? '22px' : '14px' %>;height:<%= isActive ? '22px' : '14px' %>;border-radius:50%;background:<%= done ? 'var(--secondary)' : 'rgba(255,255,255,0.1)' %>;<%= isActive ? 'box-shadow:0 0 0 4px rgba(18,169,155,0.2);' : '' %>display:flex;align-items:center;justify-content:center;">
+                <% if (isActive) { %><i class="fas fa-check" style="font-size:0.5rem;color:#fff;"></i><% } %>
+              </div>
+            </div>
+            <% if (idx < steps.length - 1) { %>
+            <div style="flex:1;height:2px;background:<%= idx < currentStep ? 'var(--secondary)' : 'rgba(255,255,255,0.08)' %>;min-width:20px;"></div>
+            <% } %>
+            <% }) %>
+          </div>
+          <% } %>
+
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;line-height:1.7;">
+            <%= o.items.map(function(i){ return i.name + ' <span style="color:var(--secondary);">×' + i.quantity + '</span>'; }).join('، ') %>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex;gap:0.4rem;align-items:center;">
+              <span style="font-size:0.7rem;background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:6px;display:flex;align-items:center;gap:4px;">
+                <i class="<%= payMethodIcon[o.paymentMethod] || 'fas fa-money-bill-wave' %>" style="font-size:0.65rem;color:var(--secondary);"></i>
+                <span style="color:var(--text-muted);"><%= payMethodMap[o.paymentMethod] || o.paymentMethod %></span>
+              </span>
+              <% if (o.insuranceDiscount > 0) { %>
+              <span style="font-size:0.68rem;color:var(--secondary);">خصم: <%= o.insuranceDiscount %> ر.س</span>
               <% } %>
             </div>
-            <strong style="color:var(--secondary);"><%= o.totalPrice %> ريال</strong>
+            <strong style="color:var(--secondary);font-size:1rem;"><%= o.totalPrice %> <span style="font-size:0.72rem;font-weight:400;">ريال</span></strong>
           </div>
         </div>
         <% }) %>

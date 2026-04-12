@@ -11,7 +11,7 @@ const User = require('../users/user.model');
 
 router.get('/', isAuthenticated, async (req, res) => {
   const pharmacies = await Pharmacy.find({ isActive: true }).sort({ isFeatured: -1, rating: -1 });
-  const orders = await Order.find({ patient: req.session.user._id }).sort({ createdAt: -1 }).limit(20);
+  const orders = await Order.find({ patient: req.session.user._id }).sort({ createdAt: -1 }).limit(20).populate('pharmacyId', 'name logo');
   const insurance = await Insurance.findOne({ patient: req.session.user._id, status: 'active' });
   res.render('pages/pharmacy', { title: 'الصيدليات', pharmacies, orders, insurance });
 });
@@ -49,6 +49,10 @@ router.get('/search', isAuthenticated, async (req, res) => {
 router.post('/order', isAuthenticated, async (req, res) => {
   try {
     const { pharmacyId, items, address, notes, paymentMethod, insuranceId } = req.body;
+    const validPayments = ['cash', 'insurance', 'card', 'apple_pay', 'health_card'];
+    if (paymentMethod && !validPayments.includes(paymentMethod)) {
+      return res.status(400).json({ error: 'طريقة دفع غير صالحة' });
+    }
     const parsedItems = typeof items === 'string' ? JSON.parse(items) : items;
 
     if (!parsedItems || !parsedItems.length) {
@@ -281,34 +285,125 @@ router.post('/admin/drugs/:id/update', isAuthenticated, isAdmin, async (req, res
 
 router.post('/admin/seed', isAuthenticated, isAdmin, async (req, res) => {
   const existingCount = await Pharmacy.countDocuments();
-  if (existingCount > 0) { req.session.error = 'توجد صيدليات بالفعل'; return res.redirect('/pharmacy/admin/pharmacies'); }
+  if (existingCount > 0) {
+    await Drug.deleteMany({});
+    await Order.deleteMany({});
+    await Pharmacy.deleteMany({});
+  }
 
   const pharmacies = [
-    { name: 'صيدلية الدواء', nameEn: 'Al Dawaa Pharmacy', description: 'أكبر سلسلة صيدليات في المملكة', location: { city: 'الرياض', district: 'العليا' }, phone: '920008855', workingHours: '24 ساعة', isFeatured: true, insuranceSupported: true, supportedInsuranceCompanies: ['بوبا', 'التعاونية', 'ميدغلف'], deliveryFee: 0, rating: 4.8 },
-    { name: 'صيدلية النهدي', nameEn: 'Nahdi Pharmacy', description: 'صيدليتك المفضلة دائماً', location: { city: 'الرياض', district: 'النخيل' }, phone: '920001010', workingHours: '8:00 ص - 12:00 م', isFeatured: true, insuranceSupported: true, supportedInsuranceCompanies: ['بوبا', 'التعاونية'], deliveryFee: 10, freeDeliveryAbove: 100, rating: 4.7 },
-    { name: 'صيدلية كيان', nameEn: 'Kayan Pharmacy', description: 'جودة عالية وأسعار منافسة', location: { city: 'جدة', district: 'الحمراء' }, phone: '0500000000', workingHours: '9:00 ص - 11:00 م', insuranceSupported: false, deliveryFee: 15, freeDeliveryAbove: 150, rating: 4.5 }
+    {
+      name: 'صيدلية النهدي',
+      nameEn: 'Nahdi Pharmacy',
+      logo: '/uploads/pharmacy/nahdi-logo.png',
+      description: 'صيدليتك المفضلة — أكثر من 1100 فرع في المملكة مع خدمة توصيل سريعة وبرنامج ولاء نقاطي',
+      location: { city: 'الرياض', district: 'العليا', address: 'طريق الملك فهد، حي العليا' },
+      phone: '920001010',
+      workingHours: '24 ساعة',
+      isFeatured: true,
+      insuranceSupported: true,
+      supportedInsuranceCompanies: ['بوبا', 'التعاونية', 'ميدغلف', 'تكافل الراجحي', 'ملاذ'],
+      deliveryFee: 0,
+      freeDeliveryAbove: 0,
+      rating: 4.8,
+      isActive: true
+    },
+    {
+      name: 'صيدلية الدواء',
+      nameEn: 'Al-Dawaa Pharmacy',
+      logo: '/uploads/pharmacy/aldawaa-logo.png',
+      description: 'أكبر سلسلة صيدليات في الشرق الأوسط — أكثر من 900 فرع مع تغطية تأمينية شاملة',
+      location: { city: 'الرياض', district: 'النخيل', address: 'طريق أنس بن مالك، حي النخيل' },
+      phone: '920008855',
+      workingHours: '8:00 ص - 12:00 م',
+      isFeatured: true,
+      insuranceSupported: true,
+      supportedInsuranceCompanies: ['بوبا', 'التعاونية', 'ميدغلف', 'الأهلية', 'وفا'],
+      deliveryFee: 10,
+      freeDeliveryAbove: 100,
+      rating: 4.7,
+      isActive: true
+    },
+    {
+      name: 'صيدلية ليمون',
+      nameEn: 'Lemon Pharmacy',
+      logo: '/uploads/pharmacy/lemon-logo.png',
+      description: 'صيدلية متخصصة بالمنتجات الطبيعية والمكملات الغذائية والعناية بالبشرة — جودة عالية بأسعار منافسة',
+      location: { city: 'جدة', district: 'الحمراء', address: 'شارع فلسطين، حي الحمراء' },
+      phone: '0126543210',
+      workingHours: '9:00 ص - 11:00 م',
+      isFeatured: false,
+      insuranceSupported: true,
+      supportedInsuranceCompanies: ['بوبا', 'التعاونية'],
+      deliveryFee: 15,
+      freeDeliveryAbove: 150,
+      rating: 4.5,
+      isActive: true
+    },
+    {
+      name: 'صيدلية أورانج',
+      nameEn: 'Orange Pharmacy',
+      logo: '/uploads/pharmacy/orange-logo.png',
+      description: 'صيدلية المجتمع — خدمة شخصية ومتميزة مع فريق صيدلي محترف واستشارات مجانية',
+      location: { city: 'الدمام', district: 'الشاطئ', address: 'الكورنيش، حي الشاطئ' },
+      phone: '0138765432',
+      workingHours: '8:00 ص - 10:00 م',
+      isFeatured: false,
+      insuranceSupported: false,
+      supportedInsuranceCompanies: [],
+      deliveryFee: 12,
+      freeDeliveryAbove: 120,
+      rating: 4.6,
+      isActive: true
+    }
   ];
 
   const created = await Pharmacy.insertMany(pharmacies);
 
+  const drugImages = {
+    panadol: 'https://cdn-images.ep.link/s/w-400/660d49f76bcff.png',
+    panadolCold: 'https://cdn-images.ep.link/s/w-400/660d4a236bcff.png',
+    brufen: 'https://cdn-images.ep.link/s/w-400/660d4a746bcff.png',
+    amoxicillin: 'https://cdn-images.ep.link/s/w-400/660d4b1c6bcff.png',
+    augmentin: 'https://cdn-images.ep.link/s/w-400/660d4b436bcff.png',
+    omeprazole: 'https://cdn-images.ep.link/s/w-400/660d4bc56bcff.png',
+    metformin: 'https://cdn-images.ep.link/s/w-400/660d4c4f6bcff.png',
+    vitaminD: 'https://cdn-images.ep.link/s/w-400/660d4cd46bcff.png',
+    vitaminC: 'https://cdn-images.ep.link/s/w-400/660d4cfe6bcff.png',
+    losartan: 'https://cdn-images.ep.link/s/w-400/660d4d5a6bcff.png',
+    cetirizine: 'https://cdn-images.ep.link/s/w-400/660d4d876bcff.png',
+    atorvastatin: 'https://cdn-images.ep.link/s/w-400/660d4db76bcff.png',
+    betaderm: 'https://cdn-images.ep.link/s/w-400/660d4de16bcff.png',
+    optive: 'https://cdn-images.ep.link/s/w-400/660d4e0c6bcff.png',
+    omega3: 'https://cdn-images.ep.link/s/w-400/660d4e3c6bcff.png',
+  };
+
   const sampleDrugs = [
-    { name: 'بنادول أكسترا', nameEn: 'Panadol Extra', category: 'مسكنات', price: 15, insurancePrice: 5, insuranceSupported: true, description: 'مسكن للألم وخافض للحرارة', dosage: '500mg', manufacturer: 'GSK', prescription: false, stock: 200 },
-    { name: 'أموكسيسيلين', nameEn: 'Amoxicillin', category: 'مضادات حيوية', price: 35, insurancePrice: 10, insuranceSupported: true, description: 'مضاد حيوي واسع المجال', dosage: '500mg', manufacturer: 'Hikma', prescription: true, stock: 80 },
-    { name: 'أوميبرازول', nameEn: 'Omeprazole', category: 'معدة', price: 25, insurancePrice: 8, insuranceSupported: true, description: 'لعلاج حموضة المعدة والارتجاع', dosage: '20mg', manufacturer: 'AstraZeneca', prescription: false, stock: 150 },
-    { name: 'ميتفورمين', nameEn: 'Metformin', category: 'سكري', price: 20, insurancePrice: 5, insuranceSupported: true, description: 'لعلاج السكري النوع الثاني', dosage: '850mg', manufacturer: 'Merck', prescription: true, stock: 120 },
-    { name: 'فيتامين د', nameEn: 'Vitamin D3', category: 'فيتامينات', price: 30, description: 'مكمل فيتامين د للعظام والمناعة', dosage: '5000 IU', manufacturer: 'Nature Made', prescription: false, stock: 250, insuranceSupported: false },
-    { name: 'لوسارتان', nameEn: 'Losartan', category: 'ضغط', price: 28, insurancePrice: 8, insuranceSupported: true, description: 'لعلاج ارتفاع ضغط الدم', dosage: '50mg', manufacturer: 'MSD', prescription: true, stock: 90 },
-    { name: 'سيتريزين', nameEn: 'Cetirizine', category: 'حساسية', price: 12, insurancePrice: 4, insuranceSupported: true, description: 'مضاد للحساسية', dosage: '10mg', manufacturer: 'UCB', prescription: false, stock: 180 },
-    { name: 'أتورفاستاتين', nameEn: 'Atorvastatin', category: 'كوليسترول', price: 40, insurancePrice: 12, insuranceSupported: true, description: 'لخفض الكوليسترول', dosage: '20mg', manufacturer: 'Pfizer', prescription: true, stock: 70 },
-    { name: 'كريم بيتاديرم', nameEn: 'Betaderm Cream', category: 'جلدية', price: 18, description: 'كريم لعلاج الالتهابات الجلدية', dosage: '0.1%', manufacturer: 'Riyadh Pharma', prescription: false, stock: 100, insuranceSupported: false },
-    { name: 'قطرة أوبتيف', nameEn: 'Optive Eye Drops', category: 'عيون', price: 22, insurancePrice: 8, insuranceSupported: true, description: 'قطرة مرطبة للعين', dosage: '10ml', manufacturer: 'Allergan', prescription: false, stock: 130 }
+    { name: 'بنادول أكسترا', nameEn: 'Panadol Extra', category: 'مسكنات', price: 14.5, insurancePrice: 5, insuranceSupported: true, description: 'مسكن قوي للألم وخافض للحرارة، يحتوي على باراسيتامول وكافيين', dosage: '500mg/65mg', manufacturer: 'GSK', prescription: false, stock: 200, image: drugImages.panadol },
+    { name: 'بنادول كولد + فلو', nameEn: 'Panadol Cold+Flu', category: 'مسكنات', price: 18, insurancePrice: 7, insuranceSupported: true, description: 'لعلاج أعراض البرد والإنفلونزا — صداع، رشح، احتقان', dosage: '500mg', manufacturer: 'GSK', prescription: false, stock: 180, image: drugImages.panadolCold },
+    { name: 'بروفين 400', nameEn: 'Brufen 400', category: 'مسكنات', price: 12, insurancePrice: 4, insuranceSupported: true, description: 'مضاد للالتهاب ومسكن للألم والحمى', dosage: '400mg', manufacturer: 'Abbott', prescription: false, stock: 220, image: drugImages.brufen },
+    { name: 'أموكسيسيلين', nameEn: 'Amoxicillin', category: 'مضادات حيوية', price: 32, insurancePrice: 10, insuranceSupported: true, description: 'مضاد حيوي واسع المجال لعلاج الالتهابات البكتيرية', dosage: '500mg', manufacturer: 'Hikma', prescription: true, stock: 80, image: drugImages.amoxicillin },
+    { name: 'أوجمنتين', nameEn: 'Augmentin', category: 'مضادات حيوية', price: 45, insurancePrice: 15, insuranceSupported: true, description: 'مضاد حيوي قوي (أموكسيسيلين + كلافيولانيك أسيد)', dosage: '625mg', manufacturer: 'GSK', prescription: true, stock: 60, image: drugImages.augmentin },
+    { name: 'أوميبرازول', nameEn: 'Omeprazole', category: 'معدة', price: 22, insurancePrice: 8, insuranceSupported: true, description: 'لعلاج حموضة المعدة وقرحة المعدة والارتجاع المريئي', dosage: '20mg', manufacturer: 'AstraZeneca', prescription: false, stock: 150, image: drugImages.omeprazole },
+    { name: 'ميتفورمين', nameEn: 'Metformin', category: 'سكري', price: 18, insurancePrice: 5, insuranceSupported: true, description: 'الخط الأول لعلاج السكري النوع الثاني — ينظم مستوى السكر', dosage: '850mg', manufacturer: 'Merck', prescription: true, stock: 120, image: drugImages.metformin },
+    { name: 'فيتامين د3', nameEn: 'Vitamin D3', category: 'فيتامينات', price: 35, description: 'مكمل فيتامين د لدعم العظام والمناعة — جرعة أسبوعية', dosage: '50,000 IU', manufacturer: 'Nature Made', prescription: false, stock: 250, insuranceSupported: false, image: drugImages.vitaminD },
+    { name: 'فيتامين سي', nameEn: 'Vitamin C', category: 'فيتامينات', price: 28, description: 'مضاد أكسدة ودعم المناعة — أقراص فوارة', dosage: '1000mg', manufacturer: 'Redoxon', prescription: false, stock: 300, insuranceSupported: false, image: drugImages.vitaminC },
+    { name: 'أوميغا 3', nameEn: 'Omega-3 Fish Oil', category: 'مكملات', price: 55, description: 'زيت السمك لصحة القلب والدماغ والمفاصل', dosage: '1000mg', manufacturer: 'Nature Made', prescription: false, stock: 150, insuranceSupported: false, image: drugImages.omega3 },
+    { name: 'لوسارتان', nameEn: 'Losartan', category: 'ضغط', price: 25, insurancePrice: 8, insuranceSupported: true, description: 'لعلاج ارتفاع ضغط الدم وحماية الكلى', dosage: '50mg', manufacturer: 'MSD', prescription: true, stock: 90, image: drugImages.losartan },
+    { name: 'سيتريزين', nameEn: 'Cetirizine', category: 'حساسية', price: 10, insurancePrice: 3, insuranceSupported: true, description: 'مضاد للحساسية والهيستامين — لا يسبب النعاس', dosage: '10mg', manufacturer: 'UCB', prescription: false, stock: 200, image: drugImages.cetirizine },
+    { name: 'أتورفاستاتين', nameEn: 'Atorvastatin (Lipitor)', category: 'كوليسترول', price: 38, insurancePrice: 12, insuranceSupported: true, description: 'لخفض الكوليسترول والدهون الثلاثية في الدم', dosage: '20mg', manufacturer: 'Pfizer', prescription: true, stock: 75, image: drugImages.atorvastatin },
+    { name: 'كريم بيتاديرم', nameEn: 'Betaderm Cream', category: 'جلدية', price: 16, description: 'كريم كورتيزون لعلاج الالتهابات والحكة الجلدية', dosage: '0.1% - 30g', manufacturer: 'Riyadh Pharma', prescription: false, stock: 110, insuranceSupported: false, image: drugImages.betaderm },
+    { name: 'قطرة أوبتيف', nameEn: 'Optive Eye Drops', category: 'عيون', price: 24, insurancePrice: 9, insuranceSupported: true, description: 'قطرة مرطبة للعين لعلاج جفاف العين', dosage: '15ml', manufacturer: 'Allergan', prescription: false, stock: 130, image: drugImages.optive },
+    { name: 'بنادول أطفال شراب', nameEn: 'Panadol Baby Syrup', category: 'أطفال', price: 16, insurancePrice: 6, insuranceSupported: true, description: 'خافض حرارة ومسكن آمن للأطفال من عمر 2 شهر', dosage: '120mg/5ml', manufacturer: 'GSK', prescription: false, stock: 160, image: drugImages.panadol },
+    { name: 'فلاجيل', nameEn: 'Flagyl', category: 'معدة', price: 15, insurancePrice: 5, insuranceSupported: true, description: 'مضاد للبكتيريا والطفيليات — لعلاج التهابات الجهاز الهضمي', dosage: '500mg', manufacturer: 'Sanofi', prescription: true, stock: 95, image: drugImages.amoxicillin },
+    { name: 'كلاريتين', nameEn: 'Claritin', category: 'حساسية', price: 22, insurancePrice: 8, insuranceSupported: true, description: 'مضاد هيستامين طويل المفعول للحساسية الموسمية', dosage: '10mg', manufacturer: 'Bayer', prescription: false, stock: 170, image: drugImages.cetirizine },
   ];
 
   for (const ph of created) {
     const drugs = sampleDrugs.map(d => ({
       ...d,
       pharmacyId: ph._id,
-      price: d.price + Math.floor(Math.random() * 5) - 2,
+      price: Math.round((d.price + Math.floor(Math.random() * 6) - 3) * 10) / 10,
       stock: d.stock + Math.floor(Math.random() * 50)
     }));
     await Drug.insertMany(drugs);

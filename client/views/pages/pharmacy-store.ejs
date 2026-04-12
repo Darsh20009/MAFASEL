@@ -156,6 +156,11 @@
                 <i class="fab fa-apple"></i>
                 <span>Apple Pay</span>
               </label>
+              <label class="payment-method-option" onclick="selectPayment('health_card', this)">
+                <input type="radio" name="payMethod" value="health_card" style="display:none;">
+                <i class="fas fa-id-card"></i>
+                <span>البطاقة الصحية</span>
+              </label>
             </div>
           </div>
 
@@ -310,6 +315,9 @@ function selectPayment(method, el) {
   } else if (method === 'card') {
     btn.innerHTML = '<i class="fas fa-credit-card"></i> ادفع الآن';
     btn.style.background = 'var(--secondary)';
+  } else if (method === 'health_card') {
+    btn.innerHTML = '<i class="fas fa-id-card"></i> الدفع بالبطاقة الصحية';
+    btn.style.background = 'linear-gradient(135deg,#12a99b,#0d8a7e)';
   } else {
     btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الطلب';
     btn.style.background = 'var(--secondary)';
@@ -343,35 +351,52 @@ function simulatePayment(method) {
   return new Promise(function(resolve) {
     var overlay = document.createElement('div');
     overlay.className = 'payment-overlay';
-    
+    var amount = document.querySelector('#cartSummary div:last-child span:last-child').textContent;
+
     if (method === 'apple_pay') {
       overlay.innerHTML = '<div class="payment-modal apple-pay-modal">' +
         '<div class="apple-pay-header"><i class="fab fa-apple" style="font-size:2rem;"></i><span style="font-size:1.1rem;font-weight:600;">Pay</span></div>' +
-        '<div class="payment-amount">' + document.querySelector('#cartSummary div:last-child span:last-child').textContent + '</div>' +
-        '<div class="payment-store">صيدلية مفاصل</div>' +
-        '<div class="apple-pay-biometric"><i class="fas fa-fingerprint" style="font-size:3rem;color:var(--accent);margin:1rem 0;"></i><p>تأكيد بالبصمة</p></div>' +
+        '<div class="payment-amount">' + amount + '</div>' +
+        '<div class="payment-store"><%= pharmacy.name %></div>' +
+        '<div class="apple-pay-biometric">' +
+        '<div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;margin:1rem auto;animation:pulse 1.5s ease infinite;">' +
+        '<i class="fas fa-fingerprint" style="font-size:2rem;color:#fff;"></i></div>' +
+        '<p style="font-size:0.85rem;color:var(--text-muted);">تأكيد بالبصمة أو Face ID</p></div>' +
         '<button class="btn" style="width:100%;background:#000;color:#fff;padding:0.85rem;border-radius:12px;font-size:1rem;margin-top:1rem;" onclick="this.innerHTML=\'<i class=\\\'fas fa-spinner fa-spin\\\'></i> جاري المعالجة...\';this.disabled=true;setTimeout(function(){document.querySelector(\'.payment-overlay\').remove();window._payResolve(true);},1500);"><i class="fab fa-apple"></i> تأكيد الدفع</button>' +
         '<button class="btn btn-outline" style="width:100%;margin-top:0.5rem;padding:0.65rem;font-size:0.85rem;" onclick="document.querySelector(\'.payment-overlay\').remove();window._payResolve(false);">إلغاء</button>' +
         '</div>';
+    } else if (method === 'health_card') {
+      overlay.innerHTML = '<div class="payment-modal">' +
+        '<div style="text-align:center;margin-bottom:1rem;">' +
+        '<div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#12a99b,#0d8a7e);display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 8px 24px rgba(18,169,155,0.3);">' +
+        '<i class="fas fa-id-card" style="font-size:2rem;color:#fff;"></i></div></div>' +
+        '<h3 style="text-align:center;margin-bottom:0.25rem;font-size:1rem;">الدفع بالبطاقة الصحية</h3>' +
+        '<p style="text-align:center;font-size:0.78rem;color:var(--text-muted);margin-bottom:1rem;">سيتم خصم المبلغ من رصيد البطاقة الصحية</p>' +
+        '<div class="payment-amount" style="margin-bottom:1rem;">' + amount + '</div>' +
+        '<div style="background:rgba(18,169,155,0.08);border:1px solid rgba(18,169,155,0.15);border-radius:10px;padding:0.75rem;margin-bottom:1rem;">' +
+        '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;"><img src="/icons/logo.png" style="width:24px;height:24px;border-radius:6px;"><strong style="font-size:0.82rem;">بطاقة مفاصل الصحية</strong></div>' +
+        '<div style="font-size:0.75rem;color:var(--text-muted);">حامل البطاقة: <strong><%= typeof user !== "undefined" ? user.name : "" %></strong></div></div>' +
+        '<div class="payment-progress"><div class="payment-progress-bar" style="background:linear-gradient(90deg,#12a99b,#0d8a7e);"></div></div>' +
+        '<p style="text-align:center;font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;" id="payStatus">جاري التحقق من البطاقة الصحية...</p>' +
+        '</div>';
+      setTimeout(function() { var s = document.getElementById('payStatus'); if(s) s.textContent = 'جاري خصم المبلغ من الرصيد...'; }, 1200);
+      setTimeout(function() { var s = document.getElementById('payStatus'); if(s) { s.textContent = 'تمت الموافقة — تم الخصم بنجاح'; s.style.color = '#22c55e'; } }, 2400);
+      setTimeout(function() { overlay.remove(); resolve(true); }, 3200);
     } else {
       overlay.innerHTML = '<div class="payment-modal">' +
-        '<div style="text-align:center;margin-bottom:1rem;"><i class="fas fa-credit-card" style="font-size:2.5rem;color:var(--accent);"></i></div>' +
+        '<div style="text-align:center;margin-bottom:1rem;">' +
+        '<div style="width:70px;height:70px;border-radius:18px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 8px 24px rgba(102,126,234,0.3);">' +
+        '<i class="fas fa-credit-card" style="font-size:1.8rem;color:#fff;"></i></div></div>' +
         '<h3 style="text-align:center;margin-bottom:0.5rem;">معالجة الدفع</h3>' +
-        '<div class="payment-amount">' + document.querySelector('#cartSummary div:last-child span:last-child').textContent + '</div>' +
+        '<div class="payment-amount">' + amount + '</div>' +
         '<div class="payment-progress"><div class="payment-progress-bar"></div></div>' +
         '<p style="text-align:center;font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;" id="payStatus">جاري التحقق من البطاقة...</p>' +
         '</div>';
-      setTimeout(function() { 
-        var s = document.getElementById('payStatus'); 
-        if(s) s.textContent = 'جاري خصم المبلغ...'; 
-      }, 1000);
-      setTimeout(function() { 
-        var s = document.getElementById('payStatus');
-        if(s) { s.textContent = 'تمت الموافقة ✓'; s.style.color = '#22c55e'; }
-      }, 2000);
+      setTimeout(function() { var s = document.getElementById('payStatus'); if(s) s.textContent = 'جاري خصم المبلغ...'; }, 1000);
+      setTimeout(function() { var s = document.getElementById('payStatus'); if(s) { s.textContent = 'تمت الموافقة ✓'; s.style.color = '#22c55e'; } }, 2000);
       setTimeout(function() { overlay.remove(); resolve(true); }, 2800);
     }
-    
+
     window._payResolve = resolve;
     document.body.appendChild(overlay);
   });
@@ -388,7 +413,7 @@ async function submitOrder() {
   var btn = document.getElementById('submitOrderBtn');
   var orig = btn.innerHTML;
 
-  if (payMethod === 'card' || payMethod === 'apple_pay') {
+  if (payMethod === 'card' || payMethod === 'apple_pay' || payMethod === 'health_card') {
     var approved = await simulatePayment(payMethod);
     if (!approved) return;
   }

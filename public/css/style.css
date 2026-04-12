@@ -4083,6 +4083,7 @@ body {
 .payment-progress { height:6px; background:var(--border); border-radius:6px; overflow:hidden; margin-top:1rem; }
 .payment-progress-bar { height:100%; width:0; background:var(--accent); border-radius:6px; animation:payProgress 2.5s ease forwards; }
 @keyframes payProgress { 0%{width:0} 40%{width:40%} 70%{width:75%} 100%{width:100%} }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
 
 /* ========== Forgot Password Modal ========== */
 .forgot-overlay {

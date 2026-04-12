@@ -53,12 +53,12 @@
 │       │   ├── insurance.model.js
 │       │   ├── medical.routes.js
 │       │   └── insurance.routes.js
-│       ├── pharmacy/            # سوق الصيدليات (متعدد الصيدليات)
-│       │   ├── pharmacy.model.js   # نموذج الصيدلية (اسم، موقع، تأمين، توصيل)
-│       │   ├── drug.model.js       # نموذج الدواء (صيدلية، سعر، تأمين، وصفة، مخزون)
-│       │   └── pharmacy.routes.js  # تصفح/بحث/طلب/إدارة
-│       ├── orders/              # نظام الطلبات
-│       │   ├── order.model.js      # طلب مرتبط بصيدلية + أدوية + تأمين
+│       ├── pharmacy/            # سوق الصيدليات (4 صيدليات: النهدي، الدواء، ليمون، أورانج)
+│       │   ├── pharmacy.model.js   # نموذج الصيدلية (اسم، لوغو، موقع، تأمين، توصيل)
+│       │   ├── drug.model.js       # نموذج الدواء (18 نوع لكل صيدلية، تأمين، وصفة، مخزون)
+│       │   └── pharmacy.routes.js  # تصفح/بحث/طلب/إدارة/seed
+│       ├── orders/              # نظام الطلبات (5 طرق دفع: نقد، بطاقة، Apple Pay، تأمين، البطاقة الصحية)
+│       │   ├── order.model.js      # طلب مرتبط بصيدلية + أدوية + تأمين + تتبع حالة
 │       │   └── orders.routes.js    # (قديم - غير مستخدم)
 │       ├── chat/                # نظام الشات (real-time WebSocket, typing, seen, internal msgs)
 │       │   ├── chat.model.js    # ChatMessage (isInternal, read, readAt), ChatRoom (internalNotes, priority)
