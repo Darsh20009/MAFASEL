@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   updateNotifBadge();
+  initPushNotifications();
 });
 
 async function updateNotifBadge() {
@@ -71,4 +72,74 @@ async function updateNotifBadge() {
       }
     }
   } catch(err) {}
+}
+
+async function initPushNotifications() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+  try {
+    var reg = await navigator.serviceWorker.register('/sw.js');
+    var sub = await reg.pushManager.getSubscription();
+    if (sub) {
+      await sendSubToServer(sub);
+    }
+  } catch (err) {
+    console.warn('SW registration failed:', err);
+  }
+}
+
+async function subscribeToPush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    alert('متصفحك لا يدعم الإشعارات الفورية');
+    return;
+  }
+
+  try {
+    var permission = await Notification.requestPermission();
+    if (permission !== 'granted') return;
+
+    var keyRes = await fetch('/notifications/vapid-key');
+    var keyData = await keyRes.json();
+    if (!keyData.publicKey) return;
+
+    var reg = await navigator.serviceWorker.ready;
+    var sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+    });
+
+    await sendSubToServer(sub);
+
+    var btn = document.getElementById('pushEnableBtn');
+    if (btn) {
+      btn.textContent = 'تم التفعيل';
+      btn.disabled = true;
+      btn.classList.add('btn-success');
+    }
+  } catch (err) {
+    console.error('Push subscribe error:', err);
+  }
+}
+
+async function sendSubToServer(sub) {
+  try {
+    await fetch('/notifications/push/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sub.toJSON())
+    });
+  } catch (err) {
+    console.error('Send sub error:', err);
+  }
+}
+
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var rawData = atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+  for (var i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 }

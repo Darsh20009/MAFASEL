@@ -38,10 +38,11 @@
 │       ├── chat/                # نظام الشات
 │       │   ├── chat.model.js
 │       │   └── chat.routes.js
-│       ├── notifications/       # نظام الإشعارات (3 طبقات)
+│       ├── notifications/       # نظام الإشعارات (3 طبقات: DB + WebSocket + Web Push)
 │       │   ├── notification.model.js
 │       │   ├── notification.service.js
-│       │   └── notifications.routes.js
+│       │   ├── notifications.routes.js
+│       │   └── push-subscription.model.js  # اشتراكات Web Push (VAPID)
 │       ├── ai/                  # المساعد الذكي (Groq)
 │       │   └── ai.routes.js
 │       ├── settings/            # الإعدادات والشكاوى
@@ -131,8 +132,24 @@
 - **الصفحة**: `client/views/pages/ai-assistant.ejs` (تصميم شات مع sidebar)
 - **عنوان URL**: `/ai` - يظهر كـ"فريق الرعاية" في القائمة
 
+## نظام الشات
+- أنواع الغرف: `doctor`, `support`, `internal`, `consultation`
+- صور الشخصيات (الأطباء/الدعم) في `public/avatars/` (SVG)
+- رفع ملفات (صور/PDF/Word/Excel) حتى 20MB في `uploads/chat/`
+- Socket.io للتسليم الفوري + إيصالات القراءة
+- CSS كامل للشات في `public/css/style.css`
+
+## نظام الإشعارات (3 طبقات)
+1. **قاعدة البيانات**: تخزين دائم في MongoDB (notification.model.js)
+2. **WebSocket**: إشعارات فورية عبر Socket.io للمستخدمين المتصلين
+3. **Web Push**: إشعارات المتصفح عبر VAPID (حتى عند إغلاق الصفحة)
+   - Service Worker: `public/sw.js`
+   - اشتراكات Push: `push-subscription.model.js`
+   - VAPID keys مخزنة في env vars
+
 ## ملاحظات أمنية
 - ملفات `.p8` مستبعدة من Git
 - رمز OTP يُعرض فقط في بيئة التطوير
 - الكوكيز آمنة في بيئة الإنتاج (secure + sameSite)
 - نفاذ في وضع المحاكاة حتى يتم ربط API الرسمي
+- IDOR protection على إشعارات المستخدم (scoped by userId)

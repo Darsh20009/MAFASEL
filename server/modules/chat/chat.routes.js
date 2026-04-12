@@ -259,6 +259,9 @@ router.post('/room/:id/upload', isAuthenticated, (req, res, next) => {
     if (!room || !room.participants.some(p => p.toString() === userId.toString())) {
       return res.status(403).json({ error: 'غير مصرح' });
     }
+    if (!room.isActive) {
+      return res.status(400).json({ error: 'المحادثة مغلقة' });
+    }
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'لم يتم اختيار ملفات' });
     }

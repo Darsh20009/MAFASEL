@@ -10,6 +10,9 @@ channel = "stable-25_05"
 [userenv.shared]
 PORT = "5000"
 NODE_ENV = "development"
+VAPID_PUBLIC_KEY = "BEycBOkyfpLUcEdSqIP9TBFIJf_krICKbdtMoGuwST5x_X6gkqQ6dsMN3BlQqubWNCNCLXAH1kmZtFLtMJVVCwI"
+VAPID_PRIVATE_KEY = "PVr3ZjgEXZMk1k4WJ4lsS4YPBojNmVheqi5rHf8dRE0"
+VAPID_EMAIL = "mailto:admin@mafasel.com"
 
 [workflows]
 runButton = "Project"

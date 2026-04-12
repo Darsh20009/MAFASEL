@@ -1,54 +1,275 @@
 <%- include('../partials/header') %>
-<div class="main-content">
-  <div class="container">
-    <div class="page-header">
-      <h1><i class="fas fa-comments"></i> محادثة</h1>
-      <a href="/chat" class="btn btn-outline">العودة</a>
-    </div>
-    <div class="ai-chat-container">
-      <div class="ai-messages" id="chatMessages">
-        <% messages.forEach(msg => { %>
-        <div class="ai-msg <%= msg.sender._id.toString() === user._id.toString() ? 'ai-user' : 'ai-bot' %>">
-          <% if (msg.sender._id.toString() !== user._id.toString()) { %>
-          <div class="ai-avatar"><i class="fas fa-user-md"></i></div>
-          <% } %>
-          <div class="ai-bubble">
-            <div class="msg-header"><strong><%= msg.sender.name %></strong></div>
-            <%= msg.text %>
-          </div>
-          <% if (msg.sender._id.toString() === user._id.toString()) { %>
-          <div class="ai-avatar"><i class="fas fa-user"></i></div>
-          <% } %>
-        </div>
-        <% }) %>
+<%
+  let headerAvatar = '/avatars/support-ahmad.svg';
+  if (room.type === 'doctor') {
+    headerAvatar = (room.personaAvatar) || '/avatars/doctor-fahad.svg';
+  } else if (room.type === 'support') {
+    headerAvatar = '/avatars/support-ahmad.svg';
+  } else {
+    headerAvatar = '/avatars/support-nouf.svg';
+  }
+  if (otherParticipant && otherParticipant.avatar) headerAvatar = otherParticipant.avatar;
+%>
+<div class="chat-page-wrap">
+  <div class="chat-room-header">
+    <a href="/chat" class="chat-back-btn"><i class="fas fa-arrow-right"></i></a>
+    <div class="chat-room-header-info">
+      <div class="chat-room-header-avatar">
+        <img src="<%= headerAvatar %>" alt="صورة">
       </div>
-      <form class="ai-input" id="chatForm">
-        <input type="text" id="chatText" placeholder="اكتب رسالتك..." required>
-        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+      <div>
+        <strong><%= room.title || (otherParticipant ? otherParticipant.name : 'محادثة') %></strong>
+        <span class="chat-room-type-label">
+          <%= room.type === 'doctor' ? 'استشارة طبية' : room.type === 'support' ? 'دعم فني' : 'محادثة داخلية' %>
+        </span>
+      </div>
+    </div>
+    <div class="chat-room-header-actions">
+      <% if (room.isActive) { %>
+      <form method="POST" action="/chat/room/<%= room._id %>/close" onsubmit="return confirm('هل تريد إغلاق المحادثة؟')">
+        <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-times-circle"></i> إغلاق</button>
       </form>
+      <% } %>
     </div>
   </div>
+
+  <div class="chat-messages-area" id="chatMessages">
+    <% messages.forEach(function(msg) { %>
+    <% var isMe = msg.sender && msg.sender._id && msg.sender._id.toString() === user._id.toString(); %>
+    <% if (msg.type === 'system') { %>
+    <div class="chat-system-msg">
+      <span><%= msg.text %></span>
+      <small><%= new Date(msg.createdAt).toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %></small>
+    </div>
+    <% } else { %>
+    <%
+      let msgAvatar = '/avatars/support-nouf.svg';
+      if (msg.sender) {
+        if (msg.sender.avatar) {
+          msgAvatar = msg.sender.avatar;
+        } else if (msg.sender.role === 'doctor') {
+          msgAvatar = '/avatars/doctor-fahad.svg';
+        } else if (msg.sender.role === 'admin' || msg.sender.role === 'moderator') {
+          msgAvatar = '/avatars/support-ahmad.svg';
+        } else if (msg.sender.role === 'pharmacist') {
+          msgAvatar = '/avatars/pharmacist-abdullah.svg';
+        }
+      }
+    %>
+    <div class="chat-msg <%= isMe ? 'chat-msg-me' : 'chat-msg-other' %>">
+      <% if (!isMe) { %>
+      <div class="chat-msg-avatar">
+        <img src="<%= msgAvatar %>" alt="<%= msg.sender ? msg.sender.name : '' %>">
+      </div>
+      <% } %>
+      <div class="chat-msg-content">
+        <% if (!isMe && msg.sender) { %>
+        <div class="chat-msg-sender"><%= msg.sender.name %></div>
+        <% } %>
+        <div class="chat-bubble">
+          <% if (msg.attachments && msg.attachments.length > 0) { %>
+          <div class="chat-attachments">
+            <% msg.attachments.forEach(function(att) { %>
+            <% if (att.type && att.type.startsWith('image/')) { %>
+            <a href="<%= att.url %>" target="_blank" class="chat-img-attach">
+              <img src="<%= att.url %>" alt="<%= att.name %>" loading="lazy">
+            </a>
+            <% } else { %>
+            <a href="<%= att.url %>" target="_blank" class="chat-file-attach" download>
+              <i class="fas fa-<%= att.type && att.type.includes('pdf') ? 'file-pdf' : 'file-alt' %>"></i>
+              <span><%= att.name || 'ملف' %></span>
+              <% if (att.size) { %>
+              <small><%= (att.size / 1024).toFixed(0) %> KB</small>
+              <% } %>
+            </a>
+            <% } %>
+            <% }) %>
+          </div>
+          <% } %>
+          <% if (msg.text && msg.type !== 'image') { %>
+          <p><%= msg.text %></p>
+          <% } %>
+          <div class="chat-msg-time">
+            <%= new Date(msg.createdAt).toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) %>
+            <% if (isMe && msg.read) { %>
+            <i class="fas fa-check-double" style="color:var(--secondary);margin-right:4px"></i>
+            <% } else if (isMe) { %>
+            <i class="fas fa-check" style="opacity:0.5;margin-right:4px"></i>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+    <% }) %>
+
+    <% if (!room.isActive) { %>
+    <div class="chat-system-msg chat-closed-msg">
+      <i class="fas fa-lock"></i> تم إغلاق هذه المحادثة
+    </div>
+    <% } %>
+  </div>
+
+  <% if (room.isActive) { %>
+  <div class="chat-input-area">
+    <div class="chat-input-preview" id="filePreview" style="display:none"></div>
+    <form class="chat-input-form" id="chatForm">
+      <button type="button" class="chat-attach-btn" onclick="document.getElementById('chatFileInput').click()" title="إرفاق ملف">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <input type="file" id="chatFileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" style="display:none">
+      <input type="text" id="chatTextInput" placeholder="اكتب رسالتك..." autocomplete="off">
+      <button type="submit" class="chat-send-btn" id="sendBtn">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </form>
+  </div>
+  <% } %>
 </div>
+
 <script>
-  document.getElementById('chatForm').addEventListener('submit', async (e) => {
+var roomId = '<%= room._id %>';
+var myId = '<%= user._id %>';
+var myName = '<%= user.name %>';
+var headerAvatarUrl = '<%= headerAvatar %>';
+var chatArea = document.getElementById('chatMessages');
+var pendingFiles = [];
+
+if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
+
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function addMsg(data, isMe) {
+  var div = document.createElement('div');
+  div.className = 'chat-msg ' + (isMe ? 'chat-msg-me' : 'chat-msg-other');
+
+  var senderAvatar = headerAvatarUrl;
+  if (data.sender && data.sender.avatar) senderAvatar = data.sender.avatar;
+
+  var html = '';
+  if (!isMe) {
+    html += '<div class="chat-msg-avatar"><img src="' + senderAvatar + '" alt=""></div>';
+  }
+  html += '<div class="chat-msg-content">';
+  if (!isMe && data.sender) {
+    html += '<div class="chat-msg-sender">' + escHtml(data.sender.name) + '</div>';
+  }
+  html += '<div class="chat-bubble">';
+
+  if (data.attachments && data.attachments.length > 0) {
+    html += '<div class="chat-attachments">';
+    data.attachments.forEach(function(att) {
+      if (att.type && att.type.startsWith('image/')) {
+        html += '<a href="' + att.url + '" target="_blank" class="chat-img-attach"><img src="' + att.url + '" loading="lazy"></a>';
+      } else {
+        html += '<a href="' + att.url + '" target="_blank" class="chat-file-attach" download><i class="fas fa-file-alt"></i><span>' + escHtml(att.name || 'ملف') + '</span></a>';
+      }
+    });
+    html += '</div>';
+  }
+
+  if (data.text && data.type !== 'image') {
+    html += '<p>' + escHtml(data.text) + '</p>';
+  }
+
+  var now = new Date();
+  html += '<div class="chat-msg-time">' + now.toLocaleString('ar-SA', {hour:'2-digit',minute:'2-digit'}) + '</div>';
+  html += '</div></div></div>';
+  div.innerHTML = html;
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+var chatForm = document.getElementById('chatForm');
+var chatInput = document.getElementById('chatTextInput');
+var fileInput = document.getElementById('chatFileInput');
+var filePreview = document.getElementById('filePreview');
+
+if (fileInput) {
+  fileInput.addEventListener('change', function() {
+    pendingFiles = Array.from(fileInput.files);
+    if (pendingFiles.length > 0) {
+      var html = '';
+      pendingFiles.forEach(function(f, i) {
+        if (f.type.startsWith('image/')) {
+          html += '<div class="file-preview-item"><img src="' + URL.createObjectURL(f) + '"><button type="button" onclick="removeFile(' + i + ')"><i class="fas fa-times"></i></button></div>';
+        } else {
+          html += '<div class="file-preview-item file-preview-doc"><i class="fas fa-file-alt"></i><span>' + escHtml(f.name) + '</span><button type="button" onclick="removeFile(' + i + ')"><i class="fas fa-times"></i></button></div>';
+        }
+      });
+      filePreview.innerHTML = html;
+      filePreview.style.display = 'flex';
+    } else {
+      filePreview.style.display = 'none';
+    }
+  });
+}
+
+function removeFile(idx) {
+  pendingFiles.splice(idx, 1);
+  var dt = new DataTransfer();
+  pendingFiles.forEach(function(f) { dt.items.add(f); });
+  fileInput.files = dt.files;
+  fileInput.dispatchEvent(new Event('change'));
+}
+
+if (chatForm) {
+  chatForm.addEventListener('submit', async function(e) {
     e.preventDefault();
-    const text = document.getElementById('chatText').value.trim();
+    var text = chatInput.value.trim();
+    var sendBtn = document.getElementById('sendBtn');
+
+    if (pendingFiles.length > 0) {
+      sendBtn.disabled = true;
+      var fd = new FormData();
+      pendingFiles.forEach(function(f) { fd.append('files', f); });
+      if (text) fd.append('text', text);
+      try {
+        var res = await fetch('/chat/room/' + roomId + '/upload', { method: 'POST', body: fd });
+        var data = await res.json();
+        if (data.success) {
+          addMsg(data.message, true);
+          chatInput.value = '';
+          pendingFiles = [];
+          fileInput.value = '';
+          filePreview.style.display = 'none';
+          filePreview.innerHTML = '';
+        }
+      } catch(err) { console.error(err); }
+      sendBtn.disabled = false;
+      return;
+    }
+
     if (!text) return;
+    sendBtn.disabled = true;
     try {
-      const res = await fetch('/chat/room/<%= room._id %>/send', {
+      var res = await fetch('/chat/room/' + roomId + '/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text: text })
       });
-      if (res.ok) {
-        const div = document.createElement('div');
-        div.className = 'ai-msg ai-user';
-        div.innerHTML = '<div class="ai-bubble">' + text + '</div><div class="ai-avatar"><i class="fas fa-user"></i></div>';
-        document.getElementById('chatMessages').appendChild(div);
-        document.getElementById('chatText').value = '';
-        div.scrollIntoView({ behavior: 'smooth' });
+      var data = await res.json();
+      if (data.success) {
+        addMsg({ text: text, type: 'text' }, true);
+        chatInput.value = '';
       }
     } catch(err) { console.error(err); }
+    sendBtn.disabled = false;
   });
+}
+
+if (typeof io !== 'undefined') {
+  var socket = io();
+  socket.on('chat_message', function(data) {
+    if (data.roomId === roomId && data.message.sender._id !== myId) {
+      addMsg(data.message, false);
+      fetch('/chat/room/' + roomId + '/send', { method: 'OPTIONS' }).catch(function(){});
+    }
+  });
+}
 </script>
 <%- include('../partials/footer') %>

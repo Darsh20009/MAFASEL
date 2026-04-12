@@ -15,109 +15,109 @@ const PERSONAS = {
   medical: {
     name: 'د. سارة الحربي',
     title: 'استشارية طب عام',
-    avatar: 'doctor-female',
+    avatar: '/avatars/doctor-sara.svg',
     department: 'medical'
   },
   orthopedics: {
     name: 'د. فهد القحطاني',
     title: 'استشاري جراحة العظام والمفاصل',
-    avatar: 'doctor-male',
+    avatar: '/avatars/doctor-fahad.svg',
     department: 'medical'
   },
   cardiology: {
     name: 'د. نورة العتيبي',
     title: 'استشارية أمراض القلب',
-    avatar: 'doctor-female',
+    avatar: '/avatars/doctor-noura.svg',
     department: 'medical'
   },
   neurology: {
     name: 'د. خالد الشمري',
     title: 'استشاري الأمراض العصبية',
-    avatar: 'doctor-male',
+    avatar: '/avatars/doctor-khaled.svg',
     department: 'medical'
   },
   internal: {
     name: 'د. ريم الدوسري',
     title: 'استشارية الطب الباطني',
-    avatar: 'doctor-female',
+    avatar: '/avatars/doctor-reem.svg',
     department: 'medical'
   },
   dermatology: {
     name: 'د. عبدالرحمن المطيري',
     title: 'استشاري الأمراض الجلدية',
-    avatar: 'doctor-male',
+    avatar: '/avatars/doctor-abdulrahman.svg',
     department: 'medical'
   },
   pediatrics: {
     name: 'د. هند الزهراني',
     title: 'استشارية طب الأطفال',
-    avatar: 'doctor-female',
+    avatar: '/avatars/doctor-hind.svg',
     department: 'medical'
   },
   psychiatry: {
     name: 'د. محمد العنزي',
     title: 'استشاري الطب النفسي',
-    avatar: 'doctor-male',
+    avatar: '/avatars/doctor-mohammed.svg',
     department: 'medical'
   },
   ent: {
     name: 'د. لطيفة السبيعي',
     title: 'استشارية أنف وأذن وحنجرة',
-    avatar: 'doctor-female',
+    avatar: '/avatars/doctor-latifa.svg',
     department: 'medical'
   },
   ophthalmology: {
     name: 'د. سعود الغامدي',
     title: 'استشاري طب العيون',
-    avatar: 'doctor-male',
+    avatar: '/avatars/doctor-saud.svg',
     department: 'medical'
   },
   dental: {
     name: 'د. أمل الحارثي',
     title: 'استشارية طب الأسنان',
-    avatar: 'doctor-female',
+    avatar: '/avatars/doctor-amal.svg',
     department: 'medical'
   },
   urology: {
     name: 'د. تركي البقمي',
     title: 'استشاري المسالك البولية',
-    avatar: 'doctor-male',
+    avatar: '/avatars/doctor-turki.svg',
     department: 'medical'
   },
   obstetrics: {
     name: 'د. منال الرشيدي',
     title: 'استشارية النساء والتوليد',
-    avatar: 'doctor-female',
+    avatar: '/avatars/doctor-manal.svg',
     department: 'medical'
   },
   support: {
     name: 'أحمد الشهري',
     title: 'مسؤول خدمة العملاء',
-    avatar: 'support-male',
+    avatar: '/avatars/support-ahmad.svg',
     department: 'support'
   },
   insurance: {
     name: 'منى القرني',
     title: 'مسؤولة قسم التأمين الصحي',
-    avatar: 'support-female',
+    avatar: '/avatars/support-mona.svg',
     department: 'insurance'
   },
   pharmacy: {
     name: 'د. عبدالله الفيفي',
     title: 'صيدلي إكلينيكي',
-    avatar: 'pharmacist-male',
+    avatar: '/avatars/pharmacist-abdullah.svg',
     department: 'pharmacy'
   },
   complaint: {
     name: 'سلطان المالكي',
     title: 'مدير علاقات المرضى',
-    avatar: 'support-male',
+    avatar: '/avatars/support-sultan.svg',
     department: 'complaint'
   },
   general: {
     name: 'نوف الخالدي',
     title: 'منسقة الخدمات الصحية',
-    avatar: 'support-female',
+    avatar: '/avatars/support-nouf.svg',
     department: 'general'
   }
 };

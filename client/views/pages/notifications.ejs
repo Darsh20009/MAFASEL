@@ -3,27 +3,41 @@
   <div class="container">
     <div class="page-header">
       <h1><i class="fas fa-bell"></i> الإشعارات</h1>
-      <button class="btn btn-outline" onclick="markAllRead()">تعيين الكل كمقروء</button>
+      <div class="notif-actions-bar">
+        <button class="btn btn-outline btn-sm" onclick="markAllRead()"><i class="fas fa-check-double"></i> تعيين الكل كمقروء</button>
+      </div>
     </div>
+
+    <div class="push-permission-card" id="pushCard">
+      <div style="display:flex;align-items:center;gap:0.75rem">
+        <i class="fas fa-bell-slash"></i>
+        <p>فعّل الإشعارات الفورية لتصلك التنبيهات حتى عند إغلاق المتصفح</p>
+      </div>
+      <button class="btn btn-primary btn-sm" id="pushEnableBtn" onclick="subscribeToPush()">
+        <i class="fas fa-bell"></i> تفعيل الإشعارات
+      </button>
+    </div>
+
     <% if (notifications.length > 0) { %>
-    <div class="list-items">
+    <div class="notif-page-list">
       <% notifications.forEach(n => { %>
-      <div class="list-item notif-item <%= n.read ? '' : 'unread' %>" onclick="<% if(n.link) { %>markRead('<%= n._id %>'); window.location='<%= n.link %>'<% } else { %>markRead('<%= n._id %>', this)<% } %>">
-        <div class="notif-icon notif-<%= n.type %>">
+      <div class="notif-page-item <%= n.read ? '' : 'unread' %>" onclick="<% if(n.link) { %>markRead('<%= n._id %>'); window.location='<%= n.link %>'<% } else { %>markRead('<%= n._id %>', this)<% } %>">
+        <div class="notif-page-icon notif-type-<%= n.type %>">
           <i class="fas fa-<%= n.type === 'success' ? 'check-circle' : n.type === 'warning' ? 'exclamation-triangle' : n.type === 'error' ? 'times-circle' : 'info-circle' %>"></i>
         </div>
-        <div class="list-item-info">
+        <div class="notif-page-content">
           <strong><%= n.title %></strong>
           <p><%= n.body %></p>
-          <span class="text-muted"><%= new Date(n.createdAt).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span>
         </div>
+        <span class="notif-page-time"><%= new Date(n.createdAt).toLocaleDateString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) %></span>
       </div>
       <% }) %>
     </div>
     <% } else { %>
-    <div class="empty-state-lg">
-      <i class="fas fa-bell-slash"></i>
+    <div class="empty-state-premium">
+      <div class="empty-icon"><i class="fas fa-bell-slash"></i></div>
       <h3>لا توجد إشعارات</h3>
+      <p>ستظهر هنا جميع التنبيهات والتحديثات</p>
     </div>
     <% } %>
   </div>
@@ -36,6 +50,11 @@
   async function markAllRead() {
     await fetch('/notifications/read-all', { method: 'POST' });
     document.querySelectorAll('.unread').forEach(el => el.classList.remove('unread'));
+  }
+
+  if ('Notification' in window && Notification.permission === 'granted') {
+    var pushCard = document.getElementById('pushCard');
+    if (pushCard) pushCard.style.display = 'none';
   }
 </script>
 <%- include('../partials/footer') %>
