@@ -144,6 +144,47 @@ io.on('connection', (socket) => {
 
 app.locals.connectedUsers = connectedUsers;
 
+const requestStats = { total: 0, errors: 0, startTime: Date.now(), responseTimes: [] };
+app.locals.requestStats = requestStats;
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  requestStats.total++;
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    requestStats.responseTimes.push(ms);
+    if (requestStats.responseTimes.length > 200) requestStats.responseTimes.shift();
+    if (res.statusCode >= 500) requestStats.errors++;
+  });
+  next();
+});
+
+app.get('/health', (req, res) => {
+  const mem = process.memoryUsage();
+  const avg = requestStats.responseTimes.length
+    ? Math.round(requestStats.responseTimes.reduce((a, b) => a + b, 0) / requestStats.responseTimes.length)
+    : 0;
+  res.json({
+    status: 'ok',
+    uptime: Math.round(process.uptime()),
+    db: app.locals.dbConnected ? 'connected' : 'disconnected',
+    memory: {
+      heapUsed: Math.round(mem.heapUsed / 1024 / 1024) + 'MB',
+      heapTotal: Math.round(mem.heapTotal / 1024 / 1024) + 'MB',
+      rss: Math.round(mem.rss / 1024 / 1024) + 'MB'
+    },
+    requests: {
+      total: requestStats.total,
+      errors: requestStats.errors,
+      avgResponseMs: avg
+    },
+    sockets: io.engine.clientsCount,
+    version: process.env.npm_package_version || '1.0.0',
+    env: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use((req, res) => {
   res.status(404).render('pages/404', { title: 'الصفحة غير موجودة' });
 });
@@ -234,3 +275,19 @@ async function startServer() {
 }
 
 startServer();
+
+process.on('uncaughtException', (err) => {
+  console.error('[UNCAUGHT EXCEPTION]', err.message, err.stack);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[UNHANDLED REJECTION]', reason);
+});
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully...');
+  server.close(() => {
+    mongoose.connection.close();
+    process.exit(0);
+  });
+});

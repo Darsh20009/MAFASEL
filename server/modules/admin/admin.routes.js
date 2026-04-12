@@ -231,10 +231,14 @@ router.get('/monitor', isAuthenticated, isAdmin, async (req, res) => {
       AuditLog.find().sort({ createdAt: -1 }).limit(15).lean()
     ]);
     const io = req.app.locals.io;
+    const reqStats = req.app.locals.requestStats || { total: 0, errors: 0, responseTimes: [] };
     const connectedSockets = io ? io.engine.clientsCount : 0;
     const uptimeH = Math.floor(uptime / 3600);
     const uptimeM = Math.floor((uptime % 3600) / 60);
     const uptimeS = Math.floor(uptime % 60);
+    const avgResponse = reqStats.responseTimes.length
+      ? Math.round(reqStats.responseTimes.reduce((a, b) => a + b, 0) / reqStats.responseTimes.length)
+      : 0;
     res.render('pages/admin-monitor', {
       title: 'مراقبة النظام',
       mem: {
@@ -246,6 +250,7 @@ router.get('/monitor', isAuthenticated, isAdmin, async (req, res) => {
       uptimeH, uptimeM, uptimeS,
       connectedSockets,
       stats: { totalUsers, totalConsultations, totalOrders, totalAuditLogs, activeUsers, suspendedUsers, todayLogins, todayOrders },
+      reqStats: { total: reqStats.total, errors: reqStats.errors, avgResponse },
       recentLogs,
       nodeVersion: process.version,
       platform: process.platform,
@@ -262,11 +267,15 @@ router.get('/monitor/api/stats', isAuthenticated, isAdmin, async (req, res) => {
   try {
     const mem = process.memoryUsage();
     const io = req.app.locals.io;
+    const reqStats = req.app.locals.requestStats || { total: 0, errors: 0, responseTimes: [] };
     const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
     const [totalUsers, todayLogins] = await Promise.all([
       User.countDocuments(),
       AuditLog.countDocuments({ category: 'auth', createdAt: { $gte: todayStart } })
     ]);
+    const avgResponse = reqStats.responseTimes.length
+      ? Math.round(reqStats.responseTimes.reduce((a, b) => a + b, 0) / reqStats.responseTimes.length)
+      : 0;
     res.json({
       memory: {
         heapUsed: Math.round(mem.heapUsed / 1024 / 1024),
@@ -277,7 +286,8 @@ router.get('/monitor/api/stats', isAuthenticated, isAdmin, async (req, res) => {
       uptime: Math.round(process.uptime()),
       connectedSockets: io ? io.engine.clientsCount : 0,
       totalUsers,
-      todayLogins
+      todayLogins,
+      requests: { total: reqStats.total, errors: reqStats.errors, avgResponse }
     });
   } catch (err) {
     res.status(500).json({ error: 'خطأ في جلب البيانات' });

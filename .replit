@@ -59,3 +59,7 @@ outputType = "webview"
 [[ports]]
 localPort = 5000
 externalPort = 5000
+
+[deployment]
+deploymentTarget = "vm"
+run = ["bash", "-c", "NODE_ENV=production node server.js"]

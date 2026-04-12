@@ -144,6 +144,30 @@
           </div>
         </div>
 
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
+          <div style="padding:1rem 1.25rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:1rem;">
+            <div style="width:42px;height:42px;border-radius:10px;background:rgba(18,169,155,0.1);color:var(--secondary);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;"><i class="fas fa-exchange-alt"></i></div>
+            <div>
+              <div style="font-size:1.3rem;font-weight:700;" id="req-total"><%= reqStats.total %></div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">إجمالي الطلبات</div>
+            </div>
+          </div>
+          <div style="padding:1rem 1.25rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:1rem;">
+            <div style="width:42px;height:42px;border-radius:10px;background:rgba(239,68,68,0.1);color:#ef4444;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;"><i class="fas fa-exclamation-triangle"></i></div>
+            <div>
+              <div style="font-size:1.3rem;font-weight:700;color:#ef4444;" id="req-errors"><%= reqStats.errors %></div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">أخطاء الخادم (5xx)</div>
+            </div>
+          </div>
+          <div style="padding:1rem 1.25rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:1rem;">
+            <div style="width:42px;height:42px;border-radius:10px;background:rgba(59,130,246,0.1);color:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;"><i class="fas fa-tachometer-alt"></i></div>
+            <div>
+              <div style="font-size:1.3rem;font-weight:700;color:#3b82f6;" id="req-avg"><%= reqStats.avgResponse %> ms</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">متوسط وقت الاستجابة</div>
+            </div>
+          </div>
+        </div>
+
         <div class="admin-section">
           <div class="admin-section-header">
             <h3><i class="fas fa-stream" style="color:#3b82f6;"></i> آخر النشاطات</h3>
@@ -212,6 +236,11 @@ async function refreshStats() {
     document.getElementById('uptime-display').textContent = h + 'س ' + m + 'د';
     document.getElementById('uptime-info').textContent = h + 'h ' + m + 'm ' + s + 's';
     if (document.getElementById('today-logins')) document.getElementById('today-logins').textContent = data.todayLogins;
+    if (data.requests) {
+      if (document.getElementById('req-total')) document.getElementById('req-total').textContent = data.requests.total;
+      if (document.getElementById('req-errors')) document.getElementById('req-errors').textContent = data.requests.errors;
+      if (document.getElementById('req-avg')) document.getElementById('req-avg').textContent = data.requests.avgResponse + ' ms';
+    }
   } catch (e) {}
   icon.style.animation = '';
 }
