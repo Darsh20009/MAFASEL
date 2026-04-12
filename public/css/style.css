@@ -636,16 +636,30 @@ body {
 
 .nafath-info { text-align: center; margin-bottom: 1.5rem; }
 .nafath-logo-wrap {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   margin: 0 auto 1rem;
-  background: linear-gradient(135deg, #2d7a3a, #4caf50);
-  border-radius: 50%;
+  border-radius: 16px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.nafath-icon { font-size: 2rem; color: white; }
+.nafath-logo-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+.nafath-tab-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 4px;
+  vertical-align: middle;
+  display: inline-block;
+}
 .nafath-verify-box {
   text-align: center;
   padding: 2rem;
