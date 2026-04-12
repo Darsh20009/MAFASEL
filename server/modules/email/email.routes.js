@@ -124,6 +124,51 @@ router.post('/send-test', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
+router.post('/send-custom', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const { to, subject, message, ctaText, ctaLink } = req.body;
+    if (!to || !subject || !message) {
+      return res.status(400).json({ error: 'البريد والعنوان والرسالة مطلوبة' });
+    }
+
+    const recipientName = to.split('@')[0] || '';
+
+    const html = buildEmailHTML({
+      title: subject,
+      greeting: '',
+      body: `<div style="white-space:pre-line;line-height:1.9;">${message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`,
+      ctaText: ctaText || '',
+      ctaLink: ctaLink || '',
+      showVideo: true
+    });
+
+    const result = await sendEmail({ to, subject, html });
+    res.json({ success: result.success, error: result.error });
+  } catch (err) {
+    console.error('Custom email error:', err);
+    res.status(500).json({ error: 'خطأ في إرسال البريد' });
+  }
+});
+
+router.get('/users-search', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) return res.json({ users: [] });
+
+    const users = await User.find({
+      $or: [
+        { name: { $regex: q, $options: 'i' } },
+        { email: { $regex: q, $options: 'i' } },
+        { phone: { $regex: q, $options: 'i' } }
+      ]
+    }).select('name email phone role avatar').limit(10).lean();
+
+    res.json({ users });
+  } catch (err) {
+    res.json({ users: [] });
+  }
+});
+
 router.get('/templates', isAuthenticated, isAdmin, (req, res) => {
   res.render('pages/admin-email-templates', {
     title: 'قوالب البريد الإلكتروني',

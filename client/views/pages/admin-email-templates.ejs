@@ -3,8 +3,58 @@
 <div class="page-container" style="max-width:1000px;margin:0 auto;padding:1.5rem;">
   <div class="page-header" style="margin-bottom:1.5rem;">
     <h2 style="margin:0;font-size:1.3rem;"><i class="fas fa-envelope" style="color:var(--secondary);"></i> قوالب البريد الإلكتروني</h2>
-    <p style="color:var(--text-muted);font-size:0.85rem;margin:0.25rem 0 0;">معاينة وإرسال تجريبي للقوالب البريدية</p>
+    <p style="color:var(--text-muted);font-size:0.85rem;margin:0.25rem 0 0;">معاينة وإرسال تجريبي للقوالب البريدية وإرسال بريد مخصص</p>
   </div>
+
+  <div class="card" style="padding:1.5rem;border-radius:14px;margin-bottom:1.5rem;border:1px solid var(--secondary)20;">
+    <h3 style="margin:0 0 1.25rem;font-size:1.05rem;display:flex;align-items:center;gap:0.5rem;">
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--secondary)15;display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-pen-fancy" style="color:var(--secondary);font-size:0.95rem;"></i>
+      </div>
+      إرسال بريد مخصص
+    </h3>
+
+    <form id="composeForm" onsubmit="sendCompose(event)">
+      <div style="margin-bottom:1rem;position:relative;">
+        <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">إلى (بريد إلكتروني)</label>
+        <input type="text" id="composeToInput" class="form-control" placeholder="اكتب اسم أو بريد مستخدم أو أدخل بريد جديد..." autocomplete="off" required style="padding-left:2.5rem;">
+        <i class="fas fa-search" style="position:absolute;left:0.85rem;top:50%;transform:translateY(20%);color:var(--text-muted);font-size:0.85rem;"></i>
+        <input type="hidden" id="composeToEmail" name="to">
+        <div id="userSearchResults" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:100;background:var(--card-bg,#1a2736);border:1px solid var(--border,#2a3a4a);border-radius:10px;max-height:260px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,0.3);"></div>
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">الموضوع</label>
+        <input type="text" name="subject" class="form-control" placeholder="عنوان البريد..." required>
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">الرسالة</label>
+        <textarea name="message" class="form-control" rows="5" placeholder="اكتب محتوى الرسالة هنا..." required style="resize:vertical;min-height:100px;"></textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">نص الزر (اختياري)</label>
+          <input type="text" name="ctaText" class="form-control" placeholder="مثال: فتح المنصة">
+        </div>
+        <div>
+          <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">رابط الزر (اختياري)</label>
+          <input type="url" name="ctaLink" class="form-control" placeholder="https://...">
+        </div>
+      </div>
+
+      <div id="selectedRecipient" style="display:none;margin-bottom:1rem;padding:0.75rem;border-radius:10px;background:var(--secondary)10;border:1px solid var(--secondary)30;"></div>
+
+      <button type="submit" class="btn" style="background:var(--secondary);color:#fff;min-width:180px;" id="composeSendBtn">
+        <i class="fas fa-paper-plane"></i> إرسال البريد
+      </button>
+    </form>
+  </div>
+
+  <h3 style="font-size:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">
+    <i class="fas fa-swatchbook" style="color:var(--secondary);"></i> القوالب الجاهزة
+  </h3>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:2rem;">
     <% var templateInfo = {
@@ -40,8 +90,8 @@
   </div>
 
   <div class="card" style="padding:1.25rem;border-radius:14px;">
-    <h3 style="margin:0 0 1rem;font-size:1rem;"><i class="fas fa-paper-plane" style="color:var(--secondary);"></i> إرسال بريد مخصص</h3>
-    <form id="customEmailForm" onsubmit="sendCustom(event)">
+    <h3 style="margin:0 0 1rem;font-size:1rem;"><i class="fas fa-paper-plane" style="color:var(--secondary);"></i> إرسال قالب لبريد محدد</h3>
+    <form id="customEmailForm" onsubmit="sendCustomTemplate(event)">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
         <div>
           <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">البريد الإلكتروني</label>
@@ -64,21 +114,107 @@
 </div>
 
 <script>
-async function sendTest(template) {
-  var btn = document.getElementById('btn-' + template);
-  if (!btn) return;
+var searchTimeout = null;
+var toInput = document.getElementById('composeToInput');
+var toEmail = document.getElementById('composeToEmail');
+var resultsDiv = document.getElementById('userSearchResults');
+var selectedDiv = document.getElementById('selectedRecipient');
+
+toInput.addEventListener('input', function() {
+  clearTimeout(searchTimeout);
+  var val = toInput.value.trim();
+  if (val.includes('@') && val.includes('.')) {
+    toEmail.value = val;
+    selectedDiv.style.display = 'block';
+    selectedDiv.innerHTML = '<div style="display:flex;align-items:center;gap:0.5rem;"><i class="fas fa-envelope" style="color:var(--secondary);"></i><span style="font-size:0.85rem;">سيُرسل إلى: <strong>' + val + '</strong></span><button type="button" onclick="clearRecipient()" style="margin-right:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.9rem;"><i class="fas fa-times"></i></button></div>';
+    resultsDiv.style.display = 'none';
+    return;
+  } else {
+    toEmail.value = '';
+    selectedDiv.style.display = 'none';
+  }
+  if (val.length < 2) { resultsDiv.style.display = 'none'; return; }
+  searchTimeout = setTimeout(function() { searchUsers(val); }, 300);
+});
+
+async function searchUsers(q) {
+  try {
+    var res = await fetch('/email/users-search?q=' + encodeURIComponent(q));
+    var data = await res.json();
+    if (!data.users || !data.users.length) {
+      resultsDiv.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--text-muted);font-size:0.85rem;"><i class="fas fa-info-circle"></i> لا توجد نتائج — يمكنك كتابة بريد مباشرة</div>';
+      resultsDiv.style.display = 'block';
+      return;
+    }
+    var html = '';
+    data.users.forEach(function(u) {
+      var roleLabel = { admin:'مدير', doctor:'طبيب', pharmacist:'صيدلي', patient:'مريض', moderator:'مشرف', employee:'موظف' };
+      html += '<div onclick="selectUser(\'' + (u.email||'') + '\',\'' + (u.name||'') + '\',\'' + (u.role||'') + '\')" style="padding:0.75rem 1rem;cursor:pointer;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid var(--border,#2a3a4a)20;transition:background 0.15s;" onmouseover="this.style.background=\'var(--secondary)10\'" onmouseout="this.style.background=\'none\'">';
+      html += '<div style="width:36px;height:36px;border-radius:50%;background:var(--secondary)15;display:flex;align-items:center;justify-content:center;">';
+      if (u.avatar) {
+        html += '<img src="' + u.avatar + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">';
+      } else {
+        html += '<i class="fas fa-user" style="color:var(--secondary);font-size:0.85rem;"></i>';
+      }
+      html += '</div><div style="flex:1;min-width:0;">';
+      html += '<div style="font-size:0.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (u.name || 'بدون اسم') + ' <span style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">' + (roleLabel[u.role] || u.role || '') + '</span></div>';
+      if (u.email) html += '<div style="font-size:0.75rem;color:var(--text-muted);direction:ltr;text-align:right;">' + u.email + '</div>';
+      if (u.phone) html += '<div style="font-size:0.72rem;color:var(--text-muted);">' + u.phone + '</div>';
+      html += '</div></div>';
+    });
+    resultsDiv.innerHTML = html;
+    resultsDiv.style.display = 'block';
+  } catch(e) { resultsDiv.style.display = 'none'; }
+}
+
+function selectUser(email, name, role) {
+  if (!email) { alert('هذا المستخدم ليس لديه بريد إلكتروني'); return; }
+  toInput.value = name + ' (' + email + ')';
+  toEmail.value = email;
+  resultsDiv.style.display = 'none';
+  selectedDiv.style.display = 'block';
+  var roleLabel = { admin:'مدير', doctor:'طبيب', pharmacist:'صيدلي', patient:'مريض', moderator:'مشرف', employee:'موظف' };
+  selectedDiv.innerHTML = '<div style="display:flex;align-items:center;gap:0.5rem;"><i class="fas fa-user-check" style="color:var(--secondary);"></i><span style="font-size:0.85rem;">سيُرسل إلى: <strong>' + name + '</strong> — <span style="direction:ltr;display:inline;">' + email + '</span> <span style="font-size:0.72rem;color:var(--text-muted);">(' + (roleLabel[role]||'') + ')</span></span><button type="button" onclick="clearRecipient()" style="margin-right:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.9rem;"><i class="fas fa-times"></i></button></div>';
+}
+
+function clearRecipient() {
+  toInput.value = '';
+  toEmail.value = '';
+  selectedDiv.style.display = 'none';
+  toInput.focus();
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#composeToInput') && !e.target.closest('#userSearchResults')) {
+    resultsDiv.style.display = 'none';
+  }
+});
+
+async function sendCompose(e) {
+  e.preventDefault();
+  var form = document.getElementById('composeForm');
+  var fd = new FormData(form);
+  var email = toEmail.value || toInput.value.trim();
+  if (!email || (!email.includes('@'))) { alert('الرجاء اختيار مستلم أو كتابة بريد إلكتروني صحيح'); return; }
+  var btn = document.getElementById('composeSendBtn');
   var orig = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
   try {
-    var res = await fetch('/email/send-test', {
+    var res = await fetch('/email/send-custom', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ template: template })
+      body: JSON.stringify({
+        to: email,
+        subject: fd.get('subject'),
+        message: fd.get('message'),
+        ctaText: fd.get('ctaText'),
+        ctaLink: fd.get('ctaLink')
+      })
     });
     var data = await res.json();
     if (data.success) {
-      btn.innerHTML = '<i class="fas fa-check"></i> تم الإرسال';
+      btn.innerHTML = '<i class="fas fa-check"></i> تم الإرسال بنجاح';
       btn.style.background = '#22c55e';
       setTimeout(function(){ btn.innerHTML = orig; btn.style.background = ''; btn.disabled = false; }, 3000);
     } else {
@@ -88,7 +224,31 @@ async function sendTest(template) {
   } catch(err) { alert('خطأ في الإرسال'); btn.innerHTML = orig; btn.disabled = false; }
 }
 
-async function sendCustom(e) {
+async function sendTest(template) {
+  var btn = document.getElementById('btn-' + template);
+  if (!btn) return;
+  var orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري...';
+  try {
+    var res = await fetch('/email/send-test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ template: template })
+    });
+    var data = await res.json();
+    if (data.success) {
+      btn.innerHTML = '<i class="fas fa-check"></i> تم';
+      btn.style.background = '#22c55e';
+      setTimeout(function(){ btn.innerHTML = orig; btn.style.background = ''; btn.disabled = false; }, 3000);
+    } else {
+      alert(data.error || 'فشل الإرسال');
+      btn.innerHTML = orig; btn.disabled = false;
+    }
+  } catch(err) { alert('خطأ في الإرسال'); btn.innerHTML = orig; btn.disabled = false; }
+}
+
+async function sendCustomTemplate(e) {
   e.preventDefault();
   var form = document.getElementById('customEmailForm');
   var fd = new FormData(form);

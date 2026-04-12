@@ -1,7 +1,7 @@
 const https = require('https');
 
 const SMTP2GO_API = 'https://api.smtp2go.com/v3/email/send';
-const FROM_NAME = 'منصة مفاصل';
+const FROM_NAME = 'مفاصل الطبيه';
 const FROM_EMAIL = 'noreply@mafaseltech.com';
 
 function getBaseUrl() {
