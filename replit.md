@@ -153,6 +153,19 @@
 - المسارات: `/scheduler`, `/scheduler/appointments/add`, `/scheduler/reminders/add`
 - API: `/scheduler/api/today` - مواعيد وتذكيرات اليوم
 
+## PWA (تطبيق ويب تقدمي)
+- **manifest.json**: اسم التطبيق، أيقونات (8 أحجام: 72-512px)، اختصارات سريعة (استشارة، صيدلية، مواعيد)
+- **Service Worker** (`public/sw.js`):
+  - تخزين مؤقت للملفات الثابتة (CSS, JS, أيقونات، خطوط)
+  - استراتيجية Stale-While-Revalidate للأصول الثابتة
+  - Network-first للصفحات مع عرض صفحة "غير متصل" كبديل
+  - دعم Push Notifications مع أزرار (فتح/تجاهل)
+  - اكتشاف التحديثات مع شريط "تحديث جديد متوفر"
+- **Install App**: زر تثبيت في شريط التنقل (يظهر عند توفر `beforeinstallprompt`)
+- **Offline Mode**: صفحة `/offline` مخصصة + شريط حالة اتصال أحمر
+- **Push Notifications**: اشتراك تلقائي عبر VAPID keys + حفظ الاشتراك بقاعدة البيانات
+- **Apple**: دعم `apple-mobile-web-app-capable` و `apple-touch-icon`
+
 ## التسجيل
 - التسجيل للمرضى فقط (لا يوجد اختيار دور)
 - المدير ينشئ الحسابات الأخرى (أطباء، صيادلة، مشرفين، شركات، موظفين)

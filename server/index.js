@@ -104,6 +104,10 @@ app.use('/email', emailRoutes);
 app.use('/maps', mapsRoutes);
 app.use('/scheduler', schedulerRoutes);
 
+app.get('/offline', (req, res) => {
+  res.render('pages/offline', { title: 'غير متصل', user: req.session.user || null, success: null, error: null });
+});
+
 const connectedUsers = new Map();
 
 io.on('connection', (socket) => {

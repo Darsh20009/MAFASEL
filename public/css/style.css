@@ -4054,3 +4054,64 @@ body {
   .page-header { flex-direction: column; align-items: flex-start; }
   .admin-quick-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ========== PWA ========== */
+.pwa-install-btn {
+  animation: pwa-pulse 2s ease-in-out infinite;
+  color: var(--accent) !important;
+}
+@keyframes pwa-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.pwa-update-banner {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  font-family: inherit;
+  box-shadow: 0 8px 32px rgba(18,169,155,0.35);
+  z-index: 10000;
+  animation: slideUpBanner 0.4s ease;
+}
+@keyframes slideUpBanner {
+  from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.pwa-update-banner button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.pwa-update-banner button:hover {
+  background: rgba(255,255,255,0.35);
+}
+.pwa-offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #e74c3c;
+  color: #fff;
+  text-align: center;
+  padding: 0.4rem;
+  font-size: 0.82rem;
+  z-index: 10001;
+  display: none;
+}
+.pwa-offline-indicator.show { display: block; }

@@ -1,0 +1,19 @@
+<%- include('../partials/header') %>
+
+<div class="page-container" style="display:flex;align-items:center;justify-content:center;min-height:70vh;text-align:center;">
+  <div>
+    <div style="font-size:4rem;margin-bottom:1.5rem;opacity:0.4;">
+      <i class="fas fa-wifi" style="position:relative;"></i>
+    </div>
+    <h1 style="font-size:1.8rem;margin-bottom:0.75rem;color:var(--text);">أنت غير متصل بالإنترنت</h1>
+    <p style="color:var(--text-muted);margin-bottom:2rem;line-height:1.8;max-width:400px;">
+      لا يمكن الوصول إلى هذه الصفحة حالياً.<br>
+      تحقق من اتصالك بالإنترنت وحاول مرة أخرى.
+    </p>
+    <a href="javascript:location.reload()" class="btn btn-primary" style="padding:0.75rem 2.5rem;">
+      <i class="fas fa-sync-alt"></i> إعادة المحاولة
+    </a>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

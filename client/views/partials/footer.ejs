@@ -6,7 +6,120 @@
 </footer>
 <% } %>
 
+<div class="pwa-offline-indicator" id="offlineBar">
+  <i class="fas fa-wifi-slash"></i> أنت غير متصل بالإنترنت — بعض المزايا قد لا تعمل
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function(reg) {
+      function showUpdateBanner(worker) {
+        if (document.getElementById('pwaUpdateBanner')) return;
+        var banner = document.createElement('div');
+        banner.id = 'pwaUpdateBanner';
+        banner.className = 'pwa-update-banner';
+        banner.innerHTML = '<span><i class="fas fa-sync-alt"></i> تحديث جديد متوفر</span><button id="pwaUpdateBtn">تحديث</button><button onclick="this.parentElement.remove()" style="background:none;border:none;color:inherit;cursor:pointer;margin-right:0.5rem;"><i class="fas fa-times"></i></button>';
+        document.body.appendChild(banner);
+        document.getElementById('pwaUpdateBtn').addEventListener('click', function() {
+          worker.postMessage({ type: 'SKIP_WAITING' });
+        });
+      }
+
+      if (reg.waiting) { showUpdateBanner(reg.waiting); }
+
+      reg.addEventListener('updatefound', function() {
+        var newWorker = reg.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateBanner(newWorker);
+            }
+          });
+        }
+      });
+
+      navigator.serviceWorker.addEventListener('controllerchange', function() {
+        location.reload();
+      });
+    }).catch(function(err) { console.warn('SW registration failed:', err); });
+  });
+}
+
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var installBtn = document.getElementById('pwaInstallBtn');
+  if (installBtn) installBtn.style.display = '';
+});
+
+function installPWA() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(result) {
+    deferredPrompt = null;
+    var installBtn = document.getElementById('pwaInstallBtn');
+    if (installBtn) installBtn.style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', function() {
+  deferredPrompt = null;
+  var installBtn = document.getElementById('pwaInstallBtn');
+  if (installBtn) installBtn.style.display = 'none';
+});
+
+var offlineBar = document.getElementById('offlineBar');
+function updateOnlineStatus() {
+  if (offlineBar) {
+    if (!navigator.onLine) offlineBar.classList.add('show');
+    else offlineBar.classList.remove('show');
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+<% if (user) { %>
+function subscribePushNotifications() {
+  if (!('PushManager' in window)) return;
+  navigator.serviceWorker.ready.then(function(reg) {
+    reg.pushManager.getSubscription().then(function(sub) {
+      if (sub) return;
+      fetch('/notifications/vapid-key').then(function(r) { return r.json(); }).then(function(data) {
+        if (!data.publicKey) return;
+        Notification.requestPermission().then(function(perm) {
+          if (perm !== 'granted') return;
+          reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(data.publicKey)
+          }).then(function(subscription) {
+            fetch('/notifications/push/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(subscription)
+            });
+          }).catch(function(err) { console.warn('Push subscription failed:', err); });
+        });
+      }).catch(function() {});
+    });
+  });
+}
+
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var rawData = window.atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+  for (var i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+  return outputArray;
+}
+
+setTimeout(subscribePushNotifications, 3000);
+<% } %>
+</script>
 </body>
 </html>
