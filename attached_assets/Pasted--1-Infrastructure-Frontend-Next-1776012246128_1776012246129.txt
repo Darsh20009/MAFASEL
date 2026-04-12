@@ -1,0 +1,235 @@
+🚀 المرحلة 1: البنية التحتية الكاملة (Infrastructure)
+🧱 إعداد المشاريع
+إنشاء Frontend باستخدام Next.js (App Router)
+إنشاء Backend باستخدام NestJS
+إنشاء مشروع MongoDB
+إعداد Redis (للجلسات + الكاش)
+إعداد WebSocket Server (Socket.io)
+⚙️ إعداد النظام
+إعداد:
+.env لكل بيئة (dev / prod)
+إعداد Logger System
+إعداد Error Handling مركزي
+إعداد Rate Limiting
+إعداد CORS
+إعداد Helmet للأمان
+🔐 المرحلة 2: نظام المصادقة الكامل (Auth System Deep)
+📲 تسجيل الجوال (OTP Simulation)
+Endpoints:
+POST /auth/phone/request-code
+POST /auth/phone/verify-code
+📧 تسجيل البريد
+POST /auth/email/register
+POST /auth/email/login
+🌐 تسجيل Google
+Redirect URIs:
+/api/auth/google/callback
+Flow:
+GET /auth/google
+GET /auth/google/callback
+🍎 تسجيل Apple
+POST /auth/apple
+🆔 تسجيل عبر Nafath
+POST /auth/nafath/init
+POST /auth/nafath/verify
+🔐 WebAuthn
+POST /auth/webauthn/register-options
+POST /auth/webauthn/register-verify
+POST /auth/webauthn/auth-options
+POST /auth/webauthn/auth-verify
+🔑 الجلسات
+Access Token (15 دقيقة)
+Refresh Token (30 يوم)
+📱 Device Model
+Device {
+  userId,
+  deviceName,
+  ip,
+  location,
+  lastActive,
+  isTrusted
+}
+🆔 المرحلة 3: ربط الهوية (Identity Flow)
+Flow كامل:
+المستخدم يسجل بأي طريقة
+يتم إنشاء حساب جزئي
+النظام يطلب:
+الهوية / الإقامة
+إرسال إلى نفاذ
+استلام البيانات
+تحديث الحساب
+Data:
+Identity {
+  userId,
+  nationalId,
+  verified,
+  source: "nafath"
+}
+🏥 المرحلة 4: الملف الطبي (Medical System Deep)
+Medical Profile:
+MedicalProfile {
+  userId,
+  bloodType,
+  allergies: [],
+  chronicDiseases: [],
+  medications: [],
+  history: [],
+  lastUpdated
+}
+Medical Logs:
+MedicalLog {
+  userId,
+  type: "consultation | ai | doctor",
+  data,
+  createdAt
+}
+💬 المرحلة 5: نظام الشات (Deep Fix + Build)
+❗ مشكلة Scroll
+الحل:
+عند إضافة رسالة:
+scrollToBottom()
+استخدام:
+overflow-y: auto;
+height: 100%;
+Message Model:
+Message {
+  chatId,
+  senderId,
+  content,
+  attachments,
+  isInternal,
+  createdAt
+}
+Chat Features:
+Real-time via WebSocket
+Typing Indicator
+Seen Control
+Internal Notes
+👁️ لوحة الدعم:
+GET /admin/user/:id/full-data
+🎥 المرحلة 6: الاجتماعات (QMeet Integration)
+Flow:
+الطبيب يضغط "Start Session"
+Backend ينشئ Room
+إرسال رابط للمريض
+WebRTC عبر QMeet
+Data:
+Meeting {
+  doctorId,
+  userId,
+  roomId,
+  status,
+  startedAt
+}
+🏥 المرحلة 7: الصيدليات (Marketplace System)
+Pharmacy Model:
+Pharmacy {
+  name,
+  logo,
+  location,
+  isActive
+}
+Product Model:
+Drug {
+  pharmacyId,
+  name,
+  image,
+  price,
+  insuranceSupported
+}
+Flow:
+عرض الصيدليات
+دخول الصيدلية
+عرض الأدوية
+اختيار:
+شراء
+تأمين
+🔔 المرحلة 8: الإشعارات (Full System)
+Notification Model:
+Notification {
+  userId,
+  title,
+  body,
+  read,
+  createdAt
+}
+Layers:
+DB
+WebSocket
+Push
+🤖 المرحلة 9: AI System
+Endpoints:
+POST /ai/analyze
+POST /ai/chat
+Features:
+تحليل أعراض
+ردود ذكية
+اقتراحات
+📍 المرحلة 10: الخرائط
+Data:
+Location {
+  name,
+  type: "hospital | pharmacy",
+  lat,
+  lng
+}
+Features:
+عرض نقاط
+حساب مسافة
+فتح Maps
+📅 المرحلة 11: Scheduler
+Appointment:
+Appointment {
+  userId,
+  doctorId,
+  date,
+  reminders
+}
+Drug Reminder:
+Reminder {
+  userId,
+  drug,
+  time
+}
+🎬 المرحلة 12: البانر + الفيديو
+Banner:
+صور بدون نص
+Lazy Load
+Fade Transition
+Video:
+تحميل متأخر
+يظهر بعد استقرار الصفحة
+📱 المرحلة 13: PWA
+ملفات:
+manifest.json
+service-worker.js
+Features:
+Install App
+Push Notifications
+Offline Mode
+🌐 المرحلة 14: SEO
+SSR
+Meta Tags
+Sitemap
+Schema Medical
+🔐 المرحلة 15: Logging + Audit
+AuditLog {
+  userId,
+  action,
+  ip,
+  device,
+  timestamp
+}
+🛠️ المرحلة 16: Admin Panel
+إدارة المستخدمين
+إدارة الشركات
+مراقبة النظام
+Logs
+🧪 المرحلة 17: Testing
+Unit Testing
+Integration Testing
+Load Testing
+🚀 المرحلة 18: Deployment
+إعداد السيرفر
+CI/CD
+Monitoring
