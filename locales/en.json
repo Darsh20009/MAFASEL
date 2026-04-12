@@ -1,6 +1,6 @@
 {
   "site_name": "Mafasel",
-  "site_desc": "Mafasel Physical Therapy & Rehabilitation Platform",
+  "site_desc": "A health-tech platform redefining the physical therapy journey",
   "dir": "ltr",
   "lang": "en",
 
@@ -151,9 +151,9 @@
   },
 
   "landing": {
-    "tagline": "Mafasel Physical Therapy Platform",
+    "tagline": "Health-Tech Platform",
     "hero_title": "All Your Health Care in One Place",
-    "hero_desc": "A comprehensive digital platform combining physical therapy sessions, online pharmacy, and health insurance management — with ease and complete security.",
+    "hero_desc": "Mafasel is a health-tech platform that redefines the physical therapy experience by connecting patients to centers, specialists, pharmacies, and insurance — managing the treatment journey from booking to follow-up.",
     "feat_sessions": "Sessions with top specialists",
     "feat_pharmacy": "Online pharmacy with fast delivery",
     "feat_insurance": "Health insurance management",

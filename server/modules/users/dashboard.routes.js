@@ -62,6 +62,18 @@ router.get('/', async (req, res) => {
     if (role === 'doctor') {
       roleData.pendingConsultations = await Consultation.countDocuments({ doctor: userId, status: { $in: ['assigned', 'in_progress'] } });
       roleData.completedToday = await Consultation.countDocuments({ doctor: userId, status: 'completed', updatedAt: { $gte: new Date(new Date().setHours(0,0,0,0)) } });
+    } else if (role === 'pharmacist') {
+      try {
+        roleData.pendingOrders = await Order.countDocuments({ status: { $in: ['pending', 'confirmed', 'preparing'] } });
+      } catch(e) { roleData.pendingOrders = 0; }
+    } else if (role === 'company') {
+      try {
+        roleData.employeeCount = await User.countDocuments({ role: 'employee' });
+      } catch(e) { roleData.employeeCount = 0; }
+    } else if (role === 'insurance_agent') {
+      try {
+        roleData.activePolicies = await Insurance.countDocuments({ status: 'active' });
+      } catch(e) { roleData.activePolicies = 0; }
     } else if (role === 'admin' || role === 'moderator') {
       roleData.totalUsers = await User.countDocuments();
       roleData.totalOrders = await Order.countDocuments();

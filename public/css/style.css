@@ -4750,3 +4750,116 @@ html[dir="ltr"] .footer {
   background: linear-gradient(transparent, var(--bg) 30%);
 }
 @media(min-width:601px){ .pay-sticky-bar { position: static; padding: 0; background: none; } }
+
+/* ── ROLE CONTROL PANELS ── */
+.role-panel-header { margin-bottom: 1.25rem; }
+.role-panel-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 1.25rem; border-radius: 50px;
+  font-size: 0.88rem; font-weight: 700;
+}
+.doctor-badge { background: linear-gradient(135deg,#e0f2f1,#b2dfdb); color: #00695c; border: 1.5px solid #80cbc4; }
+.pharmacist-badge { background: linear-gradient(135deg,#e8f5e9,#c8e6c9); color: #2e7d32; border: 1.5px solid #a5d6a7; }
+.company-badge { background: linear-gradient(135deg,#e3f2fd,#bbdefb); color: #1565c0; border: 1.5px solid #90caf9; }
+.insurance-badge { background: linear-gradient(135deg,#f3e5f5,#e1bee7); color: #7b1fa2; border: 1.5px solid #ce93d8; }
+
+.role-control-panel { margin-bottom: 2rem; }
+.control-panel-grid { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; }
+@media (max-width: 900px) { .control-panel-grid { grid-template-columns: 1fr; } }
+
+.control-panel-main { background: var(--card); border-radius: 20px; padding: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow); }
+.control-panel-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+
+.control-action-card {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.9rem 1.1rem; border-radius: 14px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  text-decoration: none; color: var(--text);
+  transition: all 0.2s; position: relative;
+}
+.control-action-card:hover { background: var(--accent-light); border-color: var(--accent); transform: translateX(-3px); }
+html[dir="ltr"] .control-action-card:hover { transform: translateX(3px); }
+.control-action-card.primary { background: linear-gradient(135deg, var(--accent-light), rgba(18,169,155,0.06)); border-color: var(--accent); }
+.ca-icon {
+  width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; font-size: 1rem;
+}
+.ca-icon.bg-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.ca-icon.bg-teal { background: linear-gradient(135deg, #12a99b, #0d8a7f); }
+.ca-icon.bg-green { background: linear-gradient(135deg, #16a34a, #15803d); }
+.ca-icon.bg-amber { background: linear-gradient(135deg, #d97706, #b45309); }
+.ca-icon.bg-red { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+.ca-icon.bg-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+.ca-icon.bg-muted { background: linear-gradient(135deg, #64748b, #475569); }
+.ca-info { flex: 1; }
+.ca-info strong { display: block; font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.15rem; }
+.ca-info small { font-size: 0.75rem; color: var(--muted); }
+.ca-badge {
+  background: var(--accent); color: #fff;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 0.15rem 0.5rem; border-radius: 50px; flex-shrink: 0;
+}
+.ca-badge.notif { background: #dc2626; }
+.ql-badge { background: var(--accent); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 50px; margin-inline-start: 4px; }
+
+/* ── AI ASSISTANT PANEL (SIDE) ── */
+.control-panel-side { display: flex; flex-direction: column; gap: 1rem; }
+.ai-assistant-panel {
+  background: linear-gradient(145deg, #0a2e2c 0%, #0d3d3a 60%, #0e4840 100%);
+  border-radius: 20px; padding: 1.5rem; color: #fff; position: relative; overflow: hidden;
+  border: 1px solid rgba(18,169,155,0.3);
+}
+.ai-panel-glow {
+  position: absolute; top: -40px; right: -40px; width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(18,169,155,0.35), transparent 70%);
+  pointer-events: none;
+}
+.ai-panel-icon { margin-bottom: 0.85rem; }
+.ai-assistant-panel h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.5rem; }
+.ai-assistant-panel p { font-size: 0.8rem; color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1rem; }
+.btn-ai-start {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff; padding: 0.6rem 1.25rem; border-radius: 10px;
+  text-decoration: none; font-size: 0.85rem; font-weight: 600; font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-ai-start:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); transform: translateY(-1px); }
+
+/* ── QUICK LINKS PANEL ── */
+.quick-links-panel { background: var(--card); border-radius: 16px; padding: 1.1rem; border: 1px solid var(--border); }
+.quick-links-panel h4 { font-size: 0.82rem; font-weight: 700; color: var(--muted); margin-bottom: 0.75rem; }
+.quick-link-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.55rem 0.75rem; border-radius: 10px; text-decoration: none;
+  color: var(--text); font-size: 0.83rem; font-weight: 500;
+  transition: all 0.15s; border: 1px solid transparent;
+}
+.quick-link-item:hover { background: var(--accent-light); color: var(--accent); border-color: var(--border); }
+.quick-link-item i { width: 16px; color: var(--accent); font-size: 0.8rem; }
+
+/* ── FLOATING AI BUTTON ── */
+.floating-ai-btn {
+  position: fixed; bottom: 90px; left: 20px; z-index: 999;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #12a99b, #0d6b62);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(18,169,155,0.5);
+  text-decoration: none; transition: all 0.25s;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+html[dir="rtl"] .floating-ai-btn { left: auto; right: 20px; }
+.floating-ai-btn:hover { transform: scale(1.1) translateY(-2px); box-shadow: 0 10px 36px rgba(18,169,155,0.6); }
+.floating-ai-btn img { width: 30px; height: 30px; object-fit: contain; filter: brightness(0) invert(1); }
+.floating-ai-pulse {
+  position: absolute; top: -3px; right: -3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #22c55e; border: 2px solid var(--bg,#fff);
+  animation: pulseGreen 2s infinite;
+}
+@keyframes pulseGreen {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}

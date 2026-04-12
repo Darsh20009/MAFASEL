@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
     const Banner = require('../admin/banner.model');
     banners = await Banner.find({ isActive: true }).sort({ order: 1 });
   } catch (e) {}
-  res.render('pages/landing', { title: 'مفاصل - منصة طبية متكاملة', metaDescription: 'منصة مفاصل الطبية الرقمية المتكاملة في السعودية - استشارات طبية متخصصة، صيدلية إلكترونية، تأمين صحي، مساعد ذكي بالذكاء الاصطناعي، مواعيد وتذكيرات أدوية', banners });
+  res.render('pages/landing', { title: 'مفاصل - منصة تقنية صحية', metaDescription: 'مفاصل منصة تقنية صحية تعيد تنظيم تجربة العلاج الطبيعي من خلال ربط المرضى بالمراكز والأخصائيين والصيدليات والتأمين وإدارة رحلة العلاج من الحجز إلى المتابعة', banners });
 });
 
 router.get('/login', (req, res) => {

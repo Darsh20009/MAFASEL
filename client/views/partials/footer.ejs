@@ -39,21 +39,12 @@
   </a>
   <% } %>
 
-  <% if (r === 'patient' || r === 'doctor') { %>
   <a href="/ai" class="mobile-nav-item mobile-nav-center">
     <div class="mobile-nav-center-btn">
       <img src="/icons/logo.png" alt="" style="width:22px;height:22px;object-fit:contain;">
     </div>
     <span><%= typeof t === 'function' ? t('nav.ai_assistant') : 'مساعد مفاصل' %></span>
   </a>
-  <% } else { %>
-  <a href="/chat" class="mobile-nav-item mobile-nav-center">
-    <div class="mobile-nav-center-btn">
-      <i class="fas fa-comments"></i>
-    </div>
-    <span><%= typeof t === 'function' ? t('nav.chat') : 'المحادثات' %></span>
-  </a>
-  <% } %>
 
   <a href="/notifications" class="mobile-nav-item" id="mobileNotifBtn">
     <span class="mobile-notif-wrap">
