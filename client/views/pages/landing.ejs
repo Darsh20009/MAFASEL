@@ -3,10 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>مفاصل | منصة طبية رقمية</title>
+  <title>مفاصل | منصة طبية رقمية متكاملة</title>
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'منصة مفاصل الطبية الرقمية المتكاملة - استشارات طبية، صيدلية إلكترونية، تأمين صحي، مساعد ذكي بالذكاء الاصطناعي' %>">
+  <meta name="keywords" content="مفاصل, منصة طبية, استشارات طبية, صيدلية إلكترونية, تأمين صحي, مواعيد طبية, تذكير أدوية, طبيب, صيدلي, السعودية, رعاية صحية رقمية">
+  <meta name="author" content="مفاصل">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' && canonicalUrl ? canonicalUrl : '' %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="مفاصل - منصة طبية رقمية">
+  <meta property="og:title" content="مفاصل | منصة طبية رقمية متكاملة">
+  <meta property="og:description" content="منصة مفاصل الطبية الرقمية المتكاملة في السعودية - استشارات طبية متخصصة، صيدلية إلكترونية، تأمين صحي، مساعد ذكي">
+  <meta property="og:image" content="/icons/icon-512.png">
+  <meta property="og:locale" content="ar_SA">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="مفاصل | منصة طبية رقمية متكاملة">
+  <meta name="twitter:description" content="منصة مفاصل الطبية الرقمية المتكاملة - استشارات طبية، صيدلية إلكترونية، تأمين صحي">
+  <meta name="twitter:image" content="/icons/icon-512.png">
+  <meta name="theme-color" content="#12a99b">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="icon" href="/icons/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <% if (typeof schemaMarkup !== 'undefined' && schemaMarkup) { %>
+  <script type="application/ld+json"><%- JSON.stringify(schemaMarkup) %></script>
+  <% } %>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 

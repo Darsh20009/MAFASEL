@@ -40,12 +40,12 @@ async function logLogin(user, method, req) {
 
 router.get('/', (req, res) => {
   if (req.session.user) return res.redirect('/dashboard');
-  res.render('pages/landing', { title: 'مفاصل - منصة طبية متكاملة' });
+  res.render('pages/landing', { title: 'مفاصل - منصة طبية متكاملة', metaDescription: 'منصة مفاصل الطبية الرقمية المتكاملة في السعودية - استشارات طبية متخصصة، صيدلية إلكترونية، تأمين صحي، مساعد ذكي بالذكاء الاصطناعي، مواعيد وتذكيرات أدوية' });
 });
 
 router.get('/login', (req, res) => {
   if (req.session.user) return res.redirect('/dashboard');
-  res.render('pages/login', { title: 'تسجيل الدخول' });
+  res.render('pages/login', { title: 'تسجيل الدخول', metaDescription: 'تسجيل الدخول إلى منصة مفاصل الطبية - استشارات طبية، صيدلية، تأمين صحي', metaRobots: 'noindex, nofollow' });
 });
 
 router.post('/login', async (req, res) => {
@@ -76,7 +76,7 @@ router.post('/login', async (req, res) => {
 
 router.get('/register', (req, res) => {
   if (req.session.user) return res.redirect('/dashboard');
-  res.render('pages/register', { title: 'إنشاء حساب جديد' });
+  res.render('pages/register', { title: 'إنشاء حساب جديد', metaDescription: 'إنشاء حساب جديد في منصة مفاصل الطبية - انضم الآن واحصل على استشارات طبية وخدمات صحية متكاملة' });
 });
 
 router.post('/register', async (req, res) => {

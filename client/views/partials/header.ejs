@@ -4,6 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title><%= title %> | مفاصل</title>
+  <% var seoDesc = typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'منصة مفاصل الطبية الرقمية المتكاملة - استشارات طبية، صيدلية إلكترونية، تأمين صحي، مساعد ذكي، مواعيد وتذكيرات أدوية'; %>
+  <% var seoUrl = typeof canonicalUrl !== 'undefined' && canonicalUrl ? canonicalUrl : ''; %>
+  <% var seoImage = typeof metaImage !== 'undefined' && metaImage ? metaImage : '/icons/icon-512.png'; %>
+  <meta name="description" content="<%= seoDesc %>">
+  <meta name="keywords" content="مفاصل, منصة طبية, استشارات طبية, صيدلية إلكترونية, تأمين صحي, مواعيد طبية, تذكير أدوية, طبيب, صيدلي, السعودية, رعاية صحية رقمية">
+  <meta name="author" content="مفاصل">
+  <meta name="robots" content="<%= typeof metaRobots !== 'undefined' && metaRobots ? metaRobots : 'index, follow' %>">
+  <link rel="canonical" href="<%= seoUrl %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="مفاصل - منصة طبية رقمية">
+  <meta property="og:title" content="<%= title %> | مفاصل">
+  <meta property="og:description" content="<%= seoDesc %>">
+  <meta property="og:image" content="<%= seoImage %>">
+  <meta property="og:url" content="<%= seoUrl %>">
+  <meta property="og:locale" content="ar_SA">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= title %> | مفاصل">
+  <meta name="twitter:description" content="<%= seoDesc %>">
+  <meta name="twitter:image" content="<%= seoImage %>">
   <link rel="icon" href="/icons/logo.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#12a99b">
@@ -14,6 +33,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
+  <% if (typeof schemaMarkup !== 'undefined' && schemaMarkup) { %>
+  <script type="application/ld+json"><%- JSON.stringify(schemaMarkup) %></script>
+  <% } %>
 </head>
 <body>
 <nav class="navbar">

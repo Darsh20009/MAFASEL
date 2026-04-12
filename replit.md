@@ -166,6 +166,20 @@
 - **Push Notifications**: اشتراك تلقائي عبر VAPID keys + حفظ الاشتراك بقاعدة البيانات
 - **Apple**: دعم `apple-mobile-web-app-capable` و `apple-touch-icon`
 
+## SEO (تحسين محركات البحث)
+- **SSR**: التطبيق يستخدم EJS (Server-Side Rendering) بالكامل — كل المحتوى يُعرض من الخادم
+- **Meta Tags**: وصف ديناميكي، Open Graph، Twitter Cards، canonical URL، robots لكل صفحة
+  - الصفحات الخاصة (login, admin) تستخدم `noindex, nofollow`
+  - متغيرات EJS اختيارية: `metaDescription`, `canonicalUrl`, `metaImage`, `metaRobots`, `schemaMarkup`
+- **robots.txt**: `/robots.txt` — يسمح بالزحف مع حظر `/admin/`, `/chat/`, `/api/`, `/profile/`
+- **sitemap.xml**: `/sitemap.xml` — 9 صفحات عامة مع أولويات وتواتر التحديث
+- **Schema.org Medical**: JSON-LD بنوع `MedicalBusiness` مع:
+  - `MedicalTherapy` للاستشارات والصيدلية
+  - `SearchAction` للبحث في الصيدلية
+  - عنوان السعودية/الرياض
+  - `pageSchema()` middleware لصفحات مخصصة (Pharmacy, MedicalClinic, ItemList)
+- الملفات: `server/modules/seo/seo.routes.js`, `server/modules/seo/seo.middleware.js`
+
 ## التسجيل
 - التسجيل للمرضى فقط (لا يوجد اختيار دور)
 - المدير ينشئ الحسابات الأخرى (أطباء، صيادلة، مشرفين، شركات، موظفين)

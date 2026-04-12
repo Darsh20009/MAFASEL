@@ -85,6 +85,12 @@ const medicalProfileRoutes = require('./modules/medical/medical-profile.routes')
 const emailRoutes = require('./modules/email/email.routes');
 const mapsRoutes = require('./modules/maps/maps.routes');
 const schedulerRoutes = require('./modules/scheduler/scheduler.routes');
+const seoRoutes = require('./modules/seo/seo.routes');
+const { seoDefaults, medicalPlatformSchema } = require('./modules/seo/seo.middleware');
+
+app.use(seoDefaults);
+app.use(medicalPlatformSchema);
+app.use('/', seoRoutes);
 
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
