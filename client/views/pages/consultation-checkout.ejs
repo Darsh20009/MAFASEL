@@ -1,0 +1,372 @@
+<%- include('../partials/header') %>
+<style>
+.checkout-wrap{max-width:700px;margin:0 auto}
+.checkout-summary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2,#1a2e38));
+  border-radius:16px;padding:1.8rem;color:#fff;margin-bottom:1.5rem;
+  position:relative;overflow:hidden;
+}
+.checkout-summary::before{
+  content:'';position:absolute;top:-30%;right:-10%;width:200px;height:200px;
+  border-radius:50%;background:rgba(18,169,155,0.12);
+}
+.checkout-summary h2{font-size:1.3rem;font-weight:800;margin-bottom:0.5rem}
+.checkout-summary .summary-row{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.1)}
+.checkout-summary .summary-row:last-child{border-bottom:none}
+.checkout-summary .summary-label{font-size:0.85rem;opacity:0.7}
+.checkout-summary .summary-value{font-size:0.9rem;font-weight:700}
+.checkout-total{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.8rem 0 0;margin-top:0.5rem;border-top:2px solid rgba(255,255,255,0.15);
+}
+.checkout-total .total-label{font-size:1rem;font-weight:700}
+.checkout-total .total-amount{font-size:1.8rem;font-weight:900;color:var(--teal)}
+.insurance-saved{
+  background:rgba(18,169,155,0.15);border-radius:8px;padding:0.5rem 0.8rem;
+  display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;margin-top:0.5rem;
+  color:var(--teal);font-weight:600;
+}
+.insurance-saved.hidden{display:none}
+
+.payment-methods{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin-bottom:1.5rem}
+.pay-option{
+  background:#fff;border:2px solid var(--border,#e2e8f0);border-radius:14px;
+  padding:1.2rem;cursor:pointer;transition:all 0.3s;text-align:center;
+  position:relative;
+}
+.pay-option:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(18,169,155,0.12)}
+.pay-option.active{border-color:var(--teal);background:linear-gradient(135deg,#e6faf8,#fff);box-shadow:0 4px 20px rgba(18,169,155,0.15)}
+.pay-option.active::after{
+  content:'✓';position:absolute;top:8px;left:8px;
+  width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:900;
+}
+.pay-option i{font-size:2rem;display:block;margin-bottom:0.5rem}
+.pay-option h4{font-size:0.9rem;font-weight:700;margin-bottom:0.15rem}
+.pay-option p{font-size:0.72rem;color:var(--muted,#6b7280)}
+.pay-option.disabled{opacity:0.4;pointer-events:none}
+
+.card-form{display:none;margin-bottom:1.5rem}
+.card-form.show{display:block}
+.card-form .form-group{margin-bottom:0.8rem}
+.card-form label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:0.3rem;color:var(--text,#1a1a2e)}
+.card-form input{
+  width:100%;padding:0.7rem 1rem;border:1px solid var(--border,#e2e8f0);
+  border-radius:10px;font-size:0.9rem;font-family:inherit;direction:ltr;text-align:left;
+}
+.card-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
+
+.apple-pay-overlay{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+.apple-pay-overlay.show{display:flex}
+.apple-pay-sheet{
+  background:#fff;border-radius:20px;padding:2rem;width:min(90vw,380px);
+  text-align:center;animation:sheetUp 0.3s ease;
+}
+@keyframes sheetUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.apple-pay-sheet h3{font-size:1.1rem;font-weight:800;margin-bottom:0.5rem}
+.apple-pay-sheet .pay-total{font-size:2rem;font-weight:900;color:var(--accent);margin-bottom:1.5rem}
+.bio-anim{
+  width:80px;height:80px;margin:0 auto 1.5rem;border-radius:50%;
+  background:linear-gradient(135deg,#e6faf8,#dbeafe);
+  display:flex;align-items:center;justify-content:center;
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(18,169,155,0.3)}50%{box-shadow:0 0 0 15px rgba(18,169,155,0)}}
+.bio-anim i{font-size:2rem;color:var(--teal)}
+.apple-pay-sheet .status-text{font-size:0.85rem;color:var(--muted,#6b7280);margin-bottom:1rem}
+.apple-pay-sheet .cancel-btn{
+  background:none;border:none;color:#dc2626;font-size:0.85rem;font-weight:700;
+  cursor:pointer;font-family:inherit;
+}
+
+.pay-btn{
+  width:100%;padding:1rem;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--teal),#0d8a7e);
+  color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;
+  font-family:inherit;transition:all 0.3s;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.pay-btn:hover{box-shadow:0 6px 24px rgba(18,169,155,0.3);transform:translateY(-2px)}
+.pay-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+.success-overlay{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+.success-overlay.show{display:flex}
+.success-card{
+  background:#fff;border-radius:20px;padding:2.5rem;width:min(90vw,400px);
+  text-align:center;animation:sheetUp 0.3s ease;
+}
+.success-icon{
+  width:80px;height:80px;border-radius:50%;background:#dcfce7;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;
+}
+.success-icon i{font-size:2.5rem;color:#16a34a}
+.success-card h3{font-size:1.3rem;font-weight:900;margin-bottom:0.5rem;color:var(--accent)}
+.success-card p{color:var(--muted,#6b7280);margin-bottom:1.5rem;font-size:0.9rem}
+.success-card .btn{
+  display:inline-flex;align-items:center;gap:0.4rem;padding:0.8rem 2rem;
+  border-radius:12px;background:var(--teal);color:#fff;text-decoration:none;
+  font-weight:700;font-size:0.95rem;
+}
+
+@media(max-width:600px){
+  .payment-methods{grid-template-columns:1fr 1fr}
+  .card-row{grid-template-columns:1fr}
+}
+</style>
+<div class="main-content">
+  <div class="container">
+    <div class="checkout-wrap">
+      <div class="page-header">
+        <h1><i class="fas fa-credit-card"></i> دفع الاستشارة</h1>
+        <a href="/consultations" class="btn btn-outline">إلغاء</a>
+      </div>
+
+      <div class="checkout-summary">
+        <h2><i class="fas fa-stethoscope"></i> ملخص الاستشارة</h2>
+        <div class="summary-row">
+          <span class="summary-label">التخصص</span>
+          <span class="summary-value"><%= consultation.specialty %></span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">الأولوية</span>
+          <span class="summary-value"><%= consultation.priority === 'urgent' ? 'عاجلة' : consultation.priority === 'high' ? 'مرتفعة' : consultation.priority === 'medium' ? 'متوسطة' : 'منخفضة' %></span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">سعر الاستشارة</span>
+          <span class="summary-value"><%= consultation.price %> ر.س</span>
+        </div>
+        <div class="insurance-saved hidden" id="insuranceSaved">
+          <i class="fas fa-shield-alt"></i>
+          <span>خصم التأمين: <strong id="discountAmount">0</strong> ر.س</span>
+        </div>
+        <div class="checkout-total">
+          <span class="total-label">المبلغ المطلوب</span>
+          <span class="total-amount" id="totalDisplay"><%= consultation.price %> <small style="font-size:0.6em">ر.س</small></span>
+        </div>
+      </div>
+
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.8rem"><i class="fas fa-wallet" style="color:var(--teal)"></i> اختر طريقة الدفع</h3>
+
+      <div class="payment-methods">
+        <div class="pay-option" data-method="card" onclick="selectPayment('card')">
+          <i class="fas fa-credit-card" style="color:#2563eb"></i>
+          <h4>بطاقة ائتمان</h4>
+          <p>Visa / Mastercard</p>
+        </div>
+        <div class="pay-option" data-method="apple_pay" onclick="selectPayment('apple_pay')">
+          <i class="fab fa-apple-pay" style="color:#000"></i>
+          <h4>Apple Pay</h4>
+          <p>دفع سريع وآمن</p>
+        </div>
+        <div class="pay-option <%= insurance ? '' : 'disabled' %>" data-method="insurance" onclick="selectPayment('insurance')">
+          <i class="fas fa-shield-alt" style="color:var(--teal)"></i>
+          <h4>التأمين</h4>
+          <p><%= insurance ? insurance.company + ' — ' + insurance.type : 'لا يوجد تأمين نشط' %></p>
+        </div>
+        <div class="pay-option" data-method="cash" onclick="selectPayment('cash')">
+          <i class="fas fa-money-bill-wave" style="color:#d97706"></i>
+          <h4>دفع عند الزيارة</h4>
+          <p>نقد أو بطاقة حضورياً</p>
+        </div>
+      </div>
+
+      <div class="card-form" id="cardForm">
+        <div class="form-card" style="padding:1.2rem">
+          <div class="form-group">
+            <label>رقم البطاقة</label>
+            <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+          </div>
+          <div class="card-row">
+            <div class="form-group">
+              <label>تاريخ الانتهاء</label>
+              <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" id="cardCvv" placeholder="123" maxlength="4" autocomplete="cc-csc">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>اسم حامل البطاقة</label>
+            <input type="text" id="cardName" placeholder="MOHAMMED ABDULLAH" autocomplete="cc-name">
+          </div>
+        </div>
+      </div>
+
+      <button class="pay-btn" id="payBtn" disabled onclick="processPayment()">
+        <i class="fas fa-lock"></i>
+        <span id="payBtnText">اختر طريقة الدفع</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="apple-pay-overlay" id="applePayOverlay">
+  <div class="apple-pay-sheet">
+    <h3>Apple Pay</h3>
+    <div class="pay-total" id="applePayTotal"><%= consultation.price %> ر.س</div>
+    <div class="bio-anim">
+      <i class="fas fa-fingerprint"></i>
+    </div>
+    <div class="status-text" id="applePayStatus">قم بتأكيد الدفع ببصمتك أو Face ID</div>
+    <button class="cancel-btn" onclick="cancelApplePay()">إلغاء</button>
+  </div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">
+      <i class="fas fa-check"></i>
+    </div>
+    <h3>تم الدفع بنجاح!</h3>
+    <p id="successMsg">تم إرسال استشارتك وسيتم تعيين أخصائي لك قريباً</p>
+    <a href="/consultations/<%= consultation._id %>" class="btn" id="goToConsultation">
+      <i class="fas fa-comments"></i> الذهاب للاستشارة
+    </a>
+  </div>
+</div>
+
+<script>
+var selectedMethod = null;
+var consultPrice = <%= consultation.price %>;
+var consultId = '<%= consultation._id %>';
+var hasInsurance = <%= insurance ? 'true' : 'false' %>;
+var insuranceCoverage = <%= insurance ? (insurance.coverageAmount - insurance.usedAmount) : 0 %>;
+var processing = false;
+
+function selectPayment(method) {
+  selectedMethod = method;
+  document.querySelectorAll('.pay-option').forEach(function(el) { el.classList.remove('active'); });
+  var chosen = document.querySelector('[data-method="' + method + '"]');
+  if (chosen) chosen.classList.add('active');
+
+  var cardForm = document.getElementById('cardForm');
+  cardForm.classList.remove('show');
+  if (method === 'card') cardForm.classList.add('show');
+
+  var savedEl = document.getElementById('insuranceSaved');
+  var totalEl = document.getElementById('totalDisplay');
+  if (method === 'insurance' && hasInsurance) {
+    var discount = Math.min(consultPrice, insuranceCoverage);
+    var finalPrice = consultPrice - discount;
+    document.getElementById('discountAmount').textContent = discount;
+    savedEl.classList.remove('hidden');
+    totalEl.innerHTML = finalPrice + ' <small style="font-size:0.6em">ر.س</small>';
+  } else {
+    savedEl.classList.add('hidden');
+    totalEl.innerHTML = consultPrice + ' <small style="font-size:0.6em">ر.س</small>';
+  }
+
+  var payBtn = document.getElementById('payBtn');
+  payBtn.disabled = false;
+  var btnText = document.getElementById('payBtnText');
+  if (method === 'card') btnText.textContent = 'ادفع ' + consultPrice + ' ر.س بالبطاقة';
+  else if (method === 'apple_pay') btnText.textContent = 'ادفع بـ Apple Pay';
+  else if (method === 'insurance') btnText.textContent = 'ادفع بالتأمين';
+  else btnText.textContent = 'تأكيد — الدفع عند الزيارة';
+}
+
+function processPayment() {
+  if (processing || !selectedMethod) return;
+  processing = true;
+  var payBtn = document.getElementById('payBtn');
+  payBtn.disabled = true;
+
+  if (selectedMethod === 'apple_pay') {
+    showApplePay();
+    return;
+  }
+
+  if (selectedMethod === 'card') {
+    var cardNum = document.getElementById('cardNumber').value.replace(/\s/g, '');
+    var cardExp = document.getElementById('cardExpiry').value;
+    var cardCvv = document.getElementById('cardCvv').value;
+    if (cardNum.length < 13 || !cardExp || cardCvv.length < 3) {
+      alert('يرجى ملء بيانات البطاقة بشكل صحيح');
+      processing = false;
+      payBtn.disabled = false;
+      return;
+    }
+  }
+
+  submitPayment();
+}
+
+function showApplePay() {
+  var overlay = document.getElementById('applePayOverlay');
+  overlay.classList.add('show');
+  document.getElementById('applePayTotal').textContent = consultPrice + ' ر.س';
+  document.getElementById('applePayStatus').textContent = 'قم بتأكيد الدفع ببصمتك أو Face ID';
+
+  setTimeout(function() {
+    document.getElementById('applePayStatus').textContent = 'جاري التحقق...';
+    setTimeout(function() {
+      overlay.classList.remove('show');
+      submitPayment();
+    }, 1500);
+  }, 2500);
+}
+
+function cancelApplePay() {
+  document.getElementById('applePayOverlay').classList.remove('show');
+  processing = false;
+  document.getElementById('payBtn').disabled = false;
+}
+
+function submitPayment() {
+  var payBtn = document.getElementById('payBtn');
+  document.getElementById('payBtnText').textContent = 'جاري معالجة الدفع...';
+
+  fetch('/consultations/' + consultId + '/pay', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ paymentMethod: selectedMethod })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.success) {
+      document.getElementById('successOverlay').classList.add('show');
+      if (data.redirect) {
+        document.getElementById('goToConsultation').href = data.redirect;
+      }
+    } else {
+      alert(data.message || 'فشل الدفع');
+      processing = false;
+      payBtn.disabled = false;
+      document.getElementById('payBtnText').textContent = 'إعادة المحاولة';
+    }
+  })
+  .catch(function(err) {
+    alert('حدث خطأ في الاتصال. حاول مرة أخرى.');
+    processing = false;
+    payBtn.disabled = false;
+    document.getElementById('payBtnText').textContent = 'إعادة المحاولة';
+  });
+}
+
+var cardInput = document.getElementById('cardNumber');
+if (cardInput) {
+  cardInput.addEventListener('input', function(e) {
+    var v = e.target.value.replace(/\D/g, '').substring(0, 16);
+    var formatted = v.replace(/(.{4})/g, '$1 ').trim();
+    e.target.value = formatted;
+  });
+}
+var expiryInput = document.getElementById('cardExpiry');
+if (expiryInput) {
+  expiryInput.addEventListener('input', function(e) {
+    var v = e.target.value.replace(/\D/g, '').substring(0, 4);
+    if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
+    e.target.value = v;
+  });
+}
+</script>
+<%- include('../partials/footer') %>

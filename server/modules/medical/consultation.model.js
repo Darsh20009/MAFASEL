@@ -14,6 +14,11 @@ const consultationSchema = new mongoose.Schema({
   symptoms: { type: String, required: true },
   status: { type: String, enum: ['pending', 'assigned', 'in_progress', 'completed', 'cancelled'], default: 'pending' },
   priority: { type: String, enum: ['low', 'medium', 'high', 'urgent'], default: 'medium' },
+  price: { type: Number, default: 0 },
+  paymentMethod: { type: String, enum: ['cash', 'insurance', 'card', 'apple_pay', 'health_card'], default: 'cash' },
+  paymentStatus: { type: String, enum: ['unpaid', 'paid', 'refunded'], default: 'unpaid' },
+  insuranceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Insurance' },
+  insuranceDiscount: { type: Number, default: 0 },
   diagnosis: { type: String },
   prescription: { type: String },
   messages: [messageSchema],
@@ -21,4 +26,4 @@ const consultationSchema = new mongoose.Schema({
   attachments: [String]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Consultation', consultationSchema);
+module.exports = mongoose.models.Consultation || mongoose.model('Consultation', consultationSchema);

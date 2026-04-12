@@ -91,6 +91,16 @@
 └── .well-known/                 # Apple domain verification
 ```
 
+## نظام الاستشارات والدفع
+- **المسار**: `/consultations` — قائمة، تفاصيل، محادثة مع الأخصائي
+- **الأسعار**: `SPECIALTY_PRICES` في `server/routes/consultation.js` (25–60 ر.س حسب التخصص)
+- **تدفق الدفع**: إنشاء استشارة → صفحة دفع (`/consultations/:id/checkout`) → اختيار طريقة الدفع → بدء المحادثة
+- **طرق الدفع**: بطاقة ائتمانية، Apple Pay، تأمين (مع خصم تلقائي)، البطاقة الصحية، نقد
+- **نموذج الاستشارة**: حقول `price`, `paymentMethod`, `paymentStatus` ('unpaid'/'paid'/'refunded'), `insuranceId`, `insuranceDiscount`
+- **النموذج المكرر**: `server/models/Consultation.js` و `server/modules/medical/consultation.model.js` — كلاهما يستخدم `mongoose.models.Consultation || mongoose.model(...)` لتجنب التعارض
+- **التحقق من الصلاحيات**: GET `/:id` و POST `/:id/message` يتحققان أن المستخدم هو المستفيد أو الأخصائي أو مشرف
+- **الملفات**: `consultation.js` (routes), `consultations.ejs` (قائمة), `consultation-detail.ejs` (تفاصيل+شات), `consultation-checkout.ejs` (دفع), `consultation-new.ejs` (إنشاء)
+
 ## نظام المصادقة
 - **البريد + كلمة المرور**: تسجيل تقليدي
 - **الجوال + OTP**: رمز تحقق 6 أرقام (محاكاة في بيئة التطوير)

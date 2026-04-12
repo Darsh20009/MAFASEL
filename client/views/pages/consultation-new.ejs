@@ -1,14 +1,26 @@
 <%- include('../partials/header') %>
+<style>
+.specialty-price{display:inline-block;background:var(--teal);color:#fff;padding:0.15rem 0.5rem;border-radius:6px;font-size:0.75rem;font-weight:700;margin-right:0.3rem}
+.price-preview{
+  background:linear-gradient(135deg,#e6faf8,#dbeafe);
+  border:1px solid var(--teal);border-radius:12px;padding:1rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;opacity:0;max-height:0;overflow:hidden;transition:all 0.3s;
+}
+.price-preview.show{opacity:1;max-height:100px}
+.price-amount{font-size:1.8rem;font-weight:900;color:var(--teal)}
+.price-label{font-size:0.85rem;color:var(--muted)}
+</style>
 <div class="main-content">
   <div class="container">
     <div class="page-header">
       <h1><i class="fas fa-plus-circle"></i> طلب استشارة جديدة</h1>
     </div>
     <div class="form-card">
-      <form method="POST" action="/consultations/new">
+      <form method="POST" action="/consultations/new" id="consultForm">
         <div class="form-group">
           <label>التخصص المطلوب</label>
-          <select name="specialty" required>
+          <select name="specialty" required id="specialtySelect">
             <option value="">اختر التخصص</option>
             <optgroup label="العلاج الطبيعي">
               <option value="علاج طبيعي عام">علاج طبيعي عام</option>
@@ -36,6 +48,17 @@
             </optgroup>
           </select>
         </div>
+
+        <div class="price-preview" id="pricePreview">
+          <div>
+            <div class="price-label">سعر الاستشارة</div>
+            <div class="price-amount"><span id="priceAmount">0</span> <small>ر.س</small></div>
+          </div>
+          <div style="text-align:left">
+            <i class="fas fa-receipt" style="font-size:2rem;color:var(--teal);opacity:0.5"></i>
+          </div>
+        </div>
+
         <div class="form-group">
           <label>الأولوية</label>
           <select name="priority">
@@ -50,11 +73,27 @@
           <textarea name="symptoms" required rows="5" placeholder="اشرح الأعراض التي تعاني منها بالتفصيل..."></textarea>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary">إرسال الاستشارة</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-arrow-left"></i> متابعة للدفع</button>
           <a href="/consultations" class="btn btn-outline">إلغاء</a>
         </div>
       </form>
     </div>
   </div>
 </div>
+<script>
+var specialtyPrices = <%- JSON.stringify(prices) %>;
+var specialtySelect = document.getElementById('specialtySelect');
+var pricePreview = document.getElementById('pricePreview');
+var priceAmount = document.getElementById('priceAmount');
+
+specialtySelect.addEventListener('change', function() {
+  var val = this.value;
+  if (val && specialtyPrices[val]) {
+    priceAmount.textContent = specialtyPrices[val];
+    pricePreview.classList.add('show');
+  } else {
+    pricePreview.classList.remove('show');
+  }
+});
+</script>
 <%- include('../partials/footer') %>

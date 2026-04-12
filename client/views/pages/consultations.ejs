@@ -7,8 +7,8 @@
     </div>
     <% if (consultations.length > 0) { %>
     <div class="cards-grid">
-      <% consultations.forEach(c => { %>
-      <a href="/consultations/<%= c._id %>" class="card">
+      <% consultations.forEach(function(c) { %>
+      <a href="/consultations/<%= c._id %><%= c.paymentStatus !== 'paid' && user.role !== 'doctor' ? '/checkout' : '' %>" class="card">
         <div class="card-header">
           <h3><%= c.specialty %></h3>
           <span class="badge badge-<%= c.status === 'completed' ? 'success' : c.status === 'pending' ? 'warning' : 'primary' %>">
@@ -18,6 +18,11 @@
         <p class="card-text"><%= c.symptoms.substring(0, 100) %></p>
         <div class="card-footer">
           <span class="badge badge-<%= c.priority === 'urgent' ? 'error' : c.priority === 'high' ? 'warning' : 'muted' %>"><%= c.priority === 'urgent' ? 'عاجل' : c.priority === 'high' ? 'مرتفع' : c.priority === 'medium' ? 'متوسط' : 'منخفض' %></span>
+          <% if (c.price) { %>
+          <span class="badge badge-<%= c.paymentStatus === 'paid' ? 'success' : 'warning' %>">
+            <%= c.price %> ر.س — <%= c.paymentStatus === 'paid' ? 'مدفوعة' : 'غير مدفوعة' %>
+          </span>
+          <% } %>
           <span class="text-muted"><%= new Date(c.createdAt).toLocaleDateString('ar-SA') %></span>
         </div>
       </a>
@@ -27,7 +32,7 @@
     <div class="empty-state-lg">
       <i class="fas fa-stethoscope"></i>
       <h3>لا توجد استشارات</h3>
-      <p>ابدأ بطلب استشارة طبية مع أطبائنا المتخصصين</p>
+      <p>ابدأ بطلب استشارة مع أخصائيينا المتميزين</p>
       <a href="/consultations/new" class="btn btn-primary">طلب استشارة جديدة</a>
     </div>
     <% } %>
