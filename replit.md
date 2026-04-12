@@ -93,9 +93,19 @@
 
 ## حساب المدير الافتراضي
 - البريد: admin@mafasel.com
-- كلمة المرور: Mafasel@2026!
-- الجوال: 500000001
-- الهوية: 1000000001
+- كلمة المرور: admin123
+- الجوال: 0500000000
+
+## الحسابات التجريبية (كلمة المرور: demo123)
+| الدور | البريد | الجوال |
+|-------|--------|--------|
+| مريض | patient@mafasel.com | 0500000001 |
+| طبيب | doctor@mafasel.com | 0500000002 |
+| صيدلي | pharmacist@mafasel.com | 0500000003 |
+| مشرف | moderator@mafasel.com | 0500000004 |
+| شركة | company@mafasel.com | 0500000005 |
+| موظف | employee@mafasel.com | 0500000006 |
+| وكيل تأمين | insurance@mafasel.com | 0500000007 |
 
 ## العرض التقديمي (Presentation)
 - صفحة عرض تقديمي احترافية على `/presentation` بتصميم كتاب (Book-style)

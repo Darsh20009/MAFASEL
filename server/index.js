@@ -244,6 +244,28 @@ async function startServer() {
         console.log('Default admin created: admin@mafasel.com / admin123');
       }
 
+      const demoAccounts = [
+        { name: 'مريض تجريبي', email: 'patient@mafasel.com', phone: '0500000001', role: 'patient' },
+        { name: 'د. أحمد الطبيب', email: 'doctor@mafasel.com', phone: '0500000002', role: 'doctor' },
+        { name: 'صيدلي تجريبي', email: 'pharmacist@mafasel.com', phone: '0500000003', role: 'pharmacist' },
+        { name: 'مشرف تجريبي', email: 'moderator@mafasel.com', phone: '0500000004', role: 'moderator' },
+        { name: 'شركة تجريبية', email: 'company@mafasel.com', phone: '0500000005', role: 'company' },
+        { name: 'موظف تجريبي', email: 'employee@mafasel.com', phone: '0500000006', role: 'employee' },
+        { name: 'وكيل تأمين تجريبي', email: 'insurance@mafasel.com', phone: '0500000007', role: 'insurance_agent' }
+      ];
+      const bcryptSeed = require('bcryptjs');
+      const demoHash = await bcryptSeed.hash('demo123', 10);
+      for (let di = 0; di < demoAccounts.length; di++) {
+        const acc = demoAccounts[di];
+        const exists = await User.findOne({ email: acc.email });
+        if (!exists) {
+          try {
+            await User.create({ ...acc, password: demoHash, isVerified: true, nationalId: '200000000' + (di + 1) });
+            console.log('Demo account created: ' + acc.email);
+          } catch(e) { console.log('Demo skip: ' + acc.email + ' - ' + e.message); }
+        }
+      }
+
       const Banner = require('./modules/admin/banner.model');
       const bannerCount = await Banner.countDocuments();
       if (bannerCount === 0) {
