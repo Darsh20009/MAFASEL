@@ -1,0 +1,188 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1 style="margin:0;"><i class="fas fa-headset" style="color:var(--secondary);"></i> لوحة الدعم الفني</h1>
+        <p style="margin:0.25rem 0 0;color:var(--text-muted);font-size:0.9rem;">عرض وإدارة جميع محادثات الدعم</p>
+      </div>
+      <a href="/admin" class="btn btn-outline btn-sm"><i class="fas fa-arrow-right"></i> لوحة الإدارة</a>
+    </div>
+
+    <!-- Filters -->
+    <form method="GET" action="/admin/support" class="support-filters">
+      <div class="filter-group">
+        <label>الحالة</label>
+        <select name="status" onchange="this.form.submit()">
+          <option value="all" <%= filters.status==='all'?'selected':'' %>>الكل</option>
+          <option value="open" <%= filters.status==='open'?'selected':'' %>>مفتوحة</option>
+          <option value="closed" <%= filters.status==='closed'?'selected':'' %>>مغلقة</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>الأولوية</label>
+        <select name="priority" onchange="this.form.submit()">
+          <option value="all" <%= filters.priority==='all'?'selected':'' %>>الكل</option>
+          <option value="urgent" <%= filters.priority==='urgent'?'selected':'' %>>عاجل</option>
+          <option value="high" <%= filters.priority==='high'?'selected':'' %>>مرتفع</option>
+          <option value="medium" <%= filters.priority==='medium'?'selected':'' %>>متوسط</option>
+          <option value="normal" <%= filters.priority==='normal'?'selected':'' %>>عادي</option>
+        </select>
+      </div>
+    </form>
+
+    <!-- Support rooms list -->
+    <% if (roomsWithUser.length === 0) { %>
+    <div class="empty-state">
+      <i class="fas fa-headset" style="font-size:3rem;color:var(--text-muted);"></i>
+      <h3>لا توجد محادثات دعم</h3>
+      <p>لم يفتح أي مستخدم طلب دعم فني بعد.</p>
+    </div>
+    <% } else { %>
+    <div class="support-rooms-list">
+      <% roomsWithUser.forEach(function(item) { %>
+      <%
+        var room = item.room;
+        var patient = item.patient;
+        var unread = item.unread;
+        var priorityClass = { urgent:'priority-urgent', high:'priority-high', medium:'priority-medium', normal:'priority-normal' }[room.priority] || 'priority-normal';
+        var priorityLabel = { urgent:'عاجل', high:'مرتفع', medium:'متوسط', normal:'عادي' }[room.priority] || 'عادي';
+      %>
+      <a href="/admin/support/room/<%= room._id %>" class="support-room-card <%= !room.isActive ? 'room-closed' : '' %>">
+        <div class="src-avatar">
+          <% if (patient && patient.avatar) { %>
+          <img src="<%= patient.avatar %>" alt="">
+          <% } else { %>
+          <div class="src-avatar-placeholder"><i class="fas fa-user"></i></div>
+          <% } %>
+          <% if (room.isActive) { %><span class="src-online"></span><% } %>
+        </div>
+        <div class="src-info">
+          <div class="src-top">
+            <strong class="src-name"><%= patient ? patient.name : room.title || 'مجهول' %></strong>
+            <span class="src-time"><%= room.lastMessageAt ? new Date(room.lastMessageAt).toLocaleDateString('ar-SA') : '' %></span>
+          </div>
+          <div class="src-sub">
+            <span class="src-email"><%= patient && patient.email ? patient.email : (patient && patient.phone ? patient.phone : '') %></span>
+          </div>
+          <div class="src-bottom">
+            <span class="src-last"><%= room.lastMessage || 'بدء المحادثة' %></span>
+            <div class="src-badges">
+              <span class="priority-badge <%= priorityClass %>"><%= priorityLabel %></span>
+              <% if (unread > 0) { %>
+              <span class="unread-badge"><%= unread %></span>
+              <% } %>
+              <% if (!room.isActive) { %><span class="badge badge-secondary" style="font-size:0.7rem;">مغلقة</span><% } %>
+              <% if (room.assignedTo) { %><span class="assigned-badge"><i class="fas fa-user-tie"></i> <%= room.assignedTo.name %></span><% } %>
+            </div>
+          </div>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<style>
+.support-filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.filter-group { display: flex; flex-direction: column; gap: 0.25rem; }
+.filter-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+.filter-group select {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.85rem;
+}
+
+.support-rooms-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.support-room-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  border-right: 4px solid var(--secondary);
+}
+.support-room-card:hover { box-shadow: 0 4px 20px rgba(18,169,155,0.15); transform: translateY(-1px); }
+.support-room-card.room-closed { opacity: 0.6; border-right-color: var(--border); }
+
+.src-avatar { position: relative; flex-shrink: 0; }
+.src-avatar img, .src-avatar-placeholder {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--secondary);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 1.2rem;
+}
+.src-online {
+  position: absolute; bottom: 1px; left: 1px;
+  width: 12px; height: 12px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid var(--card-bg);
+}
+
+.src-info { flex: 1; min-width: 0; }
+.src-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.15rem; }
+.src-name { font-size: 0.95rem; font-weight: 700; }
+.src-time { font-size: 0.75rem; color: var(--text-muted); flex-shrink: 0; }
+.src-email { font-size: 0.8rem; color: var(--text-muted); }
+.src-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem; }
+.src-last { font-size: 0.83rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+.src-badges { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+
+.priority-badge {
+  font-size: 0.68rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  font-weight: 700;
+}
+.priority-urgent { background: rgba(239,68,68,0.15); color: #ef4444; }
+.priority-high { background: rgba(249,115,22,0.15); color: #f97316; }
+.priority-medium { background: rgba(234,179,8,0.15); color: #ca8a04; }
+.priority-normal { background: rgba(148,163,184,0.15); color: var(--text-muted); }
+
+.unread-badge {
+  background: var(--secondary);
+  color: #fff;
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700;
+}
+.assigned-badge {
+  font-size: 0.72rem;
+  background: rgba(18,169,155,0.1);
+  color: var(--secondary);
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
+}
+.empty-state h3 { margin: 1rem 0 0.5rem; }
+</style>
+<%- include('../partials/footer') %>

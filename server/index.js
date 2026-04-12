@@ -78,6 +78,7 @@ const notificationsRoutes = require('./modules/notifications/notifications.route
 const aiRoutes = require('./modules/ai/ai.routes');
 const settingsRoutes = require('./modules/settings/settings.routes');
 const adminRoutes = require('./modules/admin/admin.routes');
+const supportRoutes = require('./modules/admin/support.routes');
 
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
@@ -90,6 +91,7 @@ app.use('/notifications', notificationsRoutes);
 app.use('/ai', aiRoutes);
 app.use('/complaints', settingsRoutes);
 app.use('/admin', adminRoutes);
+app.use('/admin/support', supportRoutes);
 
 const connectedUsers = new Map();
 

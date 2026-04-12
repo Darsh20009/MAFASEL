@@ -17,6 +17,12 @@ const chatMessageSchema = new mongoose.Schema({
 
 chatMessageSchema.index({ room: 1, createdAt: -1 });
 
+const internalNoteSchema = new mongoose.Schema({
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  text: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
 const chatRoomSchema = new mongoose.Schema({
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   type: { type: String, enum: ['doctor', 'support', 'internal', 'consultation'], default: 'support' },
@@ -28,7 +34,10 @@ const chatRoomSchema = new mongoose.Schema({
   unreadCount: { type: Map, of: Number, default: {} },
   isActive: { type: Boolean, default: true },
   closedAt: { type: Date },
-  closedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  closedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  internalNotes: [internalNoteSchema],
+  priority: { type: String, enum: ['normal', 'medium', 'high', 'urgent'], default: 'normal' }
 }, { timestamps: true });
 
 chatRoomSchema.index({ participants: 1, isActive: 1, lastMessageAt: -1 });
