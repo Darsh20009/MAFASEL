@@ -86,25 +86,22 @@
 
     /* ── VIDEO SLIDE ───────────────────────────────────── */
     #slide-video {
-      background: #000;
+      background: #fff;
     }
     #slide-video .slide-topbar {
-      background: rgba(0,0,0,0.55);
-      border-bottom: none;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      position: absolute;
-      top: 0; left: 0; right: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      position: relative;
       z-index: 5;
     }
-    #slide-video .slide-topbar span { color: #fff; }
+    #slide-video .slide-topbar span { color: var(--primary); }
     .video-wrap {
       flex: 1;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #000;
+      background: #fff;
       overflow: hidden;
     }
     #splash-video {
@@ -134,11 +131,9 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 9999;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: #fff;
+      background: rgba(16,29,35,0.08);
+      border: 1px solid rgba(16,29,35,0.15);
+      color: #101d23;
       font-family: 'Tajawal', sans-serif;
       font-size: 0.95rem;
       font-weight: 600;
@@ -151,7 +146,7 @@
       gap: 0.4rem;
       transition: background 0.2s;
     }
-    #skip-btn:hover { background: rgba(255,255,255,0.25); }
+    #skip-btn:hover { background: rgba(16,29,35,0.14); }
 
     /* ── ONBOARDING SLIDE BODY ─────────────────────────── */
     .onboard-body {
