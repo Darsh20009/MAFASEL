@@ -1,0 +1,137 @@
+<%- include('../partials/header') %>
+<style>
+  .ps-header{background:linear-gradient(135deg,#101d23,#1a2e38);padding:1.5rem;text-align:center}
+  .ps-header h1{color:#fff;font-size:1.4rem;font-weight:800;margin-bottom:0.3rem}
+  .ps-header h1 i{color:#12a99b}
+  .ps-header p{color:rgba(255,255,255,0.6);font-size:0.8rem}
+  .ps-filters{display:flex;gap:0.5rem;padding:1rem;flex-wrap:wrap;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+  .ps-filter{padding:0.5rem 1rem;border-radius:10px;border:1px solid #e2e8f0;background:#fff;font-family:Tajawal;font-size:0.8rem;color:#101d23;cursor:pointer}
+  .ps-filter:focus{border-color:#12a99b;outline:none}
+  .ps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;padding:1rem}
+  .ps-card{background:#fff;border-radius:16px;padding:1.2rem;box-shadow:0 4px 15px rgba(0,0,0,0.06);border:1px solid #f1f5f9;transition:all 0.3s}
+  .ps-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.1);border-color:#12a99b}
+  .ps-card-top{display:flex;gap:1rem;margin-bottom:0.8rem}
+  .ps-avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+  .ps-avatar i{font-size:1.8rem;color:#12a99b}
+  .ps-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+  .ps-verified{position:absolute;bottom:0;right:0;width:20px;height:20px;background:#12a99b;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+  .ps-verified i{font-size:0.5rem;color:#fff}
+  .ps-name{font-size:1rem;font-weight:700;color:#101d23;margin-bottom:0.1rem}
+  .ps-title{font-size:0.72rem;color:#12a99b;font-weight:600;margin-bottom:0.3rem}
+  .ps-rating{display:flex;align-items:center;gap:0.3rem;font-size:0.72rem;color:#666}
+  .ps-rating i{color:#f59e0b}
+  .ps-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.6rem}
+  .ps-tag{background:#e6faf8;color:#0d8a7f;font-size:0.62rem;padding:0.2rem 0.5rem;border-radius:6px;font-weight:600}
+  .ps-details{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:0.8rem}
+  .ps-detail{display:flex;align-items:center;gap:0.4rem;font-size:0.72rem;color:#666}
+  .ps-detail i{color:#12a99b;width:14px;font-size:0.65rem}
+  .ps-actions{display:flex;gap:0.5rem}
+  .ps-btn{flex:1;padding:0.5rem;border-radius:10px;font-size:0.75rem;font-weight:700;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:0.3rem;transition:all 0.3s;font-family:Tajawal;border:none;cursor:pointer}
+  .ps-btn-primary{background:#12a99b;color:#fff}
+  .ps-btn-primary:hover{background:#0d8a7f}
+  .ps-btn-outline{background:#fff;color:#12a99b;border:1px solid #12a99b}
+  .ps-btn-outline:hover{background:#e6faf8}
+  .ps-empty{text-align:center;padding:3rem;color:#999}
+  .ps-empty i{font-size:3rem;display:block;margin-bottom:0.5rem;color:#ddd}
+  .ps-badges{display:flex;gap:0.3rem;margin-top:0.3rem}
+  .ps-badge{font-size:0.58rem;padding:0.15rem 0.4rem;border-radius:6px;font-weight:600}
+  .ps-badge-online{background:#dcfce7;color:#16a34a}
+  .ps-badge-home{background:#dbeafe;color:#2563eb}
+  @media(max-width:480px){.ps-grid{grid-template-columns:1fr}}
+</style>
+
+<div class="main-content" style="padding:0">
+  <div class="ps-header">
+    <h1><i class="fas fa-user-md"></i> أخصائيو العلاج الطبيعي</h1>
+    <p>تصفح الأخصائيين واحجز جلسة مباشرة</p>
+  </div>
+
+  <form class="ps-filters" method="GET" action="/physiotherapy/specialists">
+    <select name="city" class="ps-filter" onchange="this.form.submit()">
+      <option value="">كل المدن</option>
+      <% cities.forEach(function(c) { %>
+      <option value="<%= c %>" <%= selectedCity === c ? 'selected' : '' %>><%= c %></option>
+      <% }) %>
+    </select>
+    <select name="spec" class="ps-filter" onchange="this.form.submit()">
+      <option value="">كل التخصصات</option>
+      <% specializations.forEach(function(s) { %>
+      <option value="<%= s %>" <%= selectedSpec === s ? 'selected' : '' %>><%= s %></option>
+      <% }) %>
+    </select>
+    <select name="gender" class="ps-filter" onchange="this.form.submit()">
+      <option value="">الجنس</option>
+      <option value="male" <%= selectedGender === 'male' ? 'selected' : '' %>>ذكر</option>
+      <option value="female" <%= selectedGender === 'female' ? 'selected' : '' %>>أنثى</option>
+    </select>
+    <a href="/physiotherapy" class="ps-filter" style="text-decoration:none;color:#12a99b"><i class="fas fa-arrow-right"></i> العودة</a>
+  </form>
+
+  <% if (specialists.length > 0) { %>
+  <div class="ps-grid">
+    <% specialists.forEach(function(s) { %>
+    <div class="ps-card">
+      <div class="ps-card-top">
+        <div class="ps-avatar">
+          <% if (s.avatar) { %>
+          <img src="<%= s.avatar %>" alt="<%= s.name %>">
+          <% } else { %>
+          <i class="fas fa-user-md"></i>
+          <% } %>
+          <% if (s.isVerified) { %>
+          <div class="ps-verified"><i class="fas fa-check"></i></div>
+          <% } %>
+        </div>
+        <div>
+          <div class="ps-name"><%= s.name %></div>
+          <div class="ps-title"><%= s.title %></div>
+          <div class="ps-rating">
+            <% if (s.rating > 0) { %>
+            <i class="fas fa-star"></i> <%= s.rating %> <span>(<%= s.reviewCount %> تقييم)</span>
+            <% } else { %>
+            <span>لا تقييمات بعد</span>
+            <% } %>
+          </div>
+          <div class="ps-badges">
+            <% if (s.acceptsOnline) { %>
+            <span class="ps-badge ps-badge-online"><i class="fas fa-video"></i> أونلاين</span>
+            <% } %>
+            <% if (s.acceptsHomeVisit) { %>
+            <span class="ps-badge ps-badge-home"><i class="fas fa-home"></i> منزلي</span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <div class="ps-tags">
+        <% (s.specializations || []).forEach(function(sp) { %>
+        <span class="ps-tag"><%= sp %></span>
+        <% }) %>
+      </div>
+      <div class="ps-details">
+        <div class="ps-detail"><i class="fas fa-briefcase"></i> <%= s.experience %> سنة خبرة</div>
+        <% if (s.city) { %>
+        <div class="ps-detail"><i class="fas fa-map-marker-alt"></i> <%= s.city %></div>
+        <% } %>
+        <% if (s.centerName) { %>
+        <div class="ps-detail"><i class="fas fa-hospital"></i> <%= s.centerName %></div>
+        <% } %>
+        <% if (s.sessionFee > 0) { %>
+        <div class="ps-detail"><i class="fas fa-money-bill-wave"></i> <%= s.sessionFee %> ر.س / جلسة</div>
+        <% } %>
+      </div>
+      <div class="ps-actions">
+        <a href="/physiotherapy/specialist/<%= s._id %>" class="ps-btn ps-btn-primary"><i class="fas fa-eye"></i> عرض الملف</a>
+        <a href="/physiotherapy/specialist/<%= s._id %>#booking" class="ps-btn ps-btn-outline"><i class="fas fa-calendar-check"></i> حجز</a>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div class="ps-empty">
+    <i class="fas fa-user-md"></i>
+    <h3>لا يوجد أخصائيون</h3>
+    <p>لم يتم إضافة أخصائيين بعد في هذا التصنيف</p>
+  </div>
+  <% } %>
+</div>
+<%- include('../partials/footer') %>

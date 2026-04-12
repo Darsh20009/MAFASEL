@@ -1,0 +1,239 @@
+<%- include('../partials/header') %>
+<style>
+  .sp-hero{background:linear-gradient(135deg,#101d23,#1a2e38);padding:2rem 1.5rem;position:relative;overflow:hidden}
+  .sp-hero::before{content:'';position:absolute;top:-50%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(18,169,155,0.15),transparent 70%);border-radius:50%}
+  .sp-profile{display:flex;gap:1.2rem;align-items:center;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .sp-avatar{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#12a99b,#2563eb);padding:3px;flex-shrink:0}
+  .sp-avatar-inner{width:100%;height:100%;border-radius:50%;background:#1a2e38;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #101d23}
+  .sp-avatar-inner i{font-size:2.2rem;color:#12a99b}
+  .sp-avatar-inner img{width:100%;height:100%;object-fit:cover}
+  .sp-info h1{color:#fff;font-size:1.3rem;font-weight:800;margin-bottom:0.2rem}
+  .sp-info .sp-title{color:#12a99b;font-size:0.82rem;font-weight:600;margin-bottom:0.3rem}
+  .sp-badges{display:flex;gap:0.3rem;flex-wrap:wrap}
+  .sp-badge{font-size:0.6rem;padding:0.2rem 0.5rem;border-radius:6px;font-weight:600}
+  .sp-badge-verified{background:rgba(18,169,155,0.2);color:#12a99b}
+  .sp-badge-online{background:rgba(22,163,74,0.2);color:#16a34a}
+  .sp-badge-home{background:rgba(37,99,235,0.2);color:#93c5fd}
+  .sp-rating-big{display:flex;align-items:center;gap:0.3rem;color:#fff;font-size:0.78rem;margin-top:0.3rem}
+  .sp-rating-big i{color:#f59e0b}
+
+  .sp-content{max-width:600px;margin:0 auto;padding:1rem 1.5rem}
+  .sp-card{background:#fff;border-radius:16px;padding:1rem;box-shadow:0 4px 15px rgba(0,0,0,0.06);border:1px solid #f1f5f9;margin-bottom:0.8rem}
+  .sp-card h3{font-size:0.9rem;font-weight:700;color:#101d23;margin-bottom:0.6rem;display:flex;align-items:center;gap:0.4rem}
+  .sp-card h3 i{color:#12a99b}
+
+  .sp-spec-tags{display:flex;flex-wrap:wrap;gap:0.3rem}
+  .sp-spec-tag{background:#e6faf8;color:#0d8a7f;font-size:0.68rem;padding:0.25rem 0.6rem;border-radius:8px;font-weight:600}
+
+  .sp-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+  .sp-detail-item{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:#555;padding:0.4rem 0}
+  .sp-detail-item i{color:#12a99b;width:18px;text-align:center}
+  .sp-detail-item strong{color:#101d23}
+
+  .sp-schedule{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.4rem}
+  .sp-day{background:#f8fafc;border-radius:10px;padding:0.5rem;text-align:center;border:1px solid #e2e8f0}
+  .sp-day.available{border-color:#12a99b;background:#e6faf8}
+  .sp-day-name{font-size:0.7rem;font-weight:700;color:#101d23;margin-bottom:0.2rem}
+  .sp-day-time{font-size:0.6rem;color:#666}
+  .sp-day-off{font-size:0.6rem;color:#dc2626}
+
+  .sp-bio{font-size:0.82rem;color:#555;line-height:1.7}
+
+  .sp-reviews{max-height:300px;overflow-y:auto}
+  .sp-review{padding:0.6rem 0;border-bottom:1px solid #f1f5f9}
+  .sp-review:last-child{border-bottom:none}
+  .sp-review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem}
+  .sp-review-name{font-size:0.78rem;font-weight:600;color:#101d23}
+  .sp-review-stars{color:#f59e0b;font-size:0.65rem}
+  .sp-review-text{font-size:0.75rem;color:#666;line-height:1.5}
+  .sp-review-date{font-size:0.6rem;color:#999;margin-top:0.2rem}
+
+  .sp-booking{background:linear-gradient(135deg,#12a99b,#0d8a7f);border-radius:16px;padding:1.2rem;text-align:center}
+  .sp-booking h3{color:#fff;font-size:1rem;margin-bottom:0.3rem}
+  .sp-booking p{color:rgba(255,255,255,0.8);font-size:0.78rem;margin-bottom:0.8rem}
+  .sp-book-btn{display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#12a99b;padding:0.65rem 1.5rem;border-radius:12px;font-weight:700;font-size:0.85rem;text-decoration:none;transition:all 0.3s;border:none;cursor:pointer;font-family:Tajawal}
+  .sp-book-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,0.2)}
+  .sp-fees{display:flex;gap:1rem;justify-content:center;margin-bottom:0.8rem}
+  .sp-fee{text-align:center}
+  .sp-fee-amount{color:#fff;font-size:1.2rem;font-weight:800;display:block}
+  .sp-fee-label{color:rgba(255,255,255,0.7);font-size:0.65rem}
+
+  .sp-review-form{margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid #e2e8f0}
+  .sp-review-form textarea{width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:10px;font-family:Tajawal;font-size:0.8rem;resize:vertical}
+  .sp-review-form select{padding:0.5rem;border:1px solid #e2e8f0;border-radius:8px;font-family:Tajawal;font-size:0.8rem;margin-left:0.5rem}
+  .sp-review-submit{background:#12a99b;color:#fff;border:none;padding:0.5rem 1rem;border-radius:8px;font-weight:700;font-family:Tajawal;cursor:pointer;font-size:0.78rem;margin-top:0.5rem}
+
+  <% var days = {saturday:'السبت',sunday:'الأحد',monday:'الإثنين',tuesday:'الثلاثاء',wednesday:'الأربعاء',thursday:'الخميس',friday:'الجمعة'}; %>
+</style>
+
+<div class="main-content" style="padding:0">
+  <div class="sp-hero">
+    <div class="sp-profile">
+      <div class="sp-avatar">
+        <div class="sp-avatar-inner">
+          <% if (specialist.avatar) { %>
+          <img src="<%= specialist.avatar %>" alt="<%= specialist.name %>">
+          <% } else { %>
+          <i class="fas fa-user-md"></i>
+          <% } %>
+        </div>
+      </div>
+      <div class="sp-info">
+        <h1><%= specialist.name %></h1>
+        <div class="sp-title"><%= specialist.title %></div>
+        <div class="sp-badges">
+          <% if (specialist.isVerified) { %>
+          <span class="sp-badge sp-badge-verified"><i class="fas fa-check-circle"></i> موثّق</span>
+          <% } %>
+          <% if (specialist.acceptsOnline) { %>
+          <span class="sp-badge sp-badge-online"><i class="fas fa-video"></i> أونلاين</span>
+          <% } %>
+          <% if (specialist.acceptsHomeVisit) { %>
+          <span class="sp-badge sp-badge-home"><i class="fas fa-home"></i> زيارة منزلية</span>
+          <% } %>
+        </div>
+        <div class="sp-rating-big">
+          <% if (specialist.rating > 0) { %>
+          <i class="fas fa-star"></i> <%= specialist.rating %> (<%= specialist.reviewCount %> تقييم)
+          <% } else { %>
+          لا تقييمات بعد
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sp-content">
+    <div class="sp-card">
+      <h3><i class="fas fa-stethoscope"></i> التخصصات</h3>
+      <div class="sp-spec-tags">
+        <% (specialist.specializations || []).forEach(function(s) { %>
+        <span class="sp-spec-tag"><%= s %></span>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="sp-card">
+      <h3><i class="fas fa-info-circle"></i> معلومات</h3>
+      <div class="sp-detail-grid">
+        <div class="sp-detail-item"><i class="fas fa-briefcase"></i> <strong><%= specialist.experience %></strong> سنة خبرة</div>
+        <% if (specialist.city) { %>
+        <div class="sp-detail-item"><i class="fas fa-map-marker-alt"></i> <%= specialist.city %></div>
+        <% } %>
+        <% if (specialist.centerName) { %>
+        <div class="sp-detail-item"><i class="fas fa-hospital"></i> <%= specialist.centerName %></div>
+        <% } %>
+        <% if (specialist.gender) { %>
+        <div class="sp-detail-item"><i class="fas fa-venus-mars"></i> <%= specialist.gender === 'male' ? 'ذكر' : 'أنثى' %></div>
+        <% } %>
+        <% if (specialist.licenseNumber) { %>
+        <div class="sp-detail-item"><i class="fas fa-id-badge"></i> ترخيص: <%= specialist.licenseNumber %></div>
+        <% } %>
+        <% if (specialist.phone) { %>
+        <div class="sp-detail-item"><i class="fas fa-phone"></i> <span dir="ltr"><%= specialist.phone %></span></div>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (specialist.bio) { %>
+    <div class="sp-card">
+      <h3><i class="fas fa-user"></i> نبذة</h3>
+      <p class="sp-bio"><%= specialist.bio %></p>
+    </div>
+    <% } %>
+
+    <div class="sp-card">
+      <h3><i class="fas fa-calendar-alt"></i> أوقات العمل</h3>
+      <div class="sp-schedule">
+        <% Object.keys(days).forEach(function(d) { var av = specialist.availability ? specialist.availability[d] : null; %>
+        <div class="sp-day <%= av && av.available ? 'available' : '' %>">
+          <div class="sp-day-name"><%= days[d] %></div>
+          <% if (av && av.available) { %>
+          <div class="sp-day-time"><%= av.from %> - <%= av.to %></div>
+          <% } else { %>
+          <div class="sp-day-off">مغلق</div>
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="sp-card sp-booking" id="booking">
+      <h3 style="color:#fff"><i class="fas fa-calendar-check"></i> احجز جلسة</h3>
+      <% if (specialist.consultationFee > 0 || specialist.sessionFee > 0) { %>
+      <div class="sp-fees">
+        <% if (specialist.consultationFee > 0) { %>
+        <div class="sp-fee">
+          <span class="sp-fee-amount"><%= specialist.consultationFee %> ر.س</span>
+          <span class="sp-fee-label">الاستشارة</span>
+        </div>
+        <% } %>
+        <% if (specialist.sessionFee > 0) { %>
+        <div class="sp-fee">
+          <span class="sp-fee-amount"><%= specialist.sessionFee %> ر.س</span>
+          <span class="sp-fee-label">الجلسة</span>
+        </div>
+        <% } %>
+      </div>
+      <% } %>
+      <p>تواصل مع الأخصائي واحجز موعدك الآن</p>
+      <% if (user) { %>
+      <form method="POST" action="/physiotherapy/request" style="display:inline">
+        <input type="hidden" name="specialistId" value="<%= specialist._id %>">
+        <input type="hidden" name="specialization" value="<%= (specialist.specializations || [])[0] || 'علاج طبيعي' %>">
+        <input type="hidden" name="symptoms" value="طلب حجز جلسة مع الأخصائي <%= specialist.name %>">
+        <button type="submit" class="sp-book-btn"><i class="fas fa-paper-plane"></i> طلب حجز</button>
+      </form>
+      <% } else { %>
+      <a href="/login" class="sp-book-btn"><i class="fas fa-sign-in-alt"></i> سجّل دخولك للحجز</a>
+      <% } %>
+    </div>
+
+    <div class="sp-card">
+      <h3><i class="fas fa-star"></i> التقييمات (<%= specialist.reviewCount || 0 %>)</h3>
+      <% if (specialist.reviews && specialist.reviews.length > 0) { %>
+      <div class="sp-reviews">
+        <% specialist.reviews.forEach(function(r) { %>
+        <div class="sp-review">
+          <div class="sp-review-header">
+            <span class="sp-review-name"><%= r.patient ? r.patient.name : 'مستخدم' %></span>
+            <span class="sp-review-stars">
+              <% for(var i=0;i<r.rating;i++){ %><i class="fas fa-star"></i><% } %>
+              <% for(var i=r.rating;i<5;i++){ %><i class="far fa-star" style="color:#ddd"></i><% } %>
+            </span>
+          </div>
+          <% if (r.comment) { %>
+          <p class="sp-review-text"><%= r.comment %></p>
+          <% } %>
+          <div class="sp-review-date"><%= new Date(r.createdAt).toLocaleDateString('ar-SA') %></div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <p style="font-size:0.78rem;color:#999;text-align:center">لا توجد تقييمات بعد</p>
+      <% } %>
+
+      <% if (user) { %>
+      <form class="sp-review-form" method="POST" action="/physiotherapy/specialist/<%= specialist._id %>/review">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+          <label style="font-size:0.78rem;font-weight:600">تقييمك:</label>
+          <select name="rating" required>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+          </select>
+        </div>
+        <textarea name="comment" rows="2" placeholder="اكتب تعليقك (اختياري)..."></textarea>
+        <button type="submit" class="sp-review-submit"><i class="fas fa-paper-plane"></i> إرسال التقييم</button>
+      </form>
+      <% } %>
+    </div>
+
+    <div style="text-align:center;padding:1rem">
+      <a href="/physiotherapy/specialists" style="color:#12a99b;font-size:0.82rem;font-weight:600;text-decoration:none"><i class="fas fa-arrow-right"></i> العودة لقائمة الأخصائيين</a>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

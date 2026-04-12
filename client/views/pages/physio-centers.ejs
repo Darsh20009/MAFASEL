@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+<style>
+  .pc-header{background:linear-gradient(135deg,#101d23,#1a2e38);padding:1.5rem;text-align:center}
+  .pc-header h1{color:#fff;font-size:1.4rem;font-weight:800;margin-bottom:0.3rem}
+  .pc-header h1 i{color:#12a99b}
+  .pc-header p{color:rgba(255,255,255,0.6);font-size:0.8rem}
+  .pc-filters{display:flex;gap:0.5rem;padding:1rem;flex-wrap:wrap;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+  .pc-filter{padding:0.5rem 1rem;border-radius:10px;border:1px solid #e2e8f0;background:#fff;font-family:Tajawal;font-size:0.8rem;color:#101d23;cursor:pointer}
+  .pc-filter:focus{border-color:#12a99b;outline:none}
+  .pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;padding:1rem}
+  .pc-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.06);border:1px solid #f1f5f9;transition:all 0.3s}
+  .pc-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.1);border-color:#12a99b}
+  .pc-card-img{height:140px;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;justify-content:center;position:relative}
+  .pc-card-img i{font-size:3rem;color:#12a99b;opacity:0.3}
+  .pc-card-body{padding:1rem}
+  .pc-card-body h3{font-size:1rem;font-weight:700;color:#101d23;margin-bottom:0.4rem}
+  .pc-card-row{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:#666;margin-bottom:0.3rem}
+  .pc-card-row i{color:#12a99b;width:16px;text-align:center}
+  .pc-card-services{display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.5rem}
+  .pc-card-services span{background:#e6faf8;color:#0d8a7f;font-size:0.6rem;padding:0.2rem 0.5rem;border-radius:6px;font-weight:600}
+  .pc-card-footer{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1rem;border-top:1px solid #f1f5f9}
+  .pc-card-rating{display:flex;align-items:center;gap:0.3rem;font-size:0.75rem}
+  .pc-card-rating i{color:#f59e0b}
+  .pc-card-btn{background:#12a99b;color:#fff;padding:0.4rem 0.8rem;border-radius:8px;font-size:0.7rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem}
+  .pc-card-btn:hover{background:#0d8a7f}
+  .pc-empty{text-align:center;padding:3rem;color:#999}
+  .pc-empty i{font-size:3rem;display:block;margin-bottom:0.5rem;color:#ddd}
+  @media(max-width:480px){.pc-grid{grid-template-columns:1fr;padding:0.8rem}}
+</style>
+
+<div class="main-content" style="padding:0">
+  <div class="pc-header">
+    <h1><i class="fas fa-hospital-alt"></i> مراكز العلاج الطبيعي</h1>
+    <p>تصفح جميع مراكز العلاج الطبيعي المعتمدة</p>
+  </div>
+
+  <form class="pc-filters" method="GET" action="/physiotherapy/centers">
+    <select name="city" class="pc-filter" onchange="this.form.submit()">
+      <option value="">كل المدن</option>
+      <% cities.forEach(function(c) { %>
+      <option value="<%= c %>" <%= selectedCity === c ? 'selected' : '' %>><%= c %></option>
+      <% }) %>
+    </select>
+    <a href="/physiotherapy" class="pc-filter" style="text-decoration:none;color:#12a99b"><i class="fas fa-arrow-right"></i> العودة</a>
+  </form>
+
+  <% if (centers.length > 0) { %>
+  <div class="pc-grid">
+    <% centers.forEach(function(c) { %>
+    <div class="pc-card">
+      <div class="pc-card-img">
+        <% if (c.image) { %>
+        <img src="<%= c.image %>" alt="<%= c.name %>" style="width:100%;height:100%;object-fit:cover">
+        <% } else { %>
+        <i class="fas fa-hospital-alt"></i>
+        <% } %>
+      </div>
+      <div class="pc-card-body">
+        <h3><%= c.name %></h3>
+        <% if (c.address || c.city) { %>
+        <div class="pc-card-row"><i class="fas fa-map-marker-alt"></i> <%= c.address || '' %> <%= c.city ? '- ' + c.city : '' %></div>
+        <% } %>
+        <% if (c.phone) { %>
+        <div class="pc-card-row"><i class="fas fa-phone"></i> <span dir="ltr"><%= c.phone %></span></div>
+        <% } %>
+        <% if (c.workingHours) { %>
+        <div class="pc-card-row"><i class="fas fa-clock"></i> <%= c.workingHours %></div>
+        <% } %>
+        <% if (c.description) { %>
+        <div class="pc-card-row"><i class="fas fa-info-circle"></i> <%= c.description %></div>
+        <% } %>
+        <% if (c.services && c.services.length > 0) { %>
+        <div class="pc-card-services">
+          <% c.services.forEach(function(s) { %>
+          <span><%= s %></span>
+          <% }) %>
+        </div>
+        <% } %>
+      </div>
+      <div class="pc-card-footer">
+        <div class="pc-card-rating">
+          <% if (c.rating > 0) { %>
+          <i class="fas fa-star"></i> <%= c.rating %> <span style="color:#999">(<%= c.reviewCount || 0 %>)</span>
+          <% } else { %>
+          <span style="color:#999">لا تقييمات</span>
+          <% } %>
+        </div>
+        <% if (c.lat && c.lng) { %>
+        <a href="https://maps.google.com/?q=<%= c.lat %>,<%= c.lng %>" target="_blank" class="pc-card-btn"><i class="fas fa-directions"></i> الاتجاهات</a>
+        <% } %>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div class="pc-empty">
+    <i class="fas fa-hospital"></i>
+    <h3>لا توجد مراكز حالياً</h3>
+    <p>لم يتم إضافة مراكز علاج طبيعي بعد</p>
+  </div>
+  <% } %>
+</div>
+<%- include('../partials/footer') %>

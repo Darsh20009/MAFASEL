@@ -107,6 +107,16 @@
 | موظف | employee@mafasel.com | 0500000006 |
 | وكيل تأمين | insurance@mafasel.com | 0500000007 |
 
+## العلاج الطبيعي (Physiotherapy)
+- صفحة رئيسية `/physiotherapy` مع أقسام الخدمات والمراكز والأخصائيين
+- `/physiotherapy/centers` — قائمة مراكز العلاج الطبيعي مع فلتر المدن
+- `/physiotherapy/specialists` — قائمة الأخصائيين مع فلتر المدن والتخصصات والجنس
+- `/physiotherapy/specialist/:id` — ملف الأخصائي التفصيلي مع التقييمات والحجز
+- نموذج Specialist في `server/modules/physiotherapy/specialist.model.js`
+- نوع موقع جديد `physiotherapy_center` في نموذج Location
+- تخصصات: علاج عظام ومفاصل، تأهيل عصبي، علاج أطفال، إصابات رياضية، علاج تنفسي، آلام الظهر والرقبة
+- بيانات تجريبية: 5 مراكز + 6 أخصائيين
+
 ## البطاقة الصحية (Health Card)
 - صفحة `/health-card` تعرض بطاقة صحية رقمية للمريض
 - تصميم إبداعي مع وجه أمامي (صورة، اسم، بيانات سريعة، QR) ووجه خلفي (تفاصيل طبية)

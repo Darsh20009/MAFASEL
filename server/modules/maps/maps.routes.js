@@ -6,7 +6,7 @@ const { isAuthenticated, isAdmin } = require('../../middleware/auth');
 router.get('/', async (req, res) => {
   try {
     const filter = { isActive: true };
-    if (req.query.type && ['hospital', 'pharmacy'].includes(req.query.type)) {
+    if (req.query.type && ['hospital', 'pharmacy', 'physiotherapy_center'].includes(req.query.type)) {
       filter.type = req.query.type;
     }
     if (req.query.city) {
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
 router.get('/api/locations', async (req, res) => {
   try {
     const filter = { isActive: true };
-    if (req.query.type && ['hospital', 'pharmacy'].includes(req.query.type)) {
+    if (req.query.type && ['hospital', 'pharmacy', 'physiotherapy_center'].includes(req.query.type)) {
       filter.type = req.query.type;
     }
     if (req.query.city) {
@@ -46,12 +46,12 @@ router.get('/api/locations', async (req, res) => {
 
 router.post('/add', isAuthenticated, isAdmin, async (req, res) => {
   try {
-    const { name, type, lat, lng, address, city, phone, workingHours } = req.body;
+    const { name, type, lat, lng, address, city, phone, workingHours, description, services } = req.body;
     if (!name || !type || !lat || !lng) {
       req.flash('error', 'يرجى تعبئة جميع الحقول المطلوبة');
       return res.redirect('/maps');
     }
-    if (!['hospital', 'pharmacy'].includes(type)) {
+    if (!['hospital', 'pharmacy', 'physiotherapy_center'].includes(type)) {
       req.flash('error', 'نوع الموقع غير صحيح');
       return res.redirect('/maps');
     }
@@ -64,6 +64,8 @@ router.post('/add', isAuthenticated, isAdmin, async (req, res) => {
       city: (city || '').trim(),
       phone: (phone || '').trim(),
       workingHours: (workingHours || '').trim(),
+      description: (description || '').trim(),
+      services: services ? services.split(',').map(s => s.trim()).filter(Boolean) : [],
       addedBy: req.session.user._id
     });
     req.flash('success', 'تمت إضافة الموقع بنجاح');

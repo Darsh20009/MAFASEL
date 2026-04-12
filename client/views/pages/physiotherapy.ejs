@@ -1,0 +1,240 @@
+<%- include('../partials/header') %>
+<style>
+  .pt-hero{background:linear-gradient(135deg,#101d23 0%,#1a2e38 60%,#0d3530 100%);padding:2.5rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+  .pt-hero::before{content:'';position:absolute;top:-50%;right:-30%;width:400px;height:400px;background:radial-gradient(circle,rgba(18,169,155,0.15),transparent 70%);border-radius:50%}
+  .pt-hero::after{content:'';position:absolute;bottom:-30%;left:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(37,99,235,0.1),transparent 70%);border-radius:50%}
+  .pt-hero h1{color:#fff;font-size:1.8rem;font-weight:800;margin-bottom:0.5rem;position:relative;z-index:1}
+  .pt-hero h1 span{color:#12a99b}
+  .pt-hero p{color:rgba(255,255,255,0.7);font-size:0.9rem;position:relative;z-index:1;max-width:500px;margin:0 auto 1.5rem}
+  .pt-hero-actions{display:flex;gap:0.8rem;justify-content:center;position:relative;z-index:1;flex-wrap:wrap}
+  .pt-btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;border-radius:14px;font-weight:700;font-size:0.85rem;text-decoration:none;transition:all 0.3s;font-family:'Tajawal',sans-serif;border:none;cursor:pointer}
+  .pt-btn-primary{background:linear-gradient(135deg,#12a99b,#0d8a7f);color:#fff;box-shadow:0 4px 15px rgba(18,169,155,0.3)}
+  .pt-btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(18,169,155,0.4)}
+  .pt-btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.3)}
+  .pt-btn-outline:hover{border-color:#12a99b;color:#12a99b}
+
+  .pt-services{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;padding:1.5rem;max-width:800px;margin:-2rem auto 0;position:relative;z-index:2}
+  .pt-service{background:#fff;border-radius:16px;padding:1.2rem 0.8rem;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;border:1px solid #f1f5f9}
+  .pt-service:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.1);border-color:#12a99b}
+  .pt-service-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.5rem;font-size:1.2rem}
+  .pt-service h4{font-size:0.78rem;color:#101d23;margin:0}
+
+  .pt-section{padding:1.5rem}
+  .pt-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+  .pt-section-header h2{font-size:1.2rem;font-weight:800;color:#101d23;display:flex;align-items:center;gap:0.4rem}
+  .pt-section-header h2 i{color:#12a99b}
+  .pt-section-header a{color:#12a99b;font-size:0.8rem;font-weight:600;text-decoration:none}
+
+  .pt-centers-scroll{display:flex;gap:0.8rem;overflow-x:auto;padding-bottom:0.5rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .pt-centers-scroll::-webkit-scrollbar{height:4px}
+  .pt-centers-scroll::-webkit-scrollbar-track{background:#f1f5f9;border-radius:4px}
+  .pt-centers-scroll::-webkit-scrollbar-thumb{background:#12a99b;border-radius:4px}
+  .pt-center-card{min-width:260px;max-width:280px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.06);border:1px solid #f1f5f9;scroll-snap-align:start;transition:all 0.3s;flex-shrink:0}
+  .pt-center-card:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,0.1)}
+  .pt-center-img{height:120px;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;justify-content:center;position:relative}
+  .pt-center-img i{font-size:2.5rem;color:#12a99b;opacity:0.4}
+  .pt-center-badge{position:absolute;top:0.5rem;left:0.5rem;background:#12a99b;color:#fff;font-size:0.6rem;padding:0.2rem 0.5rem;border-radius:8px;font-weight:700}
+  .pt-center-info{padding:0.8rem}
+  .pt-center-info h3{font-size:0.9rem;font-weight:700;color:#101d23;margin-bottom:0.3rem}
+  .pt-center-meta{display:flex;align-items:center;gap:0.4rem;font-size:0.7rem;color:#666;margin-bottom:0.3rem}
+  .pt-center-meta i{color:#12a99b;width:14px}
+  .pt-center-rating{display:flex;align-items:center;gap:0.3rem;font-size:0.7rem}
+  .pt-center-rating i{color:#f59e0b;font-size:0.65rem}
+  .pt-center-rating span{color:#666}
+
+  .pt-specialists-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.8rem}
+  .pt-spec-card{background:#fff;border-radius:16px;padding:1rem;box-shadow:0 4px 15px rgba(0,0,0,0.06);border:1px solid #f1f5f9;display:flex;gap:0.8rem;transition:all 0.3s}
+  .pt-spec-card:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.1);border-color:#12a99b}
+  .pt-spec-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pt-spec-avatar i{font-size:1.4rem;color:#12a99b}
+  .pt-spec-info h3{font-size:0.85rem;font-weight:700;color:#101d23;margin-bottom:0.15rem}
+  .pt-spec-info .pt-spec-title{font-size:0.68rem;color:#12a99b;font-weight:600;margin-bottom:0.3rem}
+  .pt-spec-tags{display:flex;flex-wrap:wrap;gap:0.2rem;margin-bottom:0.3rem}
+  .pt-spec-tag{background:#e6faf8;color:#0d8a7f;font-size:0.58rem;padding:0.15rem 0.4rem;border-radius:6px;font-weight:600}
+  .pt-spec-meta{display:flex;align-items:center;gap:0.6rem;font-size:0.65rem;color:#666}
+  .pt-spec-meta i{color:#12a99b}
+  .pt-spec-btn{display:inline-flex;align-items:center;gap:0.3rem;background:#12a99b;color:#fff;padding:0.35rem 0.7rem;border-radius:8px;font-size:0.68rem;font-weight:700;text-decoration:none;margin-top:0.4rem;transition:background 0.3s}
+  .pt-spec-btn:hover{background:#0d8a7f}
+
+  .pt-request-card{background:linear-gradient(135deg,#101d23,#1a2e38);border-radius:20px;padding:2rem;text-align:center;margin:1rem 1.5rem;position:relative;overflow:hidden}
+  .pt-request-card::before{content:'';position:absolute;top:-30px;right:-30px;width:150px;height:150px;background:radial-gradient(circle,rgba(18,169,155,0.2),transparent 70%);border-radius:50%}
+  .pt-request-card h2{color:#fff;font-size:1.2rem;margin-bottom:0.5rem;position:relative}
+  .pt-request-card p{color:rgba(255,255,255,0.6);font-size:0.8rem;margin-bottom:1rem;position:relative}
+
+  .pt-empty{text-align:center;padding:2rem;color:#999}
+  .pt-empty i{font-size:2rem;margin-bottom:0.5rem;display:block;color:#ddd}
+
+  @media(max-width:480px){
+    .pt-hero h1{font-size:1.4rem}
+    .pt-services{grid-template-columns:repeat(2,1fr);padding:1rem}
+    .pt-section{padding:1rem}
+    .pt-specialists-grid{grid-template-columns:1fr}
+  }
+</style>
+
+<div class="main-content" style="padding:0">
+  <div class="pt-hero">
+    <h1>مراكز <span>العلاج الطبيعي</span></h1>
+    <p>اعثر على أفضل مراكز وأخصائيي العلاج الطبيعي في منطقتك واحجز جلستك الآن</p>
+    <div class="pt-hero-actions">
+      <a href="/physiotherapy/centers" class="pt-btn pt-btn-primary"><i class="fas fa-hospital"></i> المراكز</a>
+      <a href="/physiotherapy/specialists" class="pt-btn pt-btn-outline"><i class="fas fa-user-md"></i> الأخصائيين</a>
+      <% if (user) { %>
+      <a href="#requestSection" class="pt-btn pt-btn-outline"><i class="fas fa-paper-plane"></i> طلب أخصائي</a>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="pt-services">
+    <div class="pt-service">
+      <div class="pt-service-icon" style="background:#e6faf8"><i class="fas fa-bone" style="color:#12a99b"></i></div>
+      <h4>علاج العظام</h4>
+    </div>
+    <div class="pt-service">
+      <div class="pt-service-icon" style="background:#dbeafe"><i class="fas fa-brain" style="color:#2563eb"></i></div>
+      <h4>تأهيل عصبي</h4>
+    </div>
+    <div class="pt-service">
+      <div class="pt-service-icon" style="background:#fce7f3"><i class="fas fa-child" style="color:#db2777"></i></div>
+      <h4>علاج أطفال</h4>
+    </div>
+    <div class="pt-service">
+      <div class="pt-service-icon" style="background:#fef3c7"><i class="fas fa-running" style="color:#d97706"></i></div>
+      <h4>إصابات رياضية</h4>
+    </div>
+    <div class="pt-service">
+      <div class="pt-service-icon" style="background:#dcfce7"><i class="fas fa-lungs" style="color:#16a34a"></i></div>
+      <h4>علاج تنفسي</h4>
+    </div>
+  </div>
+
+  <div class="pt-section">
+    <div class="pt-section-header">
+      <h2><i class="fas fa-hospital"></i> مراكز العلاج الطبيعي</h2>
+      <a href="/physiotherapy/centers">عرض الكل <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <% if (centers.length > 0) { %>
+    <div class="pt-centers-scroll">
+      <% centers.forEach(function(c) { %>
+      <div class="pt-center-card">
+        <div class="pt-center-img">
+          <% if (c.image) { %>
+          <img src="<%= c.image %>" alt="<%= c.name %>" style="width:100%;height:100%;object-fit:cover">
+          <% } else { %>
+          <i class="fas fa-hospital-alt"></i>
+          <% } %>
+          <% if (c.rating > 0) { %>
+          <span class="pt-center-badge"><i class="fas fa-star"></i> <%= c.rating %></span>
+          <% } %>
+        </div>
+        <div class="pt-center-info">
+          <h3><%= c.name %></h3>
+          <div class="pt-center-meta"><i class="fas fa-map-marker-alt"></i> <%= c.city || c.address || 'غير محدد' %></div>
+          <% if (c.phone) { %>
+          <div class="pt-center-meta"><i class="fas fa-phone"></i> <%= c.phone %></div>
+          <% } %>
+          <% if (c.workingHours) { %>
+          <div class="pt-center-meta"><i class="fas fa-clock"></i> <%= c.workingHours %></div>
+          <% } %>
+          <% if (c.services && c.services.length > 0) { %>
+          <div class="pt-spec-tags" style="margin-top:0.3rem">
+            <% c.services.slice(0,3).forEach(function(s) { %>
+            <span class="pt-spec-tag"><%= s %></span>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <div class="pt-empty">
+      <i class="fas fa-hospital"></i>
+      <p>لم يتم إضافة مراكز بعد</p>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="pt-section">
+    <div class="pt-section-header">
+      <h2><i class="fas fa-user-md"></i> أبرز الأخصائيين</h2>
+      <a href="/physiotherapy/specialists">عرض الكل <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <% if (specialists.length > 0) { %>
+    <div class="pt-specialists-grid">
+      <% specialists.forEach(function(s) { %>
+      <div class="pt-spec-card">
+        <div class="pt-spec-avatar">
+          <% if (s.avatar) { %>
+          <img src="<%= s.avatar %>" alt="<%= s.name %>" style="width:100%;height:100%;border-radius:50%;object-fit:cover">
+          <% } else { %>
+          <i class="fas fa-user-md"></i>
+          <% } %>
+        </div>
+        <div class="pt-spec-info">
+          <h3><%= s.name %></h3>
+          <div class="pt-spec-title"><%= s.title %></div>
+          <div class="pt-spec-tags">
+            <% (s.specializations || []).slice(0,2).forEach(function(sp) { %>
+            <span class="pt-spec-tag"><%= sp %></span>
+            <% }) %>
+          </div>
+          <div class="pt-spec-meta">
+            <span><i class="fas fa-briefcase"></i> <%= s.experience %> سنة</span>
+            <% if (s.rating > 0) { %>
+            <span><i class="fas fa-star" style="color:#f59e0b"></i> <%= s.rating %></span>
+            <% } %>
+            <% if (s.city) { %>
+            <span><i class="fas fa-map-marker-alt"></i> <%= s.city %></span>
+            <% } %>
+          </div>
+          <a href="/physiotherapy/specialist/<%= s._id %>" class="pt-spec-btn"><i class="fas fa-eye"></i> عرض الملف</a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <div class="pt-empty">
+      <i class="fas fa-user-md"></i>
+      <p>لم يتم إضافة أخصائيين بعد</p>
+    </div>
+    <% } %>
+  </div>
+
+  <% if (user) { %>
+  <div class="pt-request-card" id="requestSection">
+    <h2 style="color:#fff"><i class="fas fa-paper-plane" style="color:#12a99b"></i> طلب أخصائي علاج طبيعي</h2>
+    <p>أرسل طلبك وسيتم تخصيص أخصائي مناسب لحالتك</p>
+    <form method="POST" action="/physiotherapy/request" style="max-width:500px;margin:0 auto;text-align:right">
+      <div style="margin-bottom:0.8rem">
+        <label style="color:rgba(255,255,255,0.7);font-size:0.78rem;display:block;margin-bottom:0.3rem">التخصص المطلوب</label>
+        <select name="specialization" required style="width:100%;padding:0.7rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-family:Tajawal;font-size:0.85rem">
+          <option value="علاج طبيعي عام" style="color:#101d23">علاج طبيعي عام</option>
+          <option value="علاج عظام ومفاصل" style="color:#101d23">علاج عظام ومفاصل</option>
+          <option value="تأهيل بعد العمليات" style="color:#101d23">تأهيل بعد العمليات</option>
+          <option value="إصابات رياضية" style="color:#101d23">إصابات رياضية</option>
+          <option value="تأهيل عصبي" style="color:#101d23">تأهيل عصبي</option>
+          <option value="علاج أطفال" style="color:#101d23">علاج أطفال</option>
+          <option value="علاج تنفسي" style="color:#101d23">علاج تنفسي</option>
+          <option value="علاج آلام الظهر والرقبة" style="color:#101d23">علاج آلام الظهر والرقبة</option>
+          <option value="علاج طبيعي منزلي" style="color:#101d23">علاج طبيعي منزلي</option>
+        </select>
+      </div>
+      <div style="margin-bottom:0.8rem">
+        <label style="color:rgba(255,255,255,0.7);font-size:0.78rem;display:block;margin-bottom:0.3rem">نوع الجلسة</label>
+        <select name="sessionType" style="width:100%;padding:0.7rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-family:Tajawal;font-size:0.85rem">
+          <option value="in_center" style="color:#101d23">في المركز</option>
+          <option value="home_visit" style="color:#101d23">زيارة منزلية</option>
+          <option value="online" style="color:#101d23">استشارة أونلاين</option>
+        </select>
+      </div>
+      <div style="margin-bottom:0.8rem">
+        <label style="color:rgba(255,255,255,0.7);font-size:0.78rem;display:block;margin-bottom:0.3rem">وصف الحالة</label>
+        <textarea name="symptoms" required rows="4" placeholder="اشرح حالتك والأعراض التي تعاني منها..." style="width:100%;padding:0.7rem;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-family:Tajawal;font-size:0.85rem;resize:vertical"></textarea>
+      </div>
+      <button type="submit" class="pt-btn pt-btn-primary" style="width:100%;justify-content:center"><i class="fas fa-paper-plane"></i> إرسال الطلب</button>
+    </form>
+  </div>
+  <% } %>
+</div>
+<%- include('../partials/footer') %>
