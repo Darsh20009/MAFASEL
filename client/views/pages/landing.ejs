@@ -11,41 +11,42 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --primary: #101d23;
       --accent: #12a99b;
       --accent2: #0d7a6e;
-      --white: #ffffff;
-      --dark: #0a1520;
+      --primary: #101d23;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --bg-light: #f8fafc;
     }
 
     html, body {
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
       font-family: 'Tajawal', sans-serif;
-      background: var(--dark);
+      background: #fff;
       overflow: hidden;
       overscroll-behavior: none;
     }
 
-    /* ─── SPLASH WRAPPER ─────────────────────────────────── */
+    /* ── WRAPPER ───────────────────────────────────────── */
     #splash {
       position: fixed;
       inset: 0;
-      display: flex;
-      flex-direction: column;
+      height: 100dvh;
     }
 
-    /* ─── SLIDES ──────────────────────────────────────────── */
+    /* ── SLIDES ────────────────────────────────────────── */
     .slide {
       position: absolute;
       inset: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.6s ease, transform 0.6s ease;
-      transform: translateX(-30px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+      transform: translateX(-24px);
       overflow: hidden;
     }
     .slide.active {
@@ -55,57 +56,69 @@
     }
     .slide.exit {
       opacity: 0;
-      transform: translateX(30px);
+      transform: translateX(24px);
       pointer-events: none;
     }
 
-    /* ─── VIDEO SLIDE ────────────────────────────────────── */
+    /* ── SHARED TOP BAR (logo on every slide) ──────────── */
+    .slide-topbar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem 0.75rem;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+    .slide-topbar img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+    .slide-topbar span {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .slide-topbar .topbar-accent { color: var(--accent); }
+
+    /* ── VIDEO SLIDE ───────────────────────────────────── */
     #slide-video {
       background: #000;
     }
-    #splash-video {
+    #slide-video .slide-topbar {
+      background: rgba(0,0,0,0.55);
+      border-bottom: none;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      top: 0; left: 0; right: 0;
+      z-index: 5;
     }
-    .video-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.5) 100%);
-      z-index: 1;
-    }
-    .video-logo {
-      position: absolute;
-      top: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
+    #slide-video .slide-topbar span { color: #fff; }
+    .video-wrap {
+      flex: 1;
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      justify-content: center;
+      background: #000;
+      overflow: hidden;
     }
-    .video-logo img {
-      width: 44px;
-      height: 44px;
+    #splash-video {
+      width: 100%;
+      height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 0 12px rgba(18,169,155,0.6));
-    }
-    .video-logo span {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      display: block;
     }
     .video-progress {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       height: 3px;
-      background: rgba(255,255,255,0.2);
-      z-index: 3;
+      background: rgba(255,255,255,0.15);
+      z-index: 6;
     }
     .video-progress-bar {
       height: 100%;
@@ -114,243 +127,241 @@
       transition: width 0.1s linear;
     }
 
-    /* ─── SKIP BUTTON ────────────────────────────────────── */
+    /* ── SKIP BUTTON ───────────────────────────────────── */
     #skip-btn {
       position: fixed;
-      bottom: 2rem;
+      bottom: 1.8rem;
       left: 50%;
       transform: translateX(-50%);
       z-index: 9999;
-      background: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.15);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.3);
       color: #fff;
       font-family: 'Tajawal', sans-serif;
       font-size: 0.95rem;
-      font-weight: 500;
-      padding: 0.55rem 1.8rem;
+      font-weight: 600;
+      padding: 0.6rem 2rem;
       border-radius: 50px;
       cursor: pointer;
-      transition: background 0.2s, opacity 0.4s;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s;
     }
-    #skip-btn:hover { background: rgba(255,255,255,0.22); }
+    #skip-btn:hover { background: rgba(255,255,255,0.25); }
 
-    /* ─── ONBOARDING SLIDES ──────────────────────────────── */
-    .onboard-slide {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-    }
-    .onboard-bg {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #0a1520 0%, #101d23 40%, #0d2a26 100%);
-    }
-    .onboard-bg-glow {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.35;
-    }
-    .onboard-bg-glow.g1 {
-      width: 400px; height: 400px;
-      background: var(--accent);
-      top: -100px; right: -100px;
-    }
-    .onboard-bg-glow.g2 {
-      width: 300px; height: 300px;
-      background: #1a6fff;
-      bottom: -80px; left: -80px;
-    }
-    .onboard-content {
-      position: relative;
-      z-index: 2;
+    /* ── ONBOARDING SLIDE BODY ─────────────────────────── */
+    .onboard-body {
+      flex: 1;
+      background: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 2rem 2rem 5rem;
+      justify-content: flex-start;
+      padding: 1.8rem 1.5rem 7rem;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       text-align: center;
     }
+
+    /* Illustration circle */
     .onboard-icon-wrap {
-      width: 90px;
-      height: 90px;
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 2rem;
-      box-shadow: 0 0 40px rgba(18,169,155,0.4);
-      animation: iconPulse 3s ease-in-out infinite;
+      margin-bottom: 1.4rem;
+      flex-shrink: 0;
     }
-    @keyframes iconPulse {
-      0%, 100% { box-shadow: 0 0 40px rgba(18,169,155,0.4); transform: scale(1); }
-      50% { box-shadow: 0 0 60px rgba(18,169,155,0.6); transform: scale(1.04); }
+    .onboard-icon-wrap.teal {
+      background: linear-gradient(135deg, #e6faf8, #b2f0ea);
+      box-shadow: 0 8px 30px rgba(18,169,155,0.18);
+    }
+    .onboard-icon-wrap.blue {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      box-shadow: 0 8px 30px rgba(59,130,246,0.18);
+    }
+    .onboard-icon-wrap.purple {
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+      box-shadow: 0 8px 30px rgba(139,92,246,0.18);
     }
     .onboard-icon-wrap i {
       font-size: 2.2rem;
-      color: #fff;
     }
+    .icon-teal { color: var(--accent); }
+    .icon-blue { color: #3b82f6; }
+    .icon-purple { color: #8b5cf6; }
+
+    /* Tag */
     .onboard-tag {
       display: inline-block;
-      background: rgba(18,169,155,0.15);
-      border: 1px solid rgba(18,169,155,0.4);
-      color: var(--accent);
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.3rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.28rem 0.9rem;
       border-radius: 50px;
-      margin-bottom: 1rem;
-      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.3px;
     }
+    .tag-teal { background: #e6faf8; color: var(--accent2); border: 1px solid #b2f0ea; }
+    .tag-blue { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
+    .tag-purple { background: #ede9fe; color: #7c3aed; border: 1px solid #ddd6fe; }
+
+    /* Title */
     .onboard-title {
-      font-size: clamp(1.6rem, 5vw, 2.4rem);
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 1rem;
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 900;
+      color: var(--primary);
       line-height: 1.3;
+      margin-bottom: 0.9rem;
     }
-    .onboard-title .accent { color: var(--accent); }
+    .onboard-title .acc-teal { color: var(--accent); }
+    .onboard-title .acc-blue { color: #3b82f6; }
+    .onboard-title .acc-purple { color: #8b5cf6; }
+
+    /* Desc */
     .onboard-desc {
-      font-size: clamp(0.95rem, 2.5vw, 1.1rem);
-      color: rgba(255,255,255,0.72);
+      font-size: clamp(0.92rem, 2.4vw, 1.05rem);
+      color: var(--muted);
       line-height: 1.75;
-      max-width: 480px;
+      max-width: 440px;
+      margin-bottom: 1.6rem;
     }
+
+    /* Feature pills */
     .onboard-features {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
-      margin-top: 1.8rem;
+      gap: 0.65rem;
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
     }
     .onboard-feature-item {
       display: flex;
       align-items: center;
-      gap: 0.9rem;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+      gap: 0.85rem;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 0.85rem 1.1rem;
+      padding: 0.8rem 1rem;
       text-align: right;
     }
-    .onboard-feature-item i {
-      color: var(--accent);
-      font-size: 1.1rem;
+    .onboard-feature-item .feat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      font-size: 1rem;
     }
+    .feat-teal { background: #e6faf8; color: var(--accent); }
+    .feat-blue { background: #dbeafe; color: #3b82f6; }
+    .feat-purple { background: #ede9fe; color: #8b5cf6; }
     .onboard-feature-item span {
-      color: rgba(255,255,255,0.85);
-      font-size: 0.95rem;
-      font-weight: 500;
+      color: var(--text);
+      font-size: 0.93rem;
+      font-weight: 600;
     }
 
-    /* ─── LOGIN SLIDE ────────────────────────────────────── */
-    #slide-login .onboard-bg {
-      background: linear-gradient(160deg, #0a1520 0%, #0d2420 60%, #101d23 100%);
-    }
-    .login-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 2rem 2rem 1.5rem;
-      width: 100%;
-      max-width: 400px;
-      margin-top: 1.5rem;
-    }
-    .login-card-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 1.2rem;
-      text-align: center;
-    }
-    .login-btns {
+    /* ── LOGIN SLIDE ───────────────────────────────────── */
+    .login-body {
+      flex: 1;
+      background: #fff;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.5rem 6rem;
     }
-    .btn-splash {
+    .login-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.8rem 1.5rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      margin-top: 1.2rem;
+    }
+    .login-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+      text-align: center;
+    }
+    .login-btns { display: flex; flex-direction: column; gap: 0.7rem; }
+    .btn-sp {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.6rem;
       padding: 0.9rem 1.5rem;
-      border-radius: 14px;
+      border-radius: 12px;
       font-family: 'Tajawal', sans-serif;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       border: none;
       text-decoration: none;
       transition: transform 0.15s, box-shadow 0.15s;
     }
-    .btn-splash:active { transform: scale(0.97); }
-    .btn-splash-primary {
+    .btn-sp:active { transform: scale(0.97); }
+    .btn-sp-primary {
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       color: #fff;
-      box-shadow: 0 4px 20px rgba(18,169,155,0.35);
+      box-shadow: 0 4px 18px rgba(18,169,155,0.3);
     }
-    .btn-splash-primary:hover { box-shadow: 0 6px 28px rgba(18,169,155,0.5); }
-    .btn-splash-outline {
-      background: transparent;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      color: rgba(255,255,255,0.85);
+    .btn-sp-primary:hover { box-shadow: 0 6px 24px rgba(18,169,155,0.45); }
+    .btn-sp-outline {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      color: var(--text);
     }
-    .btn-splash-outline:hover { background: rgba(255,255,255,0.07); }
-    .btn-splash-ghost {
+    .btn-sp-outline:hover { background: var(--bg-light); }
+    .btn-sp-ghost {
       background: transparent;
-      color: rgba(255,255,255,0.5);
+      color: var(--muted);
       font-size: 0.9rem;
     }
-    .btn-splash-ghost:hover { color: rgba(255,255,255,0.8); }
+    .btn-sp-ghost:hover { color: var(--primary); }
     .login-divider {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      margin: 0.2rem 0;
+      display: flex; align-items: center; gap: 0.75rem; margin: 0.1rem 0;
     }
-    .login-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
-    .login-divider-text { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+    .login-divider-line { flex: 1; height: 1px; background: var(--border); }
+    .login-divider-text { font-size: 0.8rem; color: var(--muted); }
 
-    /* ─── DOTS NAV ───────────────────────────────────────── */
+    /* ── DOTS NAV ──────────────────────────────────────── */
     #dots-nav {
       position: fixed;
-      bottom: 5.5rem;
+      bottom: 4.8rem;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 0.5rem;
+      gap: 0.45rem;
       z-index: 9999;
       transition: opacity 0.3s;
     }
     #dots-nav.hidden { opacity: 0; pointer-events: none; }
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.3);
+      background: var(--border);
       cursor: pointer;
-      transition: background 0.3s, transform 0.3s, width 0.3s;
+      transition: background 0.3s, width 0.3s;
     }
-    .dot.active {
-      background: var(--accent);
-      width: 22px;
-      border-radius: 4px;
-    }
+    .dot.active { background: var(--accent); width: 22px; border-radius: 4px; }
 
-    /* ─── NEXT BUTTON (onboarding slides only) ───────────── */
+    /* ── NEXT BUTTON ───────────────────────────────────── */
     #next-btn {
       position: fixed;
-      bottom: 2rem;
+      bottom: 1.6rem;
       left: 50%;
       transform: translateX(-50%);
       z-index: 9999;
@@ -358,167 +369,159 @@
       color: #fff;
       font-family: 'Tajawal', sans-serif;
       font-size: 1rem;
-      font-weight: 600;
-      padding: 0.75rem 3rem;
+      font-weight: 700;
+      padding: 0.8rem 3.2rem;
       border-radius: 50px;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(18,169,155,0.4);
+      box-shadow: 0 4px 18px rgba(18,169,155,0.35);
       display: none;
       white-space: nowrap;
-      transition: opacity 0.4s, box-shadow 0.2s;
+      transition: box-shadow 0.2s;
     }
-    #next-btn:hover { box-shadow: 0 6px 28px rgba(18,169,155,0.55); }
+    #next-btn:hover { box-shadow: 0 6px 24px rgba(18,169,155,0.5); }
 
-    /* ─── RESPONSIVE ─────────────────────────────────────── */
-    @media (max-width: 480px) {
-      .onboard-icon-wrap { width: 74px; height: 74px; margin-bottom: 1.4rem; }
-      .onboard-icon-wrap i { font-size: 1.8rem; }
-      .onboard-content { padding: 1.5rem 1.2rem 5rem; }
-      .login-card { padding: 1.5rem 1.2rem; }
-    }
-    @media (min-width: 768px) {
-      .onboard-features { flex-direction: row; flex-wrap: wrap; max-width: 600px; }
+    /* ── RESPONSIVE ────────────────────────────────────── */
+    @media (min-width: 600px) {
+      .onboard-features { flex-direction: row; flex-wrap: wrap; max-width: 520px; }
       .onboard-feature-item { flex: 1 1 45%; }
+    }
+    @media (max-width: 380px) {
+      .onboard-icon-wrap { width: 74px; height: 74px; }
+      .onboard-icon-wrap i { font-size: 1.9rem; }
+      .onboard-body { padding: 1.2rem 1rem 7rem; }
     }
   </style>
 </head>
 <body>
-
 <div id="splash">
 
-  <!-- ── SLIDE 0: VIDEO ──────────────────────────────── -->
+  <!-- ══ SLIDE 0: VIDEO ══════════════════════════════ -->
   <div class="slide active" id="slide-video">
-    <video id="splash-video" autoplay muted playsinline preload="auto">
-      <source src="/splash-video.mp4" type="video/mp4">
-    </video>
-    <div class="video-overlay"></div>
-    <div class="video-logo">
+    <div class="slide-topbar">
       <img src="/icons/logo.png" alt="مفاصل">
       <span>مفاصل</span>
     </div>
-    <div class="video-progress">
-      <div class="video-progress-bar" id="videoProgressBar"></div>
+    <div class="video-wrap">
+      <video id="splash-video" autoplay muted playsinline preload="auto">
+        <source src="/splash-video.mp4" type="video/mp4">
+      </video>
+      <div class="video-progress">
+        <div class="video-progress-bar" id="videoProgressBar"></div>
+      </div>
     </div>
   </div>
 
-  <!-- ── SLIDE 1: ABOUT PLATFORM ──────────────────────── -->
+  <!-- ══ SLIDE 1: ABOUT PLATFORM ════════════════════ -->
   <div class="slide" id="slide-about">
-    <div class="onboard-slide">
-      <div class="onboard-bg"></div>
-      <div class="onboard-bg-glow g1"></div>
-      <div class="onboard-bg-glow g2"></div>
-      <div class="onboard-content">
-        <div class="onboard-icon-wrap">
-          <i class="fas fa-heartbeat"></i>
+    <div class="slide-topbar">
+      <img src="/icons/logo.png" alt="مفاصل">
+      <span>مفاصل</span>
+    </div>
+    <div class="onboard-body">
+      <div class="onboard-icon-wrap teal">
+        <i class="fas fa-heartbeat icon-teal"></i>
+      </div>
+      <span class="onboard-tag tag-teal">منصة مفاصل الطبية</span>
+      <h1 class="onboard-title">
+        كل رعايتك الصحية<br>في <span class="acc-teal">مكان واحد</span>
+      </h1>
+      <p class="onboard-desc">
+        منصة رقمية متكاملة تجمع بين الاستشارات الطبية والصيدلية الإلكترونية وإدارة التأمين الصحي — بسهولة وأمان تام.
+      </p>
+      <div class="onboard-features">
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-teal"><i class="fas fa-stethoscope"></i></div>
+          <span>استشارات مع أطباء متخصصين</span>
         </div>
-        <span class="onboard-tag">منصة مفاصل الطبية</span>
-        <h1 class="onboard-title">
-          كل رعايتك الصحية<br>في <span class="accent">مكان واحد</span>
-        </h1>
-        <p class="onboard-desc">
-          منصة رقمية متكاملة تجمع بين الاستشارات الطبية والصيدلية الإلكترونية وإدارة التأمين الصحي — بسهولة وأمان تام.
-        </p>
-        <div class="onboard-features">
-          <div class="onboard-feature-item">
-            <i class="fas fa-stethoscope"></i>
-            <span>استشارات مع أطباء متخصصين</span>
-          </div>
-          <div class="onboard-feature-item">
-            <i class="fas fa-pills"></i>
-            <span>صيدلية إلكترونية بتوصيل سريع</span>
-          </div>
-          <div class="onboard-feature-item">
-            <i class="fas fa-shield-alt"></i>
-            <span>إدارة التأمين الصحي</span>
-          </div>
-          <div class="onboard-feature-item">
-            <i class="fas fa-robot"></i>
-            <span>مساعد ذكاء اصطناعي طبي</span>
-          </div>
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-teal"><i class="fas fa-pills"></i></div>
+          <span>صيدلية إلكترونية بتوصيل سريع</span>
+        </div>
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-teal"><i class="fas fa-shield-alt"></i></div>
+          <span>إدارة التأمين الصحي</span>
+        </div>
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-teal"><i class="fas fa-robot"></i></div>
+          <span>مساعد ذكاء اصطناعي طبي</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── SLIDE 2: HEALTH TRACKING ─────────────────────── -->
+  <!-- ══ SLIDE 2: HEALTH TRACKING ═══════════════════ -->
   <div class="slide" id="slide-tracking">
-    <div class="onboard-slide">
-      <div class="onboard-bg" style="background: linear-gradient(135deg,#0a1520,#101d23,#0f1e2a);"></div>
-      <div class="onboard-bg-glow g1" style="background:#1a6fff;top:-80px;left:-80px;right:auto;"></div>
-      <div class="onboard-bg-glow g2" style="background:var(--accent);bottom:-80px;right:-80px;left:auto;"></div>
-      <div class="onboard-content">
-        <div class="onboard-icon-wrap" style="background:linear-gradient(135deg,#1a6fff,#0a4fc4);">
-          <i class="fas fa-home-medical" style="font-size:1.9rem;"></i>
-          <i class="fas fa-house-medical" style="font-size:1.9rem;display:none;"></i>
+    <div class="slide-topbar">
+      <img src="/icons/logo.png" alt="مفاصل">
+      <span>مفاصل</span>
+    </div>
+    <div class="onboard-body">
+      <div class="onboard-icon-wrap blue">
+        <i class="fas fa-house icon-blue"></i>
+      </div>
+      <span class="onboard-tag tag-blue">تتبع صحي ذكي</span>
+      <h1 class="onboard-title">
+        صحتك تحت <span class="acc-blue">إشرافك</span><br>من المنزل
+      </h1>
+      <p class="onboard-desc">
+        تابع ملفك الطبي الشامل، سجّل قياساتك اليومية، واستقبل تنبيهات صحية ذكية — كل ذلك دون الحاجة للخروج من البيت.
+      </p>
+      <div class="onboard-features">
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-blue"><i class="fas fa-file-medical"></i></div>
+          <span>ملف طبي شامل ومحمي</span>
         </div>
-        <span class="onboard-tag" style="color:#60a5fa;border-color:rgba(96,165,250,0.4);background:rgba(96,165,250,0.1);">تتبع صحي ذكي</span>
-        <h1 class="onboard-title">
-          صحتك تحت <span class="accent" style="color:#60a5fa;">إشرافك</span><br>من المنزل
-        </h1>
-        <p class="onboard-desc">
-          تابع ملفك الطبي الشامل، سجّل قياساتك اليومية، واستقبل تنبيهات صحية ذكية — كل ذلك دون الحاجة للخروج من البيت.
-        </p>
-        <div class="onboard-features">
-          <div class="onboard-feature-item">
-            <i class="fas fa-file-medical" style="color:#60a5fa;"></i>
-            <span>ملف طبي شامل ومحمي</span>
-          </div>
-          <div class="onboard-feature-item">
-            <i class="fas fa-bell" style="color:#60a5fa;"></i>
-            <span>تنبيهات ومواعيد صحية</span>
-          </div>
-          <div class="onboard-feature-item">
-            <i class="fas fa-chart-line" style="color:#60a5fa;"></i>
-            <span>متابعة مؤشراتك الصحية</span>
-          </div>
-          <div class="onboard-feature-item">
-            <i class="fas fa-comments" style="color:#60a5fa;"></i>
-            <span>تواصل مباشر مع طبيبك</span>
-          </div>
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-blue"><i class="fas fa-bell"></i></div>
+          <span>تنبيهات ومواعيد صحية</span>
+        </div>
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-blue"><i class="fas fa-chart-line"></i></div>
+          <span>متابعة مؤشراتك الصحية</span>
+        </div>
+        <div class="onboard-feature-item">
+          <div class="feat-icon feat-blue"><i class="fas fa-comments"></i></div>
+          <span>تواصل مباشر مع طبيبك</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── SLIDE 3: LOGIN ────────────────────────────────── -->
+  <!-- ══ SLIDE 3: LOGIN ══════════════════════════════ -->
   <div class="slide" id="slide-login">
-    <div class="onboard-slide">
-      <div class="onboard-bg"></div>
-      <div class="onboard-bg-glow g1"></div>
-      <div class="onboard-bg-glow g2" style="background:#9333ea;"></div>
-      <div class="onboard-content">
-        <div class="onboard-icon-wrap">
-          <i class="fas fa-user-shield"></i>
-        </div>
-        <span class="onboard-tag">ابدأ رحلتك الصحية</span>
-        <h1 class="onboard-title">
-          انضم إلى <span class="accent">مفاصل</span><br>اليوم
-        </h1>
-        <p class="onboard-desc">
-          سجّل دخولك أو أنشئ حساباً جديداً مجاناً وابدأ بالوصول لأفضل الخدمات الطبية الرقمية.
-        </p>
-        <div class="login-card">
-          <p class="login-card-title">اختر طريقة الدخول</p>
-          <div class="login-btns">
-            <a href="/login" class="btn-splash btn-splash-primary">
-              <i class="fas fa-sign-in-alt"></i>
-              تسجيل الدخول
-            </a>
-            <div class="login-divider">
-              <div class="login-divider-line"></div>
-              <span class="login-divider-text">أو</span>
-              <div class="login-divider-line"></div>
-            </div>
-            <a href="/register" class="btn-splash btn-splash-outline">
-              <i class="fas fa-user-plus"></i>
-              إنشاء حساب جديد
-            </a>
-            <a href="/dashboard" class="btn-splash btn-splash-ghost">
-              <i class="fas fa-eye"></i>
-              تصفح بدون تسجيل
-            </a>
+    <div class="slide-topbar">
+      <img src="/icons/logo.png" alt="مفاصل">
+      <span>مفاصل</span>
+    </div>
+    <div class="login-body">
+      <div class="onboard-icon-wrap purple">
+        <i class="fas fa-user-shield icon-purple"></i>
+      </div>
+      <span class="onboard-tag tag-purple">ابدأ رحلتك الصحية</span>
+      <h1 class="onboard-title">
+        انضم إلى <span class="acc-purple">مفاصل</span><br>اليوم
+      </h1>
+      <p class="onboard-desc" style="margin-bottom:0;">
+        سجّل دخولك أو أنشئ حساباً جديداً مجاناً وابدأ بالوصول لأفضل الخدمات الطبية.
+      </p>
+      <div class="login-card">
+        <p class="login-card-title">اختر طريقة الدخول</p>
+        <div class="login-btns">
+          <a href="/login" class="btn-sp btn-sp-primary">
+            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+          </a>
+          <div class="login-divider">
+            <div class="login-divider-line"></div>
+            <span class="login-divider-text">أو</span>
+            <div class="login-divider-line"></div>
           </div>
+          <a href="/register" class="btn-sp btn-sp-outline">
+            <i class="fas fa-user-plus"></i> إنشاء حساب جديد
+          </a>
+          <a href="/dashboard" class="btn-sp btn-sp-ghost">
+            <i class="fas fa-eye"></i> تصفح بدون تسجيل
+          </a>
         </div>
       </div>
     </div>
@@ -526,59 +529,51 @@
 
 </div>
 
-<!-- Skip button (shown on video slide) -->
-<button id="skip-btn" onclick="skipVideo()">تخطي <i class="fas fa-forward"></i></button>
+<!-- Skip (video slide only) -->
+<button id="skip-btn" onclick="skipVideo()">
+  تخطي <i class="fas fa-forward"></i>
+</button>
 
-<!-- Dots nav (shown on onboarding slides) -->
+<!-- Dots -->
 <div id="dots-nav" class="hidden">
   <div class="dot" onclick="goToSlide(1)"></div>
   <div class="dot" onclick="goToSlide(2)"></div>
   <div class="dot" onclick="goToSlide(3)"></div>
 </div>
 
-<!-- Next button (shown on onboarding slides, except last) -->
-<button id="next-btn" onclick="nextSlide()">التالي <i class="fas fa-arrow-left"></i></button>
+<!-- Next -->
+<button id="next-btn" onclick="nextSlide()">
+  التالي <i class="fas fa-arrow-left"></i>
+</button>
 
 <script>
-  const slides = ['slide-video','slide-about','slide-tracking','slide-login'];
-  let current = 0;
-  const video = document.getElementById('splash-video');
-  const progressBar = document.getElementById('videoProgressBar');
-  const skipBtn = document.getElementById('skip-btn');
-  const dotsNav = document.getElementById('dots-nav');
-  const nextBtn = document.getElementById('next-btn');
-  const dots = document.querySelectorAll('.dot');
+  var slides = ['slide-video','slide-about','slide-tracking','slide-login'];
+  var current = 0;
+  var video = document.getElementById('splash-video');
+  var progressBar = document.getElementById('videoProgressBar');
+  var skipBtn = document.getElementById('skip-btn');
+  var dotsNav = document.getElementById('dots-nav');
+  var nextBtn = document.getElementById('next-btn');
+  var dots = document.querySelectorAll('.dot');
 
-  // ─── Video progress ───────────────────────────────────
   video.addEventListener('timeupdate', function() {
     if (video.duration) {
       progressBar.style.width = (video.currentTime / video.duration * 100) + '%';
     }
   });
-
-  video.addEventListener('ended', function() {
-    goToSlide(1);
-  });
-
-  // Fallback: if video fails to load/play, go to slide 1 after 4s
-  video.addEventListener('error', function() { setTimeout(() => goToSlide(1), 500); });
-  setTimeout(function() {
-    if (current === 0) goToSlide(1);
-  }, 15000);
+  video.addEventListener('ended', function() { goToSlide(1); });
+  video.addEventListener('error', function() { setTimeout(function(){ goToSlide(1); }, 400); });
+  setTimeout(function() { if (current === 0) goToSlide(1); }, 18000);
 
   function skipVideo() { goToSlide(1); }
 
-  // ─── Navigation ───────────────────────────────────────
-  function goToSlide(index) {
-    const prevEl = document.getElementById(slides[current]);
-    prevEl.classList.remove('active');
-    prevEl.classList.add('exit');
-    setTimeout(() => prevEl.classList.remove('exit'), 650);
-
-    current = index;
-    const nextEl = document.getElementById(slides[current]);
-    nextEl.classList.add('active');
-
+  function goToSlide(idx) {
+    var prev = document.getElementById(slides[current]);
+    prev.classList.remove('active');
+    prev.classList.add('exit');
+    setTimeout(function(){ prev.classList.remove('exit'); }, 600);
+    current = idx;
+    document.getElementById(slides[current]).classList.add('active');
     updateUI();
   }
 
@@ -588,18 +583,15 @@
 
   function updateUI() {
     if (current === 0) {
-      // video slide
       skipBtn.style.display = 'flex';
       dotsNav.classList.add('hidden');
       nextBtn.style.display = 'none';
     } else if (current === slides.length - 1) {
-      // last slide (login)
       skipBtn.style.display = 'none';
       dotsNav.classList.remove('hidden');
       nextBtn.style.display = 'none';
       updateDots();
     } else {
-      // onboarding slides
       skipBtn.style.display = 'none';
       dotsNav.classList.remove('hidden');
       nextBtn.style.display = 'block';
@@ -608,33 +600,19 @@
   }
 
   function updateDots() {
-    dots.forEach((d, i) => {
+    dots.forEach(function(d, i) {
       d.classList.toggle('active', i === current - 1);
     });
   }
 
-  // Fix home-medical icon fallback
-  var hmIcon = document.querySelector('.fa-home-medical');
-  if (!hmIcon || getComputedStyle(hmIcon, ':before').content === 'none' || getComputedStyle(hmIcon, ':before').content === '') {
-    var hm2 = document.querySelector('.onboard-icon-wrap .fa-home-medical');
-    if (hm2) {
-      hm2.classList.remove('fa-home-medical');
-      hm2.classList.add('fa-house');
-    }
-  }
-
-  // Touch / swipe support
-  var touchStartX = 0, touchStartY = 0;
-  document.addEventListener('touchstart', function(e) {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  document.addEventListener('touchend', function(e) {
+  // Swipe support
+  var tx = 0, ty = 0;
+  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', function(e){
     if (current === 0) return;
-    var dx = e.changedTouches[0].clientX - touchStartX;
-    var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-    if (Math.abs(dx) > 50 && dy < 60) {
-      // RTL: swipe left = next, swipe right = back
+    var dx = e.changedTouches[0].clientX - tx;
+    var dy = Math.abs(e.changedTouches[0].clientY - ty);
+    if (Math.abs(dx) > 50 && dy < 70) {
       if (dx < 0 && current < slides.length - 1) goToSlide(current + 1);
       if (dx > 0 && current > 1) goToSlide(current - 1);
     }
