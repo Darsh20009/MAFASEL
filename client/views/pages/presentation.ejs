@@ -1,113 +1,123 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>مفاصل | العرض التقديمي</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="icon" href="/icons/logo.png">
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --accent:#101d23;--accent2:#1a2e38;--teal:#12a99b;--teal2:#0d8a7e;--primary:#101d23;
+      --accent:#101d23;--accent2:#1a2e38;--teal:#12a99b;--teal2:#0d8a7e;
       --text:#1a1a2e;--muted:#6b7280;--border:#e2e8f0;
-      --bg:#f0f4f8;--card:#fff;--shadow:0 4px 24px rgba(0,0,0,0.08);
+      --bg:#f8fafc;--card:#fff;--shadow:0 4px 24px rgba(0,0,0,0.06);
+      --gradient:linear-gradient(135deg,#12a99b,#0d8a7e);
     }
-    html,body{width:100%;height:100%;font-family:'Tajawal',sans-serif;background:#fff;overflow:hidden;user-select:none}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+    [dir="ltr"] body{font-family:'Inter','Tajawal',sans-serif}
 
-    .book-wrap{
-      width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-      background:#fff;
-      position:relative;
+    .container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+
+    .lang-toggle{
+      position:fixed;top:1.2rem;left:1.2rem;z-index:999;
+      display:flex;align-items:center;gap:0.4rem;
+      background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
+      border:1px solid var(--border);border-radius:50px;padding:0.35rem;
+      box-shadow:0 2px 16px rgba(0,0,0,0.08);
     }
-
-    .book{
-      width:min(95vw,900px);height:min(90vh,640px);position:relative;
-      perspective:2000px;
+    .lang-btn{
+      padding:0.4rem 0.9rem;border-radius:50px;border:none;cursor:pointer;
+      font-size:0.78rem;font-weight:700;transition:all 0.3s;background:transparent;color:var(--muted);
     }
+    .lang-btn.active{background:var(--accent);color:#fff}
 
-    .page{
-      position:absolute;inset:0;
-      background:#fff;
-      border-radius:4px 16px 16px 4px;
-      box-shadow:var(--shadow);
-      padding:2.5rem 3rem;
-      display:flex;flex-direction:column;
-      transform-origin:left center;
-      transition:transform 0.7s cubic-bezier(0.645,0.045,0.355,1),opacity 0.4s,box-shadow 0.7s;
-      backface-visibility:hidden;
-      overflow-y:auto;overflow-x:hidden;
-      -webkit-overflow-scrolling:touch;
+    .back-link{
+      position:fixed;top:1.2rem;right:1.2rem;z-index:999;
+      background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
+      border:1px solid var(--border);border-radius:50px;padding:0.5rem 1rem;
+      text-decoration:none;color:var(--accent);font-size:0.8rem;font-weight:700;
+      box-shadow:0 2px 16px rgba(0,0,0,0.08);transition:all 0.3s;display:flex;align-items:center;gap:0.4rem;
     }
-    .page::before{
-      content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
-      background:linear-gradient(to bottom,var(--teal),var(--primary));
-      border-radius:4px 0 0 4px;
+    [dir="ltr"] .back-link{right:auto;left:1.2rem}
+    [dir="ltr"] .lang-toggle{left:auto;right:1.2rem}
+    .back-link:hover{background:var(--accent);color:#fff}
+
+    .hero{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(170deg,#101d23 0%,#1a2e38 40%,#12a99b 100%);
+      position:relative;overflow:hidden;
     }
-    .page::after{
-      content:'';position:absolute;bottom:12px;right:12px;
-      width:28px;height:28px;
-      background:linear-gradient(135deg,transparent 50%,rgba(0,0,0,0.04) 50%);
-      border-radius:0 0 8px 0;pointer-events:none;
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 30% 70%,rgba(18,169,155,0.15) 0%,transparent 50%),
+                 radial-gradient(circle at 70% 30%,rgba(18,169,155,0.1) 0%,transparent 50%);
     }
-
-    .page.current{z-index:10;transform:rotateY(0deg);opacity:1}
-    .page.prev{z-index:5;transform:rotateY(30deg);opacity:0;pointer-events:none}
-    .page.next{z-index:5;transform:rotateY(-8deg) scale(0.97);opacity:0;pointer-events:none}
-    .page.hidden{display:none}
-
-    .page-num{
-      position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
-      font-size:0.72rem;color:var(--muted);font-weight:600;
+    .hero-content{text-align:center;position:relative;z-index:2;padding:2rem}
+    .hero-logo{
+      width:120px;height:120px;margin:0 auto 1.5rem;
+      filter:drop-shadow(0 8px 32px rgba(18,169,155,0.4));
+      animation:float 4s ease-in-out infinite;
     }
-
-    .nav-btn{
-      position:absolute;top:50%;transform:translateY(-50%);z-index:50;
-      width:48px;height:48px;border-radius:50%;border:none;
-      background:var(--card);box-shadow:0 2px 12px rgba(0,0,0,0.12);
-      cursor:pointer;display:flex;align-items:center;justify-content:center;
-      font-size:1.1rem;color:var(--primary);transition:all 0.2s;
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    .hero h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:900;color:#fff;margin-bottom:0.5rem}
+    .hero h1 span{color:var(--teal);position:relative}
+    .hero .tagline{font-size:clamp(1rem,2.5vw,1.3rem);color:rgba(255,255,255,0.7);font-weight:400;margin-bottom:2rem;max-width:600px;margin-left:auto;margin-right:auto}
+    .hero-badges{display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;
+      border-radius:50px;font-size:0.8rem;font-weight:600;
+      background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);color:#fff;
+      border:1px solid rgba(255,255,255,0.15);
     }
-    .nav-btn:hover{background:var(--teal);color:#fff;box-shadow:0 4px 20px rgba(18,169,155,0.3)}
-    .nav-btn:disabled{opacity:0.3;cursor:default;background:var(--card);color:var(--muted)}
-    #prevBtn{right:calc(50% + min(48vw,460px) + 16px)}
-    #nextBtn{left:calc(50% + min(48vw,460px) + 16px)}
-
-    .progress-bar{
-      position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
-      width:min(80vw,700px);height:4px;background:var(--border);border-radius:2px;z-index:50;
+    .scroll-hint{
+      position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+      color:rgba(255,255,255,0.5);font-size:0.8rem;display:flex;flex-direction:column;align-items:center;gap:0.3rem;
+      animation:bounce 2s infinite;
     }
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--primary));border-radius:2px;transition:width 0.5s}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
-    .page-counter{
-      position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:50;
-      font-size:0.8rem;font-weight:700;color:var(--muted);
+    .orbs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+    .orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.3}
+    .orb-1{width:300px;height:300px;background:#12a99b;top:-50px;right:-50px;animation:orb1 8s ease-in-out infinite}
+    .orb-2{width:200px;height:200px;background:#2563eb;bottom:10%;left:5%;animation:orb2 10s ease-in-out infinite}
+    .orb-3{width:250px;height:250px;background:#7c3aed;bottom:-30px;right:20%;animation:orb3 12s ease-in-out infinite}
+    @keyframes orb1{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,20px)}}
+    @keyframes orb2{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-30px)}}
+    @keyframes orb3{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,-20px)}}
+
+    section{padding:5rem 0}
+    section:nth-child(even){background:#fff}
+
+    .section-badge{
+      display:inline-flex;align-items:center;gap:0.4rem;
+      padding:0.4rem 1rem;border-radius:50px;font-size:0.75rem;font-weight:700;
+      margin-bottom:1rem;
     }
+    .section-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;color:var(--accent);margin-bottom:0.5rem;line-height:1.3}
+    .section-title span{color:var(--teal)}
+    .section-sub{font-size:1rem;color:var(--muted);max-width:650px;margin-bottom:2rem;line-height:1.8}
+    .divider{width:60px;height:4px;border-radius:2px;margin:0.8rem 0 1.2rem;background:var(--gradient)}
 
-    h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;color:var(--primary);line-height:1.3;margin-bottom:0.5rem}
-    h2{font-size:clamp(1.2rem,3vw,1.6rem);font-weight:800;color:var(--primary);line-height:1.35;margin-bottom:0.4rem}
-    h3{font-size:0.95rem;font-weight:700;color:var(--primary);margin-bottom:0.3rem}
-    .accent{color:var(--teal)}
-    .sub{font-size:clamp(0.85rem,2vw,0.95rem);color:var(--muted);line-height:1.75;margin-bottom:1rem}
-    .badge{display:inline-flex;align-items:center;gap:0.35rem;font-size:0.72rem;font-weight:700;padding:0.3rem 0.8rem;border-radius:50px;margin-bottom:0.6rem}
-    .b-teal{background:#e6faf8;color:var(--teal);border:1px solid #b2f0ea}
-    .b-blue{background:#dbeafe;color:#2563eb;border:1px solid #bfdbfe}
-    .b-purple{background:#ede9fe;color:#7c3aed;border:1px solid #ddd6fe}
-    .b-gold{background:#fef3c7;color:#d97706;border:1px solid #fde68a}
-    .b-pink{background:#fce7f3;color:#db2777;border:1px solid #fbcfe8}
-    .b-green{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
-    .b-red{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
-    .b-orange{background:#ffedd5;color:#ea580c;border:1px solid #fed7aa}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
 
-    .g2{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
-    .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:0.7rem}
-    .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem}
+    .card{
+      background:#fff;border:1px solid var(--border);border-radius:16px;
+      padding:1.5rem;transition:all 0.3s;position:relative;overflow:hidden;
+    }
+    .card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.08)}
+    .card-icon{
+      width:52px;height:52px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.2rem;margin-bottom:1rem;
+    }
+    .card h3{font-size:1.05rem;font-weight:800;color:var(--accent);margin-bottom:0.4rem}
+    .card p{font-size:0.85rem;color:var(--muted);line-height:1.7}
 
-    .card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:0.9rem;transition:transform 0.2s,box-shadow 0.2s}
-    .card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
-
-    .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:0.5rem;flex-shrink:0}
     .ic-teal{background:#e6faf8;color:var(--teal)}
     .ic-blue{background:#dbeafe;color:#2563eb}
     .ic-purple{background:#ede9fe;color:#7c3aed}
@@ -117,1058 +127,1021 @@
     .ic-red{background:#fee2e2;color:#dc2626}
     .ic-orange{background:#ffedd5;color:#ea580c}
 
-    .tag{display:inline-block;font-size:0.68rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:4px;margin:0.15rem}
-    .t-teal{background:#e6faf8;color:var(--teal)}
-    .t-blue{background:#dbeafe;color:#2563eb}
+    .b-teal{background:#e6faf8;color:var(--teal);border:1px solid #b2f0ea}
+    .b-blue{background:#dbeafe;color:#2563eb;border:1px solid #bfdbfe}
+    .b-purple{background:#ede9fe;color:#7c3aed;border:1px solid #ddd6fe}
+    .b-gold{background:#fef3c7;color:#d97706;border:1px solid #fde68a}
+    .b-pink{background:#fce7f3;color:#db2777;border:1px solid #fbcfe8}
+    .b-green{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
+    .b-red{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
+    .b-orange{background:#ffedd5;color:#ea580c;border:1px solid #fed7aa}
 
-    .divider{width:50px;height:3px;background:linear-gradient(90deg,var(--teal),var(--accent2));border-radius:2px;margin:0.5rem 0 0.8rem}
-
-    .phone-mock{
-      width:160px;height:300px;background:#fff;border-radius:24px;
-      border:2px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.1);
-      overflow:hidden;flex-shrink:0;position:relative;
+    .phone-mockup{
+      width:260px;height:520px;background:#fff;border-radius:36px;
+      border:3px solid #e2e8f0;box-shadow:0 20px 60px rgba(0,0,0,0.12);
+      overflow:hidden;position:relative;margin:0 auto;flex-shrink:0;
     }
-    .phone-mock::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:50px;height:16px;background:var(--bg);border-radius:8px;z-index:2}
-    .phone-inner{padding:1.5rem 0.6rem 0.6rem;height:100%;display:flex;flex-direction:column;gap:0.3rem;font-size:0.6rem;overflow:hidden}
-    .phone-item{background:var(--bg);border-radius:6px;padding:0.35rem 0.5rem;display:flex;align-items:center;gap:0.3rem}
-    .phone-item i{font-size:0.55rem}
+    .phone-mockup::before{
+      content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);
+      width:80px;height:24px;background:#f1f5f9;border-radius:12px;z-index:2;
+    }
+    .phone-screen{padding:2.5rem 1rem 1rem;height:100%;display:flex;flex-direction:column;overflow:hidden}
 
-    .flex-row{display:flex;gap:1.5rem;align-items:flex-start}
-    .flex-1{flex:1;min-width:0}
+    .mockup-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0.5rem 0;margin-bottom:0.5rem;border-bottom:1px solid var(--border);
+    }
+    .mockup-header h4{font-size:0.8rem;font-weight:800;color:var(--accent)}
 
-    .code-block{background:var(--primary);color:#e6faf8;border-radius:8px;padding:0.7rem 0.9rem;font-size:0.68rem;font-family:monospace;line-height:1.6;direction:ltr;text-align:left;overflow-x:auto}
+    .chat-mockup{display:flex;flex-direction:column;gap:0.4rem;flex:1;overflow:hidden}
+    .chat-msg{
+      padding:0.5rem 0.7rem;border-radius:12px;font-size:0.72rem;
+      max-width:85%;line-height:1.5;
+    }
+    .chat-sent{align-self:flex-end;background:var(--teal);color:#fff;border-radius:12px 12px 4px 12px}
+    .chat-recv{align-self:flex-start;background:#f1f5f9;color:var(--text);border-radius:12px 12px 12px 4px}
 
-    .tl{position:relative;padding-right:1.5rem}
-    .tl::before{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--teal),#2563eb,#7c3aed);border-radius:1px}
-    .tl-item{position:relative;padding:0.5rem 1rem 0.8rem 0;margin-bottom:0.3rem}
-    .tl-item::before{content:'';position:absolute;right:-0.35rem;top:0.75rem;width:8px;height:8px;border-radius:50%;background:var(--teal);border:2px solid #fff}
-    .tl-item:nth-child(2)::before{background:#2563eb}
-    .tl-item:nth-child(3)::before{background:#7c3aed}
-    .tl-item:nth-child(4)::before{background:#d97706}
+    .stats-row{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin:2.5rem 0}
+    .stat-item{text-align:center;min-width:120px}
+    .stat-num{font-size:2.5rem;font-weight:900;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+    .stat-label{font-size:0.8rem;color:var(--muted);margin-top:0.3rem;font-weight:600}
 
-    .stat{text-align:center;padding:0.6rem}
-    .stat-num{font-size:1.6rem;font-weight:900;line-height:1}
-    .stat-label{font-size:0.68rem;color:var(--muted);margin-top:0.15rem}
+    .flex-showcase{display:flex;gap:2.5rem;align-items:center}
+    .flex-showcase .content{flex:1;min-width:0}
+    .flex-showcase .visual{flex-shrink:0}
 
-    .endpoint{font-size:0.68rem;font-family:monospace;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.3rem 0.6rem;margin:0.15rem 0;display:flex;gap:0.4rem;direction:ltr;text-align:left}
-    .endpoint .method{font-weight:700;flex-shrink:0}
-    .method-post{color:#16a34a}
-    .method-get{color:#2563eb}
+    .feature-list{list-style:none;display:flex;flex-direction:column;gap:0.6rem;margin:1.5rem 0}
+    .feature-list li{
+      display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1rem;
+      background:#fff;border:1px solid var(--border);border-radius:12px;
+      font-size:0.88rem;font-weight:600;transition:all 0.3s;
+    }
+    .feature-list li:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(18,169,155,0.1)}
+    .feature-list li i{color:var(--teal);font-size:0.9rem;width:20px;text-align:center}
 
-    .chat-bubble{padding:0.4rem 0.6rem;border-radius:10px;font-size:0.7rem;max-width:80%;line-height:1.5;margin-bottom:0.3rem}
-    .chat-user{align-self:flex-end;background:var(--teal);color:#fff;border-radius:10px 10px 4px 10px}
-    .chat-bot{align-self:flex-start;background:var(--bg);color:var(--text);border-radius:10px 10px 10px 4px}
+    .tech-stack{display:flex;flex-wrap:wrap;gap:0.8rem;margin:1.5rem 0}
+    .tech-tag{
+      display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;
+      border-radius:50px;font-size:0.8rem;font-weight:600;
+      background:#fff;border:1px solid var(--border);transition:all 0.3s;
+    }
+    .tech-tag:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
 
-    @media(max-width:768px){
-      .page{padding:1.5rem 1.25rem;border-radius:2px 10px 10px 2px}
-      .g2,.g3,.g4{grid-template-columns:1fr}
-      .flex-row{flex-direction:column}
-      .phone-mock{width:120px;height:220px;align-self:center}
-      #prevBtn{right:auto;left:8px;top:auto;bottom:40px;transform:none}
-      #nextBtn{left:auto;right:8px;top:auto;bottom:40px;transform:none}
-      .nav-btn{width:40px;height:40px;font-size:0.9rem}
+    .auth-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
+    .auth-card{
+      text-align:center;padding:1.5rem 1rem;background:#fff;
+      border:1px solid var(--border);border-radius:16px;transition:all 0.3s;
+    }
+    .auth-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+    .auth-card i{font-size:2rem;margin-bottom:0.6rem;display:block}
+    .auth-card h4{font-size:0.9rem;font-weight:700;margin-bottom:0.2rem}
+    .auth-card p{font-size:0.72rem;color:var(--muted)}
+
+    .timeline{position:relative;padding:0;margin:2rem 0}
+    .timeline::before{
+      content:'';position:absolute;right:20px;top:0;bottom:0;width:3px;
+      background:linear-gradient(to bottom,var(--teal),#2563eb,#7c3aed,#d97706);
+      border-radius:2px;
+    }
+    [dir="ltr"] .timeline::before{right:auto;left:20px}
+    .tl-item{
+      position:relative;padding:0 2.5rem 2rem 0;
+      margin-right:20px;
+    }
+    [dir="ltr"] .tl-item{padding:0 0 2rem 2.5rem;margin-right:0;margin-left:20px}
+    .tl-item::before{
+      content:'';position:absolute;right:-28px;top:6px;
+      width:14px;height:14px;border-radius:50%;
+      background:var(--teal);border:3px solid #fff;box-shadow:0 0 0 3px rgba(18,169,155,0.2);
+    }
+    [dir="ltr"] .tl-item::before{right:auto;left:-28px}
+    .tl-item:nth-child(2)::before{background:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.2)}
+    .tl-item:nth-child(3)::before{background:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,0.2)}
+    .tl-item:nth-child(4)::before{background:#d97706;box-shadow:0 0 0 3px rgba(217,119,6,0.2)}
+    .tl-item h4{font-size:1rem;font-weight:800;color:var(--accent);margin-bottom:0.2rem}
+    .tl-item p{font-size:0.85rem;color:var(--muted)}
+
+    .demo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin:1.5rem 0}
+    .demo-card{
+      display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1.2rem;
+      background:#fff;border:1px solid var(--border);border-radius:14px;
+      transition:all 0.3s;
+    }
+    .demo-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+    .demo-avatar{
+      width:42px;height:42px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .demo-card strong{display:block;font-size:0.85rem}
+    .demo-card span{font-size:0.72rem;color:var(--muted);direction:ltr;display:inline-block}
+
+    .cta-section{
+      background:linear-gradient(170deg,#101d23,#1a2e38);
+      padding:5rem 0;text-align:center;position:relative;overflow:hidden;
+    }
+    .cta-section::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 50%,rgba(18,169,155,0.15),transparent 70%);
+    }
+    .cta-section h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:900;color:#fff;margin-bottom:0.8rem;position:relative}
+    .cta-section p{color:rgba(255,255,255,0.6);font-size:1rem;margin-bottom:2rem;position:relative}
+    .cta-btn{
+      display:inline-flex;align-items:center;gap:0.5rem;
+      padding:0.9rem 2.5rem;border-radius:50px;border:none;
+      background:var(--gradient);color:#fff;font-size:1rem;font-weight:700;
+      cursor:pointer;transition:all 0.3s;text-decoration:none;
+      box-shadow:0 4px 20px rgba(18,169,155,0.3);
+      font-family:inherit;
+    }
+    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(18,169,155,0.4)}
+
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    .mockup-app{
+      width:100%;max-width:700px;margin:0 auto;
+      background:#fff;border-radius:12px;border:2px solid var(--border);
+      box-shadow:0 20px 60px rgba(0,0,0,0.1);overflow:hidden;
+    }
+    .mockup-titlebar{
+      display:flex;align-items:center;gap:0.4rem;padding:0.6rem 1rem;
+      background:#f8fafc;border-bottom:1px solid var(--border);
+    }
+    .mockup-dot{width:10px;height:10px;border-radius:50%}
+    .mockup-titlebar span{font-size:0.7rem;color:var(--muted);margin-right:auto;margin-left:0.5rem}
+    .mockup-body{padding:1.5rem}
+
+    .pharmacy-items{display:flex;flex-direction:column;gap:0.5rem}
+    .pharmacy-item{
+      display:flex;align-items:center;gap:0.7rem;padding:0.7rem;
+      background:#f8fafc;border-radius:10px;
+    }
+    .pharmacy-item .drug-icon{
+      width:36px;height:36px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;font-size:0.85rem;
+    }
+    .pharmacy-item .drug-name{font-size:0.8rem;font-weight:700;flex:1}
+    .pharmacy-item .drug-price{font-size:0.8rem;font-weight:800;color:var(--teal)}
+
+    .health-card-mockup{
+      max-width:380px;margin:0 auto;padding:1.5rem 2rem;
+      background:linear-gradient(135deg,#101d23,#1a2e38);
+      border-radius:16px;color:#fff;position:relative;overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    }
+    .health-card-mockup::before{
+      content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;
+      border-radius:50%;background:rgba(18,169,155,0.15);
+    }
+    .health-card-mockup .hc-logo{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem}
+    .health-card-mockup .hc-logo img{width:32px;height:32px}
+    .health-card-mockup .hc-logo span{font-size:1.1rem;font-weight:800}
+    .health-card-mockup .hc-name{font-size:1.3rem;font-weight:900;margin-bottom:0.3rem}
+    .health-card-mockup .hc-id{font-size:0.8rem;color:rgba(255,255,255,0.6);margin-bottom:1rem;direction:ltr;display:inline-block}
+    .health-card-mockup .hc-row{display:flex;gap:1.5rem;margin-bottom:0.8rem}
+    .health-card-mockup .hc-field label{font-size:0.65rem;color:rgba(255,255,255,0.5);display:block}
+    .health-card-mockup .hc-field span{font-size:0.85rem;font-weight:700}
+    .health-card-mockup .hc-qr{
+      position:absolute;bottom:1.2rem;left:1.5rem;
+      width:60px;height:60px;background:#fff;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    [dir="ltr"] .health-card-mockup .hc-qr{left:auto;right:1.5rem}
+
+    .admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
+
+    .payment-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0}
+    .pay-card{
+      text-align:center;padding:1.5rem 1rem;background:#fff;
+      border:1px solid var(--border);border-radius:16px;transition:all 0.3s;
+    }
+    .pay-card:hover{border-color:var(--teal);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+    .pay-card i{font-size:2.2rem;margin-bottom:0.5rem;display:block}
+    .pay-card h4{font-size:0.88rem;font-weight:700;margin-bottom:0.2rem}
+    .pay-card p{font-size:0.7rem;color:var(--muted)}
+
+    .map-mockup{
+      width:100%;max-width:500px;height:300px;
+      background:linear-gradient(135deg,#e8f5e9,#e0f2f1);
+      border-radius:16px;border:2px solid var(--border);
+      position:relative;overflow:hidden;margin:0 auto;
+      box-shadow:0 12px 40px rgba(0,0,0,0.08);
+    }
+    .map-pin{
+      position:absolute;display:flex;flex-direction:column;align-items:center;
+      animation:pinDrop 0.5s ease forwards;
+    }
+    .map-pin i{font-size:1.5rem;color:#dc2626;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))}
+    .map-pin span{font-size:0.6rem;font-weight:700;background:#fff;padding:0.15rem 0.4rem;border-radius:4px;margin-top:0.15rem;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.1)}
+    @keyframes pinDrop{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+    .ai-showcase{
+      display:flex;gap:2rem;align-items:center;
+    }
+    .ai-features{flex:1}
+    .ai-visual{flex-shrink:0}
+
+    .password-badge{
+      display:inline-block;padding:0.3rem 0.8rem;border-radius:6px;
+      font-weight:800;font-size:0.85rem;font-family:monospace;
     }
 
-    @keyframes fadeSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .page.current>*{animation:fadeSlide 0.4s ease forwards}
-    .page.current>*:nth-child(2){animation-delay:0.08s}
-    .page.current>*:nth-child(3){animation-delay:0.14s}
-    .page.current>*:nth-child(4){animation-delay:0.2s}
+    footer{
+      background:var(--accent);color:rgba(255,255,255,0.5);
+      padding:2rem 0;text-align:center;font-size:0.8rem;
+    }
+    footer a{color:var(--teal);text-decoration:none}
+
+    @media(max-width:900px){
+      .grid-2,.grid-3,.grid-4,.auth-grid,.admin-grid,.payment-methods,.demo-grid{grid-template-columns:1fr 1fr}
+      .flex-showcase,.ai-showcase{flex-direction:column}
+      .phone-mockup{width:220px;height:440px}
+    }
+    @media(max-width:600px){
+      .grid-2,.grid-3,.grid-4,.auth-grid,.admin-grid,.payment-methods,.demo-grid{grid-template-columns:1fr}
+      .hero h1{font-size:2.2rem}
+      .stats-row{gap:1rem}
+      .stat-num{font-size:2rem}
+      section{padding:3rem 0}
+      .phone-mockup{width:200px;height:400px}
+      .health-card-mockup{padding:1.2rem 1.5rem}
+    }
   </style>
 </head>
 <body>
-<div class="book-wrap">
-  <div class="book" id="book">
 
-    <!-- PAGE 1: COVER -->
-    <div class="page current" data-page="1">
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-        <img src="/icons/logo.png" alt="مفاصل" style="width:80px;height:80px;margin-bottom:1.2rem;filter:drop-shadow(0 4px 16px rgba(18,169,155,0.25))">
-        <h1 style="font-size:clamp(2rem,5vw,3rem)"><span class="accent">مفاصل</span></h1>
-        <p style="font-size:1.1rem;color:var(--muted);font-weight:600;margin-bottom:0.5rem">Mafasel Medical Platform</p>
-        <div class="divider" style="margin:0.5rem auto 1rem;width:80px"></div>
-        <p class="sub" style="max-width:500px;margin:0 auto 1.5rem">منصة طبية رقمية متكاملة تُعيد تعريف تجربة الرعاية الصحية في المملكة العربية السعودية</p>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center">
-          <span class="badge b-teal"><i class="fas fa-heartbeat"></i> 19 مرحلة تطوير</span>
-          <span class="badge b-blue"><i class="fas fa-code"></i> Full-Stack</span>
-          <span class="badge b-purple"><i class="fas fa-shield-alt"></i> رؤية 2030</span>
-        </div>
-      </div>
-      <div style="text-align:center;margin-top:auto;padding-top:1rem;border-top:1px solid var(--border)">
-        <p style="font-size:0.75rem;color:var(--muted)">العرض التقديمي الشامل — جميع المراحل والتفاصيل التقنية</p>
-      </div>
-      <span class="page-num">1</span>
-    </div>
+<a href="/" class="back-link" data-ar="الرئيسية" data-en="Home">
+  <i class="fas fa-arrow-right"></i>
+  <span>الرئيسية</span>
+</a>
 
-    <!-- PAGE 2: BRAND IDENTITY -->
-    <div class="page hidden" data-page="2">
-      <span class="badge b-gold"><i class="fas fa-palette"></i> الهوية البصرية</span>
-      <h2>براند <span class="accent">مفاصل</span></h2>
-      <div class="divider"></div>
-      <p class="sub">اسم "مفاصل" مستوحى من مفاصل الجسم — النقاط التي تربط وتمنح الحركة. منصتنا تربط المستفيدين بكل الخدمات الصحية.</p>
-      <div class="g2">
-        <div>
-          <div class="g2" style="gap:0.5rem">
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <div style="width:36px;height:36px;border-radius:8px;background:var(--primary);margin:0 auto 0.4rem"></div>
-              <h3 style="font-size:0.78rem">اللون الأساسي</h3>
-              <code style="font-size:0.68rem;color:var(--muted)">#101d23</code>
-            </div>
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <div style="width:36px;height:36px;border-radius:8px;background:var(--teal);margin:0 auto 0.4rem"></div>
-              <h3 style="font-size:0.78rem">اللون المميز</h3>
-              <code style="font-size:0.68rem;color:var(--muted)">#12a99b</code>
-            </div>
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <div style="width:36px;height:36px;border-radius:8px;background:#fff;border:2px solid var(--border);margin:0 auto 0.4rem;display:flex;align-items:center;justify-content:center"><span style="font-weight:900;color:var(--primary)">ت</span></div>
-              <h3 style="font-size:0.78rem">خط Tajawal</h3>
-              <code style="font-size:0.68rem;color:var(--muted)">Arabic</code>
-            </div>
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg);border:2px solid var(--border);margin:0 auto 0.4rem;display:flex;align-items:center;justify-content:center"><i class="fas fa-arrow-right" style="color:var(--teal);transform:scaleX(-1)"></i></div>
-              <h3 style="font-size:0.78rem">RTL</h3>
-              <code style="font-size:0.68rem;color:var(--muted)">يمين ← يسار</code>
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:center">
-          <div style="width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;justify-content:center;border:2px solid var(--border)">
-            <img src="/icons/logo.png" alt="" style="width:100px;height:100px;filter:drop-shadow(0 4px 16px rgba(18,169,155,0.2))">
-          </div>
-        </div>
-      </div>
-      <span class="page-num">2</span>
-    </div>
-
-    <!-- PAGE 3: VISION & MISSION -->
-    <div class="page hidden" data-page="3">
-      <span class="badge b-blue"><i class="fas fa-bullseye"></i> الرؤية والرسالة</span>
-      <h2>نحو مستقبل <span style="color:#2563eb">صحي رقمي</span></h2>
-      <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
-      <div class="g2" style="margin-bottom:0.8rem">
-        <div class="card" style="border-right:3px solid #2563eb">
-          <div class="ic ic-blue" style="margin-bottom:0.4rem"><i class="fas fa-eye"></i></div>
-          <h3>الرؤية</h3>
-          <p style="font-size:0.78rem;color:var(--muted);line-height:1.7">أن نكون المنصة الطبية الرقمية الرائدة في المملكة والشرق الأوسط — بما يتماشى مع رؤية 2030 في التحول الرقمي الصحي.</p>
-        </div>
-        <div class="card" style="border-right:3px solid var(--teal)">
-          <div class="ic ic-teal" style="margin-bottom:0.4rem"><i class="fas fa-bullseye"></i></div>
-          <h3>الرسالة</h3>
-          <p style="font-size:0.78rem;color:var(--muted);line-height:1.7">تقديم منصة شاملة تجمع الاستشارات، الصيدلية، التأمين، والذكاء الاصطناعي في تجربة واحدة سلسة وآمنة.</p>
-        </div>
-      </div>
-      <div class="g4">
-        <div class="card" style="text-align:center;padding:0.7rem"><div class="stat-num accent">18</div><div class="stat-label">مرحلة تطوير</div></div>
-        <div class="card" style="text-align:center;padding:0.7rem"><div class="stat-num" style="color:#2563eb">24/7</div><div class="stat-label">مساعد ذكي</div></div>
-        <div class="card" style="text-align:center;padding:0.7rem"><div class="stat-num" style="color:#7c3aed">8</div><div class="stat-label">أدوار مستخدمين</div></div>
-        <div class="card" style="text-align:center;padding:0.7rem"><div class="stat-num" style="color:#d97706">6</div><div class="stat-label">طرق مصادقة</div></div>
-      </div>
-      <span class="page-num">3</span>
-    </div>
-
-    <!-- PAGE 4: INFRASTRUCTURE (Phase 1) -->
-    <div class="page hidden" data-page="4">
-      <span class="badge b-teal"><i class="fas fa-server"></i> المرحلة 1</span>
-      <h2>البنية <span class="accent">التحتية</span></h2>
-      <div class="divider"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <p class="sub">إعداد كامل للبيئة التطوير والإنتاج مع أفضل الممارسات الأمنية.</p>
-          <div class="g2" style="gap:0.5rem">
-            <div class="card" style="padding:0.7rem">
-              <div class="ic ic-green" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fab fa-node-js"></i></div>
-              <h3 style="font-size:0.8rem">Node.js + Express</h3>
-              <p style="font-size:0.68rem;color:var(--muted)">Backend سريع وقابل للتوسع</p>
-            </div>
-            <div class="card" style="padding:0.7rem">
-              <div class="ic ic-green" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-database"></i></div>
-              <h3 style="font-size:0.8rem">MongoDB Atlas</h3>
-              <p style="font-size:0.68rem;color:var(--muted)">قاعدة بيانات سحابية</p>
-            </div>
-            <div class="card" style="padding:0.7rem">
-              <div class="ic ic-purple" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-plug"></i></div>
-              <h3 style="font-size:0.8rem">Socket.io</h3>
-              <p style="font-size:0.68rem;color:var(--muted)">WebSocket للاتصال الحي</p>
-            </div>
-            <div class="card" style="padding:0.7rem">
-              <div class="ic ic-blue" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-file-code"></i></div>
-              <h3 style="font-size:0.8rem">EJS Templates</h3>
-              <p style="font-size:0.68rem;color:var(--muted)">واجهات SSR ديناميكية</p>
-            </div>
-          </div>
-        </div>
-        <div style="min-width:200px">
-          <h3 style="font-size:0.8rem;margin-bottom:0.5rem"><i class="fas fa-shield-alt" style="color:var(--teal)"></i> إعدادات النظام</h3>
-          <div style="display:flex;flex-direction:column;gap:0.3rem">
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Rate Limiting</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> CORS Policy</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Helmet Security</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Error Handling</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Logger System</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-check" style="color:var(--teal);font-size:0.6rem"></i> Compression</div>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">4</span>
-    </div>
-
-    <!-- PAGE 5: AUTH SYSTEM (Phase 2) -->
-    <div class="page hidden" data-page="5">
-      <span class="badge b-purple"><i class="fas fa-lock"></i> المرحلة 2</span>
-      <h2>نظام <span style="color:#7c3aed">المصادقة</span> الكامل</h2>
-      <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <div class="g3" style="gap:0.5rem">
-            <div class="card" style="padding:0.7rem;text-align:center">
-              <i class="fas fa-mobile-alt" style="color:var(--teal);font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
-              <h3 style="font-size:0.78rem">الجوال + OTP</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">رمز تحقق 6 أرقام</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center">
-              <i class="fas fa-envelope" style="color:#2563eb;font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
-              <h3 style="font-size:0.78rem">البريد + كلمة مرور</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">تسجيل + تحقق</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center">
-              <i class="fab fa-google" style="color:#DB4437;font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
-              <h3 style="font-size:0.78rem">Google OAuth</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">Passport.js</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center">
-              <i class="fab fa-apple" style="color:#000;font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
-              <h3 style="font-size:0.78rem">Apple Sign-In</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">iOS & Mac</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center">
-              <i class="fas fa-fingerprint" style="color:#16a34a;font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
-              <h3 style="font-size:0.78rem">WebAuthn</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">بصمة / Face ID</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center">
-              <i class="fas fa-id-card" style="color:#d97706;font-size:1.4rem;margin-bottom:0.3rem;display:block"></i>
-              <h3 style="font-size:0.78rem">نفاذ الوطني</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">هوية موحدة</p>
-            </div>
-          </div>
-        </div>
-        <div style="min-width:180px">
-          <h3 style="font-size:0.8rem;margin-bottom:0.5rem"><i class="fas fa-key" style="color:#7c3aed"></i> الجلسات</h3>
-          <div class="code-block" style="font-size:0.62rem;margin-bottom:0.5rem">
-Session {<br>
-&nbsp;&nbsp;accessToken: 15min<br>
-&nbsp;&nbsp;refreshToken: 30d<br>
-&nbsp;&nbsp;store: MongoDB<br>
-}
-          </div>
-          <h3 style="font-size:0.8rem;margin-bottom:0.4rem"><i class="fas fa-laptop" style="color:#7c3aed"></i> الأجهزة</h3>
-          <div class="code-block" style="font-size:0.62rem">
-Device {<br>
-&nbsp;&nbsp;userId<br>
-&nbsp;&nbsp;deviceName<br>
-&nbsp;&nbsp;ip, location<br>
-&nbsp;&nbsp;lastActive<br>
-&nbsp;&nbsp;isTrusted<br>
-}
-          </div>
-        </div>
-      </div>
-      <span class="page-num">5</span>
-    </div>
-
-    <!-- PAGE 6: IDENTITY + MEDICAL (Phase 3-4) -->
-    <div class="page hidden" data-page="6">
-      <div class="g2" style="height:100%">
-        <div>
-          <span class="badge b-gold"><i class="fas fa-id-card"></i> المرحلة 3</span>
-          <h2 style="font-size:1.2rem">ربط <span style="color:#d97706">الهوية</span></h2>
-          <div class="divider" style="background:linear-gradient(90deg,#d97706,transparent);margin-bottom:0.6rem"></div>
-          <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;margin-bottom:0.6rem">ربط الحساب بالهوية الوطنية عبر نفاذ لتأكيد البيانات الشخصية.</p>
-          <div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.6rem">
-            <div class="card" style="padding:0.5rem 0.7rem;font-size:0.72rem;display:flex;align-items:center;gap:0.4rem"><span style="width:6px;height:6px;border-radius:50%;background:#d97706;flex-shrink:0"></span> تسجيل بأي طريقة</div>
-            <div class="card" style="padding:0.5rem 0.7rem;font-size:0.72rem;display:flex;align-items:center;gap:0.4rem"><span style="width:6px;height:6px;border-radius:50%;background:#d97706;flex-shrink:0"></span> إرسال للتحقق عبر نفاذ</div>
-            <div class="card" style="padding:0.5rem 0.7rem;font-size:0.72rem;display:flex;align-items:center;gap:0.4rem"><span style="width:6px;height:6px;border-radius:50%;background:#d97706;flex-shrink:0"></span> استلام + تحديث البيانات</div>
-          </div>
-          <div class="code-block" style="font-size:0.6rem">
-Identity {<br>
-&nbsp;&nbsp;userId, nationalId,<br>
-&nbsp;&nbsp;verified: Boolean,<br>
-&nbsp;&nbsp;source: "nafath"<br>
-}
-          </div>
-        </div>
-        <div style="border-right:1px solid var(--border);padding-right:1rem">
-          <span class="badge b-pink"><i class="fas fa-file-medical"></i> المرحلة 4</span>
-          <h2 style="font-size:1.2rem">الملف <span style="color:#db2777">الطبي</span></h2>
-          <div class="divider" style="background:linear-gradient(90deg,#db2777,transparent);margin-bottom:0.6rem"></div>
-          <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;margin-bottom:0.6rem">ملف صحي شامل يحتوي على كل المعلومات الطبية للمستفيد.</p>
-          <div class="code-block" style="font-size:0.6rem;margin-bottom:0.5rem">
-MedicalProfile {<br>
-&nbsp;&nbsp;bloodType,<br>
-&nbsp;&nbsp;allergies: [],<br>
-&nbsp;&nbsp;chronicDiseases: [],<br>
-&nbsp;&nbsp;medications: [],<br>
-&nbsp;&nbsp;history: [],<br>
-&nbsp;&nbsp;lastUpdated<br>
-}
-          </div>
-          <div class="code-block" style="font-size:0.6rem">
-MedicalLog {<br>
-&nbsp;&nbsp;type: "consultation<br>
-&nbsp;&nbsp;&nbsp;&nbsp;| ai | doctor",<br>
-&nbsp;&nbsp;data, createdAt<br>
-}
-          </div>
-        </div>
-      </div>
-      <span class="page-num">6</span>
-    </div>
-
-    <!-- PAGE 7: CHAT (Phase 5) -->
-    <div class="page hidden" data-page="7">
-      <span class="badge b-green"><i class="fas fa-comments"></i> المرحلة 5</span>
-      <h2>نظام <span style="color:#16a34a">الشات</span> المتقدم</h2>
-      <div class="divider" style="background:linear-gradient(90deg,#16a34a,transparent)"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <p class="sub" style="font-size:0.8rem">نظام محادثات حي مبني على Socket.io مع دعم كامل للملفات والرسائل الداخلية.</p>
-          <div class="g2" style="gap:0.5rem;margin-bottom:0.6rem">
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <div class="ic ic-green" style="width:30px;height:30px;font-size:0.75rem"><i class="fas fa-bolt"></i></div>
-              <span style="font-size:0.75rem;font-weight:600">Real-time WebSocket</span>
-            </div>
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <div class="ic ic-blue" style="width:30px;height:30px;font-size:0.75rem"><i class="fas fa-keyboard"></i></div>
-              <span style="font-size:0.75rem;font-weight:600">Typing Indicator</span>
-            </div>
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <div class="ic ic-purple" style="width:30px;height:30px;font-size:0.75rem"><i class="fas fa-check-double"></i></div>
-              <span style="font-size:0.75rem;font-weight:600">Seen Control</span>
-            </div>
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <div class="ic ic-gold" style="width:30px;height:30px;font-size:0.75rem"><i class="fas fa-lock"></i></div>
-              <span style="font-size:0.75rem;font-weight:600">Internal Notes</span>
-            </div>
-          </div>
-          <div class="code-block" style="font-size:0.6rem">
-Message {<br>
-&nbsp;&nbsp;chatId, senderId,<br>
-&nbsp;&nbsp;content, attachments,<br>
-&nbsp;&nbsp;isInternal, createdAt<br>
-}
-          </div>
-        </div>
-        <div class="phone-mock" style="height:280px">
-          <div class="phone-inner" style="display:flex;flex-direction:column;gap:0.25rem;padding-top:1.8rem">
-            <div style="text-align:center;font-size:0.55rem;color:var(--muted);margin-bottom:0.2rem">المحادثة مع د. أحمد</div>
-            <div class="chat-bubble chat-user">السلام عليكم دكتور</div>
-            <div class="chat-bubble chat-bot">وعليكم السلام! كيف أقدر أساعدك؟</div>
-            <div class="chat-bubble chat-user">عندي ألم في الركبة</div>
-            <div class="chat-bubble chat-bot">من متى بدأ الألم؟ وهل يزيد مع الحركة؟</div>
-            <div style="display:flex;gap:0.2rem;margin-top:auto">
-              <div style="flex:1;background:var(--bg);border-radius:10px;padding:0.25rem 0.4rem;font-size:0.5rem;color:var(--muted)">اكتب رسالة...</div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center"><i class="fas fa-paper-plane" style="color:#fff;font-size:0.4rem"></i></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">7</span>
-    </div>
-
-    <!-- PAGE 8: MEETINGS (Phase 6) -->
-    <div class="page hidden" data-page="8">
-      <span class="badge b-blue"><i class="fas fa-video"></i> المرحلة 6</span>
-      <h2>الاجتماعات — <span style="color:#2563eb">QMeet</span></h2>
-      <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <p class="sub" style="font-size:0.8rem">نظام اجتماعات مرئية يربط الأخصائي بالمستفيد عبر WebRTC مع جودة عالية وأمان.</p>
-          <div style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.8rem">
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <span style="width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0">1</span>
-              <span style="font-size:0.78rem">الأخصائي يضغط "ابدأ الجلسة"</span>
-            </div>
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <span style="width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0">2</span>
-              <span style="font-size:0.78rem">Backend ينشئ غرفة QMeet</span>
-            </div>
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <span style="width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0">3</span>
-              <span style="font-size:0.78rem">إرسال رابط للمستفيد</span>
-            </div>
-            <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.5rem">
-              <span style="width:24px;height:24px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0">4</span>
-              <span style="font-size:0.78rem">اتصال WebRTC عالي الجودة</span>
-            </div>
-          </div>
-          <div class="code-block" style="font-size:0.62rem">
-Meeting {<br>
-&nbsp;&nbsp;doctorId, userId,<br>
-&nbsp;&nbsp;roomId, status,<br>
-&nbsp;&nbsp;startedAt, endedAt<br>
-}
-          </div>
-        </div>
-        <div style="min-width:180px;display:flex;flex-direction:column;gap:0.5rem">
-          <div class="card" style="text-align:center;padding:0.8rem;background:linear-gradient(135deg,#dbeafe,#ede9fe)">
-            <i class="fas fa-video" style="font-size:2.5rem;color:#2563eb;margin-bottom:0.4rem;display:block"></i>
-            <h3 style="font-size:0.85rem">مكالمة فيديو</h3>
-            <p style="font-size:0.68rem;color:var(--muted)">HD مع تشفير</p>
-          </div>
-          <div class="card" style="text-align:center;padding:0.8rem;background:linear-gradient(135deg,#e6faf8,#dcfce7)">
-            <i class="fas fa-microphone" style="font-size:2.5rem;color:var(--teal);margin-bottom:0.4rem;display:block"></i>
-            <h3 style="font-size:0.85rem">صوت عالي الجودة</h3>
-            <p style="font-size:0.68rem;color:var(--muted)">بدون تقطيع</p>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">8</span>
-    </div>
-
-    <!-- PAGE 9: PHARMACY (Phase 7) -->
-    <div class="page hidden" data-page="9">
-      <span class="badge b-teal"><i class="fas fa-pills"></i> المرحلة 7</span>
-      <h2>سوق <span class="accent">الصيدليات</span></h2>
-      <div class="divider"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <p class="sub" style="font-size:0.8rem">نظام صيدليات متعدد يتيح للمستخدم تصفح الصيدليات والأدوية والشراء بالتأمين أو الدفع المباشر.</p>
-          <div class="g2" style="gap:0.5rem;margin-bottom:0.5rem">
-            <div class="code-block" style="font-size:0.58rem">
-Pharmacy {<br>
-&nbsp;&nbsp;name, logo,<br>
-&nbsp;&nbsp;location,<br>
-&nbsp;&nbsp;isActive,<br>
-&nbsp;&nbsp;deliveryFee<br>
-}
-            </div>
-            <div class="code-block" style="font-size:0.58rem">
-Drug {<br>
-&nbsp;&nbsp;pharmacyId,<br>
-&nbsp;&nbsp;name, image,<br>
-&nbsp;&nbsp;price,<br>
-&nbsp;&nbsp;insurancePrice,<br>
-&nbsp;&nbsp;requiresPrescription<br>
-}
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.3rem">
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-store" style="color:var(--teal);font-size:0.65rem"></i> تصفح الصيدليات</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-search" style="color:var(--teal);font-size:0.65rem"></i> بحث في الأدوية</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-shield-alt" style="color:var(--teal);font-size:0.65rem"></i> شراء بالتأمين / نقد / بطاقة</div>
-            <div class="card" style="padding:0.5rem 0.7rem;display:flex;align-items:center;gap:0.4rem;font-size:0.72rem"><i class="fas fa-truck" style="color:var(--teal);font-size:0.65rem"></i> توصيل سريع</div>
-          </div>
-        </div>
-        <div class="phone-mock" style="height:260px">
-          <div class="phone-inner" style="padding-top:1.8rem">
-            <div style="font-weight:700;font-size:0.6rem;text-align:center;margin-bottom:0.3rem;color:var(--teal)">🏥 صيدلية النهدي</div>
-            <div class="phone-item"><i class="fas fa-pills" style="color:var(--teal)"></i> بنادول — 12 ر.س</div>
-            <div class="phone-item"><i class="fas fa-pills" style="color:#2563eb"></i> فولتارين — 28 ر.س</div>
-            <div class="phone-item"><i class="fas fa-pills" style="color:#7c3aed"></i> أوجمنتين — 45 ر.س</div>
-            <div class="phone-item"><i class="fas fa-pills" style="color:#d97706"></i> موترين — 18 ر.س</div>
-            <div style="margin-top:auto;background:var(--teal);color:#fff;text-align:center;padding:0.35rem;border-radius:6px;font-size:0.55rem;font-weight:700"><i class="fas fa-shopping-cart"></i> طلب (103 ر.س)</div>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">9</span>
-    </div>
-
-    <!-- PAGE 10: NOTIFICATIONS + AI (Phase 8-9) -->
-    <div class="page hidden" data-page="10">
-      <div class="g2" style="height:100%">
-        <div>
-          <span class="badge b-orange"><i class="fas fa-bell"></i> المرحلة 8</span>
-          <h2 style="font-size:1.15rem">نظام <span style="color:#ea580c">الإشعارات</span></h2>
-          <div class="divider" style="background:linear-gradient(90deg,#ea580c,transparent);margin-bottom:0.5rem"></div>
-          <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:0.5rem">3 طبقات للتأكد من وصول الإشعار:</p>
-          <div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.5rem">
-            <div class="card" style="padding:0.5rem;display:flex;align-items:center;gap:0.4rem">
-              <div class="ic ic-orange" style="width:26px;height:26px;font-size:0.65rem"><i class="fas fa-database"></i></div>
-              <div><strong style="font-size:0.72rem">قاعدة البيانات</strong><p style="font-size:0.6rem;color:var(--muted)">حفظ دائم</p></div>
-            </div>
-            <div class="card" style="padding:0.5rem;display:flex;align-items:center;gap:0.4rem">
-              <div class="ic ic-green" style="width:26px;height:26px;font-size:0.65rem"><i class="fas fa-plug"></i></div>
-              <div><strong style="font-size:0.72rem">WebSocket</strong><p style="font-size:0.6rem;color:var(--muted)">حية فورية</p></div>
-            </div>
-            <div class="card" style="padding:0.5rem;display:flex;align-items:center;gap:0.4rem">
-              <div class="ic ic-blue" style="width:26px;height:26px;font-size:0.65rem"><i class="fas fa-bell"></i></div>
-              <div><strong style="font-size:0.72rem">Web Push</strong><p style="font-size:0.6rem;color:var(--muted)">حتى مع إغلاق المتصفح</p></div>
-            </div>
-          </div>
-          <div class="code-block" style="font-size:0.55rem">
-Notification {<br>
-&nbsp;&nbsp;userId, title,<br>
-&nbsp;&nbsp;body, read,<br>
-&nbsp;&nbsp;createdAt<br>
-}
-          </div>
-        </div>
-        <div style="border-right:1px solid var(--border);padding-right:1rem">
-          <span class="badge b-pink"><i class="fas fa-brain"></i> المرحلة 9</span>
-          <h2 style="font-size:1.15rem">المساعد <span style="color:#db2777">الذكي</span></h2>
-          <div class="divider" style="background:linear-gradient(90deg,#db2777,transparent);margin-bottom:0.5rem"></div>
-          <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:0.5rem">مدعوم بـ Groq + LLaMA 3.3 — يرد بالعربية فوراً.</p>
-          <div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.5rem">
-            <div class="card" style="padding:0.5rem;display:flex;align-items:center;gap:0.4rem">
-              <div class="ic ic-pink" style="width:26px;height:26px;font-size:0.65rem"><i class="fas fa-comments"></i></div>
-              <span style="font-size:0.72rem">تحليل أعراض</span>
-            </div>
-            <div class="card" style="padding:0.5rem;display:flex;align-items:center;gap:0.4rem">
-              <div class="ic ic-pink" style="width:26px;height:26px;font-size:0.65rem"><i class="fas fa-bolt"></i></div>
-              <span style="font-size:0.72rem">ردود فورية</span>
-            </div>
-            <div class="card" style="padding:0.5rem;display:flex;align-items:center;gap:0.4rem">
-              <div class="ic ic-pink" style="width:26px;height:26px;font-size:0.65rem"><i class="fas fa-lightbulb"></i></div>
-              <span style="font-size:0.72rem">اقتراحات ذكية</span>
-            </div>
-          </div>
-          <div class="endpoint"><span class="method method-post">POST</span> /ai/analyze</div>
-          <div class="endpoint"><span class="method method-post">POST</span> /ai/chat</div>
-        </div>
-      </div>
-      <span class="page-num">10</span>
-    </div>
-
-    <!-- PAGE 11: MAPS + SCHEDULER (Phase 10-11) -->
-    <div class="page hidden" data-page="11">
-      <div class="g2" style="height:100%">
-        <div>
-          <span class="badge b-green"><i class="fas fa-map-marker-alt"></i> المرحلة 10</span>
-          <h2 style="font-size:1.15rem">الخرائط <span style="color:#16a34a">الصحية</span></h2>
-          <div class="divider" style="background:linear-gradient(90deg,#16a34a,transparent);margin-bottom:0.5rem"></div>
-          <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:0.5rem">عرض المراكز والصيدليات القريبة مع حساب المسافة.</p>
-          <div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.5rem">
-            <div class="card" style="padding:0.5rem 0.7rem;font-size:0.72rem;display:flex;align-items:center;gap:0.4rem"><i class="fas fa-map" style="color:#16a34a;font-size:0.6rem"></i> خريطة تفاعلية</div>
-            <div class="card" style="padding:0.5rem 0.7rem;font-size:0.72rem;display:flex;align-items:center;gap:0.4rem"><i class="fas fa-route" style="color:#16a34a;font-size:0.6rem"></i> حساب المسافة</div>
-            <div class="card" style="padding:0.5rem 0.7rem;font-size:0.72rem;display:flex;align-items:center;gap:0.4rem"><i class="fas fa-directions" style="color:#16a34a;font-size:0.6rem"></i> فتح في Maps</div>
-          </div>
-          <div class="code-block" style="font-size:0.55rem">
-Location {<br>
-&nbsp;&nbsp;name,<br>
-&nbsp;&nbsp;type: "hospital<br>
-&nbsp;&nbsp;&nbsp;&nbsp;| pharmacy",<br>
-&nbsp;&nbsp;lat, lng<br>
-}
-          </div>
-        </div>
-        <div style="border-right:1px solid var(--border);padding-right:1rem">
-          <span class="badge b-blue"><i class="fas fa-calendar-check"></i> المرحلة 11</span>
-          <h2 style="font-size:1.15rem">المواعيد <span style="color:#2563eb">والتذكيرات</span></h2>
-          <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent);margin-bottom:0.5rem"></div>
-          <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:0.5rem">جدولة المواعيد الطبية مع تذكيرات الأدوية اليومية.</p>
-          <div class="code-block" style="font-size:0.55rem;margin-bottom:0.5rem">
-Appointment {<br>
-&nbsp;&nbsp;userId, doctorId,<br>
-&nbsp;&nbsp;date,<br>
-&nbsp;&nbsp;reminders: []<br>
-}
-          </div>
-          <div class="code-block" style="font-size:0.55rem;margin-bottom:0.5rem">
-DrugReminder {<br>
-&nbsp;&nbsp;userId, drug,<br>
-&nbsp;&nbsp;time,<br>
-&nbsp;&nbsp;frequency<br>
-}
-          </div>
-          <div class="card" style="padding:0.5rem;text-align:center;background:linear-gradient(135deg,#dbeafe,#e6faf8)">
-            <i class="fas fa-bell" style="color:#2563eb;font-size:1.4rem;display:block;margin-bottom:0.2rem"></i>
-            <span style="font-size:0.68rem;font-weight:700">تنبيهات ذكية</span>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">11</span>
-    </div>
-
-    <!-- PAGE 12: BANNER + PWA + SEO (Phase 12-14) -->
-    <div class="page hidden" data-page="12">
-      <span class="badge b-purple"><i class="fas fa-layer-group"></i> المراحل 12-14</span>
-      <h2>البانر + <span style="color:#7c3aed">PWA + SEO</span></h2>
-      <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
-      <div class="g3">
-        <div class="card">
-          <div class="ic ic-purple"><i class="fas fa-images"></i></div>
-          <h3 style="font-size:0.85rem">البانر والفيديو</h3>
-          <p style="font-size:0.7rem;color:var(--muted);line-height:1.5;margin-bottom:0.4rem">صور ديناميكية من قاعدة البيانات مع Fade Transition.</p>
-          <div style="display:flex;flex-direction:column;gap:0.2rem">
-            <span class="tag t-blue">Lazy Load</span>
-            <span class="tag t-blue">Fade Transition</span>
-            <span class="tag t-blue">تحميل متأخر</span>
-          </div>
-        </div>
-        <div class="card">
-          <div class="ic ic-teal"><i class="fas fa-mobile-alt"></i></div>
-          <h3 style="font-size:0.85rem">PWA</h3>
-          <p style="font-size:0.7rem;color:var(--muted);line-height:1.5;margin-bottom:0.4rem">تطبيق ويب تقدمي يعمل كتطبيق أصلي.</p>
-          <div style="display:flex;flex-direction:column;gap:0.2rem">
-            <span class="tag t-teal">manifest.json</span>
-            <span class="tag t-teal">Service Worker</span>
-            <span class="tag t-teal">Offline Mode</span>
-            <span class="tag t-teal">Push Notifications</span>
-          </div>
-        </div>
-        <div class="card">
-          <div class="ic ic-green"><i class="fas fa-search"></i></div>
-          <h3 style="font-size:0.85rem">SEO</h3>
-          <p style="font-size:0.7rem;color:var(--muted);line-height:1.5;margin-bottom:0.4rem">تحسين محركات البحث مع بيانات منظمة.</p>
-          <div style="display:flex;flex-direction:column;gap:0.2rem">
-            <span class="tag t-teal">SSR Rendering</span>
-            <span class="tag t-teal">Meta Tags</span>
-            <span class="tag t-teal">Schema Medical</span>
-            <span class="tag t-teal">Sitemap</span>
-          </div>
-        </div>
-      </div>
-      <div class="g2" style="margin-top:0.6rem">
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem">
-          <div class="ic ic-purple" style="width:36px;height:36px"><i class="fas fa-code"></i></div>
-          <div>
-            <h3 style="font-size:0.78rem">SSR + Meta</h3>
-            <p style="font-size:0.65rem;color:var(--muted)">صفحات مُعدّة مسبقاً مع Open Graph</p>
-          </div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem">
-          <div class="ic ic-teal" style="width:36px;height:36px"><i class="fas fa-download"></i></div>
-          <div>
-            <h3 style="font-size:0.78rem">Install Prompt</h3>
-            <p style="font-size:0.65rem;color:var(--muted)">تثبيت التطبيق على الجهاز</p>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">12</span>
-    </div>
-
-    <!-- PAGE 13: AUDIT + SECURITY (Phase 15) -->
-    <div class="page hidden" data-page="13">
-      <span class="badge b-red"><i class="fas fa-shield-alt"></i> المرحلة 15</span>
-      <h2>الأمان و<span style="color:#dc2626">سجل النشاطات</span></h2>
-      <div class="divider" style="background:linear-gradient(90deg,#dc2626,transparent)"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <div class="g2" style="gap:0.5rem">
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <i class="fas fa-lock" style="font-size:1.5rem;color:#dc2626;display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.8rem">تشفير HTTPS</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">TLS + Bcrypt</p>
-            </div>
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <i class="fas fa-user-shield" style="font-size:1.5rem;color:#dc2626;display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.8rem">RBAC</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">صلاحيات دقيقة</p>
-            </div>
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <i class="fas fa-helmet-safety" style="font-size:1.5rem;color:#dc2626;display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.8rem">Helmet + CSP</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">حماية Headers</p>
-            </div>
-            <div class="card" style="text-align:center;padding:0.7rem">
-              <i class="fas fa-fingerprint" style="font-size:1.5rem;color:#dc2626;display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.8rem">WebAuthn</h3>
-              <p style="font-size:0.65rem;color:var(--muted)">بيومتري</p>
-            </div>
-          </div>
-        </div>
-        <div style="min-width:200px">
-          <h3 style="font-size:0.82rem;margin-bottom:0.5rem"><i class="fas fa-clipboard-list" style="color:#dc2626"></i> Audit Log</h3>
-          <div class="code-block" style="font-size:0.6rem;margin-bottom:0.5rem">
-AuditLog {<br>
-&nbsp;&nbsp;userId,<br>
-&nbsp;&nbsp;action,<br>
-&nbsp;&nbsp;ip,<br>
-&nbsp;&nbsp;device,<br>
-&nbsp;&nbsp;category,<br>
-&nbsp;&nbsp;timestamp<br>
-}
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.25rem">
-            <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-sign-in-alt" style="color:var(--teal);font-size:0.55rem"></i> تسجيل دخول</div>
-            <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-edit" style="color:#2563eb;font-size:0.55rem"></i> تغيير بيانات</div>
-            <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-trash" style="color:#dc2626;font-size:0.55rem"></i> حذف حساب</div>
-            <div class="card" style="padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;gap:0.3rem;align-items:center"><i class="fas fa-cog" style="color:#d97706;font-size:0.55rem"></i> إجراء إداري</div>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">13</span>
-    </div>
-
-    <!-- PAGE 14: ADMIN PANEL (Phase 16) -->
-    <div class="page hidden" data-page="14">
-      <span class="badge b-orange"><i class="fas fa-tachometer-alt"></i> المرحلة 16</span>
-      <h2>لوحة <span style="color:#ea580c">الإدارة</span></h2>
-      <div class="divider" style="background:linear-gradient(90deg,#ea580c,transparent)"></div>
-      <p class="sub" style="font-size:0.8rem">تحكّم كامل في المنصة من مكان واحد — مستخدمين، شركات، استشارات، طلبات، ودعم فني.</p>
-      <div class="g3" style="gap:0.5rem">
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-users"></i></div>
-          <h3 style="font-size:0.78rem">المستخدمين</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">بحث، فلاتر، تعليق، حذف</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-building"></i></div>
-          <h3 style="font-size:0.78rem">الشركات</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">إدارة الشركات والموظفين</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-stethoscope"></i></div>
-          <h3 style="font-size:0.78rem">الاستشارات</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">تعيين أخصائيين ومتابعة</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-shopping-bag"></i></div>
-          <h3 style="font-size:0.78rem">الطلبات</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">متابعة طلبات الصيدلية</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-headset"></i></div>
-          <h3 style="font-size:0.78rem">الدعم الفني</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">تذاكر + AI مقترحات</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-server"></i></div>
-          <h3 style="font-size:0.78rem">مراقبة النظام</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">CPU, RAM, حي كل 15ث</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-images"></i></div>
-          <h3 style="font-size:0.78rem">البانرات</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">رفع وإدارة الصور</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-link"></i></div>
-          <h3 style="font-size:0.78rem">الدعوات</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">روابط تسجيل مخصصة</p>
-        </div>
-        <div class="card" style="padding:0.7rem">
-          <div class="ic ic-orange" style="width:32px;height:32px;font-size:0.8rem;margin-bottom:0.3rem"><i class="fas fa-clipboard-list"></i></div>
-          <h3 style="font-size:0.78rem">سجل النشاطات</h3>
-          <p style="font-size:0.62rem;color:var(--muted)">فلاتر + تصدير CSV</p>
-        </div>
-      </div>
-      <span class="page-num">14</span>
-    </div>
-
-    <!-- PAGE 15: TESTING + DEPLOYMENT (Phase 17-18) -->
-    <div class="page hidden" data-page="15">
-      <span class="badge b-blue"><i class="fas fa-rocket"></i> المراحل 17-18</span>
-      <h2>الاختبار و<span style="color:#2563eb">النشر</span></h2>
-      <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
-      <div class="g2">
-        <div>
-          <h3 style="margin-bottom:0.6rem"><i class="fas fa-flask" style="color:#7c3aed"></i> الاختبار</h3>
-          <div style="display:flex;flex-direction:column;gap:0.4rem">
-            <div class="card" style="padding:0.7rem;display:flex;align-items:center;gap:0.6rem">
-              <div class="ic ic-purple" style="width:34px;height:34px;font-size:0.8rem"><i class="fas fa-check"></i></div>
-              <div><h3 style="font-size:0.78rem">Unit Testing</h3><p style="font-size:0.62rem;color:var(--muted)">اختبار الوحدات المنفردة</p></div>
-            </div>
-            <div class="card" style="padding:0.7rem;display:flex;align-items:center;gap:0.6rem">
-              <div class="ic ic-blue" style="width:34px;height:34px;font-size:0.8rem"><i class="fas fa-project-diagram"></i></div>
-              <div><h3 style="font-size:0.78rem">Integration Testing</h3><p style="font-size:0.62rem;color:var(--muted)">اختبار التكامل بين الأنظمة</p></div>
-            </div>
-            <div class="card" style="padding:0.7rem;display:flex;align-items:center;gap:0.6rem">
-              <div class="ic ic-red" style="width:34px;height:34px;font-size:0.8rem"><i class="fas fa-tachometer-alt"></i></div>
-              <div><h3 style="font-size:0.78rem">Load Testing</h3><p style="font-size:0.62rem;color:var(--muted)">اختبار الأداء تحت الضغط</p></div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h3 style="margin-bottom:0.6rem"><i class="fas fa-cloud-upload-alt" style="color:#2563eb"></i> النشر</h3>
-          <div style="display:flex;flex-direction:column;gap:0.4rem">
-            <div class="card" style="padding:0.7rem;display:flex;align-items:center;gap:0.6rem">
-              <div class="ic ic-teal" style="width:34px;height:34px;font-size:0.8rem"><i class="fas fa-server"></i></div>
-              <div><h3 style="font-size:0.78rem">VM Deployment</h3><p style="font-size:0.62rem;color:var(--muted)">Always-on للـ Socket.io</p></div>
-            </div>
-            <div class="card" style="padding:0.7rem;display:flex;align-items:center;gap:0.6rem">
-              <div class="ic ic-green" style="width:34px;height:34px;font-size:0.8rem"><i class="fas fa-heartbeat"></i></div>
-              <div><h3 style="font-size:0.78rem">Health Check</h3><p style="font-size:0.62rem;color:var(--muted)">/health مع إحصائيات كاملة</p></div>
-            </div>
-            <div class="card" style="padding:0.7rem;display:flex;align-items:center;gap:0.6rem">
-              <div class="ic ic-orange" style="width:34px;height:34px;font-size:0.8rem"><i class="fas fa-chart-bar"></i></div>
-              <div><h3 style="font-size:0.78rem">Monitoring</h3><p style="font-size:0.62rem;color:var(--muted)">مراقبة حية 24/7</p></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:0.6rem;padding:0.6rem;display:flex;align-items:center;gap:0.6rem;background:linear-gradient(135deg,#e6faf8,#dbeafe)">
-        <i class="fas fa-check-circle" style="color:var(--teal);font-size:1.2rem;flex-shrink:0"></i>
-        <div>
-          <strong style="font-size:0.8rem">Graceful Shutdown</strong>
-          <p style="font-size:0.65rem;color:var(--muted)">إيقاف آمن مع حفظ الجلسات — SIGTERM + uncaughtException + unhandledRejection</p>
-        </div>
-      </div>
-      <span class="page-num">15</span>
-    </div>
-
-    <!-- PAGE 16: PAYMENT SYSTEM -->
-    <div class="page hidden" data-page="16">
-      <span class="badge b-green"><i class="fas fa-credit-card"></i> نظام الدفع</span>
-      <h2>بوابة <span style="color:#16a34a">الدفع</span> الإلكتروني</h2>
-      <div class="divider" style="background:linear-gradient(90deg,#16a34a,transparent)"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <p class="sub" style="font-size:0.8rem">نظام دفع متعدد القنوات يدعم البطاقات والتأمين والدفع عند الاستلام.</p>
-          <div class="g2" style="gap:0.5rem;margin-bottom:0.6rem">
-            <div class="card" style="padding:0.7rem;text-align:center;border-color:rgba(22,163,106,0.2)">
-              <i class="fas fa-credit-card" style="font-size:1.5rem;color:#16a34a;display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.78rem">بطاقة ائتمان</h3>
-              <p style="font-size:0.6rem;color:var(--muted)">Visa / Mastercard</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center;border-color:rgba(22,163,106,0.2)">
-              <i class="fab fa-apple-pay" style="font-size:1.5rem;color:#000;display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.78rem">Apple Pay</h3>
-              <p style="font-size:0.6rem;color:var(--muted)">دفع سريع وآمن</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center;border-color:rgba(22,163,106,0.2)">
-              <i class="fas fa-shield-alt" style="font-size:1.5rem;color:var(--teal);display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.78rem">التأمين</h3>
-              <p style="font-size:0.6rem;color:var(--muted)">تغطية تأمينية مباشرة</p>
-            </div>
-            <div class="card" style="padding:0.7rem;text-align:center;border-color:rgba(22,163,106,0.2)">
-              <i class="fas fa-money-bill-wave" style="font-size:1.5rem;color:#d97706;display:block;margin-bottom:0.3rem"></i>
-              <h3 style="font-size:0.78rem">نقد / COD</h3>
-              <p style="font-size:0.6rem;color:var(--muted)">الدفع عند الاستلام</p>
-            </div>
-          </div>
-          <div class="code-block" style="font-size:0.6rem">
-Order.paymentMethod:<br>
-&nbsp;&nbsp;"cash" | "insurance"<br>
-&nbsp;&nbsp;"card" | "apple_pay"
-          </div>
-        </div>
-        <div style="min-width:180px">
-          <div class="card" style="padding:0.7rem;background:linear-gradient(135deg,#dcfce7,#e6faf8);margin-bottom:0.5rem;text-align:center">
-            <i class="fas fa-file-invoice-dollar" style="font-size:2rem;color:#16a34a;display:block;margin-bottom:0.4rem"></i>
-            <h3 style="font-size:0.85rem">فواتير إلكترونية</h3>
-            <p style="font-size:0.62rem;color:var(--muted)">متوافقة مع ZATCA</p>
-          </div>
-          <div class="card" style="padding:0.7rem;text-align:center">
-            <i class="fas fa-lock" style="font-size:1.5rem;color:#16a34a;display:block;margin-bottom:0.3rem"></i>
-            <h3 style="font-size:0.82rem">PCI DSS</h3>
-            <p style="font-size:0.62rem;color:var(--muted)">معايير أمان الدفع العالمية</p>
-          </div>
-        </div>
-      </div>
-      <span class="page-num">16</span>
-    </div>
-
-    <!-- PAGE 17: ROLES + DEMO ACCOUNTS -->
-    <div class="page hidden" data-page="17">
-      <span class="badge b-purple"><i class="fas fa-users-cog"></i> الأدوار والحسابات التجريبية</span>
-      <h2>حسابات <span style="color:#7c3aed">تجريبية</span> لكل دور</h2>
-      <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
-      <p class="sub" style="font-size:0.78rem">كلمة المرور الموحدة لجميع الحسابات التجريبية: <code style="background:#ede9fe;padding:0.15rem 0.5rem;border-radius:4px;font-weight:800;color:#7c3aed;font-size:0.82rem">demo123</code> &nbsp;|&nbsp; المدير: <code style="background:#fee2e2;padding:0.15rem 0.5rem;border-radius:4px;font-weight:800;color:#dc2626;font-size:0.82rem">admin123</code></p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;font-size:0.72rem">
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid var(--teal)">
-          <div style="width:34px;height:34px;border-radius:50%;background:#e6faf8;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-user-injured" style="color:var(--teal);font-size:0.85rem"></i></div>
-          <div><strong>مستفيد</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">patient@mafasel.com</span></div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #2563eb">
-          <div style="width:34px;height:34px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-user-md" style="color:#2563eb;font-size:0.85rem"></i></div>
-          <div><strong>أخصائي</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">doctor@mafasel.com</span></div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #16a34a">
-          <div style="width:34px;height:34px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-pills" style="color:#16a34a;font-size:0.85rem"></i></div>
-          <div><strong>صيدلي</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">pharmacist@mafasel.com</span></div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #d97706">
-          <div style="width:34px;height:34px;border-radius:50%;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-building" style="color:#d97706;font-size:0.85rem"></i></div>
-          <div><strong>شركة</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">company@mafasel.com</span></div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #db2777">
-          <div style="width:34px;height:34px;border-radius:50%;background:#fce7f3;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-shield-alt" style="color:#db2777;font-size:0.85rem"></i></div>
-          <div><strong>وكيل تأمين</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">insurance@mafasel.com</span></div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #7c3aed">
-          <div style="width:34px;height:34px;border-radius:50%;background:#ede9fe;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-user-tie" style="color:#7c3aed;font-size:0.85rem"></i></div>
-          <div><strong>موظف</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">employee@mafasel.com</span></div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #2563eb">
-          <div style="width:34px;height:34px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-eye" style="color:#2563eb;font-size:0.85rem"></i></div>
-          <div><strong>مشرف</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">moderator@mafasel.com</span></div>
-        </div>
-        <div class="card" style="padding:0.6rem;display:flex;align-items:center;gap:0.6rem;border-right:3px solid #dc2626;background:linear-gradient(135deg,#fff,#fee2e2)">
-          <div style="width:34px;height:34px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-crown" style="color:#dc2626;font-size:0.85rem"></i></div>
-          <div><strong>مدير النظام</strong><br><span style="font-size:0.62rem;color:var(--muted);direction:ltr;display:inline-block">admin@mafasel.com</span></div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:0.5rem;padding:0.5rem 0.8rem;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;gap:0.5rem">
-        <i class="fas fa-info-circle" style="color:var(--teal);font-size:0.9rem;flex-shrink:0"></i>
-        <p style="font-size:0.68rem;color:var(--text);line-height:1.5">جميع الحسابات مفعّلة وجاهزة للاختبار. سجّل الدخول من <a href="/login" style="color:var(--teal);font-weight:700">/login</a> واستكشف كل واجهة حسب الدور.</p>
-      </div>
-      <span class="page-num">17</span>
-    </div>
-
-    <!-- PAGE 18: HEALTH CARD -->
-    <div class="page hidden" data-page="18">
-      <span class="badge b-teal"><i class="fas fa-id-card-alt"></i> البطاقة الصحية الذكية</span>
-      <h2>بطاقة <span class="accent">مفاصل</span> الصحية</h2>
-      <div class="divider"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <p class="sub" style="font-size:0.8rem;margin-bottom:0.7rem">بطاقة رقمية ذكية تحمل كل بيانات المستفيد الطبية — تضاف مباشرة إلى Apple Wallet وتعمل بتقنية QR Code لنقل الملف الطبي بين المراكز فوراً.</p>
-          <div class="g2" style="gap:0.5rem">
-            <div class="card" style="padding:0.7rem;border-right:3px solid var(--teal)">
-              <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem">
-                <div class="ic ic-teal" style="width:28px;height:28px;font-size:0.7rem"><i class="fas fa-qrcode"></i></div>
-                <h3 style="font-size:0.78rem">QR فوري</h3>
-              </div>
-              <p style="font-size:0.65rem;color:var(--muted);line-height:1.6">مسح الباركود يعرض ملف المستفيد كاملاً — الحساسية، الأمراض المزمنة، الأدوية، فصيلة الدم، والسجل الطبي.</p>
-            </div>
-            <div class="card" style="padding:0.7rem;border-right:3px solid #2563eb">
-              <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem">
-                <div class="ic ic-blue" style="width:28px;height:28px;font-size:0.7rem"><i class="fas fa-exchange-alt"></i></div>
-                <h3 style="font-size:0.78rem">نقل الملف</h3>
-              </div>
-              <p style="font-size:0.65rem;color:var(--muted);line-height:1.6">إذا لم يكن للمستفيد ملف في مركز جديد، يتم نقل بياناته تلقائياً من البطاقة لإنشاء ملف فوري.</p>
-            </div>
-            <div class="card" style="padding:0.7rem;border-right:3px solid #d97706">
-              <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem">
-                <div class="ic ic-gold" style="width:28px;height:28px;font-size:0.7rem"><i class="fab fa-apple"></i></div>
-                <h3 style="font-size:0.78rem">Apple Wallet</h3>
-              </div>
-              <p style="font-size:0.65rem;color:var(--muted);line-height:1.6">إضافة البطاقة مباشرة إلى محفظة Apple — جاهزة للمسح في أي وقت بدون فتح التطبيق.</p>
-            </div>
-            <div class="card" style="padding:0.7rem;border-right:3px solid #7c3aed">
-              <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem">
-                <div class="ic ic-purple" style="width:28px;height:28px;font-size:0.7rem"><i class="fas fa-shield-alt"></i></div>
-                <h3 style="font-size:0.78rem">تحقق مشفر</h3>
-              </div>
-              <p style="font-size:0.65rem;color:var(--muted);line-height:1.6">كل بطاقة تحمل رمز تحقق فريد مشفر — لا يمكن تزوير البيانات أو الوصول بدون صلاحية.</p>
-            </div>
-          </div>
-        </div>
-        <div style="min-width:160px;display:flex;flex-direction:column;align-items:center;gap:0.6rem">
-          <div class="phone-mock" style="height:320px">
-            <div class="phone-inner" style="background:linear-gradient(145deg,#101d23,#1a2e38);padding:2rem 0.8rem 0.8rem;gap:0.4rem">
-              <div style="text-align:center;margin-bottom:0.3rem">
-                <div style="width:36px;height:36px;border-radius:50%;border:2px solid #12a99b;margin:0 auto 0.3rem;background:#1a2e38;display:flex;align-items:center;justify-content:center"><i class="fas fa-user" style="color:#12a99b;font-size:0.55rem"></i></div>
-                <div style="font-size:0.55rem;color:#fff;font-weight:700">أحمد محمد</div>
-                <div style="font-size:0.4rem;color:rgba(255,255,255,0.4);font-family:monospace">MFS-A1B2C3D4</div>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.2rem;margin-bottom:0.2rem">
-                <div style="background:rgba(255,255,255,0.06);border-radius:4px;padding:0.2rem;text-align:center"><span style="font-size:0.35rem;color:rgba(255,255,255,0.4);display:block">فصيلة الدم</span><span style="font-size:0.5rem;color:#12a99b;font-weight:700">A+</span></div>
-                <div style="background:rgba(255,255,255,0.06);border-radius:4px;padding:0.2rem;text-align:center"><span style="font-size:0.35rem;color:rgba(255,255,255,0.4);display:block">العمر</span><span style="font-size:0.5rem;color:#fff;font-weight:700">32 سنة</span></div>
-              </div>
-              <div style="background:#fff;border-radius:6px;padding:0.3rem;text-align:center;margin:0 auto;width:60px;height:60px;display:flex;align-items:center;justify-content:center">
-                <i class="fas fa-qrcode" style="font-size:2rem;color:#101d23"></i>
-              </div>
-              <div style="text-align:center;font-size:0.35rem;color:rgba(255,255,255,0.3);margin-top:0.1rem">امسح للتحقق</div>
-              <div style="height:2px;background:linear-gradient(90deg,#12a99b,#2563eb);border-radius:1px;margin-top:auto"></div>
-            </div>
-          </div>
-          <div style="display:flex;gap:0.3rem">
-            <span class="badge b-teal" style="font-size:0.6rem"><i class="fas fa-check"></i> مفعّل</span>
-            <span class="badge b-blue" style="font-size:0.6rem"><i class="fab fa-apple"></i> Wallet</span>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:0.6rem;padding:0.6rem 0.8rem;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;gap:0.5rem">
-        <i class="fas fa-lightbulb" style="color:var(--teal);font-size:0.9rem;flex-shrink:0"></i>
-        <p style="font-size:0.68rem;color:var(--text);line-height:1.5"><strong>التوافق مع المراكز:</strong> عند مسح البطاقة في أي مركز علاج طبيعي متوافق — إذا لم يكن للمستفيد ملف — يتم إنشاء ملف تلقائي من بيانات البطاقة. هذا يلغي الحاجة لتعبئة نماذج جديدة ويوفر الوقت على المستفيد والمركز.</p>
-      </div>
-      <span class="page-num">18</span>
-    </div>
-
-    <!-- PAGE 19: ROADMAP -->
-    <div class="page hidden" data-page="19">
-      <span class="badge b-teal"><i class="fas fa-road"></i> خارطة الطريق</span>
-      <h2>المستقبل <span class="accent">يبدأ الآن</span></h2>
-      <div class="divider"></div>
-      <div class="flex-row">
-        <div class="flex-1">
-          <div class="tl">
-            <div class="tl-item">
-              <span class="badge b-teal" style="margin-bottom:0.3rem"><i class="fas fa-check"></i> مكتمل</span>
-              <h3 style="font-size:0.82rem">المنصة الأساسية</h3>
-              <p style="font-size:0.68rem;color:var(--muted);line-height:1.6">19 مرحلة مكتملة — استشارات، صيدلية، تأمين، AI، شات، خرائط، مواعيد، إشعارات، لوحة إدارة، بطاقة صحية ذكية.</p>
-            </div>
-            <div class="tl-item">
-              <span class="badge b-purple" style="margin-bottom:0.3rem"><i class="fas fa-code"></i> قيد التطوير</span>
-              <h3 style="font-size:0.82rem">تطبيق الجوال</h3>
-              <p style="font-size:0.68rem;color:var(--muted);line-height:1.6">React Native لـ iOS و Android مع إشعارات أصلية.</p>
-            </div>
-            <div class="tl-item">
-              <span class="badge b-blue" style="margin-bottom:0.3rem"><i class="fas fa-flask"></i> مخطط</span>
-              <h3 style="font-size:0.82rem">بوابة الدفع المتقدمة</h3>
-              <p style="font-size:0.68rem;color:var(--muted);line-height:1.6">Stripe/Tap مع فواتير ZATCA إلكترونية.</p>
-            </div>
-            <div class="tl-item">
-              <span class="badge b-gold" style="margin-bottom:0.3rem"><i class="fas fa-star"></i> رؤية</span>
-              <h3 style="font-size:0.82rem">التوسع والتكامل</h3>
-              <p style="font-size:0.68rem;color:var(--muted);line-height:1.6">HL7/FHIR، تشخيص AI من الصور، IoT، التوسع الخليجي.</p>
-            </div>
-          </div>
-        </div>
-        <div style="min-width:180px;display:flex;flex-direction:column;gap:0.5rem">
-          <div class="card" style="text-align:center;padding:0.7rem;background:linear-gradient(135deg,#e6faf8,#dbeafe)">
-            <div class="stat-num accent" style="font-size:1.4rem">20+</div>
-            <div class="stat-label">صفحة</div>
-          </div>
-          <div class="card" style="text-align:center;padding:0.7rem;background:linear-gradient(135deg,#dbeafe,#ede9fe)">
-            <div class="stat-num" style="font-size:1.4rem;color:#2563eb">15+</div>
-            <div class="stat-label">وحدة برمجية</div>
-          </div>
-          <div class="card" style="text-align:center;padding:0.7rem;background:linear-gradient(135deg,#ede9fe,#fce7f3)">
-            <div class="stat-num" style="font-size:1.4rem;color:#7c3aed">8</div>
-            <div class="stat-label">أدوار مستخدمين</div>
-          </div>
-          <a href="/login" style="display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.7rem;background:linear-gradient(135deg,var(--teal),var(--accent2));color:#fff;border-radius:10px;font-weight:700;font-size:0.85rem;text-decoration:none;box-shadow:0 4px 16px rgba(18,169,155,0.25)">
-            <i class="fas fa-sign-in-alt"></i> ابدأ الآن
-          </a>
-        </div>
-      </div>
-      <span class="page-num">19</span>
-    </div>
-
-  </div>
-
-  <button class="nav-btn" id="prevBtn" disabled onclick="flipPage(-1)"><i class="fas fa-chevron-right"></i></button>
-  <button class="nav-btn" id="nextBtn" onclick="flipPage(1)"><i class="fas fa-chevron-left"></i></button>
-
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  <div class="page-counter" id="pageCounter">1 / 19</div>
+<div class="lang-toggle">
+  <button class="lang-btn active" onclick="setLang('ar')">عربي</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
 </div>
 
+<!-- HERO -->
+<section class="hero">
+  <div class="orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="hero-content">
+    <img src="/icons/logo.png" alt="مفاصل" class="hero-logo">
+    <h1>
+      <span data-ar="مفاصل" data-en="Mafasel" class="i18n accent">مفاصل</span>
+    </h1>
+    <p class="tagline i18n" data-ar="منصة طبية رقمية متكاملة تُعيد تعريف تجربة الرعاية الصحية في المملكة العربية السعودية — متخصصة في العلاج الطبيعي والتأهيل" data-en="A comprehensive digital medical platform redefining the healthcare experience in Saudi Arabia — specializing in physical therapy and rehabilitation">منصة طبية رقمية متكاملة تُعيد تعريف تجربة الرعاية الصحية في المملكة العربية السعودية — متخصصة في العلاج الطبيعي والتأهيل</p>
+    <div class="hero-badges">
+      <span class="hero-badge"><i class="fas fa-heartbeat"></i> <span class="i18n" data-ar="19 مرحلة تطوير" data-en="19 Dev Phases">19 مرحلة تطوير</span></span>
+      <span class="hero-badge"><i class="fas fa-code"></i> Full-Stack</span>
+      <span class="hero-badge"><i class="fas fa-shield-alt"></i> <span class="i18n" data-ar="رؤية 2030" data-en="Vision 2030">رؤية 2030</span></span>
+      <span class="hero-badge"><i class="fas fa-globe"></i> <span class="i18n" data-ar="عربي / English" data-en="Arabic / English">عربي / English</span></span>
+    </div>
+    <a href="/login" class="cta-btn i18n" data-ar="ادخل المنصة" data-en="Enter Platform">ادخل المنصة</a>
+  </div>
+  <div class="scroll-hint">
+    <span class="i18n" data-ar="اسحب للأسفل" data-en="Scroll down">اسحب للأسفل</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- BRAND IDENTITY -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-gold"><i class="fas fa-palette"></i> <span class="i18n" data-ar="الهوية البصرية" data-en="Brand Identity">الهوية البصرية</span></span>
+    <h2 class="section-title"><span class="i18n" data-ar='براند <span>مفاصل</span>' data-en='The <span>Mafasel</span> Brand'>براند <span>مفاصل</span></span></h2>
+    <p class="section-sub i18n" data-ar='اسم "مفاصل" مستوحى من مفاصل الجسم — النقاط التي تربط وتمنح الحركة. منصتنا تربط المستفيدين بكل الخدمات الصحية بسلاسة.' data-en="&quot;Mafasel&quot; (Joints) is inspired by the body&apos;s joints — connection points that enable movement. Our platform seamlessly connects patients with all healthcare services.">اسم "مفاصل" مستوحى من مفاصل الجسم — النقاط التي تربط وتمنح الحركة. منصتنا تربط المستفيدين بكل الخدمات الصحية بسلاسة.</p>
+    <div class="divider"></div>
+    <div class="grid-4">
+      <div class="card" style="text-align:center">
+        <div style="width:60px;height:60px;border-radius:14px;background:var(--accent);margin:0 auto 0.8rem"></div>
+        <h3 class="i18n" data-ar="اللون الأساسي" data-en="Primary Color">اللون الأساسي</h3>
+        <code style="color:var(--muted);font-size:0.8rem">#101d23</code>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="width:60px;height:60px;border-radius:14px;background:var(--teal);margin:0 auto 0.8rem"></div>
+        <h3 class="i18n" data-ar="اللون المميز" data-en="Accent Color">اللون المميز</h3>
+        <code style="color:var(--muted);font-size:0.8rem">#12a99b</code>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="width:60px;height:60px;border-radius:14px;background:#fff;border:2px solid var(--border);margin:0 auto 0.8rem;display:flex;align-items:center;justify-content:center"><span style="font-weight:900;font-size:1.5rem;color:var(--accent)">ت</span></div>
+        <h3>Tajawal</h3>
+        <p style="font-size:0.75rem;color:var(--muted)" class="i18n" data-ar="الخط العربي" data-en="Arabic Font">الخط العربي</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="width:60px;height:60px;border-radius:14px;background:var(--bg);border:2px solid var(--border);margin:0 auto 0.8rem;display:flex;align-items:center;justify-content:center"><i class="fas fa-arrow-right" style="color:var(--teal);font-size:1.3rem;transform:scaleX(-1)"></i></div>
+        <h3>RTL</h3>
+        <p style="font-size:0.75rem;color:var(--muted)" class="i18n" data-ar="يمين ← يسار" data-en="Right to Left">يمين ← يسار</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION & STATS -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-blue"><i class="fas fa-bullseye"></i> <span class="i18n" data-ar="الرؤية والرسالة" data-en="Vision & Mission">الرؤية والرسالة</span></span>
+    <h2 class="section-title i18n" data-ar='نحو مستقبل <span>صحي رقمي</span>' data-en='Towards a <span>Digital Health</span> Future'>نحو مستقبل <span>صحي رقمي</span></h2>
+    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
+    <div class="grid-2" style="margin-bottom:2rem">
+      <div class="card" style="border-inline-start:4px solid #2563eb">
+        <div class="card-icon ic-blue"><i class="fas fa-eye"></i></div>
+        <h3 class="i18n" data-ar="الرؤية" data-en="Vision">الرؤية</h3>
+        <p class="i18n" data-ar="أن نكون المنصة الطبية الرقمية الرائدة في المملكة والشرق الأوسط — بما يتماشى مع رؤية 2030 في التحول الرقمي الصحي." data-en="To be the leading digital medical platform in the Kingdom and the Middle East — aligned with Vision 2030's digital health transformation.">أن نكون المنصة الطبية الرقمية الرائدة في المملكة والشرق الأوسط — بما يتماشى مع رؤية 2030 في التحول الرقمي الصحي.</p>
+      </div>
+      <div class="card" style="border-inline-start:4px solid var(--teal)">
+        <div class="card-icon ic-teal"><i class="fas fa-bullseye"></i></div>
+        <h3 class="i18n" data-ar="الرسالة" data-en="Mission">الرسالة</h3>
+        <p class="i18n" data-ar="تقديم منصة شاملة تجمع الاستشارات، الصيدلية، التأمين، والذكاء الاصطناعي في تجربة واحدة سلسة وآمنة." data-en="Delivering a comprehensive platform that combines consultations, pharmacy, insurance, and AI in one seamless, secure experience.">تقديم منصة شاملة تجمع الاستشارات، الصيدلية، التأمين، والذكاء الاصطناعي في تجربة واحدة سلسة وآمنة.</p>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num">19</div><div class="stat-label i18n" data-ar="مرحلة تطوير" data-en="Dev Phases">مرحلة تطوير</div></div>
+      <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label i18n" data-ar="مساعد ذكي" data-en="AI Assistant">مساعد ذكي</div></div>
+      <div class="stat-item"><div class="stat-num">8</div><div class="stat-label i18n" data-ar="أدوار مستخدمين" data-en="User Roles">أدوار مستخدمين</div></div>
+      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label i18n" data-ar="طرق مصادقة" data-en="Auth Methods">طرق مصادقة</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-teal"><i class="fas fa-server"></i> <span class="i18n" data-ar="البنية التحتية" data-en="Infrastructure">البنية التحتية</span></span>
+    <h2 class="section-title i18n" data-ar='التقنيات <span>المستخدمة</span>' data-en='Technology <span>Stack</span>'>التقنيات <span>المستخدمة</span></h2>
+    <p class="section-sub i18n" data-ar="بنية تحتية متينة مبنية على أحدث التقنيات لضمان الأداء والأمان والقابلية للتوسع." data-en="Robust infrastructure built on cutting-edge technologies ensuring performance, security, and scalability.">بنية تحتية متينة مبنية على أحدث التقنيات لضمان الأداء والأمان والقابلية للتوسع.</p>
+    <div class="divider"></div>
+    <div class="tech-stack">
+      <span class="tech-tag"><i class="fab fa-node-js" style="color:#68a063"></i> Node.js</span>
+      <span class="tech-tag"><i class="fas fa-bolt" style="color:var(--teal)"></i> Express.js</span>
+      <span class="tech-tag"><i class="fas fa-database" style="color:#4DB33D"></i> MongoDB Atlas</span>
+      <span class="tech-tag"><i class="fas fa-plug" style="color:#7c3aed"></i> Socket.io</span>
+      <span class="tech-tag"><i class="fas fa-file-code" style="color:#2563eb"></i> EJS Templates</span>
+      <span class="tech-tag"><i class="fas fa-key" style="color:#d97706"></i> Passport.js</span>
+      <span class="tech-tag"><i class="fas fa-robot" style="color:var(--teal)"></i> Google AI (Gemini)</span>
+      <span class="tech-tag"><i class="fas fa-shield-alt" style="color:#dc2626"></i> Helmet + CORS</span>
+      <span class="tech-tag"><i class="fas fa-tachometer-alt" style="color:#ea580c"></i> Rate Limiting</span>
+      <span class="tech-tag"><i class="fas fa-compress-alt" style="color:#16a34a"></i> Compression</span>
+    </div>
+    <div class="grid-3" style="margin-top:1.5rem">
+      <div class="card">
+        <div class="card-icon ic-green"><i class="fab fa-node-js"></i></div>
+        <h3 class="i18n" data-ar="باك إند سريع" data-en="Fast Backend">باك إند سريع</h3>
+        <p class="i18n" data-ar="Node.js + Express مع SSR لأداء عالي وتجربة سلسة" data-en="Node.js + Express with SSR for high performance and smooth experience">Node.js + Express مع SSR لأداء عالي وتجربة سلسة</p>
+      </div>
+      <div class="card">
+        <div class="card-icon ic-green"><i class="fas fa-database"></i></div>
+        <h3 class="i18n" data-ar="قاعدة بيانات سحابية" data-en="Cloud Database">قاعدة بيانات سحابية</h3>
+        <p class="i18n" data-ar="MongoDB Atlas مع Mongoose — مرنة وقابلة للتوسع" data-en="MongoDB Atlas with Mongoose — flexible and scalable">MongoDB Atlas مع Mongoose — مرنة وقابلة للتوسع</p>
+      </div>
+      <div class="card">
+        <div class="card-icon ic-purple"><i class="fas fa-plug"></i></div>
+        <h3 class="i18n" data-ar="اتصال حي" data-en="Real-time Connection">اتصال حي</h3>
+        <p class="i18n" data-ar="Socket.io للمحادثات والإشعارات الفورية" data-en="Socket.io for live chat and instant notifications">Socket.io للمحادثات والإشعارات الفورية</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTH SYSTEM -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-purple"><i class="fas fa-lock"></i> <span class="i18n" data-ar="نظام المصادقة" data-en="Authentication">نظام المصادقة</span></span>
+    <h2 class="section-title i18n" data-ar='6 طرق <span>تسجيل دخول</span>' data-en='6 <span>Login</span> Methods'>6 طرق <span>تسجيل دخول</span></h2>
+    <p class="section-sub i18n" data-ar="نظام مصادقة متعدد الطبقات يدعم كل الطرق الحديثة — من البصمة إلى الهوية الوطنية." data-en="Multi-layered authentication system supporting all modern methods — from biometrics to national identity.">نظام مصادقة متعدد الطبقات يدعم كل الطرق الحديثة — من البصمة إلى الهوية الوطنية.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
+    <div class="auth-grid">
+      <div class="auth-card">
+        <i class="fas fa-mobile-alt" style="color:var(--teal)"></i>
+        <h4 class="i18n" data-ar="الجوال + OTP" data-en="Phone + OTP">الجوال + OTP</h4>
+        <p class="i18n" data-ar="رمز تحقق 6 أرقام" data-en="6-digit verification code">رمز تحقق 6 أرقام</p>
+      </div>
+      <div class="auth-card">
+        <i class="fas fa-envelope" style="color:#2563eb"></i>
+        <h4 class="i18n" data-ar="البريد + كلمة مرور" data-en="Email + Password">البريد + كلمة مرور</h4>
+        <p class="i18n" data-ar="تسجيل كلاسيكي مع تحقق" data-en="Classic login with verification">تسجيل كلاسيكي مع تحقق</p>
+      </div>
+      <div class="auth-card">
+        <i class="fab fa-google" style="color:#DB4437"></i>
+        <h4>Google OAuth</h4>
+        <p>Passport.js</p>
+      </div>
+      <div class="auth-card">
+        <i class="fab fa-apple" style="color:#000"></i>
+        <h4>Apple Sign-In</h4>
+        <p>iOS & Mac</p>
+      </div>
+      <div class="auth-card">
+        <i class="fas fa-fingerprint" style="color:#16a34a"></i>
+        <h4>WebAuthn</h4>
+        <p class="i18n" data-ar="بصمة / Face ID" data-en="Fingerprint / Face ID">بصمة / Face ID</p>
+      </div>
+      <div class="auth-card">
+        <i class="fas fa-id-card" style="color:#d97706"></i>
+        <h4 class="i18n" data-ar="نفاذ الوطني" data-en="Nafath National ID">نفاذ الوطني</h4>
+        <p class="i18n" data-ar="هوية موحدة سعودية" data-en="Saudi unified identity">هوية موحدة سعودية</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAT SYSTEM -->
+<section>
+  <div class="container reveal">
+    <div class="flex-showcase">
+      <div class="content">
+        <span class="section-badge b-green"><i class="fas fa-comments"></i> <span class="i18n" data-ar="نظام الشات" data-en="Chat System">نظام الشات</span></span>
+        <h2 class="section-title i18n" data-ar='محادثات <span>فورية</span> متقدمة' data-en='Advanced <span>Real-time</span> Messaging'>محادثات <span>فورية</span> متقدمة</h2>
+        <p class="section-sub i18n" data-ar="نظام محادثات حي مبني على Socket.io مع دعم كامل للملفات والرسائل الداخلية بين الأخصائيين والمستفيدين." data-en="Live chat system built on Socket.io with full file support and internal messaging between specialists and patients.">نظام محادثات حي مبني على Socket.io مع دعم كامل للملفات والرسائل الداخلية بين الأخصائيين والمستفيدين.</p>
+        <ul class="feature-list">
+          <li><i class="fas fa-bolt"></i> <span class="i18n" data-ar="WebSocket — تحديث فوري" data-en="WebSocket — instant updates">WebSocket — تحديث فوري</span></li>
+          <li><i class="fas fa-keyboard"></i> <span class="i18n" data-ar="مؤشر الكتابة الحي" data-en="Live typing indicator">مؤشر الكتابة الحي</span></li>
+          <li><i class="fas fa-check-double"></i> <span class="i18n" data-ar="تم الاستلام / تم القراءة" data-en="Delivered / Read receipts">تم الاستلام / تم القراءة</span></li>
+          <li><i class="fas fa-lock"></i> <span class="i18n" data-ar="ملاحظات داخلية للفريق" data-en="Internal team notes">ملاحظات داخلية للفريق</span></li>
+          <li><i class="fas fa-paperclip"></i> <span class="i18n" data-ar="مرفقات وصور وملفات" data-en="Attachments, images & files">مرفقات وصور وملفات</span></li>
+        </ul>
+      </div>
+      <div class="visual">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="mockup-header">
+              <h4 class="i18n" data-ar="الأخصائي أحمد" data-en="Dr. Ahmed">الأخصائي أحمد</h4>
+              <span style="width:8px;height:8px;border-radius:50%;background:#16a34a"></span>
+            </div>
+            <div class="chat-mockup">
+              <div class="chat-msg chat-sent i18n" data-ar="السلام عليكم أخصائي" data-en="Hello Doctor">السلام عليكم أخصائي</div>
+              <div class="chat-msg chat-recv i18n" data-ar="وعليكم السلام! كيف أقدر أساعدك؟" data-en="Hello! How can I help you?">وعليكم السلام! كيف أقدر أساعدك؟</div>
+              <div class="chat-msg chat-sent i18n" data-ar="عندي ألم في الركبة من أسبوع" data-en="I've had knee pain for a week">عندي ألم في الركبة من أسبوع</div>
+              <div class="chat-msg chat-recv i18n" data-ar="هل الألم يزيد مع الحركة؟ وهل في تورم؟" data-en="Does the pain increase with movement? Any swelling?">هل الألم يزيد مع الحركة؟ وهل في تورم؟</div>
+              <div class="chat-msg chat-sent i18n" data-ar="إي يزيد لما أمشي كثير" data-en="Yes, it gets worse when I walk a lot">إي يزيد لما أمشي كثير</div>
+              <div class="chat-msg chat-recv i18n" data-ar="أنصحك تحجز جلسة علاج طبيعي عندنا 💪" data-en="I recommend booking a physiotherapy session with us">أنصحك تحجز جلسة علاج طبيعي عندنا</div>
+            </div>
+            <div style="display:flex;gap:0.4rem;margin-top:auto;padding-top:0.5rem">
+              <div style="flex:1;background:#f1f5f9;border-radius:20px;padding:0.5rem 0.8rem;font-size:0.7rem;color:var(--muted)" class="i18n" data-ar="اكتب رسالة..." data-en="Type a message...">اكتب رسالة...</div>
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center"><i class="fas fa-paper-plane" style="color:#fff;font-size:0.7rem"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEETINGS -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-blue"><i class="fas fa-video"></i> <span class="i18n" data-ar="الاجتماعات المرئية" data-en="Video Meetings">الاجتماعات المرئية</span></span>
+    <h2 class="section-title i18n" data-ar='اجتماعات <span>QMeet</span> المرئية' data-en='<span>QMeet</span> Video Meetings'>اجتماعات <span>QMeet</span> المرئية</h2>
+    <p class="section-sub i18n" data-ar="نظام اجتماعات مرئية يربط الأخصائي بالمستفيد عبر WebRTC مع جودة عالية وتشفير كامل." data-en="Video meeting system connecting specialists with patients via WebRTC with high quality and full encryption.">نظام اجتماعات مرئية يربط الأخصائي بالمستفيد عبر WebRTC مع جودة عالية وتشفير كامل.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
+    <div class="grid-2">
+      <div>
+        <div class="timeline">
+          <div class="tl-item">
+            <h4 class="i18n" data-ar="إنشاء الجلسة" data-en="Create Session">إنشاء الجلسة</h4>
+            <p class="i18n" data-ar='الأخصائي يضغط "ابدأ الجلسة" من لوحة التحكم' data-en="Specialist clicks 'Start Session' from dashboard">الأخصائي يضغط "ابدأ الجلسة" من لوحة التحكم</p>
+          </div>
+          <div class="tl-item">
+            <h4 class="i18n" data-ar="إرسال الدعوة" data-en="Send Invitation">إرسال الدعوة</h4>
+            <p class="i18n" data-ar="إرسال رابط مباشر للمستفيد عبر الإشعارات" data-en="Direct link sent to patient via notifications">إرسال رابط مباشر للمستفيد عبر الإشعارات</p>
+          </div>
+          <div class="tl-item">
+            <h4 class="i18n" data-ar="اتصال مشفر" data-en="Encrypted Connection">اتصال مشفر</h4>
+            <p class="i18n" data-ar="WebRTC مع تشفير E2E وجودة HD" data-en="WebRTC with E2E encryption and HD quality">WebRTC مع تشفير E2E وجودة HD</p>
+          </div>
+          <div class="tl-item">
+            <h4 class="i18n" data-ar="حفظ السجل" data-en="Save Record">حفظ السجل</h4>
+            <p class="i18n" data-ar="حفظ تفاصيل الجلسة في الملف الطبي" data-en="Session details saved to medical record">حفظ تفاصيل الجلسة في الملف الطبي</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem;justify-content:center">
+        <div class="card" style="text-align:center;padding:2rem;background:linear-gradient(135deg,#dbeafe,#ede9fe)">
+          <i class="fas fa-video" style="font-size:3rem;color:#2563eb;margin-bottom:0.6rem;display:block"></i>
+          <h3 class="i18n" data-ar="مكالمة فيديو HD" data-en="HD Video Call">مكالمة فيديو HD</h3>
+          <p style="color:var(--muted);font-size:0.8rem" class="i18n" data-ar="صوت وصورة بجودة عالية" data-en="High quality audio & video">صوت وصورة بجودة عالية</p>
+        </div>
+        <div class="card" style="text-align:center;padding:2rem;background:linear-gradient(135deg,#e6faf8,#dcfce7)">
+          <i class="fas fa-shield-alt" style="font-size:3rem;color:var(--teal);margin-bottom:0.6rem;display:block"></i>
+          <h3 class="i18n" data-ar="تشفير كامل" data-en="Full Encryption">تشفير كامل</h3>
+          <p style="color:var(--muted);font-size:0.8rem" class="i18n" data-ar="حماية خصوصية الجلسة" data-en="Session privacy protection">حماية خصوصية الجلسة</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHARMACY -->
+<section>
+  <div class="container reveal">
+    <div class="flex-showcase">
+      <div class="content">
+        <span class="section-badge b-teal"><i class="fas fa-pills"></i> <span class="i18n" data-ar="الصيدلية" data-en="Pharmacy">الصيدلية</span></span>
+        <h2 class="section-title i18n" data-ar='سوق <span>الصيدليات</span> الرقمي' data-en='Digital <span>Pharmacy</span> Market'>سوق <span>الصيدليات</span> الرقمي</h2>
+        <p class="section-sub i18n" data-ar="تصفح الصيدليات والأدوية والشراء بالتأمين أو الدفع المباشر مع توصيل سريع." data-en="Browse pharmacies and medications, purchase with insurance or direct payment, with fast delivery.">تصفح الصيدليات والأدوية والشراء بالتأمين أو الدفع المباشر مع توصيل سريع.</p>
+        <ul class="feature-list">
+          <li><i class="fas fa-store"></i> <span class="i18n" data-ar="تصفح الصيدليات المتاحة" data-en="Browse available pharmacies">تصفح الصيدليات المتاحة</span></li>
+          <li><i class="fas fa-search"></i> <span class="i18n" data-ar="بحث ذكي في الأدوية" data-en="Smart medication search">بحث ذكي في الأدوية</span></li>
+          <li><i class="fas fa-shield-alt"></i> <span class="i18n" data-ar="شراء بالتأمين / نقد / بطاقة" data-en="Buy with insurance / cash / card">شراء بالتأمين / نقد / بطاقة</span></li>
+          <li><i class="fas fa-truck"></i> <span class="i18n" data-ar="توصيل سريع للمنزل" data-en="Fast home delivery">توصيل سريع للمنزل</span></li>
+          <li><i class="fas fa-prescription-bottle-alt"></i> <span class="i18n" data-ar="دعم الوصفات الطبية" data-en="Prescription support">دعم الوصفات الطبية</span></li>
+        </ul>
+      </div>
+      <div class="visual">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="mockup-header">
+              <h4 class="i18n" data-ar="صيدلية النهدي" data-en="Al Nahdi Pharmacy">صيدلية النهدي</h4>
+              <i class="fas fa-store" style="color:var(--teal);font-size:0.8rem"></i>
+            </div>
+            <div class="pharmacy-items">
+              <div class="pharmacy-item">
+                <div class="drug-icon ic-teal"><i class="fas fa-pills"></i></div>
+                <span class="drug-name i18n" data-ar="بنادول" data-en="Panadol">بنادول</span>
+                <span class="drug-price i18n" data-ar="12 ر.س" data-en="12 SAR">12 ر.س</span>
+              </div>
+              <div class="pharmacy-item">
+                <div class="drug-icon ic-blue"><i class="fas fa-pills"></i></div>
+                <span class="drug-name i18n" data-ar="فولتارين" data-en="Voltaren">فولتارين</span>
+                <span class="drug-price i18n" data-ar="28 ر.س" data-en="28 SAR">28 ر.س</span>
+              </div>
+              <div class="pharmacy-item">
+                <div class="drug-icon ic-purple"><i class="fas fa-pills"></i></div>
+                <span class="drug-name i18n" data-ar="أوجمنتين" data-en="Augmentin">أوجمنتين</span>
+                <span class="drug-price i18n" data-ar="45 ر.س" data-en="45 SAR">45 ر.س</span>
+              </div>
+              <div class="pharmacy-item">
+                <div class="drug-icon ic-green"><i class="fas fa-pills"></i></div>
+                <span class="drug-name i18n" data-ar="زيرتك" data-en="Zyrtec">زيرتك</span>
+                <span class="drug-price i18n" data-ar="22 ر.س" data-en="22 SAR">22 ر.س</span>
+              </div>
+              <div class="pharmacy-item">
+                <div class="drug-icon ic-gold"><i class="fas fa-pills"></i></div>
+                <span class="drug-name i18n" data-ar="أموكسيل" data-en="Amoxil">أموكسيل</span>
+                <span class="drug-price i18n" data-ar="35 ر.س" data-en="35 SAR">35 ر.س</span>
+              </div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.5rem">
+              <div style="background:var(--teal);color:#fff;text-align:center;padding:0.6rem;border-radius:12px;font-size:0.8rem;font-weight:700" class="i18n" data-ar="أضف للسلة 🛒" data-en="Add to Cart">أضف للسلة</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI ASSISTANT -->
+<section>
+  <div class="container reveal">
+    <div class="ai-showcase">
+      <div class="ai-features">
+        <span class="section-badge b-purple"><i class="fas fa-robot"></i> <span class="i18n" data-ar="المساعد الذكي" data-en="AI Assistant">المساعد الذكي</span></span>
+        <h2 class="section-title i18n" data-ar='مساعد <span>ذكي</span> بلهجة سعودية' data-en='<span>Smart</span> AI Assistant with Saudi Dialect'>مساعد <span>ذكي</span> بلهجة سعودية</h2>
+        <p class="section-sub i18n" data-ar="مساعد طبي مدعوم بالذكاء الاصطناعي (Gemini) يتحدث باللهجة السعودية ويفهم الأعراض ويوجه المستفيد للقسم المناسب." data-en="AI-powered medical assistant (Gemini) that speaks Saudi dialect, understands symptoms, and directs patients to the right department.">مساعد طبي مدعوم بالذكاء الاصطناعي (Gemini) يتحدث باللهجة السعودية ويفهم الأعراض ويوجه المستفيد للقسم المناسب.</p>
+        <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
+        <ul class="feature-list">
+          <li><i class="fas fa-brain"></i> <span class="i18n" data-ar="تحليل الأعراض وتوجيه ذكي" data-en="Symptom analysis & smart routing">تحليل الأعراض وتوجيه ذكي</span></li>
+          <li><i class="fas fa-language"></i> <span class="i18n" data-ar="لهجة سعودية طبيعية" data-en="Natural Saudi dialect">لهجة سعودية طبيعية</span></li>
+          <li><i class="fas fa-clock"></i> <span class="i18n" data-ar="متاح 24/7 بدون انتظار" data-en="Available 24/7 with no wait">متاح 24/7 بدون انتظار</span></li>
+          <li><i class="fas fa-file-medical"></i> <span class="i18n" data-ar="حفظ في السجل الطبي" data-en="Saved to medical record">حفظ في السجل الطبي</span></li>
+        </ul>
+      </div>
+      <div class="ai-visual">
+        <div class="phone-mockup" style="background:linear-gradient(135deg,#f8fafc,#ede9fe)">
+          <div class="phone-screen">
+            <div class="mockup-header">
+              <h4 style="color:#7c3aed"><i class="fas fa-robot"></i> <span class="i18n" data-ar="المساعد الذكي" data-en="AI Assistant">المساعد الذكي</span></h4>
+            </div>
+            <div class="chat-mockup">
+              <div class="chat-msg chat-recv" style="background:#ede9fe;color:#7c3aed"><span class="i18n" data-ar="هلا فيك! أنا مساعدك الصحي 🌿 كيف أقدر أساعدك اليوم؟" data-en="Welcome! I'm your health assistant. How can I help you today?">هلا فيك! أنا مساعدك الصحي كيف أقدر أساعدك اليوم؟</span></div>
+              <div class="chat-msg chat-sent i18n" data-ar="عندي صداع قوي من يومين" data-en="I've had a severe headache for two days">عندي صداع قوي من يومين</div>
+              <div class="chat-msg chat-recv" style="background:#ede9fe;color:#7c3aed"><span class="i18n" data-ar="يا هلا! الصداع المستمر يحتاج تقييم. هل معاه غثيان أو حساسية من الضوء؟" data-en="Persistent headaches need evaluation. Any nausea or light sensitivity?">يا هلا! الصداع المستمر يحتاج تقييم. هل معاه غثيان أو حساسية من الضوء؟</span></div>
+              <div class="chat-msg chat-sent i18n" data-ar="إي في غثيان خفيف" data-en="Yes, mild nausea">إي في غثيان خفيف</div>
+              <div class="chat-msg chat-recv" style="background:#ede9fe;color:#7c3aed"><span class="i18n" data-ar="أنصحك تحجز استشارة مع أخصائي. أرسلك للقسم المناسب الحين؟" data-en="I recommend booking a consultation with a specialist. Shall I direct you?">أنصحك تحجز استشارة مع أخصائي. أرسلك للقسم المناسب الحين؟</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPS -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-green"><i class="fas fa-map-marked-alt"></i> <span class="i18n" data-ar="الخريطة التفاعلية" data-en="Interactive Map">الخريطة التفاعلية</span></span>
+    <h2 class="section-title i18n" data-ar='اكتشف <span>المراكز</span> القريبة' data-en='Find Nearby <span>Centers</span>'>اكتشف <span>المراكز</span> القريبة</h2>
+    <p class="section-sub i18n" data-ar="خريطة تفاعلية تعرض مراكز العلاج الطبيعي والصيدليات القريبة مع فلاتر ذكية وتوجيه مباشر." data-en="Interactive map showing nearby physiotherapy centers and pharmacies with smart filters and direct navigation.">خريطة تفاعلية تعرض مراكز العلاج الطبيعي والصيدليات القريبة مع فلاتر ذكية وتوجيه مباشر.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#16a34a,transparent)"></div>
+    <div class="map-mockup">
+      <div style="position:absolute;inset:0;opacity:0.15">
+        <svg width="100%" height="100%"><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#888" stroke-width="0.5"/></pattern><rect width="100%" height="100%" fill="url(#grid)"/></svg>
+      </div>
+      <div class="map-pin" style="top:25%;right:35%;animation-delay:0.2s"><i class="fas fa-map-marker-alt"></i><span class="i18n" data-ar="مركز الحركة" data-en="Motion Center">مركز الحركة</span></div>
+      <div class="map-pin" style="top:45%;right:55%;animation-delay:0.5s"><i class="fas fa-map-marker-alt" style="color:var(--teal)"></i><span class="i18n" data-ar="صيدلية النهدي" data-en="Al Nahdi Pharmacy">صيدلية النهدي</span></div>
+      <div class="map-pin" style="top:60%;right:25%;animation-delay:0.8s"><i class="fas fa-map-marker-alt"></i><span class="i18n" data-ar="مركز المفاصل" data-en="Mafasel Center">مركز المفاصل</span></div>
+      <div class="map-pin" style="top:35%;right:70%;animation-delay:1.1s"><i class="fas fa-map-marker-alt" style="color:var(--teal)"></i><span class="i18n" data-ar="صيدلية الدواء" data-en="Al Dawaa Pharmacy">صيدلية الدواء</span></div>
+      <div class="map-pin" style="top:70%;right:60%;animation-delay:1.4s"><i class="fas fa-map-marker-alt"></i><span class="i18n" data-ar="مركز الشفاء" data-en="Al Shifa Center">مركز الشفاء</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HEALTH CARD -->
+<section>
+  <div class="container reveal">
+    <div class="flex-showcase">
+      <div class="content">
+        <span class="section-badge b-teal"><i class="fas fa-id-card-alt"></i> <span class="i18n" data-ar="البطاقة الصحية" data-en="Health Card">البطاقة الصحية</span></span>
+        <h2 class="section-title i18n" data-ar='بطاقة <span>مفاصل</span> الصحية الذكية' data-en='<span>Mafasel</span> Smart Health Card'>بطاقة <span>مفاصل</span> الصحية الذكية</h2>
+        <p class="section-sub i18n" data-ar="بطاقة رقمية ذكية تحمل كل بيانات المستفيد الطبية — تضاف مباشرة إلى Apple Wallet وتعمل بتقنية QR Code." data-en="Smart digital card containing all patient medical data — directly added to Apple Wallet with QR Code technology.">بطاقة رقمية ذكية تحمل كل بيانات المستفيد الطبية — تضاف مباشرة إلى Apple Wallet وتعمل بتقنية QR Code.</p>
+        <ul class="feature-list">
+          <li><i class="fas fa-qrcode"></i> <span class="i18n" data-ar="QR فوري لنقل الملف الطبي" data-en="Instant QR for medical record transfer">QR فوري لنقل الملف الطبي</span></li>
+          <li><i class="fab fa-apple"></i> <span class="i18n" data-ar="إضافة إلى Apple Wallet" data-en="Add to Apple Wallet">إضافة إلى Apple Wallet</span></li>
+          <li><i class="fas fa-exchange-alt"></i> <span class="i18n" data-ar="نقل الملف بين المراكز فوراً" data-en="Instant record transfer between centers">نقل الملف بين المراكز فوراً</span></li>
+          <li><i class="fas fa-heartbeat"></i> <span class="i18n" data-ar="الحساسية والأمراض المزمنة" data-en="Allergies & chronic conditions">الحساسية والأمراض المزمنة</span></li>
+        </ul>
+      </div>
+      <div class="visual">
+        <div class="health-card-mockup">
+          <div class="hc-logo">
+            <img src="/icons/logo.png" alt="">
+            <span class="i18n" data-ar="مفاصل" data-en="Mafasel">مفاصل</span>
+          </div>
+          <div class="hc-name i18n" data-ar="محمد عبدالله" data-en="Mohammed Abdullah">محمد عبدالله</div>
+          <div class="hc-id">ID: MF-2024-00847</div>
+          <div class="hc-row">
+            <div class="hc-field">
+              <label class="i18n" data-ar="فصيلة الدم" data-en="Blood Type">فصيلة الدم</label>
+              <span>A+</span>
+            </div>
+            <div class="hc-field">
+              <label class="i18n" data-ar="الحساسية" data-en="Allergies">الحساسية</label>
+              <span class="i18n" data-ar="بنسلين" data-en="Penicillin">بنسلين</span>
+            </div>
+          </div>
+          <div class="hc-row">
+            <div class="hc-field">
+              <label class="i18n" data-ar="التأمين" data-en="Insurance">التأمين</label>
+              <span class="i18n" data-ar="بوبا VIP" data-en="Bupa VIP">بوبا VIP</span>
+            </div>
+          </div>
+          <div class="hc-qr">
+            <i class="fas fa-qrcode" style="font-size:2rem;color:var(--accent)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSURANCE & PAYMENT -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-green"><i class="fas fa-credit-card"></i> <span class="i18n" data-ar="الدفع والتأمين" data-en="Payment & Insurance">الدفع والتأمين</span></span>
+    <h2 class="section-title i18n" data-ar='بوابة <span>الدفع</span> المتكاملة' data-en='Integrated <span>Payment</span> Gateway'>بوابة <span>الدفع</span> المتكاملة</h2>
+    <p class="section-sub i18n" data-ar="نظام دفع متعدد القنوات يدعم البطاقات والتأمين والدفع عند الاستلام مع فواتير متوافقة مع ZATCA." data-en="Multi-channel payment system supporting cards, insurance, and cash on delivery with ZATCA-compliant invoices.">نظام دفع متعدد القنوات يدعم البطاقات والتأمين والدفع عند الاستلام مع فواتير متوافقة مع ZATCA.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#16a34a,transparent)"></div>
+    <div class="payment-methods">
+      <div class="pay-card">
+        <i class="fas fa-credit-card" style="color:#16a34a"></i>
+        <h4 class="i18n" data-ar="بطاقة ائتمان" data-en="Credit Card">بطاقة ائتمان</h4>
+        <p>Visa / Mastercard</p>
+      </div>
+      <div class="pay-card">
+        <i class="fab fa-apple-pay" style="color:#000"></i>
+        <h4>Apple Pay</h4>
+        <p class="i18n" data-ar="دفع سريع وآمن" data-en="Fast & secure">دفع سريع وآمن</p>
+      </div>
+      <div class="pay-card">
+        <i class="fas fa-shield-alt" style="color:var(--teal)"></i>
+        <h4 class="i18n" data-ar="التأمين" data-en="Insurance">التأمين</h4>
+        <p class="i18n" data-ar="تغطية تأمينية مباشرة" data-en="Direct insurance coverage">تغطية تأمينية مباشرة</p>
+      </div>
+      <div class="pay-card">
+        <i class="fas fa-money-bill-wave" style="color:#d97706"></i>
+        <h4 class="i18n" data-ar="نقد / COD" data-en="Cash / COD">نقد / COD</h4>
+        <p class="i18n" data-ar="الدفع عند الاستلام" data-en="Cash on delivery">الدفع عند الاستلام</p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card" style="display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,#dcfce7,#e6faf8)">
+        <i class="fas fa-file-invoice-dollar" style="font-size:2.5rem;color:#16a34a"></i>
+        <div>
+          <h3 class="i18n" data-ar="فواتير إلكترونية" data-en="Electronic Invoices">فواتير إلكترونية</h3>
+          <p class="i18n" data-ar="متوافقة مع معايير ZATCA السعودية" data-en="Compliant with ZATCA Saudi standards">متوافقة مع معايير ZATCA السعودية</p>
+        </div>
+      </div>
+      <div class="card" style="display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,#e6faf8,#dbeafe)">
+        <i class="fas fa-lock" style="font-size:2.5rem;color:var(--teal)"></i>
+        <div>
+          <h3>PCI DSS</h3>
+          <p class="i18n" data-ar="معايير أمان الدفع العالمية" data-en="Global payment security standards">معايير أمان الدفع العالمية</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN PANEL -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-orange"><i class="fas fa-tachometer-alt"></i> <span class="i18n" data-ar="لوحة الإدارة" data-en="Admin Panel">لوحة الإدارة</span></span>
+    <h2 class="section-title i18n" data-ar='لوحة <span>تحكم</span> شاملة' data-en='Comprehensive <span>Control</span> Panel'>لوحة <span>تحكم</span> شاملة</h2>
+    <p class="section-sub i18n" data-ar="تحكّم كامل في المنصة من مكان واحد — مستخدمين، شركات، استشارات، طلبات، ودعم فني." data-en="Full platform control from one place — users, companies, consultations, orders, and support.">تحكّم كامل في المنصة من مكان واحد — مستخدمين، شركات، استشارات، طلبات، ودعم فني.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#ea580c,transparent)"></div>
+    <div class="admin-grid">
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-users"></i></div><h3 class="i18n" data-ar="المستخدمين" data-en="Users">المستخدمين</h3><p class="i18n" data-ar="بحث، فلاتر، تعليق، حذف" data-en="Search, filter, suspend, delete">بحث، فلاتر، تعليق، حذف</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-building"></i></div><h3 class="i18n" data-ar="الشركات" data-en="Companies">الشركات</h3><p class="i18n" data-ar="إدارة الشركات والموظفين" data-en="Manage companies & employees">إدارة الشركات والموظفين</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-stethoscope"></i></div><h3 class="i18n" data-ar="الاستشارات" data-en="Consultations">الاستشارات</h3><p class="i18n" data-ar="تعيين أخصائيين ومتابعة" data-en="Assign specialists & follow up">تعيين أخصائيين ومتابعة</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-shopping-bag"></i></div><h3 class="i18n" data-ar="الطلبات" data-en="Orders">الطلبات</h3><p class="i18n" data-ar="متابعة طلبات الصيدلية" data-en="Track pharmacy orders">متابعة طلبات الصيدلية</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-headset"></i></div><h3 class="i18n" data-ar="الدعم الفني" data-en="Support">الدعم الفني</h3><p class="i18n" data-ar="تذاكر + AI مقترحات" data-en="Tickets + AI suggestions">تذاكر + AI مقترحات</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-server"></i></div><h3 class="i18n" data-ar="مراقبة النظام" data-en="Monitoring">مراقبة النظام</h3><p class="i18n" data-ar="CPU, RAM حي كل 15 ثانية" data-en="CPU, RAM live every 15s">CPU, RAM حي كل 15 ثانية</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-images"></i></div><h3 class="i18n" data-ar="البانرات" data-en="Banners">البانرات</h3><p class="i18n" data-ar="رفع وإدارة الصور" data-en="Upload & manage images">رفع وإدارة الصور</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-link"></i></div><h3 class="i18n" data-ar="الدعوات" data-en="Invitations">الدعوات</h3><p class="i18n" data-ar="روابط تسجيل مخصصة" data-en="Custom registration links">روابط تسجيل مخصصة</p></div>
+      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-clipboard-list"></i></div><h3 class="i18n" data-ar="سجل النشاطات" data-en="Activity Log">سجل النشاطات</h3><p class="i18n" data-ar="فلاتر + تصدير CSV" data-en="Filters + CSV export">فلاتر + تصدير CSV</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-red"><i class="fas fa-shield-alt"></i> <span class="i18n" data-ar="الأمان" data-en="Security">الأمان</span></span>
+    <h2 class="section-title i18n" data-ar='حماية <span>متقدمة</span> متعددة الطبقات' data-en='Multi-layer <span>Advanced</span> Protection'>حماية <span>متقدمة</span> متعددة الطبقات</h2>
+    <p class="section-sub i18n" data-ar="أمان على مستوى المؤسسات مع تشفير شامل وسجل نشاطات كامل." data-en="Enterprise-grade security with full encryption and comprehensive activity logging.">أمان على مستوى المؤسسات مع تشفير شامل وسجل نشاطات كامل.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#dc2626,transparent)"></div>
+    <div class="grid-4">
+      <div class="card" style="text-align:center"><i class="fas fa-lock" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>HTTPS/TLS</h3><p class="i18n" data-ar="تشفير كامل" data-en="Full encryption">تشفير كامل</p></div>
+      <div class="card" style="text-align:center"><i class="fas fa-user-shield" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>RBAC</h3><p class="i18n" data-ar="صلاحيات دقيقة" data-en="Fine-grained access">صلاحيات دقيقة</p></div>
+      <div class="card" style="text-align:center"><i class="fas fa-helmet-safety" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>Helmet + CSP</h3><p class="i18n" data-ar="حماية Headers" data-en="Header protection">حماية Headers</p></div>
+      <div class="card" style="text-align:center"><i class="fas fa-fingerprint" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>WebAuthn</h3><p class="i18n" data-ar="مصادقة بيومترية" data-en="Biometric auth">مصادقة بيومترية</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- IDENTITY & MEDICAL PROFILE -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-gold"><i class="fas fa-id-card"></i> <span class="i18n" data-ar="الهوية والملف الطبي" data-en="Identity & Medical Profile">الهوية والملف الطبي</span></span>
+    <h2 class="section-title i18n" data-ar='ربط <span>الهوية</span> والملف الطبي الشامل' data-en='<span>Identity</span> Linking & Comprehensive Medical Profile'>ربط <span>الهوية</span> والملف الطبي الشامل</h2>
+    <p class="section-sub i18n" data-ar="ربط الحساب بالهوية الوطنية عبر نفاذ مع ملف صحي شامل يحتوي على كل المعلومات الطبية." data-en="Account linking with national ID via Nafath, with a comprehensive health profile containing all medical data.">ربط الحساب بالهوية الوطنية عبر نفاذ مع ملف صحي شامل يحتوي على كل المعلومات الطبية.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#d97706,#db2777)"></div>
+    <div class="grid-2">
+      <div class="card" style="border-inline-start:4px solid #d97706">
+        <div class="card-icon ic-gold"><i class="fas fa-id-card"></i></div>
+        <h3 class="i18n" data-ar="ربط الهوية (نفاذ)" data-en="Identity Linking (Nafath)">ربط الهوية (نفاذ)</h3>
+        <p class="i18n" data-ar="تحقق من الهوية الوطنية عبر خدمة نفاذ الموحدة — ربط آمن وموثوق للبيانات الشخصية." data-en="National ID verification via unified Nafath service — secure and trusted personal data linking.">تحقق من الهوية الوطنية عبر خدمة نفاذ الموحدة — ربط آمن وموثوق للبيانات الشخصية.</p>
+        <ul class="feature-list" style="margin:0.8rem 0 0">
+          <li><i class="fas fa-check"></i> <span class="i18n" data-ar="تسجيل بأي طريقة متاحة" data-en="Register with any available method">تسجيل بأي طريقة متاحة</span></li>
+          <li><i class="fas fa-check"></i> <span class="i18n" data-ar="إرسال للتحقق عبر نفاذ" data-en="Send for Nafath verification">إرسال للتحقق عبر نفاذ</span></li>
+          <li><i class="fas fa-check"></i> <span class="i18n" data-ar="استلام وتحديث البيانات تلقائياً" data-en="Auto receive & update data">استلام وتحديث البيانات تلقائياً</span></li>
+        </ul>
+      </div>
+      <div class="card" style="border-inline-start:4px solid #db2777">
+        <div class="card-icon ic-pink"><i class="fas fa-file-medical"></i></div>
+        <h3 class="i18n" data-ar="الملف الطبي الشامل" data-en="Comprehensive Medical File">الملف الطبي الشامل</h3>
+        <p class="i18n" data-ar="ملف صحي يحتوي على فصيلة الدم، الحساسية، الأمراض المزمنة، الأدوية الحالية، والسجل الطبي الكامل." data-en="Health file containing blood type, allergies, chronic diseases, current medications, and complete medical history.">ملف صحي يحتوي على فصيلة الدم، الحساسية، الأمراض المزمنة، الأدوية الحالية، والسجل الطبي الكامل.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.8rem">
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="فصيلة الدم" data-en="Blood Type">فصيلة الدم</span></span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="الحساسية" data-en="Allergies">الحساسية</span></span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="أمراض مزمنة" data-en="Chronic Diseases">أمراض مزمنة</span></span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="الأدوية" data-en="Medications">الأدوية</span></span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="السجل الطبي" data-en="Medical History">السجل الطبي</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTIFICATIONS & SCHEDULER -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-pink"><i class="fas fa-bell"></i> <span class="i18n" data-ar="الإشعارات والمواعيد" data-en="Notifications & Scheduling">الإشعارات والمواعيد</span></span>
+    <h2 class="section-title i18n" data-ar='نظام <span>الإشعارات</span> وجدولة المواعيد' data-en='<span>Notifications</span> & Appointment Scheduling'>نظام <span>الإشعارات</span> وجدولة المواعيد</h2>
+    <p class="section-sub i18n" data-ar="إشعارات فورية متعددة القنوات مع نظام حجز مواعيد متكامل وتذكيرات تلقائية." data-en="Multi-channel instant notifications with an integrated appointment booking system and automatic reminders.">إشعارات فورية متعددة القنوات مع نظام حجز مواعيد متكامل وتذكيرات تلقائية.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#db2777,transparent)"></div>
+    <div class="grid-2">
+      <div class="card" style="padding:1.5rem">
+        <div class="card-icon ic-pink"><i class="fas fa-bell"></i></div>
+        <h3 class="i18n" data-ar="إشعارات فورية" data-en="Instant Notifications">إشعارات فورية</h3>
+        <p class="i18n" data-ar="نظام إشعارات متعدد القنوات — داخل التطبيق، بريد إلكتروني، وإشعارات Push." data-en="Multi-channel notification system — in-app, email, and push notifications.">نظام إشعارات متعدد القنوات — داخل التطبيق، بريد إلكتروني، وإشعارات Push.</p>
+        <ul class="feature-list" style="margin:0.8rem 0 0">
+          <li><i class="fas fa-inbox"></i> <span class="i18n" data-ar="إشعارات داخل التطبيق" data-en="In-app notifications">إشعارات داخل التطبيق</span></li>
+          <li><i class="fas fa-envelope"></i> <span class="i18n" data-ar="إشعارات بريد إلكتروني" data-en="Email notifications">إشعارات بريد إلكتروني</span></li>
+          <li><i class="fas fa-mobile-alt"></i> <span class="i18n" data-ar="Push Notifications" data-en="Push Notifications">Push Notifications</span></li>
+          <li><i class="fas fa-bell-slash"></i> <span class="i18n" data-ar="تحكم بالتفضيلات" data-en="Preference controls">تحكم بالتفضيلات</span></li>
+        </ul>
+      </div>
+      <div class="card" style="padding:1.5rem">
+        <div class="card-icon ic-blue"><i class="fas fa-calendar-check"></i></div>
+        <h3 class="i18n" data-ar="جدولة المواعيد" data-en="Appointment Scheduling">جدولة المواعيد</h3>
+        <p class="i18n" data-ar="نظام حجز مواعيد ذكي مع تذكيرات تلقائية وإدارة الجدول الزمني للأخصائيين." data-en="Smart appointment booking system with automatic reminders and specialist schedule management.">نظام حجز مواعيد ذكي مع تذكيرات تلقائية وإدارة الجدول الزمني للأخصائيين.</p>
+        <ul class="feature-list" style="margin:0.8rem 0 0">
+          <li><i class="fas fa-calendar-plus"></i> <span class="i18n" data-ar="حجز موعد فوري" data-en="Instant appointment booking">حجز موعد فوري</span></li>
+          <li><i class="fas fa-clock"></i> <span class="i18n" data-ar="تذكيرات تلقائية" data-en="Automatic reminders">تذكيرات تلقائية</span></li>
+          <li><i class="fas fa-calendar-alt"></i> <span class="i18n" data-ar="جدول الأخصائي" data-en="Specialist schedule">جدول الأخصائي</span></li>
+          <li><i class="fas fa-redo"></i> <span class="i18n" data-ar="إعادة جدولة / إلغاء" data-en="Reschedule / Cancel">إعادة جدولة / إلغاء</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PWA & SEO -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-blue"><i class="fas fa-mobile-alt"></i> <span class="i18n" data-ar="التطبيق والتحسين" data-en="PWA & SEO">التطبيق والتحسين</span></span>
+    <h2 class="section-title i18n" data-ar='تطبيق ويب <span>تقدمي</span> + تحسين محركات البحث' data-en='Progressive <span>Web App</span> + SEO Optimization'>تطبيق ويب <span>تقدمي</span> + تحسين محركات البحث</h2>
+    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
+    <div class="grid-2">
+      <div class="card" style="padding:2rem">
+        <div class="card-icon ic-blue"><i class="fas fa-mobile-alt"></i></div>
+        <h3>PWA</h3>
+        <p class="i18n" data-ar="تطبيق ويب تقدمي يعمل كتطبيق أصلي — تثبيت على الجهاز، عمل بدون إنترنت، إشعارات فورية." data-en="Progressive Web App working like a native app — device install, offline mode, push notifications.">تطبيق ويب تقدمي يعمل كتطبيق أصلي — تثبيت على الجهاز، عمل بدون إنترنت، إشعارات فورية.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.8rem">
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">manifest.json</span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Service Worker</span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Offline Mode</span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Push Notifications</span>
+        </div>
+      </div>
+      <div class="card" style="padding:2rem">
+        <div class="card-icon ic-green"><i class="fas fa-search"></i></div>
+        <h3>SEO</h3>
+        <p class="i18n" data-ar="تحسين محركات البحث مع SSR وبيانات منظمة طبية — تصدر في نتائج Google." data-en="Search engine optimization with SSR and structured medical data — ranking on Google results.">تحسين محركات البحث مع SSR وبيانات منظمة طبية — تصدر في نتائج Google.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.8rem">
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">SSR Rendering</span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Meta Tags</span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Schema Medical</span>
+          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Sitemap</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO ACCOUNTS -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-purple"><i class="fas fa-users-cog"></i> <span class="i18n" data-ar="الحسابات التجريبية" data-en="Demo Accounts">الحسابات التجريبية</span></span>
+    <h2 class="section-title i18n" data-ar='جرّب <span>المنصة</span> بأي دور' data-en='Try the <span>Platform</span> with Any Role'>جرّب <span>المنصة</span> بأي دور</h2>
+    <p class="section-sub">
+      <span class="i18n" data-ar="كلمة المرور الموحدة:" data-en="Default password:">كلمة المرور الموحدة:</span>
+      <span class="password-badge" style="background:#ede9fe;color:#7c3aed">demo123</span>
+      &nbsp;|&nbsp;
+      <span class="i18n" data-ar="المدير:" data-en="Admin:">المدير:</span>
+      <span class="password-badge" style="background:#fee2e2;color:#dc2626">admin123</span>
+    </p>
+    <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
+    <div class="demo-grid">
+      <div class="demo-card" style="border-inline-start:3px solid var(--teal)">
+        <div class="demo-avatar ic-teal"><i class="fas fa-user-injured" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="مستفيد" data-en="Patient">مستفيد</strong><span>patient@mafasel.com</span></div>
+      </div>
+      <div class="demo-card" style="border-inline-start:3px solid #2563eb">
+        <div class="demo-avatar ic-blue"><i class="fas fa-user-md" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="أخصائي" data-en="Specialist">أخصائي</strong><span>doctor@mafasel.com</span></div>
+      </div>
+      <div class="demo-card" style="border-inline-start:3px solid #16a34a">
+        <div class="demo-avatar ic-green"><i class="fas fa-pills" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="صيدلي" data-en="Pharmacist">صيدلي</strong><span>pharmacist@mafasel.com</span></div>
+      </div>
+      <div class="demo-card" style="border-inline-start:3px solid #d97706">
+        <div class="demo-avatar ic-gold"><i class="fas fa-building" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="شركة" data-en="Company">شركة</strong><span>company@mafasel.com</span></div>
+      </div>
+      <div class="demo-card" style="border-inline-start:3px solid #db2777">
+        <div class="demo-avatar ic-pink"><i class="fas fa-shield-alt" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="وكيل تأمين" data-en="Insurance Agent">وكيل تأمين</strong><span>insurance@mafasel.com</span></div>
+      </div>
+      <div class="demo-card" style="border-inline-start:3px solid #7c3aed">
+        <div class="demo-avatar ic-purple"><i class="fas fa-user-tie" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="موظف" data-en="Employee">موظف</strong><span>employee@mafasel.com</span></div>
+      </div>
+      <div class="demo-card" style="border-inline-start:3px solid #2563eb">
+        <div class="demo-avatar ic-blue"><i class="fas fa-eye" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="مشرف" data-en="Moderator">مشرف</strong><span>moderator@mafasel.com</span></div>
+      </div>
+      <div class="demo-card" style="border-inline-start:3px solid #dc2626;background:linear-gradient(135deg,#fff,#fee2e2)">
+        <div class="demo-avatar ic-red"><i class="fas fa-crown" style="font-size:1.1rem"></i></div>
+        <div><strong class="i18n" data-ar="مدير النظام" data-en="System Admin">مدير النظام</strong><span>admin@mafasel.com</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1.5rem;padding:1rem 1.5rem;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;gap:0.8rem">
+      <i class="fas fa-info-circle" style="color:var(--teal);font-size:1.2rem;flex-shrink:0"></i>
+      <p style="font-size:0.85rem;line-height:1.6" class="i18n" data-ar='جميع الحسابات مفعّلة وجاهزة للاختبار. سجّل الدخول من <a href="/login" style="color:var(--teal);font-weight:700">/login</a> واستكشف كل واجهة حسب الدور.' data-en='All accounts are active and ready for testing. Log in from <a href="/login" style="color:var(--teal);font-weight:700">/login</a> and explore each interface by role.'>جميع الحسابات مفعّلة وجاهزة للاختبار. سجّل الدخول من <a href="/login" style="color:var(--teal);font-weight:700">/login</a> واستكشف كل واجهة حسب الدور.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTING & DEPLOYMENT -->
+<section>
+  <div class="container reveal">
+    <span class="section-badge b-blue"><i class="fas fa-rocket"></i> <span class="i18n" data-ar="الاختبار والنشر" data-en="Testing & Deployment">الاختبار والنشر</span></span>
+    <h2 class="section-title i18n" data-ar='الاختبار و<span>النشر</span> الاحترافي' data-en='Professional Testing & <span>Deployment</span>'>الاختبار و<span>النشر</span> الاحترافي</h2>
+    <p class="section-sub i18n" data-ar="اختبارات شاملة على كل المستويات مع بيئة نشر مستقرة ومراقبة حية 24/7." data-en="Comprehensive testing at all levels with a stable deployment environment and 24/7 live monitoring.">اختبارات شاملة على كل المستويات مع بيئة نشر مستقرة ومراقبة حية 24/7.</p>
+    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
+    <div class="grid-2">
+      <div class="card" style="padding:1.5rem">
+        <div class="card-icon ic-purple"><i class="fas fa-flask"></i></div>
+        <h3 class="i18n" data-ar="الاختبار" data-en="Testing">الاختبار</h3>
+        <ul class="feature-list" style="margin:0.5rem 0 0">
+          <li><i class="fas fa-check-circle" style="color:#7c3aed"></i> <span class="i18n" data-ar="اختبار الوحدات المنفردة" data-en="Unit Testing">اختبار الوحدات المنفردة</span></li>
+          <li><i class="fas fa-project-diagram" style="color:#2563eb"></i> <span class="i18n" data-ar="اختبار التكامل بين الأنظمة" data-en="Integration Testing">اختبار التكامل بين الأنظمة</span></li>
+          <li><i class="fas fa-tachometer-alt" style="color:#dc2626"></i> <span class="i18n" data-ar="اختبار الأداء تحت الضغط" data-en="Load & Performance Testing">اختبار الأداء تحت الضغط</span></li>
+        </ul>
+      </div>
+      <div class="card" style="padding:1.5rem">
+        <div class="card-icon ic-blue"><i class="fas fa-cloud-upload-alt"></i></div>
+        <h3 class="i18n" data-ar="النشر" data-en="Deployment">النشر</h3>
+        <ul class="feature-list" style="margin:0.5rem 0 0">
+          <li><i class="fas fa-server" style="color:var(--teal)"></i> <span class="i18n" data-ar="VM Deployment — دائم التشغيل" data-en="VM Deployment — Always On">VM Deployment — دائم التشغيل</span></li>
+          <li><i class="fas fa-heartbeat" style="color:#16a34a"></i> <span class="i18n" data-ar="Health Check مع إحصائيات" data-en="Health Check with Stats">Health Check مع إحصائيات</span></li>
+          <li><i class="fas fa-chart-bar" style="color:#ea580c"></i> <span class="i18n" data-ar="مراقبة حية 24/7" data-en="24/7 Live Monitoring">مراقبة حية 24/7</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1.2rem;padding:1rem 1.5rem;display:flex;align-items:center;gap:0.8rem;background:linear-gradient(135deg,#e6faf8,#dbeafe)">
+      <i class="fas fa-check-circle" style="color:var(--teal);font-size:1.3rem;flex-shrink:0"></i>
+      <div>
+        <strong style="font-size:0.9rem" class="i18n" data-ar="Graceful Shutdown" data-en="Graceful Shutdown">Graceful Shutdown</strong>
+        <p style="font-size:0.8rem;color:var(--muted)" class="i18n" data-ar="إيقاف آمن مع حفظ الجلسات — SIGTERM + معالجة الأخطاء غير المتوقعة" data-en="Safe shutdown with session preservation — SIGTERM + unhandled error handling">إيقاف آمن مع حفظ الجلسات — SIGTERM + معالجة الأخطاء غير المتوقعة</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+  <div class="container" style="position:relative">
+    <h2 class="i18n" data-ar="جاهز تجرّب مفاصل؟" data-en="Ready to try Mafasel?">جاهز تجرّب مفاصل؟</h2>
+    <p class="i18n" data-ar="ادخل المنصة الآن واستكشف كل الميزات بنفسك" data-en="Enter the platform now and explore all features yourself">ادخل المنصة الآن واستكشف كل الميزات بنفسك</p>
+    <a href="/login" class="cta-btn">
+      <i class="fas fa-sign-in-alt"></i>
+      <span class="i18n" data-ar="ادخل المنصة" data-en="Enter Platform">ادخل المنصة</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p class="i18n" data-ar='مفاصل &copy; 2024 — منصة طبية رقمية متكاملة | <a href="/">الرئيسية</a>' data-en='Mafasel &copy; 2024 — Integrated Digital Medical Platform | <a href="/">Home</a>'>مفاصل &copy; 2024 — منصة طبية رقمية متكاملة | <a href="/">الرئيسية</a></p>
+  </div>
+</footer>
+
 <script>
-var pages = document.querySelectorAll('.page');
-var total = pages.length;
-var current = 0;
-var prevBtn = document.getElementById('prevBtn');
-var nextBtn = document.getElementById('nextBtn');
-var counter = document.getElementById('pageCounter');
-var progress = document.getElementById('progressFill');
+var currentLang = 'ar';
 
-function updateBook() {
-  pages.forEach(function(p, i) {
-    p.classList.remove('current', 'prev', 'next', 'hidden');
-    if (i === current) p.classList.add('current');
-    else if (i < current) p.classList.add('prev');
-    else p.classList.add('next');
+function setLang(lang) {
+  currentLang = lang;
+  var root = document.getElementById('htmlRoot');
+  root.lang = lang;
+  root.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.remove('active');
   });
-  prevBtn.disabled = current === 0;
-  nextBtn.disabled = current === total - 1;
-  counter.textContent = (current + 1) + ' / ' + total;
-  progress.style.width = ((current + 1) / total * 100) + '%';
+  if (lang === 'ar') {
+    document.querySelectorAll('.lang-btn')[0].classList.add('active');
+  } else {
+    document.querySelectorAll('.lang-btn')[1].classList.add('active');
+  }
+
+  document.querySelectorAll('.i18n').forEach(function(el) {
+    var text = el.getAttribute('data-' + lang);
+    if (text) el.innerHTML = text;
+  });
+
+  var backLink = document.querySelector('.back-link span');
+  if (backLink) {
+    backLink.textContent = lang === 'ar' ? 'الرئيسية' : 'Home';
+  }
+
+  var arrow = document.querySelector('.back-link i');
+  if (arrow) {
+    arrow.className = lang === 'ar' ? 'fas fa-arrow-right' : 'fas fa-arrow-left';
+  }
+
+  document.title = lang === 'ar' ? 'مفاصل | العرض التقديمي' : 'Mafasel | Presentation';
 }
 
-function flipPage(dir) {
-  var next = current + dir;
-  if (next < 0 || next >= total) return;
-  current = next;
-  updateBook();
-}
+var reveals = document.querySelectorAll('.reveal');
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); flipPage(1); }
-  if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); flipPage(-1); }
-});
-
-var sx = 0;
-document.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', function(e) {
-  var dx = e.changedTouches[0].clientX - sx;
-  if (Math.abs(dx) > 50) { dx < 0 ? flipPage(1) : flipPage(-1); }
-}, { passive: true });
-
-updateBook();
+reveals.forEach(function(el) { observer.observe(el); });
 </script>
 </body>
 </html>
