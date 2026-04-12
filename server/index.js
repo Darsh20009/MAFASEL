@@ -80,6 +80,7 @@ const settingsRoutes = require('./modules/settings/settings.routes');
 const adminRoutes = require('./modules/admin/admin.routes');
 const supportRoutes = require('./modules/admin/support.routes');
 const meetingsRoutes = require('./modules/meetings/meetings.routes');
+const medicalProfileRoutes = require('./modules/medical/medical-profile.routes');
 
 app.use('/', authRoutes);
 app.use('/dashboard', dashboardRoutes);
@@ -94,6 +95,7 @@ app.use('/complaints', settingsRoutes);
 app.use('/admin', adminRoutes);
 app.use('/admin/support', supportRoutes);
 app.use('/meetings', meetingsRoutes);
+app.use('/medical-profile', medicalProfileRoutes);
 
 const connectedUsers = new Map();
 

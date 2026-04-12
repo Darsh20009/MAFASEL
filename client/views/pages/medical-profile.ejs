@@ -1,0 +1,463 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+
+    <div class="page-header">
+      <h1><i class="fas fa-heartbeat"></i> الملف الطبي</h1>
+      <span class="text-muted" style="font-size:0.85rem">آخر تحديث: <%= profile.lastUpdated ? new Date(profile.lastUpdated).toLocaleDateString('ar-SA') : 'لم يُحدَّث بعد' %></span>
+    </div>
+
+    <div class="med-stats-row">
+      <div class="med-stat-card blood">
+        <div class="med-stat-icon"><i class="fas fa-tint"></i></div>
+        <div class="med-stat-body">
+          <span class="med-stat-value"><%= profile.bloodType || '—' %></span>
+          <span class="med-stat-label">فصيلة الدم</span>
+        </div>
+      </div>
+      <div class="med-stat-card allergy">
+        <div class="med-stat-icon"><i class="fas fa-allergies"></i></div>
+        <div class="med-stat-body">
+          <span class="med-stat-value"><%= profile.allergies.length %></span>
+          <span class="med-stat-label">حساسيات</span>
+        </div>
+      </div>
+      <div class="med-stat-card disease">
+        <div class="med-stat-icon"><i class="fas fa-virus"></i></div>
+        <div class="med-stat-body">
+          <span class="med-stat-value"><%= profile.chronicDiseases.length %></span>
+          <span class="med-stat-label">أمراض مزمنة</span>
+        </div>
+      </div>
+      <div class="med-stat-card medication">
+        <div class="med-stat-icon"><i class="fas fa-pills"></i></div>
+        <div class="med-stat-body">
+          <span class="med-stat-value"><%= profile.medications.filter(m=>m.isActive).length %></span>
+          <span class="med-stat-label">أدوية نشطة</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="med-tabs">
+      <button class="med-tab active" data-tab="overview"><i class="fas fa-user-circle"></i> البيانات الأساسية</button>
+      <button class="med-tab" data-tab="allergies"><i class="fas fa-allergies"></i> الحساسيات <% if(profile.allergies.length){ %><span class="tab-badge"><%= profile.allergies.length %></span><% } %></button>
+      <button class="med-tab" data-tab="diseases"><i class="fas fa-virus"></i> الأمراض المزمنة <% if(profile.chronicDiseases.length){ %><span class="tab-badge"><%= profile.chronicDiseases.length %></span><% } %></button>
+      <button class="med-tab" data-tab="medications"><i class="fas fa-pills"></i> الأدوية <% if(profile.medications.length){ %><span class="tab-badge"><%= profile.medications.length %></span><% } %></button>
+      <button class="med-tab" data-tab="history"><i class="fas fa-history"></i> السجل الطبي <% if(profile.history.length){ %><span class="tab-badge"><%= profile.history.length %></span><% } %></button>
+      <button class="med-tab" data-tab="logs"><i class="fas fa-clipboard-list"></i> سجل النشاط</button>
+    </div>
+
+    <div class="med-tab-panels">
+
+      <div class="med-panel active" id="panel-overview">
+        <div class="med-section-card">
+          <h3><i class="fas fa-info-circle"></i> البيانات الصحية الأساسية</h3>
+          <form id="overviewForm">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>فصيلة الدم</label>
+                <select name="bloodType" class="form-control">
+                  <option value="">— غير محدد —</option>
+                  <% ['A+','A-','B+','B-','AB+','AB-','O+','O-'].forEach(bt => { %>
+                  <option value="<%= bt %>" <%= profile.bloodType === bt ? 'selected' : '' %>><%= bt %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>التدخين</label>
+                <select name="smokingStatus" class="form-control">
+                  <option value="">— غير محدد —</option>
+                  <option value="never" <%= profile.smokingStatus === 'never' ? 'selected' : '' %>>لا يدخن</option>
+                  <option value="former" <%= profile.smokingStatus === 'former' ? 'selected' : '' %>>مدخن سابق</option>
+                  <option value="current" <%= profile.smokingStatus === 'current' ? 'selected' : '' %>>يدخن</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>الطول (سم)</label>
+                <input type="number" name="height" class="form-control" placeholder="170" value="<%= profile.height || '' %>" min="50" max="250">
+              </div>
+              <div class="form-group">
+                <label>الوزن (كغ)</label>
+                <input type="number" name="weight" class="form-control" placeholder="70" value="<%= profile.weight || '' %>" min="10" max="500">
+              </div>
+            </div>
+            <% const bmi = profile.height && profile.weight ? (profile.weight / ((profile.height/100) * (profile.height/100))).toFixed(1) : null; %>
+            <% if (bmi) { %>
+            <div class="bmi-display">
+              <span class="bmi-label">مؤشر كتلة الجسم (BMI):</span>
+              <span class="bmi-value <%= bmi < 18.5 ? 'bmi-low' : bmi < 25 ? 'bmi-normal' : bmi < 30 ? 'bmi-over' : 'bmi-obese' %>"><%= bmi %></span>
+              <span class="bmi-desc"><%= bmi < 18.5 ? 'نقص وزن' : bmi < 25 ? 'وزن طبيعي' : bmi < 30 ? 'زيادة وزن' : 'سمنة' %></span>
+            </div>
+            <% } %>
+
+            <h3 style="margin-top:1.5rem"><i class="fas fa-phone-alt"></i> جهة الاتصال في حالات الطوارئ</h3>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>الاسم</label>
+                <input type="text" name="emergencyName" class="form-control" placeholder="اسم شخص الطوارئ" value="<%= profile.emergencyContact?.name || '' %>">
+              </div>
+              <div class="form-group">
+                <label>رقم الجوال</label>
+                <input type="text" name="emergencyPhone" class="form-control" placeholder="05xxxxxxxx" value="<%= profile.emergencyContact?.phone || '' %>">
+              </div>
+              <div class="form-group">
+                <label>صلة القرابة</label>
+                <input type="text" name="emergencyRelation" class="form-control" placeholder="والد / زوج / أخ..." value="<%= profile.emergencyContact?.relation || '' %>">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ التغييرات</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="med-panel" id="panel-allergies">
+        <div class="med-section-card">
+          <div class="med-section-header">
+            <h3><i class="fas fa-allergies"></i> الحساسيات</h3>
+            <button class="btn btn-primary btn-sm" onclick="openModal('allergyModal')"><i class="fas fa-plus"></i> إضافة</button>
+          </div>
+          <div id="allergiesList">
+            <% if (profile.allergies.length === 0) { %>
+            <div class="empty-state"><i class="fas fa-allergies"></i><p>لا توجد حساسيات مسجلة</p></div>
+            <% } else { %>
+            <% profile.allergies.forEach(a => { %>
+            <div class="med-list-item" data-id="<%= a._id %>">
+              <div class="med-item-info">
+                <span class="med-item-name"><i class="fas fa-exclamation-triangle"></i> <%= a.name %></span>
+                <span class="med-item-badge sev-<%= a.severity %>"><%= a.severity === 'mild' ? 'خفيف' : a.severity === 'moderate' ? 'متوسط' : 'شديد' %></span>
+                <% if(a.notes) { %><span class="med-item-notes"><%= a.notes %></span><% } %>
+              </div>
+              <button class="btn-icon-danger" onclick="deleteItem('allergies','<%= a._id %>',this)"><i class="fas fa-trash"></i></button>
+            </div>
+            <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="med-panel" id="panel-diseases">
+        <div class="med-section-card">
+          <div class="med-section-header">
+            <h3><i class="fas fa-virus"></i> الأمراض المزمنة</h3>
+            <button class="btn btn-primary btn-sm" onclick="openModal('diseaseModal')"><i class="fas fa-plus"></i> إضافة</button>
+          </div>
+          <div id="diseasesList">
+            <% if (profile.chronicDiseases.length === 0) { %>
+            <div class="empty-state"><i class="fas fa-virus"></i><p>لا توجد أمراض مزمنة مسجلة</p></div>
+            <% } else { %>
+            <% profile.chronicDiseases.forEach(d => { %>
+            <div class="med-list-item" data-id="<%= d._id %>">
+              <div class="med-item-info">
+                <span class="med-item-name"><i class="fas fa-disease"></i> <%= d.name %></span>
+                <span class="med-item-badge status-<%= d.status %>"><%= d.status === 'active' ? 'نشط' : d.status === 'controlled' ? 'تحت السيطرة' : 'شُفي' %></span>
+                <% if(d.diagnosedAt) { %><span class="med-item-notes">تشخيص: <%= new Date(d.diagnosedAt).toLocaleDateString('ar-SA') %></span><% } %>
+                <% if(d.notes) { %><span class="med-item-notes"><%= d.notes %></span><% } %>
+              </div>
+              <button class="btn-icon-danger" onclick="deleteItem('diseases','<%= d._id %>',this)"><i class="fas fa-trash"></i></button>
+            </div>
+            <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="med-panel" id="panel-medications">
+        <div class="med-section-card">
+          <div class="med-section-header">
+            <h3><i class="fas fa-pills"></i> الأدوية</h3>
+            <button class="btn btn-primary btn-sm" onclick="openModal('medModal')"><i class="fas fa-plus"></i> إضافة</button>
+          </div>
+          <div id="medicationsList">
+            <% if (profile.medications.length === 0) { %>
+            <div class="empty-state"><i class="fas fa-pills"></i><p>لا توجد أدوية مسجلة</p></div>
+            <% } else { %>
+            <% profile.medications.forEach(m => { %>
+            <div class="med-list-item" data-id="<%= m._id %>">
+              <div class="med-item-info">
+                <span class="med-item-name"><i class="fas fa-capsules"></i> <%= m.name %></span>
+                <span class="med-item-badge <%= m.isActive ? 'status-active' : 'status-resolved' %>"><%= m.isActive ? 'نشط' : 'موقوف' %></span>
+                <% if(m.dosage) { %><span class="med-item-notes">الجرعة: <%= m.dosage %></span><% } %>
+                <% if(m.frequency) { %><span class="med-item-notes">التكرار: <%= m.frequency %></span><% } %>
+              </div>
+              <div class="med-item-actions">
+                <button class="btn-icon-muted" title="تبديل الحالة" onclick="toggleMed('<%= m._id %>',this)"><i class="fas fa-toggle-<%= m.isActive ? 'on' : 'off' %>"></i></button>
+                <button class="btn-icon-danger" onclick="deleteItem('medications','<%= m._id %>',this)"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+            <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="med-panel" id="panel-history">
+        <div class="med-section-card">
+          <div class="med-section-header">
+            <h3><i class="fas fa-history"></i> السجل الطبي</h3>
+            <button class="btn btn-primary btn-sm" onclick="openModal('historyModal')"><i class="fas fa-plus"></i> إضافة</button>
+          </div>
+          <div id="historyList">
+            <% if (profile.history.length === 0) { %>
+            <div class="empty-state"><i class="fas fa-history"></i><p>لا يوجد سجل طبي</p></div>
+            <% } else { %>
+            <% const typeMap = {surgery:'عملية جراحية',hospitalization:'تنويم',injury:'إصابة',other:'أخرى'}; %>
+            <% const typeIcon = {surgery:'fa-scalpel',hospitalization:'fa-hospital',injury:'fa-band-aid',other:'fa-file-medical'}; %>
+            <% profile.history.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).forEach(h => { %>
+            <div class="med-list-item" data-id="<%= h._id %>">
+              <div class="med-item-icon-wrap history-icon"><i class="fas <%= typeIcon[h.type] || 'fa-file-medical' %>"></i></div>
+              <div class="med-item-info">
+                <span class="med-item-name"><%= h.title %></span>
+                <span class="med-item-badge type-badge"><%= typeMap[h.type] || 'أخرى' %></span>
+                <% if(h.date) { %><span class="med-item-notes"><i class="fas fa-calendar-alt"></i> <%= new Date(h.date).toLocaleDateString('ar-SA') %></span><% } %>
+                <% if(h.facility) { %><span class="med-item-notes"><i class="fas fa-hospital"></i> <%= h.facility %></span><% } %>
+                <% if(h.notes) { %><span class="med-item-notes"><%= h.notes %></span><% } %>
+              </div>
+              <button class="btn-icon-danger" onclick="deleteItem('history','<%= h._id %>',this)"><i class="fas fa-trash"></i></button>
+            </div>
+            <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="med-panel" id="panel-logs">
+        <div class="med-section-card">
+          <h3><i class="fas fa-clipboard-list"></i> سجل النشاط الطبي</h3>
+          <div id="logsList">
+            <% if (logs.length === 0) { %>
+            <div class="empty-state"><i class="fas fa-clipboard-list"></i><p>لا يوجد سجل نشاط بعد</p></div>
+            <% } else { %>
+            <% const logTypeMap = {consultation:'استشارة',ai:'مساعد ذكاء',doctor:'طبيب',profile_update:'تحديث ملف',lab:'تحاليل',prescription:'وصفة'}; %>
+            <% const logTypeColor = {consultation:'primary',ai:'info',doctor:'success',profile_update:'muted',lab:'warning',prescription:'error'}; %>
+            <% logs.forEach(l => { %>
+            <div class="log-entry">
+              <div class="log-dot badge-<%= logTypeColor[l.type] || 'muted' %>"></div>
+              <div class="log-content">
+                <span class="log-type"><%= logTypeMap[l.type] || l.type %></span>
+                <% if(l.title) { %><span class="log-title"><%= l.title %></span><% } %>
+                <span class="log-date"><%= new Date(l.createdAt).toLocaleString('ar-SA') %></span>
+              </div>
+            </div>
+            <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="allergyModal" style="display:none" onclick="if(event.target===this)closeModal('allergyModal')">
+  <div class="modal-box">
+    <div class="modal-header"><h3><i class="fas fa-allergies"></i> إضافة حساسية</h3><button class="modal-close" onclick="closeModal('allergyModal')"><i class="fas fa-times"></i></button></div>
+    <form onsubmit="addItem('allergies',event)">
+      <div class="form-group"><label>اسم الحساسية *</label><input type="text" name="name" class="form-control" placeholder="مثال: البنسلين، الفول السوداني..." required></div>
+      <div class="form-group"><label>الشدة</label>
+        <select name="severity" class="form-control">
+          <option value="mild">خفيف</option><option value="moderate" selected>متوسط</option><option value="severe">شديد</option>
+        </select>
+      </div>
+      <div class="form-group"><label>ملاحظات</label><input type="text" name="notes" class="form-control" placeholder="أعراض أو ملاحظات..."></div>
+      <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-plus"></i> إضافة</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="diseaseModal" style="display:none" onclick="if(event.target===this)closeModal('diseaseModal')">
+  <div class="modal-box">
+    <div class="modal-header"><h3><i class="fas fa-virus"></i> إضافة مرض مزمن</h3><button class="modal-close" onclick="closeModal('diseaseModal')"><i class="fas fa-times"></i></button></div>
+    <form onsubmit="addItem('diseases',event)">
+      <div class="form-group"><label>اسم المرض *</label><input type="text" name="name" class="form-control" placeholder="مثال: السكري، ضغط الدم..." required></div>
+      <div class="form-group"><label>تاريخ التشخيص</label><input type="date" name="diagnosedAt" class="form-control"></div>
+      <div class="form-group"><label>الحالة</label>
+        <select name="status" class="form-control">
+          <option value="active">نشط</option><option value="controlled">تحت السيطرة</option><option value="resolved">شُفي</option>
+        </select>
+      </div>
+      <div class="form-group"><label>ملاحظات</label><input type="text" name="notes" class="form-control" placeholder="ملاحظات إضافية..."></div>
+      <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-plus"></i> إضافة</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="medModal" style="display:none" onclick="if(event.target===this)closeModal('medModal')">
+  <div class="modal-box">
+    <div class="modal-header"><h3><i class="fas fa-pills"></i> إضافة دواء</h3><button class="modal-close" onclick="closeModal('medModal')"><i class="fas fa-times"></i></button></div>
+    <form onsubmit="addItem('medications',event)">
+      <div class="form-group"><label>اسم الدواء *</label><input type="text" name="name" class="form-control" placeholder="مثال: ميتفورمين 500mg..." required></div>
+      <div class="form-group"><label>الجرعة</label><input type="text" name="dosage" class="form-control" placeholder="مثال: 500mg"></div>
+      <div class="form-group"><label>التكرار</label><input type="text" name="frequency" class="form-control" placeholder="مثال: مرة يومياً بعد الغداء"></div>
+      <div class="form-grid-2">
+        <div class="form-group"><label>تاريخ البدء</label><input type="date" name="startDate" class="form-control"></div>
+        <div class="form-group"><label>تاريخ الانتهاء</label><input type="date" name="endDate" class="form-control"></div>
+      </div>
+      <div class="form-group"><label>ملاحظات</label><input type="text" name="notes" class="form-control" placeholder="ملاحظات..."></div>
+      <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-plus"></i> إضافة</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="historyModal" style="display:none" onclick="if(event.target===this)closeModal('historyModal')">
+  <div class="modal-box">
+    <div class="modal-header"><h3><i class="fas fa-history"></i> إضافة سجل طبي</h3><button class="modal-close" onclick="closeModal('historyModal')"><i class="fas fa-times"></i></button></div>
+    <form onsubmit="addItem('history',event)">
+      <div class="form-group"><label>النوع</label>
+        <select name="type" class="form-control">
+          <option value="surgery">عملية جراحية</option><option value="hospitalization">تنويم في مستشفى</option><option value="injury">إصابة</option><option value="other" selected>أخرى</option>
+        </select>
+      </div>
+      <div class="form-group"><label>العنوان *</label><input type="text" name="title" class="form-control" placeholder="مثال: استئصال الزائدة..." required></div>
+      <div class="form-group"><label>التاريخ</label><input type="date" name="date" class="form-control"></div>
+      <div class="form-group"><label>المستشفى / المنشأة</label><input type="text" name="facility" class="form-control" placeholder="اسم المستشفى..."></div>
+      <div class="form-group"><label>ملاحظات</label><input type="text" name="notes" class="form-control" placeholder="ملاحظات..."></div>
+      <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-plus"></i> إضافة</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.med-stats-row { display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.med-stat-card { display:flex; align-items:center; gap:1rem; background:var(--card-bg); border-radius:12px; padding:1rem 1.25rem; flex:1; min-width:140px; border:1px solid var(--border); }
+.med-stat-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+.med-stat-card.blood .med-stat-icon { background:#fee2e2; color:#dc2626; }
+.med-stat-card.allergy .med-stat-icon { background:#fef3c7; color:#d97706; }
+.med-stat-card.disease .med-stat-icon { background:#ede9fe; color:#7c3aed; }
+.med-stat-card.medication .med-stat-icon { background:#d1fae5; color:#059669; }
+.med-stat-value { font-size:1.6rem; font-weight:800; color:var(--text); display:block; }
+.med-stat-label { font-size:0.78rem; color:var(--text-muted); }
+.med-tabs { display:flex; gap:0.4rem; margin-bottom:1rem; overflow-x:auto; padding-bottom:2px; flex-wrap:nowrap; }
+.med-tab { padding:0.55rem 1rem; border:1px solid var(--border); background:var(--card-bg); color:var(--text-muted); border-radius:8px; cursor:pointer; white-space:nowrap; font-family:inherit; font-size:0.88rem; display:flex; align-items:center; gap:0.4rem; }
+.med-tab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+.tab-badge { background:rgba(255,255,255,0.3); border-radius:10px; padding:1px 6px; font-size:0.75rem; }
+.med-tab:not(.active) .tab-badge { background:var(--primary); color:#fff; }
+.med-panel { display:none; }
+.med-panel.active { display:block; }
+.med-section-card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:1.5rem; }
+.med-section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem; }
+.med-section-header h3 { margin:0; }
+.med-list-item { display:flex; align-items:center; justify-content:space-between; padding:0.85rem 1rem; border:1px solid var(--border); border-radius:10px; margin-bottom:0.6rem; background:var(--bg); gap:1rem; }
+.med-item-info { display:flex; align-items:center; flex-wrap:wrap; gap:0.5rem; flex:1; }
+.med-item-name { font-weight:600; color:var(--text); }
+.med-item-badge { padding:2px 10px; border-radius:20px; font-size:0.76rem; font-weight:600; }
+.med-item-notes { font-size:0.8rem; color:var(--text-muted); }
+.med-item-actions { display:flex; gap:0.4rem; }
+.med-item-icon-wrap { width:38px; height:38px; border-radius:8px; background:var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); flex-shrink:0; }
+.btn-icon-danger { background:none; border:none; color:#ef4444; cursor:pointer; padding:6px; border-radius:6px; font-size:0.9rem; }
+.btn-icon-danger:hover { background:#fee2e2; }
+.btn-icon-muted { background:none; border:none; color:var(--text-muted); cursor:pointer; padding:6px; border-radius:6px; font-size:0.9rem; }
+.btn-icon-muted:hover { background:var(--border); }
+.sev-mild { background:#d1fae5; color:#059669; }
+.sev-moderate { background:#fef3c7; color:#d97706; }
+.sev-severe { background:#fee2e2; color:#dc2626; }
+.status-active { background:#fee2e2; color:#dc2626; }
+.status-controlled { background:#fef3c7; color:#d97706; }
+.status-resolved { background:#d1fae5; color:#059669; }
+.type-badge { background:#ede9fe; color:#7c3aed; }
+.bmi-display { display:flex; align-items:center; gap:0.75rem; background:var(--bg); border-radius:8px; padding:0.75rem 1rem; margin:0.5rem 0 1rem; }
+.bmi-label { color:var(--text-muted); font-size:0.9rem; }
+.bmi-value { font-size:1.4rem; font-weight:800; }
+.bmi-normal { color:#059669; }
+.bmi-low { color:#3b82f6; }
+.bmi-over { color:#d97706; }
+.bmi-obese { color:#dc2626; }
+.bmi-desc { font-size:0.85rem; color:var(--text-muted); }
+.form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.form-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; }
+@media(max-width:640px) { .form-grid-2,.form-grid-3 { grid-template-columns:1fr; } .med-stats-row { gap:0.6rem; } }
+.log-entry { display:flex; align-items:flex-start; gap:0.85rem; padding:0.7rem 0; border-bottom:1px solid var(--border); }
+.log-dot { width:10px; height:10px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+.log-content { display:flex; flex-direction:column; gap:2px; }
+.log-type { font-size:0.75rem; font-weight:600; color:var(--primary); }
+.log-title { font-size:0.9rem; color:var(--text); }
+.log-date { font-size:0.75rem; color:var(--text-muted); }
+.empty-state { text-align:center; padding:2rem; color:var(--text-muted); }
+.empty-state i { font-size:2.5rem; margin-bottom:0.5rem; display:block; }
+.btn-full { width:100%; }
+</style>
+
+<script>
+document.querySelectorAll('.med-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.med-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.med-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('panel-' + this.dataset.tab).classList.add('active');
+  });
+});
+
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+document.getElementById('overviewForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('[type=submit]');
+  btn.disabled = true;
+  const data = Object.fromEntries(new FormData(this));
+  try {
+    const res = await fetch('/medical-profile/update', {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (json.success) { showToast(json.message, 'success'); setTimeout(() => location.reload(), 800); }
+    else showToast(json.message, 'error');
+  } catch(e) { showToast('حدث خطأ', 'error'); }
+  btn.disabled = false;
+});
+
+async function addItem(section, e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('[type=submit]');
+  btn.disabled = true;
+  const data = Object.fromEntries(new FormData(form));
+  const endpointMap = { allergies: 'allergies/add', diseases: 'diseases/add', medications: 'medications/add', history: 'history/add' };
+  const listMap = { allergies: 'allergiesList', diseases: 'diseasesList', medications: 'medicationsList', history: 'historyList' };
+  const modalMap = { allergies: 'allergyModal', diseases: 'diseaseModal', medications: 'medModal', history: 'historyModal' };
+  try {
+    const res = await fetch('/medical-profile/' + endpointMap[section], {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (json.success) {
+      closeModal(modalMap[section]);
+      showToast('تمت الإضافة بنجاح', 'success');
+      setTimeout(() => location.reload(), 600);
+    } else { showToast(json.message, 'error'); }
+  } catch(e) { showToast('حدث خطأ', 'error'); }
+  btn.disabled = false;
+}
+
+async function deleteItem(section, id, btn) {
+  if (!confirm('هل تريد حذف هذا العنصر؟')) return;
+  try {
+    const res = await fetch('/medical-profile/' + section + '/' + id, { method: 'DELETE' });
+    const json = await res.json();
+    if (json.success) { btn.closest('.med-list-item').remove(); showToast('تم الحذف', 'success'); }
+    else showToast(json.message, 'error');
+  } catch(e) { showToast('حدث خطأ', 'error'); }
+}
+
+async function toggleMed(id, btn) {
+  try {
+    const res = await fetch('/medical-profile/medications/' + id, { method: 'PATCH' });
+    const json = await res.json();
+    if (json.success) {
+      const icon = btn.querySelector('i');
+      icon.className = 'fas fa-toggle-' + (json.isActive ? 'on' : 'off');
+      const badge = btn.closest('.med-list-item').querySelector('.med-item-badge');
+      if (badge) { badge.textContent = json.isActive ? 'نشط' : 'موقوف'; badge.className = 'med-item-badge ' + (json.isActive ? 'status-active' : 'status-resolved'); }
+      showToast(json.isActive ? 'تم تفعيل الدواء' : 'تم إيقاف الدواء', 'success');
+    }
+  } catch(e) {}
+}
+
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + (type === 'success' ? 'success' : 'error');
+  t.innerHTML = '<i class="fas fa-' + (type==='success'?'check-circle':'exclamation-circle') + '"></i><span>' + msg + '</span>';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+</script>
+<%- include('../partials/footer') %>
