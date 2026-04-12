@@ -12,21 +12,9 @@
           <% } else { %>
           <img src="<%= b.filePath %>" alt="<%= b.title || 'مفاصل' %>" class="banner-media">
           <% } %>
-          <% if (b.title) { %>
-          <div class="banner-overlay">
-            <h3><%= b.title %></h3>
-          </div>
-          <% } %>
         </div>
         <% }) %>
       </div>
-      <% if (banners.length > 1) { %>
-      <div class="banner-dots">
-        <% banners.forEach((b, i) => { %>
-        <span class="banner-dot <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)"></span>
-        <% }) %>
-      </div>
-      <% } %>
       <div class="banner-gradient-bottom"></div>
     </div>
     <% } else { %>
@@ -275,7 +263,6 @@
 <script>
 var currentSlide = 0;
 var slides = document.querySelectorAll('.banner-slide');
-var dots = document.querySelectorAll('.banner-dot');
 var bannerInterval;
 
 if (slides.length > 0) {
@@ -283,7 +270,7 @@ if (slides.length > 0) {
     if (s.dataset.link) {
       s.style.cursor = 'pointer';
       s.addEventListener('click', function(e) {
-        if (!e.target.closest('.banner-arrow') && !e.target.closest('.banner-dot')) {
+        if (!e.target.closest('.banner-arrow')) {
           var link = s.dataset.link;
           if (link.startsWith('/') || link.startsWith('http')) {
             window.location.href = link;
@@ -302,9 +289,6 @@ function showSlide(index) {
       if (i === index) { video.play().catch(function(){}); }
       else { video.pause(); video.currentTime = 0; }
     }
-  });
-  dots.forEach(function(d, i) {
-    d.classList.toggle('active', i === index);
   });
   currentSlide = index;
 }
