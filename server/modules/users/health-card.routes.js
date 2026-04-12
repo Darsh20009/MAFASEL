@@ -3,6 +3,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../../middleware/auth');
 const User = require('./user.model');
 const QRCode = require('qrcode');
+const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 
@@ -10,30 +11,190 @@ const ROOT_DIR = path.resolve(__dirname, '..', '..', '..');
 const CERTS_DIR = path.join(ROOT_DIR, 'apple-wallet-certs');
 const PASS_TEMPLATE_DIR = path.join(CERTS_DIR, 'pass-template', 'mafasel.pass');
 
+const HC_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+const TOKEN_EXPIRY = '24h';
+
+function generateCardToken(userId) {
+  return jwt.sign(
+    { sub: userId.toString(), purpose: 'health_card_scan' },
+    HC_SECRET,
+    { expiresIn: TOKEN_EXPIRY }
+  );
+}
+
+function verifyCardToken(token) {
+  try {
+    const decoded = jwt.verify(token, HC_SECRET);
+    if (decoded.purpose !== 'health_card_scan') return null;
+    return decoded.sub;
+  } catch(e) {
+    return null;
+  }
+}
+
+let MedicalProfile;
+try {
+  MedicalProfile = require('../medical/medical-profile.model');
+} catch(e) {
+  MedicalProfile = null;
+}
+
 router.get('/', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.session.user._id);
     if (!user) return res.redirect('/login');
 
-    const qrData = JSON.stringify({
-      type: 'mafasel_health_card',
-      ref: user._id.toString(),
-      v: 1
-    });
-    const qrImage = await QRCode.toDataURL(qrData, {
-      width: 280,
+    let medProfile = null;
+    if (MedicalProfile) {
+      medProfile = await MedicalProfile.findOne({ userId: user._id });
+    }
+
+    const token = generateCardToken(user._id);
+    const scanUrl = `${req.protocol}://${req.get('host')}/health-card/scan/${user._id}?t=${token}`;
+
+    const qrImage = await QRCode.toDataURL(scanUrl, {
+      width: 300,
       margin: 1,
-      color: { dark: '#101d23', light: '#ffffff' }
+      color: { dark: '#101d23', light: '#ffffff' },
+      errorCorrectionLevel: 'H'
     });
+
+    const memberId = 'MFS-' + user._id.toString().slice(-8).toUpperCase();
 
     res.render('pages/health-card', {
       title: 'البطاقة الصحية',
       user,
-      qrImage
+      qrImage,
+      memberId,
+      medProfile,
+      scanUrl
     });
   } catch (err) {
     console.error('Health card error:', err);
     res.redirect('/profile');
+  }
+});
+
+router.get('/scan/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { t: token } = req.query;
+
+    if (!token) {
+      return res.render('pages/health-card-scan', {
+        title: 'بطاقة غير صالحة',
+        valid: false,
+        error: 'رمز التحقق مطلوب',
+        user: req.session?.user || null,
+        patient: null,
+        medProfile: null,
+        memberId: null
+      });
+    }
+
+    const verifiedUserId = verifyCardToken(token);
+    if (!verifiedUserId || verifiedUserId !== userId) {
+      return res.render('pages/health-card-scan', {
+        title: 'بطاقة غير صالحة',
+        valid: false,
+        error: 'رمز التحقق غير صالح أو منتهي الصلاحية. يرجى طلب بطاقة جديدة من المستفيد.',
+        user: req.session?.user || null,
+        patient: null,
+        medProfile: null,
+        memberId: null
+      });
+    }
+
+    const patient = await User.findById(userId).select('name phone nationalId gender dateOfBirth avatar medicalProfile address');
+    if (!patient) {
+      return res.render('pages/health-card-scan', {
+        title: 'مستفيد غير موجود',
+        valid: false,
+        error: 'لم يتم العثور على بيانات المستفيد',
+        user: req.session?.user || null,
+        patient: null,
+        medProfile: null,
+        memberId: null
+      });
+    }
+
+    let medProfile = null;
+    if (MedicalProfile) {
+      medProfile = await MedicalProfile.findOne({ userId: patient._id });
+    }
+
+    const memberId = 'MFS-' + patient._id.toString().slice(-8).toUpperCase();
+
+    res.render('pages/health-card-scan', {
+      title: 'البطاقة الصحية — ' + patient.name,
+      valid: true,
+      error: null,
+      user: req.session?.user || null,
+      patient,
+      medProfile,
+      memberId
+    });
+  } catch (err) {
+    console.error('Health card scan error:', err);
+    res.render('pages/health-card-scan', {
+      title: 'خطأ',
+      valid: false,
+      error: 'حدث خطأ أثناء قراءة البطاقة',
+      user: req.session?.user || null,
+      patient: null,
+      medProfile: null,
+      memberId: null
+    });
+  }
+});
+
+router.get('/api/scan/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { t: token } = req.query;
+
+    const verifiedUserId = verifyCardToken(token);
+    if (!verifiedUserId || verifiedUserId !== userId) {
+      return res.status(401).json({ valid: false, error: 'Invalid or expired token' });
+    }
+
+    const patient = await User.findById(userId).select('name phone nationalId gender dateOfBirth avatar medicalProfile address');
+    if (!patient) {
+      return res.status(404).json({ valid: false, error: 'Patient not found' });
+    }
+
+    let medProfile = null;
+    if (MedicalProfile) {
+      medProfile = await MedicalProfile.findOne({ userId: patient._id });
+    }
+
+    const memberId = 'MFS-' + patient._id.toString().slice(-8).toUpperCase();
+
+    res.json({
+      valid: true,
+      memberId,
+      patient: {
+        name: patient.name,
+        phone: patient.phone,
+        nationalId: patient.nationalId ? patient.nationalId.slice(0,3) + '****' + patient.nationalId.slice(-3) : null,
+        gender: patient.gender,
+        dateOfBirth: patient.dateOfBirth,
+        address: patient.address,
+        bloodType: patient.medicalProfile?.bloodType || (medProfile?.bloodType) || null,
+        height: medProfile?.height || patient.medicalProfile?.height || null,
+        weight: medProfile?.weight || patient.medicalProfile?.weight || null
+      },
+      medicalSummary: {
+        allergies: medProfile?.allergies?.map(a => ({ name: a.name, severity: a.severity })) || (patient.medicalProfile?.allergies || []).map(a => typeof a === 'string' ? { name: a } : a),
+        chronicDiseases: medProfile?.chronicDiseases?.map(d => ({ name: d.name, status: d.status })) || (patient.medicalProfile?.chronicDiseases || []).map(d => typeof d === 'string' ? { name: d } : d),
+        medications: medProfile?.medications?.filter(m => m.isActive !== false).map(m => ({ name: m.name, dosage: m.dosage, frequency: m.frequency })) || (patient.medicalProfile?.medications || []).map(m => typeof m === 'string' ? { name: m } : m),
+        emergencyContact: medProfile?.emergencyContact || patient.medicalProfile?.emergencyContact || null,
+        smokingStatus: medProfile?.smokingStatus || null
+      }
+    });
+  } catch (err) {
+    console.error('Health card API scan error:', err);
+    res.status(500).json({ valid: false, error: 'Server error' });
   }
 });
 
@@ -71,6 +232,9 @@ router.get('/wallet-pass', isAuthenticated, async (req, res) => {
     const emergency = user.medicalProfile?.emergencyContact?.name
       ? `${user.medicalProfile.emergencyContact.name} (${user.medicalProfile.emergencyContact.relation || ''}) ${user.medicalProfile.emergencyContact.phone || ''}`
       : 'غير محدد';
+
+    const token = generateCardToken(user._id);
+    const scanUrl = `${req.protocol}://${req.get('host')}/health-card/scan/${user._id}?t=${token}`;
 
     const pass = new PKPass(templateFiles, {
       signerCert,
@@ -130,7 +294,7 @@ router.get('/wallet-pass', isAuthenticated, async (req, res) => {
 
     pass.setBarcodes({
       format: 'PKBarcodeFormatQR',
-      message: JSON.stringify({ type: 'mafasel_health_card', ref: user._id.toString(), v: 1 }),
+      message: scanUrl,
       messageEncoding: 'iso-8859-1'
     });
 

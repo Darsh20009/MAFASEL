@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | مفاصل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" href="/icons/logo.png">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Tajawal',sans-serif;background:linear-gradient(160deg,#e6faf8 0%,#f0f4f8 40%,#dbeafe 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+    .scan-container{width:100%;max-width:520px}
+    .scan-header{text-align:center;margin-bottom:1.5rem}
+    .scan-logo{display:flex;align-items:center;justify-content:center;gap:0.6rem;margin-bottom:0.8rem}
+    .scan-logo img{width:48px;height:48px}
+    .scan-logo span{font-size:1.5rem;font-weight:900;color:#101d23}
+    .scan-badge{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.75rem;font-weight:700;padding:0.3rem 1rem;border-radius:50px}
+    .badge-valid{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
+    .badge-invalid{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
+
+    .error-card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.08);padding:2.5rem;text-align:center}
+    .error-icon{width:80px;height:80px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:#dc2626}
+    .error-title{font-size:1.3rem;font-weight:800;color:#101d23;margin-bottom:0.5rem}
+    .error-desc{font-size:0.9rem;color:#6b7280;line-height:1.7}
+
+    .patient-card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.08);overflow:hidden}
+    .pc-top{background:linear-gradient(145deg,#101d23,#1a2e38);padding:1.5rem;position:relative;overflow:hidden}
+    .pc-top::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:radial-gradient(circle,rgba(18,169,155,0.2),transparent 70%);border-radius:50%}
+    .pc-top::after{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(37,99,235,0.12),transparent 70%);border-radius:50%}
+    .pc-identity{display:flex;align-items:center;gap:1rem;position:relative;z-index:1}
+    .pc-avatar{width:72px;height:72px;border-radius:50%;border:3px solid #12a99b;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#1a2e38;flex-shrink:0}
+    .pc-avatar img{width:100%;height:100%;object-fit:cover}
+    .pc-avatar i{font-size:2rem;color:#12a99b}
+    .pc-name{font-size:1.4rem;font-weight:800;color:#fff}
+    .pc-member{font-size:0.72rem;color:rgba(255,255,255,0.5);font-family:monospace;letter-spacing:1.5px;margin-top:0.2rem}
+    .pc-verified{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.68rem;background:rgba(18,169,155,0.2);color:#12a99b;padding:0.2rem 0.6rem;border-radius:20px;margin-top:0.4rem;font-weight:600}
+
+    .pc-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid #f0f4f8}
+    .pc-quick-item{text-align:center;padding:0.9rem 0.4rem;border-left:1px solid #f0f4f8}
+    .pc-quick-item:last-child{border-left:none}
+    .pc-quick-label{font-size:0.6rem;color:#6b7280;display:block;margin-bottom:0.2rem}
+    .pc-quick-value{font-size:0.9rem;font-weight:800;color:#101d23;display:block}
+    .pc-quick-value.blood{color:#12a99b;font-size:1.1rem}
+
+    .pc-section{padding:1rem 1.5rem}
+    .pc-section+.pc-section{border-top:1px solid #f0f4f8}
+    .pc-section-title{font-size:0.8rem;font-weight:800;color:#101d23;margin-bottom:0.7rem;display:flex;align-items:center;gap:0.4rem}
+    .pc-section-title i{color:#12a99b;font-size:0.75rem}
+
+    .pc-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+    .pc-info-item{background:#f8fafc;border-radius:10px;padding:0.6rem 0.8rem}
+    .pc-info-label{font-size:0.6rem;color:#6b7280;display:block;margin-bottom:0.15rem}
+    .pc-info-value{font-size:0.8rem;font-weight:700;color:#101d23;display:block}
+    .pc-info-item.full{grid-column:1/-1}
+
+    .pc-tag-list{display:flex;flex-wrap:wrap;gap:0.3rem}
+    .pc-tag{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.72rem;font-weight:600;padding:0.3rem 0.7rem;border-radius:8px}
+    .pc-tag-red{background:#fee2e2;color:#dc2626}
+    .pc-tag-amber{background:#fef3c7;color:#d97706}
+    .pc-tag-blue{background:#dbeafe;color:#2563eb}
+    .pc-tag-teal{background:#e6faf8;color:#0d8a7e}
+    .pc-tag-empty{background:#f0f4f8;color:#9ca3af;font-weight:500}
+
+    .pc-med-item{display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #f8fafc}
+    .pc-med-item:last-child{border-bottom:none}
+    .pc-med-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;flex-shrink:0}
+    .pc-med-name{font-size:0.78rem;font-weight:600;color:#101d23}
+    .pc-med-detail{font-size:0.62rem;color:#6b7280}
+
+    .pc-emergency{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-radius:12px;padding:0.8rem 1rem;display:flex;align-items:center;gap:0.8rem;margin:0.5rem 0}
+    .pc-emergency-icon{width:40px;height:40px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+
+    .pc-transfer{background:linear-gradient(135deg,#e6faf8,#dbeafe);border-radius:14px;padding:1rem 1.2rem;margin:0.5rem 1.5rem 1.5rem;text-align:center}
+    .pc-transfer-title{font-size:0.85rem;font-weight:800;color:#101d23;margin-bottom:0.3rem}
+    .pc-transfer-desc{font-size:0.72rem;color:#6b7280;line-height:1.6;margin-bottom:0.8rem}
+    .pc-transfer-btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.7rem 1.5rem;background:linear-gradient(135deg,#12a99b,#0d8a7f);color:#fff;border:none;border-radius:12px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;box-shadow:0 4px 15px rgba(18,169,155,0.3);transition:all 0.3s}
+    .pc-transfer-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(18,169,155,0.4)}
+
+    .pc-footer{text-align:center;padding:0.8rem;border-top:1px solid #f0f4f8;font-size:0.65rem;color:#9ca3af}
+
+    .pc-history-item{padding:0.5rem 0;border-bottom:1px solid #f8fafc}
+    .pc-history-item:last-child{border-bottom:none}
+    .pc-history-title{font-size:0.78rem;font-weight:700;color:#101d23}
+    .pc-history-meta{font-size:0.62rem;color:#6b7280;margin-top:0.1rem}
+
+    @media(max-width:480px){
+      .pc-info-grid{grid-template-columns:1fr}
+      .pc-quick{grid-template-columns:repeat(2,1fr)}
+      .pc-quick-item:nth-child(2){border-left:none}
+    }
+  </style>
+</head>
+<body>
+<div class="scan-container">
+  <div class="scan-header">
+    <div class="scan-logo">
+      <img src="/icons/logo.png" alt="مفاصل">
+      <span>مفاصل</span>
+    </div>
+    <% if (valid) { %>
+      <span class="scan-badge badge-valid"><i class="fas fa-check-circle"></i> بطاقة صحية موثقة</span>
+    <% } else { %>
+      <span class="scan-badge badge-invalid"><i class="fas fa-times-circle"></i> بطاقة غير صالحة</span>
+    <% } %>
+  </div>
+
+  <% if (!valid) { %>
+    <div class="error-card">
+      <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="error-title">تعذر التحقق من البطاقة</div>
+      <div class="error-desc"><%= error %></div>
+    </div>
+  <% } else { %>
+    <div class="patient-card">
+      <div class="pc-top">
+        <div class="pc-identity">
+          <div class="pc-avatar">
+            <% if (patient.avatar) { %>
+              <img src="<%= patient.avatar %>" alt="<%= patient.name %>">
+            <% } else { %>
+              <i class="fas fa-user"></i>
+            <% } %>
+          </div>
+          <div>
+            <div class="pc-name"><%= patient.name %></div>
+            <div class="pc-member"><%= memberId %></div>
+            <div class="pc-verified"><i class="fas fa-shield-alt"></i> عضوية مفاصل الموثقة</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-quick">
+        <div class="pc-quick-item">
+          <span class="pc-quick-label"><i class="fas fa-tint"></i> فصيلة الدم</span>
+          <span class="pc-quick-value blood"><%= patient.medicalProfile?.bloodType || (medProfile?.bloodType) || '—' %></span>
+        </div>
+        <div class="pc-quick-item">
+          <span class="pc-quick-label"><i class="fas fa-venus-mars"></i> الجنس</span>
+          <span class="pc-quick-value"><%= patient.gender === 'male' ? 'ذكر' : patient.gender === 'female' ? 'أنثى' : '—' %></span>
+        </div>
+        <div class="pc-quick-item">
+          <span class="pc-quick-label"><i class="fas fa-birthday-cake"></i> العمر</span>
+          <span class="pc-quick-value"><%= patient.dateOfBirth ? Math.floor((Date.now() - new Date(patient.dateOfBirth)) / (365.25*24*60*60*1000)) + ' سنة' : '—' %></span>
+        </div>
+        <div class="pc-quick-item">
+          <span class="pc-quick-label"><i class="fas fa-ruler-vertical"></i> BMI</span>
+          <% const h = medProfile?.height || patient.medicalProfile?.height; const w = medProfile?.weight || patient.medicalProfile?.weight; %>
+          <span class="pc-quick-value"><%= (h && w) ? (w / ((h/100) * (h/100))).toFixed(1) : '—' %></span>
+        </div>
+      </div>
+
+      <div class="pc-section">
+        <div class="pc-section-title"><i class="fas fa-id-card"></i> المعلومات الشخصية</div>
+        <div class="pc-info-grid">
+          <div class="pc-info-item">
+            <span class="pc-info-label">رقم الهوية</span>
+            <span class="pc-info-value"><%= patient.nationalId ? patient.nationalId.slice(0,3) + '****' + patient.nationalId.slice(-3) : '—' %></span>
+          </div>
+          <div class="pc-info-item">
+            <span class="pc-info-label">الجوال</span>
+            <span class="pc-info-value" style="direction:ltr;text-align:right"><%= patient.phone || '—' %></span>
+          </div>
+          <div class="pc-info-item">
+            <span class="pc-info-label">الطول</span>
+            <span class="pc-info-value"><%= (medProfile?.height || patient.medicalProfile?.height) ? (medProfile?.height || patient.medicalProfile?.height) + ' سم' : '—' %></span>
+          </div>
+          <div class="pc-info-item">
+            <span class="pc-info-label">الوزن</span>
+            <span class="pc-info-value"><%= (medProfile?.weight || patient.medicalProfile?.weight) ? (medProfile?.weight || patient.medicalProfile?.weight) + ' كغ' : '—' %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-section">
+        <div class="pc-section-title"><i class="fas fa-allergies"></i> الحساسية</div>
+        <div class="pc-tag-list">
+          <% const allergies = medProfile?.allergies?.length ? medProfile.allergies : (patient.medicalProfile?.allergies || []); %>
+          <% if (allergies.length > 0) { %>
+            <% allergies.forEach(function(a) { %>
+              <span class="pc-tag pc-tag-red"><i class="fas fa-exclamation-triangle"></i> <%= typeof a === 'object' ? a.name : a %><% if (typeof a === 'object' && a.severity === 'severe') { %> (شديدة)<% } %></span>
+            <% }); %>
+          <% } else { %>
+            <span class="pc-tag pc-tag-empty">لا يوجد حساسية مسجلة</span>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="pc-section">
+        <div class="pc-section-title"><i class="fas fa-heartbeat"></i> أمراض مزمنة</div>
+        <div class="pc-tag-list">
+          <% const diseases = medProfile?.chronicDiseases?.length ? medProfile.chronicDiseases : (patient.medicalProfile?.chronicDiseases || []); %>
+          <% if (diseases.length > 0) { %>
+            <% diseases.forEach(function(d) { %>
+              <span class="pc-tag pc-tag-amber"><i class="fas fa-heart"></i> <%= typeof d === 'object' ? d.name : d %><% if (typeof d === 'object' && d.status) { %> (<%= d.status === 'active' ? 'نشط' : d.status === 'controlled' ? 'مسيطر عليه' : 'ملتئم' %>)<% } %></span>
+            <% }); %>
+          <% } else { %>
+            <span class="pc-tag pc-tag-empty">لا يوجد أمراض مزمنة</span>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="pc-section">
+        <div class="pc-section-title"><i class="fas fa-pills"></i> الأدوية الحالية</div>
+        <% const meds = medProfile?.medications?.length ? medProfile.medications : (patient.medicalProfile?.medications || []); %>
+        <% if (meds.length > 0) { %>
+          <% meds.forEach(function(m) { %>
+            <div class="pc-med-item">
+              <div class="pc-med-icon" style="background:#dbeafe;color:#2563eb"><i class="fas fa-capsules"></i></div>
+              <div>
+                <div class="pc-med-name"><%= typeof m === 'object' ? m.name : m %></div>
+                <% if (typeof m === 'object' && (m.dosage || m.frequency)) { %>
+                  <div class="pc-med-detail"><%= m.dosage || '' %> <% if(m.frequency) { %>— <%= m.frequency %><% } %></div>
+                <% } %>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="pc-tag-list"><span class="pc-tag pc-tag-empty">لا يوجد أدوية حالية</span></div>
+        <% } %>
+      </div>
+
+      <% if (medProfile?.history?.length > 0) { %>
+        <div class="pc-section">
+          <div class="pc-section-title"><i class="fas fa-file-medical"></i> السجل الطبي</div>
+          <% medProfile.history.slice(0,5).forEach(function(h) { %>
+            <div class="pc-history-item">
+              <div class="pc-history-title"><%= h.title %></div>
+              <div class="pc-history-meta">
+                <%= h.type === 'surgery' ? 'عملية جراحية' : h.type === 'hospitalization' ? 'تنويم' : h.type === 'injury' ? 'إصابة' : 'أخرى' %>
+                <% if(h.date) { %> — <%= new Date(h.date).toLocaleDateString('ar-SA') %><% } %>
+                <% if(h.facility) { %> — <%= h.facility %><% } %>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <div class="pc-section">
+        <div class="pc-section-title"><i class="fas fa-phone-alt"></i> جهة اتصال الطوارئ</div>
+        <% const ec = medProfile?.emergencyContact || patient.medicalProfile?.emergencyContact; %>
+        <% if (ec?.name) { %>
+          <div class="pc-emergency">
+            <div class="pc-emergency-icon"><i class="fas fa-phone-alt"></i></div>
+            <div>
+              <div style="font-size:0.85rem;font-weight:700;color:#101d23"><%= ec.name %></div>
+              <div style="font-size:0.7rem;color:#6b7280"><%= ec.relation || '' %> — <span dir="ltr"><%= ec.phone || '' %></span></div>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="pc-tag-list"><span class="pc-tag pc-tag-empty">غير محدد</span></div>
+        <% } %>
+      </div>
+
+      <div class="pc-transfer">
+        <div class="pc-transfer-title"><i class="fas fa-exchange-alt"></i> نقل الملف الطبي</div>
+        <div class="pc-transfer-desc">لا يوجد ملف لهذا المستفيد في مركزكم؟ يمكنكم نقل بياناته الطبية مباشرة من بطاقة مفاصل لإنشاء ملف جديد تلقائياً.</div>
+        <button class="pc-transfer-btn" onclick="transferFile()">
+          <i class="fas fa-file-import"></i> نقل الملف إلى مركزكم
+        </button>
+      </div>
+
+      <div class="pc-footer">
+        <i class="fas fa-shield-alt"></i> بطاقة مفاصل الصحية — بيانات محمية ومشفرة &copy; <%= new Date().getFullYear() %>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<script>
+function transferFile() {
+  var data = {
+    memberId: '<%= memberId %>',
+    name: '<%= patient ? patient.name : "" %>',
+    phone: '<%= patient ? (patient.phone || "") : "" %>',
+    nationalId: '<%= patient ? (patient.nationalId || "") : "" %>'
+  };
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(function() {
+      var btn = document.querySelector('.pc-transfer-btn');
+      btn.innerHTML = '<i class="fas fa-check"></i> تم نسخ البيانات';
+      btn.style.background = '#16a34a';
+      setTimeout(function() {
+        btn.innerHTML = '<i class="fas fa-file-import"></i> نقل الملف إلى مركزكم';
+        btn.style.background = '';
+      }, 3000);
+    });
+  }
+
+  alert('تم تجهيز بيانات المستفيد للنقل.\nقريباً: سيتم ربط هذه الخاصية مباشرة بأنظمة المراكز لنقل الملف تلقائياً.');
+}
+</script>
+</body>
+</html>

@@ -21,6 +21,15 @@
 - **CSS LTR**: قواعد `html[dir="ltr"]` في نهاية `style.css` لتحويل التخطيط من RTL إلى LTR
 - **الخط الإنجليزي**: Inter (Google Fonts) للنصوص الإنجليزية
 
+## البطاقة الصحية الذكية
+- **الصفحة**: `/health-card` — بطاقة رقمية بتصميم بطاقة ائتمانية مع QR Code وتأثير flip
+- **مسح QR**: `/health-card/scan/:userId?t=token` — صفحة عامة تعرض بيانات المستفيد الكاملة عند مسح QR
+- **API مسح**: `/health-card/api/scan/:userId?t=token` — JSON endpoint للتكامل مع أنظمة المراكز
+- **Apple Wallet**: `/health-card/wallet-pass` — توليد ملف .pkpass (يتطلب شهادات Apple في `apple-wallet-certs/`)
+- **التحقق**: كل بطاقة تحمل token مشفر بـ SHA256 — لا يمكن الوصول بدون الرمز الصحيح
+- **نقل الملف**: عند مسح البطاقة في مركز جديد، يمكن نقل البيانات تلقائياً لإنشاء ملف جديد
+- **الملفات**: `health-card.routes.js` (backend)، `health-card.ejs` (البطاقة)، `health-card-scan.ejs` (صفحة المسح)
+
 ## هيكل الملفات
 ```
 ├── server.js                    # نقطة الدخول الرئيسية
@@ -37,6 +46,7 @@
 │       ├── users/               # إدارة المستخدمين والملف الشخصي
 │       │   ├── user.model.js
 │       │   ├── users.routes.js
+│       │   ├── health-card.routes.js  # البطاقة الصحية الذكية (QR scan, Apple Wallet, نقل الملف)
 │       │   └── dashboard.routes.js
 │       ├── medical/             # الخدمات الطبية
 │       │   ├── consultation.model.js
