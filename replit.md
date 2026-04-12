@@ -32,9 +32,13 @@
 │       │   ├── insurance.model.js
 │       │   ├── medical.routes.js
 │       │   └── insurance.routes.js
-│       ├── orders/              # نظام الطلبات (الصيدلية)
-│       │   ├── order.model.js
-│       │   └── orders.routes.js
+│       ├── pharmacy/            # سوق الصيدليات (متعدد الصيدليات)
+│       │   ├── pharmacy.model.js   # نموذج الصيدلية (اسم، موقع، تأمين، توصيل)
+│       │   ├── drug.model.js       # نموذج الدواء (صيدلية، سعر، تأمين، وصفة، مخزون)
+│       │   └── pharmacy.routes.js  # تصفح/بحث/طلب/إدارة
+│       ├── orders/              # نظام الطلبات
+│       │   ├── order.model.js      # طلب مرتبط بصيدلية + أدوية + تأمين
+│       │   └── orders.routes.js    # (قديم - غير مستخدم)
 │       ├── chat/                # نظام الشات (real-time WebSocket, typing, seen, internal msgs)
 │       │   ├── chat.model.js    # ChatMessage (isInternal, read, readAt), ChatRoom (internalNotes, priority)
 │       │   └── chat.routes.js   # /chat/room/:id/send, /mark-read, /upload, /close

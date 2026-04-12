@@ -1,0 +1,113 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-pills" style="color:var(--secondary);"></i> أدوية <%= pharmacy.name %></h1>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-primary" onclick="document.getElementById('createDrugModal').style.display='flex'"><i class="fas fa-plus"></i> إضافة دواء</button>
+        <a href="/pharmacy/admin/pharmacies" class="btn btn-outline">العودة</a>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="createDrugModal" style="display:none;">
+      <div class="modal-card" style="max-width:560px;">
+        <div class="modal-header">
+          <h2><i class="fas fa-pills"></i> إضافة دواء</h2>
+          <button class="modal-close" onclick="document.getElementById('createDrugModal').style.display='none'"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST" action="/pharmacy/admin/drugs/<%= pharmacy._id %>/create" class="modal-form">
+          <div class="form-row">
+            <div class="form-group"><label>اسم الدواء *</label><input type="text" name="name" required placeholder="بنادول أكسترا"></div>
+            <div class="form-group"><label>الاسم بالإنجليزية</label><input type="text" name="nameEn" placeholder="Panadol Extra"></div>
+          </div>
+          <div class="form-group"><label>الوصف</label><textarea name="description" rows="2" placeholder="وصف مختصر..."></textarea></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>التصنيف</label>
+              <select name="category">
+                <option value="مسكنات">مسكنات</option>
+                <option value="مضادات حيوية">مضادات حيوية</option>
+                <option value="فيتامينات">فيتامينات</option>
+                <option value="معدة">معدة</option>
+                <option value="سكري">سكري</option>
+                <option value="ضغط">ضغط</option>
+                <option value="حساسية">حساسية</option>
+                <option value="كوليسترول">كوليسترول</option>
+                <option value="جلدية">جلدية</option>
+                <option value="عيون">عيون</option>
+                <option value="أطفال">أطفال</option>
+                <option value="مكملات">مكملات</option>
+                <option value="أخرى">أخرى</option>
+              </select>
+            </div>
+            <div class="form-group"><label>الجرعة</label><input type="text" name="dosage" placeholder="500mg"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>السعر (ر.س) *</label><input type="number" name="price" required min="0" step="0.5"></div>
+            <div class="form-group"><label>السعر الأصلي</label><input type="number" name="originalPrice" min="0" step="0.5"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>سعر التأمين (ر.س)</label><input type="number" name="insurancePrice" min="0" step="0.5"></div>
+            <div class="form-group"><label>المخزون</label><input type="number" name="stock" value="100" min="0"></div>
+          </div>
+          <div class="form-group"><label>الشركة المصنعة</label><input type="text" name="manufacturer" placeholder="اختياري"></div>
+          <div class="form-row">
+            <div class="form-group"><label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><input type="checkbox" name="insuranceSupported"> يدعم التأمين</label></div>
+            <div class="form-group"><label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><input type="checkbox" name="prescription"> يتطلب وصفة طبية</label></div>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> إضافة</button>
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('createDrugModal').style.display='none'">إلغاء</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="margin-bottom:1.5rem;">
+      <div class="stat-card"><div class="stat-number"><%= drugs.length %></div><div class="stat-label">إجمالي الأدوية</div></div>
+      <div class="stat-card"><div class="stat-number" style="color:var(--secondary);"><%= drugs.filter(function(d){return d.isActive;}).length %></div><div class="stat-label">نشطة</div></div>
+      <div class="stat-card"><div class="stat-number" style="color:#f59e0b;"><%= drugs.filter(function(d){return d.insuranceSupported;}).length %></div><div class="stat-label">تدعم تأمين</div></div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr><th>الدواء</th><th>التصنيف</th><th>السعر</th><th>التأمين</th><th>المخزون</th><th>المبيعات</th><th>إجراءات</th></tr>
+        </thead>
+        <tbody>
+          <% if (drugs.length === 0) { %>
+          <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">لا توجد أدوية — أضف دواء جديد</td></tr>
+          <% } %>
+          <% drugs.forEach(function(d) { %>
+          <tr style="opacity:<%= d.isActive ? 1 : 0.5 %>;">
+            <td>
+              <strong style="font-size:0.88rem;"><%= d.name %></strong>
+              <% if (d.prescription) { %><span style="font-size:0.65rem;color:#f59e0b;"> <i class="fas fa-file-medical"></i></span><% } %>
+              <% if (d.dosage) { %><br><small style="color:var(--text-muted);"><%= d.dosage %></small><% } %>
+            </td>
+            <td style="font-size:0.82rem;"><%= d.category %></td>
+            <td><strong><%= d.price %></strong> <span style="font-size:0.75rem;">ر.س</span></td>
+            <td>
+              <% if (d.insuranceSupported) { %>
+              <span style="color:var(--secondary);font-size:0.82rem;"><%= d.insurancePrice || '-' %> ر.س</span>
+              <% } else { %>
+              <span style="color:var(--text-muted);font-size:0.82rem;">—</span>
+              <% } %>
+            </td>
+            <td style="font-size:0.85rem;<%= d.stock <= 10 ? 'color:#ef4444;font-weight:600;' : '' %>"><%= d.stock %></td>
+            <td style="font-size:0.85rem;"><%= d.soldCount || 0 %></td>
+            <td>
+              <form method="POST" action="/pharmacy/admin/drugs/<%= d._id %>/toggle" style="display:inline;">
+                <button type="submit" class="btn btn-sm" style="background:<%= d.isActive ? '#ef4444' : 'var(--secondary)' %>;color:#fff;font-size:0.72rem;">
+                  <i class="fas fa-<%= d.isActive ? 'pause' : 'play' %>"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

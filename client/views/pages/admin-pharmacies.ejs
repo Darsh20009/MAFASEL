@@ -1,0 +1,111 @@
+<%- include('../partials/header') %>
+<div class="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-clinic-medical" style="color:var(--secondary);"></i> إدارة الصيدليات</h1>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-primary" onclick="document.getElementById('createPharmacyModal').style.display='flex'"><i class="fas fa-plus"></i> إضافة صيدلية</button>
+        <% if (pharmacies.length === 0) { %>
+        <form method="POST" action="/pharmacy/admin/seed" style="display:inline;"><button type="submit" class="btn" style="background:#8b5cf6;color:#fff;"><i class="fas fa-database"></i> بيانات تجريبية</button></form>
+        <% } %>
+        <a href="/admin" class="btn btn-outline">العودة</a>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="createPharmacyModal" style="display:none;">
+      <div class="modal-card" style="max-width:600px;">
+        <div class="modal-header">
+          <h2><i class="fas fa-clinic-medical"></i> إضافة صيدلية</h2>
+          <button class="modal-close" onclick="document.getElementById('createPharmacyModal').style.display='none'"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST" action="/pharmacy/admin/pharmacies/create" class="modal-form">
+          <div class="form-row">
+            <div class="form-group"><label>اسم الصيدلية *</label><input type="text" name="name" required placeholder="صيدلية ..."></div>
+            <div class="form-group"><label>الاسم بالإنجليزية</label><input type="text" name="nameEn" placeholder="Pharmacy ..."></div>
+          </div>
+          <div class="form-group"><label>الوصف</label><textarea name="description" rows="2" placeholder="وصف مختصر..."></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>المدينة</label><input type="text" name="city" placeholder="الرياض"></div>
+            <div class="form-group"><label>الحي</label><input type="text" name="district" placeholder="العليا"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>الجوال</label><input type="text" name="phone" placeholder="05..." dir="ltr"></div>
+            <div class="form-group"><label>البريد</label><input type="email" name="email" placeholder="pharmacy@..."></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>ساعات العمل</label><input type="text" name="workingHours" value="8:00 ص - 12:00 م"></div>
+            <div class="form-group"><label>رقم الترخيص</label><input type="text" name="licenseNumber" dir="ltr"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>رسوم التوصيل (ر.س)</label><input type="number" name="deliveryFee" value="0" min="0"></div>
+            <div class="form-group"><label>توصيل مجاني فوق (ر.س)</label><input type="number" name="freeDeliveryAbove" value="0" min="0"></div>
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+              <input type="checkbox" name="insuranceSupported"> يدعم التأمين الصحي
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> إضافة</button>
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('createPharmacyModal').style.display='none'">إلغاء</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="margin-bottom:1.5rem;">
+      <div class="stat-card"><div class="stat-number"><%= pharmacies.length %></div><div class="stat-label">إجمالي الصيدليات</div></div>
+      <div class="stat-card"><div class="stat-number" style="color:var(--secondary);"><%= pharmacies.filter(function(p){return p.isActive;}).length %></div><div class="stat-label">نشطة</div></div>
+      <div class="stat-card"><div class="stat-number" style="color:#f59e0b;"><%= pharmacies.filter(function(p){return p.isFeatured;}).length %></div><div class="stat-label">مميزة</div></div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr><th>الصيدلية</th><th>الموقع</th><th>الطلبات</th><th>التقييم</th><th>الحالة</th><th>إجراءات</th></tr>
+        </thead>
+        <tbody>
+          <% if (pharmacies.length === 0) { %>
+          <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">لا توجد صيدليات</td></tr>
+          <% } %>
+          <% pharmacies.forEach(function(p) { %>
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.5rem;">
+                <div style="width:36px;height:36px;border-radius:10px;background:var(--secondary)12;display:flex;align-items:center;justify-content:center;">
+                  <% if (p.logo) { %><img src="<%= p.logo %>" style="width:36px;height:36px;border-radius:10px;object-fit:cover;"><% } else { %><i class="fas fa-prescription-bottle-alt" style="color:var(--secondary);"></i><% } %>
+                </div>
+                <div>
+                  <strong style="font-size:0.88rem;"><%= p.name %></strong>
+                  <% if (p.isFeatured) { %><i class="fas fa-star" style="color:#f59e0b;font-size:0.7rem;"></i><% } %>
+                  <% if (p.insuranceSupported) { %><i class="fas fa-shield-alt" style="color:var(--secondary);font-size:0.7rem;"></i><% } %>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:0.82rem;"><%= p.location.city || '-' %></td>
+            <td><%= p.totalOrders || 0 %></td>
+            <td><i class="fas fa-star" style="color:#f59e0b;font-size:0.75rem;"></i> <%= p.rating.toFixed(1) %></td>
+            <td><span style="color:<%= p.isActive ? 'var(--secondary)' : '#ef4444' %>;font-weight:600;font-size:0.82rem;"><%= p.isActive ? 'نشطة' : 'معطلة' %></span></td>
+            <td>
+              <div style="display:flex;gap:0.35rem;">
+                <a href="/pharmacy/admin/drugs/<%= p._id %>" class="btn btn-sm btn-outline" title="الأدوية"><i class="fas fa-pills"></i></a>
+                <form method="POST" action="/pharmacy/admin/pharmacies/<%= p._id %>/toggle" style="display:inline;">
+                  <button type="submit" class="btn btn-sm" style="background:<%= p.isActive ? '#ef4444' : 'var(--secondary)' %>;color:#fff;" title="<%= p.isActive ? 'تعطيل' : 'تفعيل' %>">
+                    <i class="fas fa-<%= p.isActive ? 'pause' : 'play' %>"></i>
+                  </button>
+                </form>
+                <form method="POST" action="/pharmacy/admin/pharmacies/<%= p._id %>/feature" style="display:inline;">
+                  <button type="submit" class="btn btn-sm btn-outline" title="<%= p.isFeatured ? 'إزالة التمييز' : 'تمييز' %>">
+                    <i class="fas fa-star" style="color:<%= p.isFeatured ? '#f59e0b' : '' %>;"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>
