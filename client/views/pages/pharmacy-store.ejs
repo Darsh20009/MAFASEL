@@ -139,6 +139,59 @@
           <% } %>
 
           <div style="margin-bottom:0.85rem;">
+            <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">طريقة الدفع</label>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;" id="paymentMethods">
+              <label class="payment-method-option selected" onclick="selectPayment('cash', this)">
+                <input type="radio" name="payMethod" value="cash" checked style="display:none;">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>نقد عند الاستلام</span>
+              </label>
+              <label class="payment-method-option" onclick="selectPayment('card', this)">
+                <input type="radio" name="payMethod" value="card" style="display:none;">
+                <i class="fas fa-credit-card"></i>
+                <span>بطاقة ائتمان</span>
+              </label>
+              <label class="payment-method-option" onclick="selectPayment('apple_pay', this)">
+                <input type="radio" name="payMethod" value="apple_pay" style="display:none;">
+                <i class="fab fa-apple"></i>
+                <span>Apple Pay</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="cardFormSection" style="display:none;margin-bottom:1rem;">
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:1rem;">
+              <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.85rem;">
+                <i class="fas fa-lock" style="color:var(--accent);font-size:0.8rem;"></i>
+                <span style="font-size:0.78rem;color:var(--text-muted);">دفع آمن — محاكاة</span>
+                <div style="margin-right:auto;display:flex;gap:0.3rem;">
+                  <i class="fab fa-cc-visa" style="font-size:1.2rem;color:#1a1f71;"></i>
+                  <i class="fab fa-cc-mastercard" style="font-size:1.2rem;color:#eb001b;"></i>
+                  <i class="fab fa-cc-amex" style="font-size:1.2rem;color:#006fcf;"></i>
+                </div>
+              </div>
+              <div style="margin-bottom:0.65rem;">
+                <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:0.25rem;">رقم البطاقة</label>
+                <input type="text" id="cardNumber" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" dir="ltr" style="font-family:monospace;letter-spacing:2px;" oninput="formatCardNumber(this)">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.65rem;">
+                <div>
+                  <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:0.25rem;">تاريخ الانتهاء</label>
+                  <input type="text" id="cardExpiry" class="form-control" placeholder="MM/YY" maxlength="5" dir="ltr" style="font-family:monospace;" oninput="formatExpiry(this)">
+                </div>
+                <div>
+                  <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:0.25rem;">CVV</label>
+                  <input type="password" id="cardCVV" class="form-control" placeholder="•••" maxlength="4" dir="ltr" style="font-family:monospace;">
+                </div>
+              </div>
+              <div>
+                <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:0.25rem;">اسم حامل البطاقة</label>
+                <input type="text" id="cardHolder" class="form-control" placeholder="الاسم كما هو على البطاقة" dir="ltr">
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:0.85rem;">
             <label style="font-size:0.82rem;color:var(--text-muted);display:block;margin-bottom:0.3rem;">عنوان التوصيل *</label>
             <input type="text" id="orderAddress" class="form-control" placeholder="المدينة - الحي - الشارع" required>
           </div>
@@ -242,11 +295,104 @@ function updateCart() {
   document.getElementById('cartSummary').innerHTML = summary;
 }
 
+var selectedPayment = 'cash';
+
+function selectPayment(method, el) {
+  selectedPayment = method;
+  document.querySelectorAll('.payment-method-option').forEach(function(opt) { opt.classList.remove('selected'); });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  document.getElementById('cardFormSection').style.display = method === 'card' ? 'block' : 'none';
+  var btn = document.getElementById('submitOrderBtn');
+  if (method === 'apple_pay') {
+    btn.innerHTML = '<i class="fab fa-apple"></i> الدفع بـ Apple Pay';
+    btn.style.background = '#000';
+  } else if (method === 'card') {
+    btn.innerHTML = '<i class="fas fa-credit-card"></i> ادفع الآن';
+    btn.style.background = 'var(--secondary)';
+  } else {
+    btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الطلب';
+    btn.style.background = 'var(--secondary)';
+  }
+}
+
+function formatCardNumber(el) {
+  var v = el.value.replace(/\D/g, '').substring(0, 16);
+  el.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+
+function formatExpiry(el) {
+  var v = el.value.replace(/\D/g, '').substring(0, 4);
+  if (v.length >= 3) v = v.substring(0, 2) + '/' + v.substring(2);
+  el.value = v;
+}
+
+function validateCard() {
+  var num = document.getElementById('cardNumber').value.replace(/\s/g, '');
+  var exp = document.getElementById('cardExpiry').value;
+  var cvv = document.getElementById('cardCVV').value;
+  var holder = document.getElementById('cardHolder').value.trim();
+  if (num.length < 13) { alert('رقم البطاقة غير صحيح'); return false; }
+  if (!/^\d{2}\/\d{2}$/.test(exp)) { alert('تاريخ الانتهاء غير صحيح'); return false; }
+  if (cvv.length < 3) { alert('CVV غير صحيح'); return false; }
+  if (!holder) { alert('يرجى إدخال اسم حامل البطاقة'); return false; }
+  return true;
+}
+
+function simulatePayment(method) {
+  return new Promise(function(resolve) {
+    var overlay = document.createElement('div');
+    overlay.className = 'payment-overlay';
+    
+    if (method === 'apple_pay') {
+      overlay.innerHTML = '<div class="payment-modal apple-pay-modal">' +
+        '<div class="apple-pay-header"><i class="fab fa-apple" style="font-size:2rem;"></i><span style="font-size:1.1rem;font-weight:600;">Pay</span></div>' +
+        '<div class="payment-amount">' + document.querySelector('#cartSummary div:last-child span:last-child').textContent + '</div>' +
+        '<div class="payment-store">صيدلية مفاصل</div>' +
+        '<div class="apple-pay-biometric"><i class="fas fa-fingerprint" style="font-size:3rem;color:var(--accent);margin:1rem 0;"></i><p>تأكيد بالبصمة</p></div>' +
+        '<button class="btn" style="width:100%;background:#000;color:#fff;padding:0.85rem;border-radius:12px;font-size:1rem;margin-top:1rem;" onclick="this.innerHTML=\'<i class=\\\'fas fa-spinner fa-spin\\\'></i> جاري المعالجة...\';this.disabled=true;setTimeout(function(){document.querySelector(\'.payment-overlay\').remove();window._payResolve(true);},1500);"><i class="fab fa-apple"></i> تأكيد الدفع</button>' +
+        '<button class="btn btn-outline" style="width:100%;margin-top:0.5rem;padding:0.65rem;font-size:0.85rem;" onclick="document.querySelector(\'.payment-overlay\').remove();window._payResolve(false);">إلغاء</button>' +
+        '</div>';
+    } else {
+      overlay.innerHTML = '<div class="payment-modal">' +
+        '<div style="text-align:center;margin-bottom:1rem;"><i class="fas fa-credit-card" style="font-size:2.5rem;color:var(--accent);"></i></div>' +
+        '<h3 style="text-align:center;margin-bottom:0.5rem;">معالجة الدفع</h3>' +
+        '<div class="payment-amount">' + document.querySelector('#cartSummary div:last-child span:last-child').textContent + '</div>' +
+        '<div class="payment-progress"><div class="payment-progress-bar"></div></div>' +
+        '<p style="text-align:center;font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;" id="payStatus">جاري التحقق من البطاقة...</p>' +
+        '</div>';
+      setTimeout(function() { 
+        var s = document.getElementById('payStatus'); 
+        if(s) s.textContent = 'جاري خصم المبلغ...'; 
+      }, 1000);
+      setTimeout(function() { 
+        var s = document.getElementById('payStatus');
+        if(s) { s.textContent = 'تمت الموافقة ✓'; s.style.color = '#22c55e'; }
+      }, 2000);
+      setTimeout(function() { overlay.remove(); resolve(true); }, 2800);
+    }
+    
+    window._payResolve = resolve;
+    document.body.appendChild(overlay);
+  });
+}
+
 async function submitOrder() {
   var address = document.getElementById('orderAddress').value.trim();
   if (!address) { alert('يرجى إدخال عنوان التوصيل'); return; }
+  
+  var payMethod = useIns ? 'insurance' : selectedPayment;
+  
+  if (payMethod === 'card' && !validateCard()) return;
+
   var btn = document.getElementById('submitOrderBtn');
   var orig = btn.innerHTML;
+
+  if (payMethod === 'card' || payMethod === 'apple_pay') {
+    var approved = await simulatePayment(payMethod);
+    if (!approved) return;
+  }
+
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إرسال الطلب...';
   try {
@@ -255,7 +401,7 @@ async function submitOrder() {
       items: cart.map(function(i) { return { drugId: i.drugId, name: i.name, price: i.price, quantity: i.quantity, prescription: i.prescription }; }),
       address: address,
       notes: document.getElementById('orderNotes').value,
-      paymentMethod: useIns ? 'insurance' : 'cash',
+      paymentMethod: payMethod,
       insuranceId: useIns ? insuranceId : ''
     };
     var res = await fetch('/pharmacy/order', {

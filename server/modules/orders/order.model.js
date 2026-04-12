@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema({
   items: [orderItemSchema],
   totalPrice: { type: Number, required: true },
   status: { type: String, enum: ['pending', 'confirmed', 'preparing', 'delivering', 'delivered', 'cancelled'], default: 'pending' },
-  paymentMethod: { type: String, enum: ['cash', 'insurance', 'card'], default: 'cash' },
+  paymentMethod: { type: String, enum: ['cash', 'insurance', 'card', 'apple_pay'], default: 'cash' },
   insuranceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Insurance' },
   insuranceDiscount: { type: Number, default: 0 },
   address: { type: String },

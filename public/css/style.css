@@ -4115,3 +4115,78 @@ body {
   display: none;
 }
 .pwa-offline-indicator.show { display: block; }
+
+/* ========== Payment Methods ========== */
+.payment-method-option {
+  flex:1;
+  min-width:90px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.35rem;
+  padding:0.75rem 0.5rem;
+  border:2px solid var(--border);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-size:0.78rem;
+  text-align:center;
+  background:var(--bg-secondary);
+}
+.payment-method-option i { font-size:1.3rem; }
+.payment-method-option:hover { border-color:var(--accent); }
+.payment-method-option.selected { border-color:var(--accent); background:rgba(18,169,155,0.08); color:var(--accent); }
+
+.payment-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(4px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  animation:fadeIn 0.3s ease;
+}
+.payment-modal {
+  background:var(--card-bg);
+  border-radius:20px;
+  padding:2rem 1.75rem;
+  width:90%;
+  max-width:360px;
+  animation:slideUpBanner 0.4s ease;
+}
+.apple-pay-modal { background:#fff; color:#000; }
+.apple-pay-header { display:flex; align-items:center; justify-content:center; gap:0.3rem; margin-bottom:1rem; }
+.payment-amount { text-align:center; font-size:1.8rem; font-weight:700; margin:0.5rem 0; }
+.payment-store { text-align:center; font-size:0.85rem; color:#666; margin-bottom:1rem; }
+.apple-pay-biometric { text-align:center; }
+.apple-pay-biometric p { font-size:0.82rem; color:#666; }
+.payment-progress { height:6px; background:var(--border); border-radius:6px; overflow:hidden; margin-top:1rem; }
+.payment-progress-bar { height:100%; width:0; background:var(--accent); border-radius:6px; animation:payProgress 2.5s ease forwards; }
+@keyframes payProgress { 0%{width:0} 40%{width:40%} 70%{width:75%} 100%{width:100%} }
+
+/* ========== Forgot Password Modal ========== */
+.forgot-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(4px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  animation:fadeIn 0.3s ease;
+}
+.forgot-modal {
+  background:var(--card-bg);
+  border-radius:20px;
+  padding:2rem 1.75rem;
+  width:90%;
+  max-width:400px;
+  animation:slideUpBanner 0.4s ease;
+}
+.forgot-modal h2 { font-size:1.2rem; margin-bottom:0.5rem; text-align:center; }
+.forgot-modal p { font-size:0.85rem; color:var(--text-muted); text-align:center; margin-bottom:1.25rem; line-height:1.6; }
+.forgot-step { display:none; }
+.forgot-step.active { display:block; }

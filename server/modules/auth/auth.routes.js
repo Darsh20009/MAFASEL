@@ -78,6 +78,102 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.json({ success: false, message: 'يرجى إدخال البريد الإلكتروني' });
+    
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) return res.json({ success: false, message: 'البريد الإلكتروني غير مسجل' });
+    
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 10 * 60 * 1000);
+    
+    user.resetCode = code;
+    user.resetCodeExpires = expires;
+    await user.save();
+    
+    try {
+      const { buildEmailHTML, sendEmail } = require('../email/email.service');
+      const html = buildEmailHTML({
+        title: 'إعادة تعيين كلمة المرور',
+        body: `<p style="line-height:1.9;">مرحباً <strong>${user.name}</strong>،</p>
+               <p style="line-height:1.9;">رمز إعادة تعيين كلمة المرور الخاص بك هو:</p>
+               <div style="text-align:center;margin:1.5rem 0;">
+                 <span style="font-size:2rem;font-weight:700;letter-spacing:8px;color:#12a99b;font-family:monospace;">${code}</span>
+               </div>
+               <p style="line-height:1.9;color:#94a3b8;">هذا الرمز صالح لمدة 10 دقائق فقط. إذا لم تطلب إعادة التعيين، تجاهل هذا البريد.</p>`,
+        ctaText: '',
+        ctaLink: ''
+      });
+      await sendEmail({ to: user.email, subject: 'رمز إعادة تعيين كلمة المرور - مفاصل', html });
+    } catch (emailErr) {
+      console.error('Reset email error:', emailErr);
+    }
+    
+    logAudit({ req, userId: user._id, userName: user.name, userRole: user.role, action: 'طلب إعادة تعيين كلمة المرور', category: 'auth' });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.json({ success: false, message: 'حدث خطأ' });
+  }
+});
+
+router.post('/verify-reset-code', async (req, res) => {
+  try {
+    const { email, code } = req.body;
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user || !user.resetCode || !user.resetCodeExpires) {
+      return res.json({ success: false, message: 'رمز غير صالح' });
+    }
+    if (new Date() > user.resetCodeExpires) {
+      return res.json({ success: false, message: 'انتهت صلاحية الرمز' });
+    }
+    if (user.resetCode !== code) {
+      return res.json({ success: false, message: 'الرمز غير صحيح' });
+    }
+    
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpires = new Date(Date.now() + 15 * 60 * 1000);
+    await user.save();
+    
+    res.json({ success: true, token });
+  } catch (err) {
+    res.json({ success: false, message: 'حدث خطأ' });
+  }
+});
+
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, token, password } = req.body;
+    if (!password || password.length < 6) {
+      return res.json({ success: false, message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
+    }
+    
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user || !user.resetToken || user.resetToken !== token) {
+      return res.json({ success: false, message: 'رابط غير صالح' });
+    }
+    if (new Date() > user.resetTokenExpires) {
+      return res.json({ success: false, message: 'انتهت صلاحية الرابط' });
+    }
+    
+    user.password = await bcrypt.hash(password, 12);
+    user.resetCode = undefined;
+    user.resetCodeExpires = undefined;
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+    
+    logAudit({ req, userId: user._id, userName: user.name, userRole: user.role, action: 'إعادة تعيين كلمة المرور', category: 'auth' });
+    res.json({ success: true });
+  } catch (err) {
+    res.json({ success: false, message: 'حدث خطأ' });
+  }
+});
+
 router.get('/register', (req, res) => {
   if (req.session.user) return res.redirect('/dashboard');
   res.render('pages/register', { title: 'إنشاء حساب جديد', metaDescription: 'إنشاء حساب جديد في منصة مفاصل الطبية - انضم الآن واحصل على استشارات طبية وخدمات صحية متكاملة' });

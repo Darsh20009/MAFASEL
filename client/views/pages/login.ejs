@@ -36,6 +36,11 @@
         <button type="submit" class="btn btn-primary btn-block">
           <i class="fas fa-sign-in-alt"></i> دخول
         </button>
+        <div style="text-align:center;margin-top:0.75rem;">
+          <a href="#" onclick="showForgotPassword(event)" style="color:var(--accent);font-size:0.85rem;text-decoration:none;">
+            <i class="fas fa-key"></i> نسيت كلمة المرور؟
+          </a>
+        </div>
       </form>
     </div>
 
@@ -351,6 +356,118 @@ if (window.PublicKeyCredential) {
       }
     })
     .catch(function() {});
+}
+
+function showForgotPassword(e) {
+  if (e) e.preventDefault();
+  var overlay = document.createElement('div');
+  overlay.className = 'forgot-overlay';
+  overlay.id = 'forgotOverlay';
+  overlay.innerHTML = 
+    '<div class="forgot-modal">' +
+      '<div id="forgotStep1" class="forgot-step active">' +
+        '<h2><i class="fas fa-key" style="color:var(--accent);"></i> نسيت كلمة المرور</h2>' +
+        '<p>أدخل بريدك الإلكتروني وسنرسل لك رمز إعادة التعيين</p>' +
+        '<div class="form-group" style="margin-bottom:1rem;">' +
+          '<input type="email" id="forgotEmail" class="form-control" placeholder="البريد الإلكتروني" dir="ltr" style="text-align:center;">' +
+        '</div>' +
+        '<button class="btn btn-primary btn-block" onclick="sendResetCode()" id="sendResetBtn">' +
+          '<i class="fas fa-paper-plane"></i> إرسال الرمز' +
+        '</button>' +
+        '<div id="forgotMsg" style="margin-top:0.75rem;font-size:0.82rem;text-align:center;"></div>' +
+      '</div>' +
+      '<div id="forgotStep2" class="forgot-step">' +
+        '<h2><i class="fas fa-shield-alt" style="color:var(--accent);"></i> أدخل الرمز</h2>' +
+        '<p>تم إرسال رمز مكون من 6 أرقام إلى بريدك الإلكتروني</p>' +
+        '<div class="form-group" style="margin-bottom:1rem;">' +
+          '<input type="text" id="resetCode" class="form-control" placeholder="000000" maxlength="6" dir="ltr" style="text-align:center;font-size:1.5rem;letter-spacing:8px;font-family:monospace;">' +
+        '</div>' +
+        '<button class="btn btn-primary btn-block" onclick="verifyResetCode()" id="verifyCodeBtn">' +
+          '<i class="fas fa-check"></i> تحقق' +
+        '</button>' +
+        '<div id="codeMsg" style="margin-top:0.75rem;font-size:0.82rem;text-align:center;"></div>' +
+      '</div>' +
+      '<div id="forgotStep3" class="forgot-step">' +
+        '<h2><i class="fas fa-lock" style="color:var(--accent);"></i> كلمة مرور جديدة</h2>' +
+        '<p>أدخل كلمة المرور الجديدة</p>' +
+        '<div class="form-group" style="margin-bottom:0.75rem;">' +
+          '<input type="password" id="newPassword" class="form-control" placeholder="كلمة المرور الجديدة" minlength="6">' +
+        '</div>' +
+        '<div class="form-group" style="margin-bottom:1rem;">' +
+          '<input type="password" id="confirmNewPassword" class="form-control" placeholder="تأكيد كلمة المرور">' +
+        '</div>' +
+        '<button class="btn btn-primary btn-block" onclick="resetPassword()" id="resetPassBtn">' +
+          '<i class="fas fa-save"></i> حفظ كلمة المرور' +
+        '</button>' +
+        '<div id="resetMsg" style="margin-top:0.75rem;font-size:0.82rem;text-align:center;"></div>' +
+      '</div>' +
+      '<button class="btn btn-outline btn-block" style="margin-top:0.75rem;" onclick="document.getElementById(\'forgotOverlay\').remove();">' +
+        'إلغاء' +
+      '</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(ev) { if (ev.target === overlay) overlay.remove(); });
+}
+
+var forgotEmailVal = '';
+var resetToken = '';
+
+async function sendResetCode() {
+  var email = document.getElementById('forgotEmail').value.trim();
+  if (!email) { document.getElementById('forgotMsg').innerHTML = '<span style="color:#ef4444;">يرجى إدخال البريد الإلكتروني</span>'; return; }
+  var btn = document.getElementById('sendResetBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+  try {
+    var res = await fetch('/forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) });
+    var data = await res.json();
+    if (data.success) {
+      forgotEmailVal = email;
+      document.getElementById('forgotStep1').classList.remove('active');
+      document.getElementById('forgotStep2').classList.add('active');
+    } else {
+      document.getElementById('forgotMsg').innerHTML = '<span style="color:#ef4444;">' + data.message + '</span>';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الرمز';
+    }
+  } catch(e) { document.getElementById('forgotMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الرمز'; }
+}
+
+async function verifyResetCode() {
+  var code = document.getElementById('resetCode').value.trim();
+  if (code.length !== 6) { document.getElementById('codeMsg').innerHTML = '<span style="color:#ef4444;">الرمز يجب أن يكون 6 أرقام</span>'; return; }
+  var btn = document.getElementById('verifyCodeBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
+  try {
+    var res = await fetch('/verify-reset-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: forgotEmailVal, code: code }) });
+    var data = await res.json();
+    if (data.success) {
+      resetToken = data.token;
+      document.getElementById('forgotStep2').classList.remove('active');
+      document.getElementById('forgotStep3').classList.add('active');
+    } else {
+      document.getElementById('codeMsg').innerHTML = '<span style="color:#ef4444;">' + data.message + '</span>';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> تحقق';
+    }
+  } catch(e) { document.getElementById('codeMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> تحقق'; }
+}
+
+async function resetPassword() {
+  var pw = document.getElementById('newPassword').value;
+  var cpw = document.getElementById('confirmNewPassword').value;
+  if (pw.length < 6) { document.getElementById('resetMsg').innerHTML = '<span style="color:#ef4444;">كلمة المرور يجب أن تكون 6 أحرف على الأقل</span>'; return; }
+  if (pw !== cpw) { document.getElementById('resetMsg').innerHTML = '<span style="color:#ef4444;">كلمتا المرور غير متطابقتين</span>'; return; }
+  var btn = document.getElementById('resetPassBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+  try {
+    var res = await fetch('/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: forgotEmailVal, token: resetToken, password: pw }) });
+    var data = await res.json();
+    if (data.success) {
+      document.getElementById('resetMsg').innerHTML = '<span style="color:#22c55e;"><i class="fas fa-check-circle"></i> تم تغيير كلمة المرور بنجاح</span>';
+      setTimeout(function() { document.getElementById('forgotOverlay').remove(); }, 1500);
+    } else {
+      document.getElementById('resetMsg').innerHTML = '<span style="color:#ef4444;">' + data.message + '</span>';
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ كلمة المرور';
+    }
+  } catch(e) { document.getElementById('resetMsg').innerHTML = '<span style="color:#ef4444;">حدث خطأ</span>'; btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ كلمة المرور'; }
 }
 </script>
 <%- include('../partials/footer') %>
