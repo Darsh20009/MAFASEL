@@ -7,10 +7,11 @@ const FROM_NAME = 'مفاصل الطبيه';
 const FROM_EMAIL = 'noreply@mafaseltech.com';
 
 function getBaseUrl() {
-  if (process.env.NODE_ENV === 'production' || process.env.REPL_SLUG) {
-    return process.env.BASE_URL || 'https://mafaseltech.com';
-  }
-  return `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}`;
+  if (process.env.BASE_URL) return process.env.BASE_URL;
+  if (process.env.RENDER_EXTERNAL_URL) return process.env.RENDER_EXTERNAL_URL;
+  if (process.env.REPLIT_DEV_DOMAIN) return `https://${process.env.REPLIT_DEV_DOMAIN}`;
+  if (process.env.NODE_ENV === 'production') return 'https://mafaseltech.com';
+  return 'http://localhost:5000';
 }
 
 let _cachedLogoB64 = null;
@@ -34,11 +35,15 @@ function getGifBase64() {
   } catch (e) { return null; }
 }
 
-function getLogoUrl() {
+function getLogoSrc() {
+  const b64 = getLogoBase64();
+  if (b64) return `data:image/png;base64,${b64}`;
   return getBaseUrl() + '/uploads/email/banner-logo.png';
 }
 
-function getGifUrl() {
+function getGifSrc() {
+  const b64 = getGifBase64();
+  if (b64) return `data:image/gif;base64,${b64}`;
   return getBaseUrl() + '/uploads/email/logo-animation.gif';
 }
 
@@ -54,8 +59,8 @@ function buildEmailHTML(options) {
   } = options;
 
   const baseUrl = getBaseUrl();
-  const logoUrl = getLogoUrl();
-  const gifUrl = getGifUrl();
+  const logoUrl = getLogoSrc();
+  const gifUrl = getGifSrc();
 
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
