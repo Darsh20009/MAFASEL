@@ -1,6 +1,4 @@
 const https = require('https');
-const fs = require('fs');
-const pathModule = require('path');
 
 const SMTP2GO_API = 'https://api.smtp2go.com/v3/email/send';
 const FROM_NAME = 'مفاصل الطبيه';
@@ -14,37 +12,14 @@ function getBaseUrl() {
   return 'http://localhost:5000';
 }
 
-let _cachedLogoB64 = null;
-let _cachedGifB64 = null;
-
-function getLogoBase64() {
-  if (_cachedLogoB64) return _cachedLogoB64;
-  try {
-    const filePath = pathModule.join(__dirname, '../../../public/uploads/email/banner-logo.png');
-    _cachedLogoB64 = fs.readFileSync(filePath).toString('base64');
-    return _cachedLogoB64;
-  } catch (e) { return null; }
-}
-
-function getGifBase64() {
-  if (_cachedGifB64) return _cachedGifB64;
-  try {
-    const filePath = pathModule.join(__dirname, '../../../public/uploads/email/logo-animation.gif');
-    _cachedGifB64 = fs.readFileSync(filePath).toString('base64');
-    return _cachedGifB64;
-  } catch (e) { return null; }
-}
-
+// Always use absolute HTTP URLs — data URIs (base64) are blocked by Gmail and most email clients
+// Assets are in /assets/email/ which is committed to git and always available on deployment
 function getLogoSrc() {
-  const b64 = getLogoBase64();
-  if (b64) return `data:image/png;base64,${b64}`;
-  return getBaseUrl() + '/uploads/email/banner-logo.png';
+  return getBaseUrl() + '/assets/email/banner-logo.png';
 }
 
 function getGifSrc() {
-  const b64 = getGifBase64();
-  if (b64) return `data:image/gif;base64,${b64}`;
-  return getBaseUrl() + '/uploads/email/logo-animation.gif';
+  return getBaseUrl() + '/assets/email/logo-animation.gif';
 }
 
 function buildEmailHTML(options) {

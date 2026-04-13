@@ -1,7 +1,5 @@
 node_modules/
 .env
-uploads/*
-!uploads/.gitkeep
 *.log
 .DS_Store
 memory/*
@@ -10,3 +8,10 @@ test_reports/*
 !test_reports/.gitkeep
 apple-pay-certs/*.p8
 *.p8
+
+# Ignore only user-uploaded dynamic content (not static app assets)
+# Allow all static public assets (banners, logos, drugs, centers, specialists, email)
+public/uploads/avatars/**
+public/uploads/users/**
+public/uploads/receipts/**
+public/uploads/temp/**
