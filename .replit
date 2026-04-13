@@ -33,6 +33,9 @@ GOOGLE_CALLBACK_URL = "https://mafaseltech.com/api/auth/google/callback"
 QMEET_BASE_URL = "https://qiroxstudio.online/api/qmeet/v1"
 APPLE_CALLBACK_URL = "https://mafaseltech.com/api/auth/apple/callback"
 
+[userenv.production]
+BASE_URL = "https://mafaseltech.com"
+
 [workflows]
 runButton = "Project"
 
