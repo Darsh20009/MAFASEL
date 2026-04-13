@@ -31,6 +31,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(ROOT_DIR, 'public')));
 app.use('/uploads', express.static(path.join(ROOT_DIR, 'uploads')));
 
+// Serve .well-known files (Apple Pay, Apple Sign-In, domain verification)
+// express.static ignores dot-directories by default, so we serve them explicitly
+app.use('/.well-known', express.static(path.join(ROOT_DIR, 'public', '.well-known'), {
+  dotfiles: 'allow',
+  setHeaders: (res) => { res.setHeader('Content-Type', 'text/plain'); }
+}));
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 let sessionConfig = {
