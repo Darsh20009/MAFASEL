@@ -318,6 +318,85 @@ async function startServer() {
       const seedLocations = require('./modules/maps/seed-locations');
       await seedLocations();
 
+      // Image migration: update existing records with local images
+      try {
+        const Location = require('./modules/maps/location.model');
+        const centerImageMap = [
+          { name: /مفاصل.*العليا|العليا.*مفاصل/, image: '/uploads/centers/physio-center-1.jpg' },
+          { name: /الحركة|التعافي|الأمل/, image: '/uploads/centers/physio-center-2.jpg' },
+          { name: /الشفاء|التعافي/, image: '/uploads/centers/physio-center-3.jpg' },
+          { name: /مفاصل.*الخبر|الخبر.*مفاصل/, image: '/uploads/centers/physio-center-2.jpg' },
+          { name: /الرعاية|النهضة/, image: '/uploads/centers/physio-center-3.jpg' },
+          { name: /العناية|مفاصل.*جدة|جدة.*مفاصل/, image: '/uploads/centers/physio-center-1.jpg' },
+          { name: /البدن/, image: '/uploads/centers/physio-center-4.jpg' },
+        ];
+        const allCenters = await Location.find({ type: 'physiotherapy_center', image: '' });
+        for (const center of allCenters) {
+          const match = centerImageMap.find(m => m.name.test(center.name));
+          if (match) {
+            await Location.updateOne({ _id: center._id }, { image: match.image, rating: center.rating || 4.7 });
+          } else {
+            await Location.updateOne({ _id: center._id }, { image: '/uploads/centers/physio-center-4.jpg', rating: center.rating || 4.6 });
+          }
+        }
+        const pharmacyImageMap = [
+          { name: /النهدي/, cover: '/uploads/pharmacy/covers/nahdi-cover.jpg' },
+          { name: /الدواء/, cover: '/uploads/pharmacy/covers/aldawaa-cover.jpg' },
+          { name: /ليمون|lemon/i, cover: '/uploads/pharmacy/covers/lemon-cover.jpg' },
+          { name: /أورانج|orange/i, cover: '/uploads/pharmacy/covers/orange-cover.jpg' },
+        ];
+        const Pharmacy = require('./modules/pharmacy/pharmacy.model');
+        const allPharmacies = await Pharmacy.find({ cover: '' });
+        for (const ph of allPharmacies) {
+          const match = pharmacyImageMap.find(m => m.name.test(ph.name));
+          if (match) {
+            await Pharmacy.updateOne({ _id: ph._id }, { cover: match.cover });
+          }
+        }
+        const Drug = require('./modules/pharmacy/drug.model');
+        const drugImageMap = [
+          { name: /بنادول|panadol/i, image: '/uploads/drugs/panadol.png' },
+          { name: /بروفين|brufen|ibuprofen/i, image: '/uploads/drugs/brufen.png' },
+          { name: /أموكسيسيلين|amoxicillin/i, image: '/uploads/drugs/amoxicillin.png' },
+          { name: /أوجمنتين|augmentin/i, image: '/uploads/drugs/augmentin.png' },
+          { name: /أوميبرازول|omeprazole/i, image: '/uploads/drugs/omeprazole.png' },
+          { name: /ميتفورمين|metformin/i, image: '/uploads/drugs/metformin.png' },
+          { name: /فيتامين د|vitamin d/i, image: '/uploads/drugs/vitamin-d.png' },
+          { name: /فيتامين سي|vitamin c/i, image: '/uploads/drugs/vitamin-c.png' },
+          { name: /أوميغا|omega/i, image: '/uploads/drugs/omega3.png' },
+          { name: /لوسارتان|losartan/i, image: '/uploads/drugs/losartan.jpg' },
+          { name: /سيتريزين|cetirizine|كلاريتين|claritin/i, image: '/uploads/drugs/cetirizine.png' },
+          { name: /أتورفاستاتين|atorvastatin/i, image: '/uploads/drugs/atorvastatin.jpg' },
+          { name: /بيتاديرم|betaderm/i, image: '/uploads/drugs/betaderm.jpg' },
+          { name: /أوبتيف|optive/i, image: '/uploads/drugs/optive.jpg' },
+          { name: /أطفال|baby|syrup/i, image: '/uploads/drugs/panadol-baby.jpg' },
+        ];
+        const allDrugs = await Drug.find({ $or: [{ image: '' }, { image: /cdn-images\.ep\.link/ }] });
+        for (const drug of allDrugs) {
+          const match = drugImageMap.find(m => m.name.test(drug.name) || (drug.nameEn && m.name.test(drug.nameEn)));
+          if (match) {
+            await Drug.updateOne({ _id: drug._id }, { image: match.image });
+          } else {
+            await Drug.updateOne({ _id: drug._id }, { image: '/uploads/drugs/panadol.png' });
+          }
+        }
+        // Update specialist avatars
+        const allSpecs = await Specialist.find({ avatar: '' });
+        for (const spec of allSpecs) {
+          const avatar = spec.gender === 'female' ? '/uploads/specialists/specialist-female.jpg' : '/uploads/specialists/specialist-male.jpg';
+          await Specialist.updateOne({ _id: spec._id }, { avatar });
+        }
+        // Update demo centers that have no image
+        const demoCenters = await Location.find({ type: 'physiotherapy_center', image: '' });
+        const centerImgs = ['/uploads/centers/physio-center-1.jpg', '/uploads/centers/physio-center-2.jpg', '/uploads/centers/physio-center-3.jpg', '/uploads/centers/physio-center-4.jpg'];
+        for (let i = 0; i < demoCenters.length; i++) {
+          await Location.updateOne({ _id: demoCenters[i]._id }, { image: centerImgs[i % centerImgs.length] });
+        }
+        console.log('Image migration completed');
+      } catch (migErr) {
+        console.log('Image migration skipped:', migErr.message);
+      }
+
       const MongoStore = require('connect-mongo');
       const mongoStore = MongoStore.create({
         client: mongoose.connection.getClient(),

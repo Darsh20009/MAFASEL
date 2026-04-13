@@ -1,7 +1,14 @@
 # منصة مفاصل الطبية - MAFASEL
 
 ## نبذة عن المشروع
-منصة طبية رقمية متكاملة تجمع بين الخدمات الصحية في مكان واحد (استشارات، صيدلية، تأمين، مساعد ذكي).
+منصة تقنية صحية تعيد تنظيم تجربة العلاج الطبيعي من خلال ربط المرضى بالمراكز والأخصائيين والصيدليات والتأمين — وإدارة رحلة العلاج من الحجز إلى المتابعة.
+
+## الصور والوسائط
+- **صور الأدوية**: `public/uploads/drugs/` — 15 صورة (10 مولّدة بالذكاء الاصطناعي + 5 صور مخزون) بأسماء: panadol, brufen, amoxicillin, augmentin, omeprazole, metformin, vitamin-d, vitamin-c, omega3, cetirizine, losartan, atorvastatin, betaderm, optive, panadol-baby
+- **أغلفة الصيدليات**: `public/uploads/pharmacy/covers/` — nahdi, aldawaa, lemon, orange cover photos
+- **صور مراكز العلاج الطبيعي**: `public/uploads/centers/` — physio-center-1 إلى physio-center-4
+- **صور المتخصصين**: `public/uploads/specialists/` — specialist-male, specialist-female
+- **ترحيل الصور**: يعمل تلقائياً عند كل بداية تشغيل في `server/index.js` — يُحدّث المراكز والصيدليات والأدوية والمتخصصين في DB
 
 ## البنية التقنية
 - **Backend**: Node.js + Express.js

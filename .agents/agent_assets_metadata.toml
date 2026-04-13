@@ -1,0 +1,151 @@
+uploads = []
+
+[[generated]]
+id = "xaPMjiWRp1pYXYneYF84O"
+uri = "file://public/uploads/drugs/panadol.png"
+type = "image"
+title = "panadol tablets medicine"
+
+[[generated]]
+id = "RJxzf7_yvFKRLAkaGYDTV"
+uri = "file://public/uploads/drugs/brufen.png"
+type = "image"
+title = "brufen ibuprofen medicine"
+
+[[generated]]
+id = "wafkXOaiMDx4yh5sNaE5p"
+uri = "file://public/uploads/drugs/amoxicillin.png"
+type = "image"
+title = "amoxicillin antibiotic capsules"
+
+[[generated]]
+id = "a1gEYnjtCIxdHfahKlV6F"
+uri = "file://public/uploads/drugs/augmentin.png"
+type = "image"
+title = "augmentin antibiotic medicine"
+
+[[generated]]
+id = "iuThhZd9VIYHPdPJa7oLw"
+uri = "file://public/uploads/drugs/omeprazole.png"
+type = "image"
+title = "omeprazole stomach medicine"
+
+[[generated]]
+id = "0j4gMNam786YqPiSLJr16"
+uri = "file://public/uploads/drugs/metformin.png"
+type = "image"
+title = "metformin diabetes medicine"
+
+[[generated]]
+id = "xIPEF6x38sQ7-Ey9Pveu2"
+uri = "file://public/uploads/drugs/vitamin-d.png"
+type = "image"
+title = "vitamin D3 supplement"
+
+[[generated]]
+id = "TxUNWN0_L5rI6TX0YO7AW"
+uri = "file://public/uploads/drugs/vitamin-c.png"
+type = "image"
+title = "vitamin C supplement"
+
+[[generated]]
+id = "JnnjycYheINmdsuDE-hok"
+uri = "file://public/uploads/drugs/omega3.png"
+type = "image"
+title = "omega3 fish oil supplement"
+
+[[generated]]
+id = "myO4AQeOOtngP_yVHozFH"
+uri = "file://public/uploads/drugs/cetirizine.png"
+type = "image"
+title = "cetirizine allergy medicine"
+
+[[outputs]]
+id = "b0bSbsRl7ZYIAwAC2GXPz"
+uri = "file://attached_assets/stock_images/nahdi-pharmacy-cover.jpg"
+type = "image"
+title = "modern pharmacy store exterior Saudi Arabia green branding storefront"
+
+[[outputs]]
+id = "9pYyNW1edcuTU7zD0wWNL"
+uri = "file://attached_assets/stock_images/aldawaa-pharmacy-cover.jpg"
+type = "image"
+title = "pharmacy store interior well stocked medicine shelves professional"
+
+[[outputs]]
+id = "AUZsF-FcO4DDczgOEQMJA"
+uri = "file://attached_assets/stock_images/lemon-pharmacy-cover.jpg"
+type = "image"
+title = "health wellness natural supplement store interior bright"
+
+[[outputs]]
+id = "HiumPfdLD0cdyBKATD4u5"
+uri = "file://attached_assets/stock_images/orange-pharmacy-cover.jpg"
+type = "image"
+title = "community pharmacy counter pharmacist medicine professional"
+
+[[outputs]]
+id = "wWLG-RtJG7m26x3wK_5Ym"
+uri = "file://attached_assets/stock_images/physio-center-1.jpg"
+type = "image"
+title = "physiotherapy rehabilitation center interior modern equipment treatment room"
+
+[[outputs]]
+id = "UGWJfB24uWNZnxQtl6SN4"
+uri = "file://attached_assets/stock_images/physio-center-2.jpg"
+type = "image"
+title = "physical therapy clinic professional medical treatment parallel bars exercise"
+
+[[outputs]]
+id = "VGygg71KDAlcjWfdygmpO"
+uri = "file://attached_assets/stock_images/physio-center-3.jpg"
+type = "image"
+title = "medical rehabilitation center hospital building exterior modern Saudi Arabia"
+
+[[outputs]]
+id = "KOjcNDD3ZikGhNUGqCA90"
+uri = "file://attached_assets/stock_images/physio-center-4.jpg"
+type = "image"
+title = "orthopedic sports rehabilitation center therapy gym exercise equipment"
+
+[[outputs]]
+id = "6hfee1pgBnnb55E-lfvHI"
+uri = "file://attached_assets/stock_images/specialist-male.jpg"
+type = "image"
+title = "male physical therapist doctor professional white coat smiling"
+
+[[outputs]]
+id = "qpu9IrBgcgdGnE1k9Mn1O"
+uri = "file://attached_assets/stock_images/specialist-female.jpg"
+type = "image"
+title = "female physiotherapist doctor professional white coat smiling"
+
+[[outputs]]
+id = "_vzY24qxI_a_qsZ7yv9CK"
+uri = "file://attached_assets/stock_images/losartan-medicine.jpg"
+type = "image"
+title = "losartan blood pressure medication tablets white blue pill pack pharmaceutical"
+
+[[outputs]]
+id = "of4B0YMW3NBRy517Ql91l"
+uri = "file://attached_assets/stock_images/atorvastatin-medicine.jpg"
+type = "image"
+title = "atorvastatin cholesterol medication lipitor tablets pharmaceutical pill pack"
+
+[[outputs]]
+id = "FpngStNEjgvR3UoRT_pp4"
+uri = "file://attached_assets/stock_images/eye-drops-medicine.jpg"
+type = "image"
+title = "eye drops bottle white pharmaceutical medical eye care product"
+
+[[outputs]]
+id = "RqtXGmkNYUxm2HL5Vwc-9"
+uri = "file://attached_assets/stock_images/skin-cream-medicine.jpg"
+type = "image"
+title = "skin cream tube white pharmaceutical dermatology cream tube medical"
+
+[[outputs]]
+id = "2kZrQuTbZOadWYFv3gZts"
+uri = "file://attached_assets/stock_images/baby-medicine.jpg"
+type = "image"
+title = "baby children syrup medicine pink bottle pharmaceutical pediatric"
