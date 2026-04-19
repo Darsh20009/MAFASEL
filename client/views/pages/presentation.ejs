@@ -1,1147 +1,1120 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlRoot">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مفاصل | العرض التقديمي</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>مفاصل | الدراسة التكاملية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="icon" href="/icons/logo.png">
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --accent:#101d23;--accent2:#1a2e38;--teal:#12a99b;--teal2:#0d8a7e;
-      --text:#1a1a2e;--muted:#6b7280;--border:#e2e8f0;
-      --bg:#f8fafc;--card:#fff;--shadow:0 4px 24px rgba(0,0,0,0.06);
-      --gradient:linear-gradient(135deg,#12a99b,#0d8a7e);
+      --dark:#0b1520;--dark2:#101d23;--dark3:#1a2e38;
+      --teal:#12a99b;--teal2:#0d8a7e;--teal-glow:rgba(18,169,155,0.25);
+      --gold:#f0a500;--gold2:#d97706;
+      --blue:#2563eb;--purple:#7c3aed;--green:#16a34a;--red:#dc2626;
+      --text:#1a1a2e;--muted:#64748b;--border:#e2e8f0;
+      --bg:#f8fafc;--card:#fff;
+      --grad-teal:linear-gradient(135deg,#12a99b,#0d8a7e);
+      --grad-dark:linear-gradient(170deg,#0b1520,#1a2e38);
+      --grad-gold:linear-gradient(135deg,#f0a500,#d97706);
     }
     html{scroll-behavior:smooth;overflow-x:hidden}
-    body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
-    [dir="ltr"] body{font-family:'Inter','Tajawal',sans-serif}
+    body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 
-    .container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
-
-    .lang-toggle{
-      position:fixed;top:1.2rem;left:1.2rem;z-index:999;
-      display:flex;align-items:center;gap:0.4rem;
-      background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
-      border:1px solid var(--border);border-radius:50px;padding:0.35rem;
-      box-shadow:0 2px 16px rgba(0,0,0,0.08);
-    }
-    .lang-btn{
-      padding:0.4rem 0.9rem;border-radius:50px;border:none;cursor:pointer;
-      font-size:0.78rem;font-weight:700;transition:all 0.3s;background:transparent;color:var(--muted);
-    }
-    .lang-btn.active{background:var(--accent);color:#fff}
-
-    .back-link{
+    /* ====== BACK BTN ====== */
+    .back-btn{
       position:fixed;top:1.2rem;right:1.2rem;z-index:999;
-      background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
-      border:1px solid var(--border);border-radius:50px;padding:0.5rem 1rem;
-      text-decoration:none;color:var(--accent);font-size:0.8rem;font-weight:700;
-      box-shadow:0 2px 16px rgba(0,0,0,0.08);transition:all 0.3s;display:flex;align-items:center;gap:0.4rem;
+      display:flex;align-items:center;gap:0.4rem;
+      background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);
+      border:1px solid var(--border);border-radius:50px;
+      padding:0.5rem 1rem;text-decoration:none;
+      color:var(--dark2);font-size:0.82rem;font-weight:700;
+      box-shadow:0 2px 16px rgba(0,0,0,0.08);transition:all 0.3s;
     }
-    [dir="ltr"] .back-link{right:auto;left:1.2rem}
-    [dir="ltr"] .lang-toggle{left:auto;right:1.2rem}
-    .back-link:hover{background:var(--accent);color:#fff}
+    .back-btn:hover{background:var(--dark2);color:#fff}
 
+    /* ====== HERO ====== */
     .hero{
       min-height:100vh;display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(170deg,#101d23 0%,#1a2e38 40%,#12a99b 100%);
-      position:relative;overflow:hidden;
+      background:var(--grad-dark);position:relative;overflow:hidden;
     }
-    .hero::before{
-      content:'';position:absolute;inset:0;
-      background:radial-gradient(circle at 30% 70%,rgba(18,169,155,0.15) 0%,transparent 50%),
-                 radial-gradient(circle at 70% 30%,rgba(18,169,155,0.1) 0%,transparent 50%);
+    .hero-orbs{position:absolute;inset:0;pointer-events:none}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.2}
+    .orb-1{width:400px;height:400px;background:var(--teal);top:-100px;left:-100px;animation:orbFloat 10s ease-in-out infinite}
+    .orb-2{width:300px;height:300px;background:#2563eb;bottom:5%;right:5%;animation:orbFloat 14s ease-in-out infinite reverse}
+    .orb-3{width:250px;height:250px;background:#7c3aed;top:50%;left:60%;animation:orbFloat 12s ease-in-out infinite}
+    @keyframes orbFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-30px)}}
+
+    .hero-inner{text-align:center;position:relative;z-index:2;padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+    .hero-logo{width:110px;height:110px;margin:0 auto 1.5rem;animation:floatY 4s ease-in-out infinite;filter:drop-shadow(0 8px 32px var(--teal-glow))}
+    @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+    .hero-tag{
+      display:inline-flex;align-items:center;gap:0.5rem;
+      padding:0.45rem 1.2rem;border-radius:50px;
+      background:rgba(18,169,155,0.15);border:1px solid rgba(18,169,155,0.3);
+      color:var(--teal);font-size:0.82rem;font-weight:700;margin-bottom:1.5rem;
     }
-    .hero-content{text-align:center;position:relative;z-index:2;padding:2rem}
-    .hero-logo{
-      width:120px;height:120px;margin:0 auto 1.5rem;
-      filter:drop-shadow(0 8px 32px rgba(18,169,155,0.4));
-      animation:float 4s ease-in-out infinite;
+    .hero h1{font-size:clamp(3rem,8vw,5.5rem);font-weight:900;color:#fff;line-height:1.05;margin-bottom:0.8rem}
+    .hero h1 .accent{color:var(--teal)}
+    .hero-sub{font-size:clamp(1rem,2.5vw,1.3rem);color:rgba(255,255,255,0.65);margin-bottom:2.5rem;line-height:1.8;max-width:680px;margin-left:auto;margin-right:auto}
+
+    .hero-kpis{
+      display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-bottom:3rem;
     }
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-    .hero h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:900;color:#fff;margin-bottom:0.5rem}
-    .hero h1 span{color:var(--teal);position:relative}
-    .hero .tagline{font-size:clamp(1rem,2.5vw,1.3rem);color:rgba(255,255,255,0.7);font-weight:400;margin-bottom:2rem;max-width:600px;margin-left:auto;margin-right:auto}
-    .hero-badges{display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
-    .hero-badge{
-      display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;
-      border-radius:50px;font-size:0.8rem;font-weight:600;
-      background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);color:#fff;
-      border:1px solid rgba(255,255,255,0.15);
+    .kpi{text-align:center}
+    .kpi-num{font-size:2.8rem;font-weight:900;color:var(--teal);line-height:1;display:block}
+    .kpi-label{font-size:0.78rem;color:rgba(255,255,255,0.5);margin-top:0.3rem;font-weight:600}
+
+    .hero-chips{display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap}
+    .chip{
+      display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 1rem;
+      border-radius:50px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
+      color:rgba(255,255,255,0.8);font-size:0.78rem;font-weight:600;
     }
-    .scroll-hint{
+
+    .scroll-cue{
       position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
-      color:rgba(255,255,255,0.5);font-size:0.8rem;display:flex;flex-direction:column;align-items:center;gap:0.3rem;
-      animation:bounce 2s infinite;
+      display:flex;flex-direction:column;align-items:center;gap:0.4rem;
+      color:rgba(255,255,255,0.35);font-size:0.75rem;animation:bounce 2s infinite;
     }
     @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
-    .orbs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-    .orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.3}
-    .orb-1{width:300px;height:300px;background:#12a99b;top:-50px;right:-50px;animation:orb1 8s ease-in-out infinite}
-    .orb-2{width:200px;height:200px;background:#2563eb;bottom:10%;left:5%;animation:orb2 10s ease-in-out infinite}
-    .orb-3{width:250px;height:250px;background:#7c3aed;bottom:-30px;right:20%;animation:orb3 12s ease-in-out infinite}
-    @keyframes orb1{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,20px)}}
-    @keyframes orb2{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-30px)}}
-    @keyframes orb3{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,-20px)}}
+    /* ====== SECTIONS ====== */
+    section{padding:5rem 0;position:relative}
+    section.dark-sec{background:var(--dark2);color:#fff}
+    section.dark-sec .section-title{color:#fff}
+    section.dark-sec .section-title span{color:var(--teal)}
+    section.light-sec{background:var(--bg)}
+    section.white-sec{background:#fff}
+    .container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
 
-    section{padding:5rem 0}
-    section:nth-child(even){background:#fff}
+    .reveal{opacity:0;transform:translateY(32px);transition:opacity 0.65s ease,transform 0.65s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
 
-    .section-badge{
-      display:inline-flex;align-items:center;gap:0.4rem;
-      padding:0.4rem 1rem;border-radius:50px;font-size:0.75rem;font-weight:700;
+    .sec-badge{
+      display:inline-flex;align-items:center;gap:0.5rem;
+      padding:0.4rem 1rem;border-radius:50px;font-size:0.75rem;font-weight:800;
       margin-bottom:1rem;
     }
-    .section-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;color:var(--accent);margin-bottom:0.5rem;line-height:1.3}
+    .badge-teal{background:#e6faf8;color:var(--teal);border:1px solid #b2f0ea}
+    .badge-gold{background:#fef3c7;color:var(--gold2);border:1px solid #fde68a}
+    .badge-blue{background:#dbeafe;color:var(--blue);border:1px solid #bfdbfe}
+    .badge-purple{background:#ede9fe;color:var(--purple);border:1px solid #ddd6fe}
+    .badge-green{background:#dcfce7;color:var(--green);border:1px solid #bbf7d0}
+    .badge-red{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
+    .badge-orange{background:#ffedd5;color:#ea580c;border:1px solid #fed7aa}
+
+    .badge-dark{background:rgba(18,169,155,0.15);color:var(--teal);border:1px solid rgba(18,169,155,0.3)}
+
+    .section-title{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;color:var(--dark2);margin-bottom:0.5rem;line-height:1.25}
     .section-title span{color:var(--teal)}
-    .section-sub{font-size:1rem;color:var(--muted);max-width:650px;margin-bottom:2rem;line-height:1.8}
-    .divider{width:60px;height:4px;border-radius:2px;margin:0.8rem 0 1.2rem;background:var(--gradient)}
+    .section-sub{font-size:0.95rem;color:var(--muted);line-height:1.8;margin-bottom:2rem;max-width:650px}
+    .divider{width:56px;height:4px;border-radius:2px;margin:0.7rem 0 1.5rem;background:var(--grad-teal)}
 
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
-    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-
-    .card{
-      background:#fff;border:1px solid var(--border);border-radius:16px;
-      padding:1.5rem;transition:all 0.3s;position:relative;overflow:hidden;
-    }
-    .card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.08)}
-    .card-icon{
-      width:52px;height:52px;border-radius:14px;
-      display:flex;align-items:center;justify-content:center;
-      font-size:1.2rem;margin-bottom:1rem;
-    }
-    .card h3{font-size:1.05rem;font-weight:800;color:var(--accent);margin-bottom:0.4rem}
+    /* ====== CARDS ====== */
+    .card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:1.6rem;transition:all 0.3s;position:relative;overflow:hidden}
+    .card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.08)}
+    .card-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin-bottom:0.9rem}
+    .card h3{font-size:1rem;font-weight:800;color:var(--dark2);margin-bottom:0.35rem}
     .card p{font-size:0.85rem;color:var(--muted);line-height:1.7}
 
     .ic-teal{background:#e6faf8;color:var(--teal)}
-    .ic-blue{background:#dbeafe;color:#2563eb}
-    .ic-purple{background:#ede9fe;color:#7c3aed}
-    .ic-pink{background:#fce7f3;color:#db2777}
-    .ic-gold{background:#fef3c7;color:#d97706}
-    .ic-green{background:#dcfce7;color:#16a34a}
-    .ic-red{background:#fee2e2;color:#dc2626}
+    .ic-blue{background:#dbeafe;color:var(--blue)}
+    .ic-purple{background:#ede9fe;color:var(--purple)}
+    .ic-gold{background:#fef3c7;color:var(--gold2)}
+    .ic-green{background:#dcfce7;color:var(--green)}
+    .ic-red{background:#fee2e2;color:var(--red)}
     .ic-orange{background:#ffedd5;color:#ea580c}
 
-    .b-teal{background:#e6faf8;color:var(--teal);border:1px solid #b2f0ea}
-    .b-blue{background:#dbeafe;color:#2563eb;border:1px solid #bfdbfe}
-    .b-purple{background:#ede9fe;color:#7c3aed;border:1px solid #ddd6fe}
-    .b-gold{background:#fef3c7;color:#d97706;border:1px solid #fde68a}
-    .b-pink{background:#fce7f3;color:#db2777;border:1px solid #fbcfe8}
-    .b-green{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
-    .b-red{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
-    .b-orange{background:#ffedd5;color:#ea580c;border:1px solid #fed7aa}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
 
-    .phone-mockup{
-      width:260px;height:520px;background:#fff;border-radius:36px;
-      border:3px solid #e2e8f0;box-shadow:0 20px 60px rgba(0,0,0,0.12);
-      overflow:hidden;position:relative;margin:0 auto;flex-shrink:0;
+    /* ====== PLATFORM DEFINITION ====== */
+    .platform-type{
+      display:inline-flex;align-items:center;gap:0.6rem;
+      padding:0.7rem 1.5rem;border-radius:12px;
+      background:linear-gradient(135deg,rgba(18,169,155,0.12),rgba(18,169,155,0.06));
+      border:1px solid rgba(18,169,155,0.25);margin:1.5rem 0 2rem;
     }
-    .phone-mockup::before{
-      content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);
-      width:80px;height:24px;background:#f1f5f9;border-radius:12px;z-index:2;
-    }
-    .phone-screen{padding:2.5rem 1rem 1rem;height:100%;display:flex;flex-direction:column;overflow:hidden}
+    .platform-type .pt-icon{font-size:1.3rem}
+    .platform-type .pt-text{font-size:1.1rem;font-weight:800;color:var(--dark2)}
+    .platform-type .pt-sub{font-size:0.82rem;color:var(--muted)}
 
-    .mockup-header{
+    .connect-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;
+      margin:1.5rem 0;
+    }
+    .connect-card{
+      text-align:center;padding:1.4rem 1rem;
+      background:#fff;border:1px solid var(--border);border-radius:16px;transition:all 0.3s;
+    }
+    .connect-card:hover{border-color:var(--teal);box-shadow:0 8px 24px var(--teal-glow)}
+    .connect-card i{font-size:1.8rem;margin-bottom:0.6rem;display:block}
+    .connect-card h4{font-size:0.9rem;font-weight:800;margin-bottom:0.2rem}
+    .connect-card p{font-size:0.75rem;color:var(--muted)}
+
+    /* ====== BIG STAT ====== */
+    .big-stat-row{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin:2.5rem 0}
+    .big-stat{text-align:center;min-width:150px}
+    .big-num{
+      font-size:3.5rem;font-weight:900;line-height:1;
+      background:var(--grad-teal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .big-label{font-size:0.82rem;color:var(--muted);font-weight:600;margin-top:0.4rem}
+
+    .dark-sec .big-label{color:rgba(255,255,255,0.5)}
+    .dark-sec .big-num{font-size:3.5rem;font-weight:900;background:var(--grad-teal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    /* ====== LICENSE CARDS ====== */
+    .license-item{
+      background:#fff;border:1px solid var(--border);border-radius:16px;
+      padding:1.4rem;display:flex;align-items:flex-start;gap:1rem;
+      transition:all 0.3s;margin-bottom:1rem;
+    }
+    .license-item:hover{border-color:var(--teal);box-shadow:0 8px 24px var(--teal-glow)}
+    .lic-icon{
+      width:48px;height:48px;border-radius:12px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+    }
+    .lic-body{flex:1}
+    .lic-body h4{font-size:0.95rem;font-weight:800;color:var(--dark2);margin-bottom:0.3rem}
+    .lic-body p{font-size:0.8rem;color:var(--muted);line-height:1.6}
+    .lic-cost{
+      display:inline-block;margin-top:0.5rem;padding:0.3rem 0.8rem;
+      border-radius:8px;background:#fef3c7;color:var(--gold2);
+      font-size:0.8rem;font-weight:800;
+    }
+    .lic-total{
+      background:linear-gradient(135deg,#0b1520,#1a2e38);
+      color:#fff;border-radius:16px;padding:1.5rem 2rem;
       display:flex;align-items:center;justify-content:space-between;
-      padding:0.5rem 0;margin-bottom:0.5rem;border-bottom:1px solid var(--border);
+      margin-top:1.5rem;
     }
-    .mockup-header h4{font-size:0.8rem;font-weight:800;color:var(--accent)}
+    .lic-total h3{font-size:1rem;font-weight:700}
+    .lic-total .amount{font-size:1.8rem;font-weight:900;color:var(--teal)}
 
-    .chat-mockup{display:flex;flex-direction:column;gap:0.4rem;flex:1;overflow:hidden}
-    .chat-msg{
-      padding:0.5rem 0.7rem;border-radius:12px;font-size:0.72rem;
-      max-width:85%;line-height:1.5;
+    /* ====== MARKET ====== */
+    .market-highlight{
+      background:linear-gradient(135deg,var(--dark2),var(--dark3));
+      border-radius:20px;padding:2.5rem;text-align:center;color:#fff;margin:2rem 0;
     }
-    .chat-sent{align-self:flex-end;background:var(--teal);color:#fff;border-radius:12px 12px 4px 12px}
-    .chat-recv{align-self:flex-start;background:#f1f5f9;color:var(--text);border-radius:12px 12px 12px 4px}
+    .market-highlight .mh-val{font-size:5rem;font-weight:900;color:var(--teal);line-height:1;display:block}
+    .market-highlight .mh-label{font-size:1rem;color:rgba(255,255,255,0.65);margin-top:0.5rem}
+    .market-highlight .mh-sub{font-size:0.85rem;color:rgba(255,255,255,0.4);margin-top:0.4rem}
 
-    .stats-row{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin:2.5rem 0}
-    .stat-item{text-align:center;min-width:120px}
-    .stat-num{font-size:2.5rem;font-weight:900;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
-    .stat-label{font-size:0.8rem;color:var(--muted);margin-top:0.3rem;font-weight:600}
+    /* ====== CONDITIONS ====== */
+    .condition-bar{margin-bottom:1rem}
+    .condition-bar .cb-top{display:flex;justify-content:space-between;margin-bottom:0.35rem}
+    .condition-bar .cb-name{font-size:0.9rem;font-weight:700;color:var(--dark2)}
+    .condition-bar .cb-pct{font-size:0.9rem;font-weight:800;color:var(--teal)}
+    .bar-track{height:10px;background:#f1f5f9;border-radius:5px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:5px;background:var(--grad-teal);transition:width 1.2s ease}
 
-    .flex-showcase{display:flex;gap:2.5rem;align-items:center}
-    .flex-showcase .content{flex:1;min-width:0}
-    .flex-showcase .visual{flex-shrink:0}
+    /* ====== REVENUE MODEL ====== */
+    .rev-card{
+      background:#fff;border:1px solid var(--border);border-radius:16px;
+      padding:1.4rem;display:flex;align-items:center;gap:1rem;transition:all 0.3s;
+    }
+    .rev-card:hover{border-color:var(--teal);transform:translateX(-4px);box-shadow:0 8px 24px var(--teal-glow)}
+    .rev-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .rev-body{flex:1}
+    .rev-body h4{font-size:0.95rem;font-weight:800;color:var(--dark2)}
+    .rev-body p{font-size:0.82rem;color:var(--muted)}
+    .rev-rate{font-size:1.1rem;font-weight:900;color:var(--teal);white-space:nowrap}
 
-    .feature-list{list-style:none;display:flex;flex-direction:column;gap:0.6rem;margin:1.5rem 0}
-    .feature-list li{
-      display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1rem;
-      background:#fff;border:1px solid var(--border);border-radius:12px;
-      font-size:0.88rem;font-weight:600;transition:all 0.3s;
-    }
-    .feature-list li:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(18,169,155,0.1)}
-    .feature-list li i{color:var(--teal);font-size:0.9rem;width:20px;text-align:center}
+    /* ====== CAPITAL TABLE ====== */
+    .cap-table{width:100%;border-collapse:collapse;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+    .cap-table thead{background:var(--dark2);color:#fff}
+    .cap-table thead th{padding:1rem 1.2rem;font-size:0.88rem;font-weight:800;text-align:right}
+    .cap-table tbody tr{border-bottom:1px solid var(--border);background:#fff;transition:background 0.2s}
+    .cap-table tbody tr:hover{background:#f0fdf9}
+    .cap-table tbody td{padding:0.9rem 1.2rem;font-size:0.88rem}
+    .cap-table tbody td:last-child{font-weight:800;color:var(--teal);text-align:left}
+    .cap-table tfoot td{padding:1rem 1.2rem;font-weight:900;font-size:1rem;background:linear-gradient(135deg,#0b1520,#1a2e38);color:#fff}
+    .cap-table tfoot td:last-child{color:var(--teal);font-size:1.2rem}
 
-    .tech-stack{display:flex;flex-wrap:wrap;gap:0.8rem;margin:1.5rem 0}
-    .tech-tag{
-      display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;
-      border-radius:50px;font-size:0.8rem;font-weight:600;
-      background:#fff;border:1px solid var(--border);transition:all 0.3s;
+    /* ====== TEAM ====== */
+    .team-card{
+      background:#fff;border:1px solid var(--border);border-radius:16px;
+      padding:1.2rem;text-align:center;transition:all 0.3s;
     }
-    .tech-tag:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+    .team-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.08)}
+    .team-avatar{
+      width:60px;height:60px;border-radius:50%;margin:0 auto 0.8rem;
+      display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+    }
+    .team-card h4{font-size:0.92rem;font-weight:800;color:var(--dark2);margin-bottom:0.2rem}
+    .team-card .salary{font-size:0.95rem;font-weight:900;color:var(--teal)}
+    .team-card p{font-size:0.75rem;color:var(--muted)}
 
-    .auth-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
-    .auth-card{
-      text-align:center;padding:1.5rem 1rem;background:#fff;
-      border:1px solid var(--border);border-radius:16px;transition:all 0.3s;
+    /* ====== GROWTH TABLE ====== */
+    .growth-table{width:100%;border-collapse:collapse;border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+    .growth-table thead{background:linear-gradient(135deg,#0b1520,#1a2e38)}
+    .growth-table thead th{padding:1rem 1.2rem;color:#fff;font-size:0.85rem;font-weight:800;text-align:right}
+    .growth-table tbody tr{background:#fff;border-bottom:1px solid var(--border);transition:all 0.2s}
+    .growth-table tbody tr:hover{background:#f0fdf9}
+    .growth-table tbody td{padding:0.85rem 1.2rem;font-size:0.88rem}
+    .growth-table .year-cell{font-weight:900;color:var(--teal);font-size:1rem}
+    .growth-table .rev-cell{font-weight:800;color:var(--dark2)}
+    .growth-table .growth-cell{
+      display:inline-flex;align-items:center;gap:0.3rem;
+      padding:0.25rem 0.6rem;border-radius:6px;font-weight:800;font-size:0.82rem;
+      background:#dcfce7;color:var(--green);
     }
-    .auth-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
-    .auth-card i{font-size:2rem;margin-bottom:0.6rem;display:block}
-    .auth-card h4{font-size:0.9rem;font-weight:700;margin-bottom:0.2rem}
-    .auth-card p{font-size:0.72rem;color:var(--muted)}
 
-    .timeline{position:relative;padding:0;margin:2rem 0}
-    .timeline::before{
-      content:'';position:absolute;right:20px;top:0;bottom:0;width:3px;
-      background:linear-gradient(to bottom,var(--teal),#2563eb,#7c3aed,#d97706);
-      border-radius:2px;
-    }
-    [dir="ltr"] .timeline::before{right:auto;left:20px}
-    .tl-item{
-      position:relative;padding:0 2.5rem 2rem 0;
-      margin-right:20px;
-    }
-    [dir="ltr"] .tl-item{padding:0 0 2rem 2.5rem;margin-right:0;margin-left:20px}
-    .tl-item::before{
-      content:'';position:absolute;right:-28px;top:6px;
-      width:14px;height:14px;border-radius:50%;
-      background:var(--teal);border:3px solid #fff;box-shadow:0 0 0 3px rgba(18,169,155,0.2);
-    }
-    [dir="ltr"] .tl-item::before{right:auto;left:-28px}
-    .tl-item:nth-child(2)::before{background:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.2)}
-    .tl-item:nth-child(3)::before{background:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,0.2)}
-    .tl-item:nth-child(4)::before{background:#d97706;box-shadow:0 0 0 3px rgba(217,119,6,0.2)}
-    .tl-item h4{font-size:1rem;font-weight:800;color:var(--accent);margin-bottom:0.2rem}
-    .tl-item p{font-size:0.85rem;color:var(--muted)}
+    /* ====== SECTOR PIE (CSS) ====== */
+    .sector-list{display:flex;flex-direction:column;gap:1rem;margin:1.5rem 0}
+    .sector-item{display:flex;align-items:center;gap:1rem}
+    .sector-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+    .sector-label{flex:1;font-size:0.9rem;font-weight:700;color:var(--dark2)}
+    .sector-pct{font-size:1.1rem;font-weight:900}
+    .sector-bar-wrap{flex:2}
+    .sector-bar{height:8px;border-radius:4px}
 
-    .demo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin:1.5rem 0}
-    .demo-card{
-      display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1.2rem;
-      background:#fff;border:1px solid var(--border);border-radius:14px;
-      transition:all 0.3s;
+    /* ====== COMPETITORS ====== */
+    .vs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1.5rem 0}
+    .vs-card{border-radius:16px;padding:1.4rem;text-align:center;border:2px solid transparent;transition:all 0.3s}
+    .vs-card.competitor{background:#f8fafc;border-color:var(--border)}
+    .vs-card.us{background:linear-gradient(135deg,#0b1520,#1a2e38);color:#fff;border-color:var(--teal)}
+    .vs-card h4{font-size:1rem;font-weight:800;margin-bottom:0.8rem}
+    .vs-card .feat-list{list-style:none;display:flex;flex-direction:column;gap:0.4rem}
+    .vs-card .feat-list li{font-size:0.78rem;padding:0.3rem 0;border-bottom:1px solid rgba(0,0,0,0.05);color:var(--muted)}
+    .vs-card.us .feat-list li{color:rgba(255,255,255,0.7);border-bottom-color:rgba(255,255,255,0.08)}
+    .vs-card .feat-list li.yes{color:var(--teal);font-weight:700}
+    .vs-badge{
+      display:inline-block;padding:0.3rem 0.8rem;border-radius:8px;
+      font-size:0.72rem;font-weight:800;margin-bottom:0.5rem;
+      background:rgba(18,169,155,0.2);color:var(--teal);
     }
-    .demo-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.06)}
-    .demo-avatar{
-      width:42px;height:42px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    }
-    .demo-card strong{display:block;font-size:0.85rem}
-    .demo-card span{font-size:0.72rem;color:var(--muted);direction:ltr;display:inline-block}
 
-    .cta-section{
-      background:linear-gradient(170deg,#101d23,#1a2e38);
-      padding:5rem 0;text-align:center;position:relative;overflow:hidden;
+    /* ====== TIMELINE RECOVERY ====== */
+    .recovery-line{
+      display:flex;align-items:center;gap:0;margin:2rem 0;position:relative;
+      overflow:hidden;border-radius:12px;
     }
-    .cta-section::before{
+    .rec-step{
+      flex:1;padding:1.4rem 1rem;text-align:center;position:relative;
+    }
+    .rec-step h4{font-size:0.88rem;font-weight:800;margin-bottom:0.3rem}
+    .rec-step p{font-size:0.76rem;color:var(--muted)}
+    .rec-step.active p{color:rgba(255,255,255,0.7)}
+
+    /* ====== CLOSING STATEMENT ====== */
+    .closing{
+      background:var(--grad-dark);min-height:60vh;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:5rem 2rem;position:relative;overflow:hidden;
+    }
+    .closing::before{
       content:'';position:absolute;inset:0;
-      background:radial-gradient(circle at 50% 50%,rgba(18,169,155,0.15),transparent 70%);
+      background:radial-gradient(circle at 50% 50%,rgba(18,169,155,0.15),transparent 60%);
     }
-    .cta-section h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:900;color:#fff;margin-bottom:0.8rem;position:relative}
-    .cta-section p{color:rgba(255,255,255,0.6);font-size:1rem;margin-bottom:2rem;position:relative}
-    .cta-btn{
-      display:inline-flex;align-items:center;gap:0.5rem;
-      padding:0.9rem 2.5rem;border-radius:50px;border:none;
-      background:var(--gradient);color:#fff;font-size:1rem;font-weight:700;
-      cursor:pointer;transition:all 0.3s;text-decoration:none;
-      box-shadow:0 4px 20px rgba(18,169,155,0.3);
-      font-family:inherit;
+    .closing-inner{position:relative;z-index:2;max-width:800px;margin:0 auto}
+    .closing h2{font-size:clamp(1.5rem,4vw,2.5rem);color:rgba(255,255,255,0.5);font-weight:400;margin-bottom:1.5rem;line-height:1.6}
+    .closing .highlight{color:#fff;font-weight:900}
+    .closing .punch{
+      font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;
+      color:var(--teal);margin-top:2rem;line-height:1.4;
     }
-    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(18,169,155,0.4)}
-
-    .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
-    .reveal.visible{opacity:1;transform:translateY(0)}
-
-    .mockup-app{
-      width:100%;max-width:700px;margin:0 auto;
-      background:#fff;border-radius:12px;border:2px solid var(--border);
-      box-shadow:0 20px 60px rgba(0,0,0,0.1);overflow:hidden;
-    }
-    .mockup-titlebar{
-      display:flex;align-items:center;gap:0.4rem;padding:0.6rem 1rem;
-      background:#f8fafc;border-bottom:1px solid var(--border);
-    }
-    .mockup-dot{width:10px;height:10px;border-radius:50%}
-    .mockup-titlebar span{font-size:0.7rem;color:var(--muted);margin-right:auto;margin-left:0.5rem}
-    .mockup-body{padding:1.5rem}
-
-    .pharmacy-items{display:flex;flex-direction:column;gap:0.5rem}
-    .pharmacy-item{
-      display:flex;align-items:center;gap:0.7rem;padding:0.7rem;
-      background:#f8fafc;border-radius:10px;
-    }
-    .pharmacy-item .drug-icon{
-      width:36px;height:36px;border-radius:10px;
-      display:flex;align-items:center;justify-content:center;font-size:0.85rem;
-    }
-    .pharmacy-item .drug-name{font-size:0.8rem;font-weight:700;flex:1}
-    .pharmacy-item .drug-price{font-size:0.8rem;font-weight:800;color:var(--teal)}
-
-    .health-card-mockup{
-      max-width:380px;margin:0 auto;padding:1.5rem 2rem;
-      background:linear-gradient(135deg,#101d23,#1a2e38);
-      border-radius:16px;color:#fff;position:relative;overflow:hidden;
-      box-shadow:0 20px 60px rgba(0,0,0,0.2);
-    }
-    .health-card-mockup::before{
-      content:'';position:absolute;top:-30%;right:-20%;width:200px;height:200px;
-      border-radius:50%;background:rgba(18,169,155,0.15);
-    }
-    .health-card-mockup .hc-logo{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem}
-    .health-card-mockup .hc-logo img{width:32px;height:32px}
-    .health-card-mockup .hc-logo span{font-size:1.1rem;font-weight:800}
-    .health-card-mockup .hc-name{font-size:1.3rem;font-weight:900;margin-bottom:0.3rem}
-    .health-card-mockup .hc-id{font-size:0.8rem;color:rgba(255,255,255,0.6);margin-bottom:1rem;direction:ltr;display:inline-block}
-    .health-card-mockup .hc-row{display:flex;gap:1.5rem;margin-bottom:0.8rem}
-    .health-card-mockup .hc-field label{font-size:0.65rem;color:rgba(255,255,255,0.5);display:block}
-    .health-card-mockup .hc-field span{font-size:0.85rem;font-weight:700}
-    .health-card-mockup .hc-qr{
-      position:absolute;bottom:1.2rem;left:1.5rem;
-      width:60px;height:60px;background:#fff;border-radius:8px;
-      display:flex;align-items:center;justify-content:center;
-    }
-    [dir="ltr"] .health-card-mockup .hc-qr{left:auto;right:1.5rem}
-
-    .admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
-
-    .payment-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0}
-    .pay-card{
-      text-align:center;padding:1.5rem 1rem;background:#fff;
-      border:1px solid var(--border);border-radius:16px;transition:all 0.3s;
-    }
-    .pay-card:hover{border-color:var(--teal);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
-    .pay-card i{font-size:2.2rem;margin-bottom:0.5rem;display:block}
-    .pay-card h4{font-size:0.88rem;font-weight:700;margin-bottom:0.2rem}
-    .pay-card p{font-size:0.7rem;color:var(--muted)}
-
-    .map-mockup{
-      width:100%;max-width:500px;height:300px;
-      background:linear-gradient(135deg,#e8f5e9,#e0f2f1);
-      border-radius:16px;border:2px solid var(--border);
-      position:relative;overflow:hidden;margin:0 auto;
-      box-shadow:0 12px 40px rgba(0,0,0,0.08);
-    }
-    .map-pin{
-      position:absolute;display:flex;flex-direction:column;align-items:center;
-      animation:pinDrop 0.5s ease forwards;
-    }
-    .map-pin i{font-size:1.5rem;color:#dc2626;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))}
-    .map-pin span{font-size:0.6rem;font-weight:700;background:#fff;padding:0.15rem 0.4rem;border-radius:4px;margin-top:0.15rem;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.1)}
-    @keyframes pinDrop{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
-
-    .ai-showcase{
-      display:flex;gap:2rem;align-items:center;
-    }
-    .ai-features{flex:1}
-    .ai-visual{flex-shrink:0}
-
-    .password-badge{
-      display:inline-block;padding:0.3rem 0.8rem;border-radius:6px;
-      font-weight:800;font-size:0.85rem;font-family:monospace;
+    .closing .punch span{color:#fff}
+    .closing-chips{display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-top:2.5rem}
+    .closing-chip{
+      padding:0.6rem 1.4rem;border-radius:50px;
+      background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
+      color:rgba(255,255,255,0.8);font-size:0.85rem;font-weight:700;
     }
 
-    footer{
-      background:var(--accent);color:rgba(255,255,255,0.5);
-      padding:2rem 0;text-align:center;font-size:0.8rem;
+    /* ====== VISION BADGE ====== */
+    .vision-box{
+      background:linear-gradient(135deg,rgba(18,169,155,0.1),rgba(37,99,235,0.08));
+      border:1px solid rgba(18,169,155,0.2);border-radius:16px;
+      padding:1.5rem 2rem;margin:1.5rem 0;
     }
-    footer a{color:var(--teal);text-decoration:none}
+    .vision-box h4{font-size:1rem;font-weight:800;color:var(--dark2);margin-bottom:0.8rem}
+    .vision-box .vb-row{display:flex;gap:1.5rem;flex-wrap:wrap}
+    .vision-box .vb-item{display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;color:var(--muted)}
+    .vision-box .vb-item i{color:var(--teal)}
 
+    /* ====== LOCATION CARDS ====== */
+    .location-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin:1.5rem 0}
+    .loc-card{
+      background:#fff;border:1px solid var(--border);border-radius:14px;
+      padding:1.2rem 0.8rem;text-align:center;transition:all 0.3s;
+    }
+    .loc-card:hover{border-color:var(--teal);transform:translateY(-3px);box-shadow:0 8px 24px var(--teal-glow)}
+    .loc-card i{font-size:1.5rem;color:var(--teal);margin-bottom:0.5rem;display:block}
+    .loc-card h4{font-size:0.88rem;font-weight:800;color:var(--dark2)}
+
+    /* ====== TADAWUL ====== */
+    .tadawul-box{
+      background:linear-gradient(135deg,#0b1520,#1a2e38);
+      border-radius:20px;padding:2rem 2.5rem;color:#fff;
+      display:flex;align-items:center;justify-content:space-between;gap:2rem;
+      flex-wrap:wrap;margin-top:2rem;
+    }
+    .tadawul-box h3{font-size:1.3rem;font-weight:900;margin-bottom:0.5rem}
+    .tadawul-box p{color:rgba(255,255,255,0.6);font-size:0.9rem}
+    .tadawul-badge{
+      display:flex;flex-direction:column;align-items:center;gap:0.3rem;
+      padding:1.2rem 2rem;border-radius:14px;
+      background:rgba(18,169,155,0.15);border:1px solid rgba(18,169,155,0.3);
+      text-align:center;flex-shrink:0;
+    }
+    .tadawul-badge .tb-val{font-size:2rem;font-weight:900;color:var(--teal)}
+    .tadawul-badge .tb-label{font-size:0.75rem;color:rgba(255,255,255,0.5);font-weight:600}
+
+    /* ====== FOOTER ====== */
+    footer{background:var(--dark);color:rgba(255,255,255,0.3);padding:2rem;text-align:center;font-size:0.8rem}
+    footer span{color:var(--teal)}
+
+    /* ====== RESPONSIVE ====== */
     @media(max-width:900px){
-      .grid-2,.grid-3,.grid-4,.auth-grid,.admin-grid,.payment-methods,.demo-grid{grid-template-columns:1fr 1fr}
-      .flex-showcase,.ai-showcase{flex-direction:column}
-      .phone-mockup{width:220px;height:440px}
+      .grid-2,.grid-3,.grid-4,.connect-grid,.vs-grid{grid-template-columns:1fr 1fr}
+      .location-grid{grid-template-columns:repeat(3,1fr)}
+      .cap-table,.growth-table{font-size:0.8rem}
     }
     @media(max-width:600px){
-      .grid-2,.grid-3,.grid-4,.auth-grid,.admin-grid,.payment-methods,.demo-grid{grid-template-columns:1fr}
-      .hero h1{font-size:2.2rem}
-      .stats-row{gap:1rem}
-      .stat-num{font-size:2rem}
-      section{padding:3rem 0}
-      .phone-mockup{width:200px;height:400px}
-      .health-card-mockup{padding:1.2rem 1.5rem}
+      .grid-2,.grid-3,.grid-4,.connect-grid,.vs-grid,.location-grid{grid-template-columns:1fr}
+      .hero h1{font-size:2.8rem}
+      .kpi-num{font-size:2rem}
+      .big-num{font-size:2.5rem}
+      .market-highlight .mh-val{font-size:3.5rem}
+      section{padding:3.5rem 0}
+      .recovery-line{flex-direction:column}
     }
   </style>
 </head>
 <body>
 
-<a href="/" class="back-link" data-ar="الرئيسية" data-en="Home">
-  <i class="fas fa-arrow-right"></i>
-  <span>الرئيسية</span>
-</a>
+<a href="/" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
 
-<div class="lang-toggle">
-  <button class="lang-btn active" onclick="setLang('ar')">عربي</button>
-  <button class="lang-btn" onclick="setLang('en')">EN</button>
-</div>
-
-<!-- HERO -->
+<!-- ━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━ -->
 <section class="hero">
-  <div class="orbs">
+  <div class="hero-orbs">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
   </div>
-  <div class="hero-content">
+  <div class="hero-inner">
     <img src="/icons/logo.png" alt="مفاصل" class="hero-logo">
-    <h1>
-      <span data-ar="مفاصل" data-en="Mafasel" class="i18n accent">مفاصل</span>
-    </h1>
-    <p class="tagline i18n" data-ar="منصة طبية رقمية متكاملة تُعيد تعريف تجربة الرعاية الصحية في المملكة العربية السعودية — متخصصة في العلاج الطبيعي والتأهيل" data-en="A comprehensive digital medical platform redefining the healthcare experience in Saudi Arabia — specializing in physical therapy and rehabilitation">منصة طبية رقمية متكاملة تُعيد تعريف تجربة الرعاية الصحية في المملكة العربية السعودية — متخصصة في العلاج الطبيعي والتأهيل</p>
-    <div class="hero-badges">
-      <span class="hero-badge"><i class="fas fa-heartbeat"></i> <span class="i18n" data-ar="19 مرحلة تطوير" data-en="19 Dev Phases">19 مرحلة تطوير</span></span>
-      <span class="hero-badge"><i class="fas fa-code"></i> Full-Stack</span>
-      <span class="hero-badge"><i class="fas fa-shield-alt"></i> <span class="i18n" data-ar="رؤية 2030" data-en="Vision 2030">رؤية 2030</span></span>
-      <span class="hero-badge"><i class="fas fa-globe"></i> <span class="i18n" data-ar="عربي / English" data-en="Arabic / English">عربي / English</span></span>
+    <div class="hero-tag"><i class="fas fa-chart-line"></i> الدراسة التكاملية للمنصة</div>
+    <h1><span class="accent">مفاصل</span></h1>
+    <p class="hero-sub">منصة ربط لقطاع العلاج الطبيعي والرعاية الصحية<br>في المملكة العربية السعودية</p>
+    <div class="hero-kpis">
+      <div class="kpi"><span class="kpi-num">9.7B</span><div class="kpi-label">ريال حجم السوق</div></div>
+      <div class="kpi"><span class="kpi-num">8%</span><div class="kpi-label">نمو سنوي</div></div>
+      <div class="kpi"><span class="kpi-num">2.1K</span><div class="kpi-label">مركز علاج</div></div>
+      <div class="kpi"><span class="kpi-num">22K</span><div class="kpi-label">أخصائي</div></div>
     </div>
-    <a href="/login" class="cta-btn i18n" data-ar="ادخل المنصة" data-en="Enter Platform">ادخل المنصة</a>
+    <div class="hero-chips">
+      <span class="chip"><i class="fas fa-flag"></i> رؤية 2030</span>
+      <span class="chip"><i class="fas fa-shield-alt"></i> دعم حكومي مباشر</span>
+      <span class="chip"><i class="fas fa-rocket"></i> إطلاق 2026</span>
+      <span class="chip"><i class="fas fa-chart-bar"></i> ربحية 2029</span>
+    </div>
   </div>
-  <div class="scroll-hint">
-    <span class="i18n" data-ar="اسحب للأسفل" data-en="Scroll down">اسحب للأسفل</span>
+  <div class="scroll-cue">
+    <span>اسحب للأسفل</span>
     <i class="fas fa-chevron-down"></i>
   </div>
 </section>
 
-<!-- BRAND IDENTITY -->
-<section>
+<!-- ━━━━━━━━━━━━━━━ PLATFORM DEFINITION ━━━━━━━━━━━━━━━ -->
+<section class="white-sec">
   <div class="container reveal">
-    <span class="section-badge b-gold"><i class="fas fa-palette"></i> <span class="i18n" data-ar="الهوية البصرية" data-en="Brand Identity">الهوية البصرية</span></span>
-    <h2 class="section-title"><span class="i18n" data-ar='براند <span>مفاصل</span>' data-en='The <span>Mafasel</span> Brand'>براند <span>مفاصل</span></span></h2>
-    <p class="section-sub i18n" data-ar='اسم "مفاصل" مستوحى من مفاصل الجسم — النقاط التي تربط وتمنح الحركة. منصتنا تربط المستفيدين بكل الخدمات الصحية بسلاسة.' data-en="&quot;Mafasel&quot; (Joints) is inspired by the body&apos;s joints — connection points that enable movement. Our platform seamlessly connects patients with all healthcare services.">اسم "مفاصل" مستوحى من مفاصل الجسم — النقاط التي تربط وتمنح الحركة. منصتنا تربط المستفيدين بكل الخدمات الصحية بسلاسة.</p>
+    <span class="sec-badge badge-teal"><i class="fas fa-network-wired"></i> تعريف المنصة</span>
+    <h2 class="section-title">ما هي <span>مفاصل</span>؟</h2>
     <div class="divider"></div>
-    <div class="grid-4">
-      <div class="card" style="text-align:center">
-        <div style="width:60px;height:60px;border-radius:14px;background:var(--accent);margin:0 auto 0.8rem"></div>
-        <h3 class="i18n" data-ar="اللون الأساسي" data-en="Primary Color">اللون الأساسي</h3>
-        <code style="color:var(--muted);font-size:0.8rem">#101d23</code>
-      </div>
-      <div class="card" style="text-align:center">
-        <div style="width:60px;height:60px;border-radius:14px;background:var(--teal);margin:0 auto 0.8rem"></div>
-        <h3 class="i18n" data-ar="اللون المميز" data-en="Accent Color">اللون المميز</h3>
-        <code style="color:var(--muted);font-size:0.8rem">#12a99b</code>
-      </div>
-      <div class="card" style="text-align:center">
-        <div style="width:60px;height:60px;border-radius:14px;background:#fff;border:2px solid var(--border);margin:0 auto 0.8rem;display:flex;align-items:center;justify-content:center"><span style="font-weight:900;font-size:1.5rem;color:var(--accent)">ت</span></div>
-        <h3>Tajawal</h3>
-        <p style="font-size:0.75rem;color:var(--muted)" class="i18n" data-ar="الخط العربي" data-en="Arabic Font">الخط العربي</p>
-      </div>
-      <div class="card" style="text-align:center">
-        <div style="width:60px;height:60px;border-radius:14px;background:var(--bg);border:2px solid var(--border);margin:0 auto 0.8rem;display:flex;align-items:center;justify-content:center"><i class="fas fa-arrow-right" style="color:var(--teal);font-size:1.3rem;transform:scaleX(-1)"></i></div>
-        <h3>RTL</h3>
-        <p style="font-size:0.75rem;color:var(--muted)" class="i18n" data-ar="يمين ← يسار" data-en="Right to Left">يمين ← يسار</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- VISION & STATS -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-blue"><i class="fas fa-bullseye"></i> <span class="i18n" data-ar="الرؤية والرسالة" data-en="Vision & Mission">الرؤية والرسالة</span></span>
-    <h2 class="section-title i18n" data-ar='نحو مستقبل <span>صحي رقمي</span>' data-en='Towards a <span>Digital Health</span> Future'>نحو مستقبل <span>صحي رقمي</span></h2>
-    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
-    <div class="grid-2" style="margin-bottom:2rem">
-      <div class="card" style="border-inline-start:4px solid #2563eb">
-        <div class="card-icon ic-blue"><i class="fas fa-eye"></i></div>
-        <h3 class="i18n" data-ar="الرؤية" data-en="Vision">الرؤية</h3>
-        <p class="i18n" data-ar="أن نكون المنصة الطبية الرقمية الرائدة في المملكة والشرق الأوسط — بما يتماشى مع رؤية 2030 في التحول الرقمي الصحي." data-en="To be the leading digital medical platform in the Kingdom and the Middle East — aligned with Vision 2030's digital health transformation.">أن نكون المنصة الطبية الرقمية الرائدة في المملكة والشرق الأوسط — بما يتماشى مع رؤية 2030 في التحول الرقمي الصحي.</p>
-      </div>
-      <div class="card" style="border-inline-start:4px solid var(--teal)">
-        <div class="card-icon ic-teal"><i class="fas fa-bullseye"></i></div>
-        <h3 class="i18n" data-ar="الرسالة" data-en="Mission">الرسالة</h3>
-        <p class="i18n" data-ar="تقديم منصة شاملة تجمع الاستشارات، الصيدلية، التأمين، والذكاء الاصطناعي في تجربة واحدة سلسة وآمنة." data-en="Delivering a comprehensive platform that combines consultations, pharmacy, insurance, and AI in one seamless, secure experience.">تقديم منصة شاملة تجمع الاستشارات، الصيدلية، التأمين، والذكاء الاصطناعي في تجربة واحدة سلسة وآمنة.</p>
+    <div class="platform-type">
+      <div class="pt-icon">🔗</div>
+      <div>
+        <div class="pt-text">منصة ربط وتشغيل (Orchestration Platform)</div>
+        <div class="pt-sub">وليست مقدم خدمة مباشر — تُنسّق بين كل الأطراف الصحية</div>
       </div>
     </div>
-    <div class="stats-row">
-      <div class="stat-item"><div class="stat-num">19</div><div class="stat-label i18n" data-ar="مرحلة تطوير" data-en="Dev Phases">مرحلة تطوير</div></div>
-      <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label i18n" data-ar="مساعد ذكي" data-en="AI Assistant">مساعد ذكي</div></div>
-      <div class="stat-item"><div class="stat-num">8</div><div class="stat-label i18n" data-ar="أدوار مستخدمين" data-en="User Roles">أدوار مستخدمين</div></div>
-      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label i18n" data-ar="طرق مصادقة" data-en="Auth Methods">طرق مصادقة</div></div>
-    </div>
-  </div>
-</section>
 
-<!-- TECH STACK -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-teal"><i class="fas fa-server"></i> <span class="i18n" data-ar="البنية التحتية" data-en="Infrastructure">البنية التحتية</span></span>
-    <h2 class="section-title i18n" data-ar='التقنيات <span>المستخدمة</span>' data-en='Technology <span>Stack</span>'>التقنيات <span>المستخدمة</span></h2>
-    <p class="section-sub i18n" data-ar="بنية تحتية متينة مبنية على أحدث التقنيات لضمان الأداء والأمان والقابلية للتوسع." data-en="Robust infrastructure built on cutting-edge technologies ensuring performance, security, and scalability.">بنية تحتية متينة مبنية على أحدث التقنيات لضمان الأداء والأمان والقابلية للتوسع.</p>
-    <div class="divider"></div>
-    <div class="tech-stack">
-      <span class="tech-tag"><i class="fab fa-node-js" style="color:#68a063"></i> Node.js</span>
-      <span class="tech-tag"><i class="fas fa-bolt" style="color:var(--teal)"></i> Express.js</span>
-      <span class="tech-tag"><i class="fas fa-database" style="color:#4DB33D"></i> MongoDB Atlas</span>
-      <span class="tech-tag"><i class="fas fa-plug" style="color:#7c3aed"></i> Socket.io</span>
-      <span class="tech-tag"><i class="fas fa-file-code" style="color:#2563eb"></i> EJS Templates</span>
-      <span class="tech-tag"><i class="fas fa-key" style="color:#d97706"></i> Passport.js</span>
-      <span class="tech-tag"><i class="fas fa-robot" style="color:var(--teal)"></i> Google AI (Gemini)</span>
-      <span class="tech-tag"><i class="fas fa-shield-alt" style="color:#dc2626"></i> Helmet + CORS</span>
-      <span class="tech-tag"><i class="fas fa-tachometer-alt" style="color:#ea580c"></i> Rate Limiting</span>
-      <span class="tech-tag"><i class="fas fa-compress-alt" style="color:#16a34a"></i> Compression</span>
+    <div class="connect-grid">
+      <div class="connect-card">
+        <i class="fas fa-user-injured" style="color:var(--teal)"></i>
+        <h4>المرضى</h4>
+        <p>حجز وتتبع ومتابعة رقمية</p>
+      </div>
+      <div class="connect-card">
+        <i class="fas fa-clinic-medical" style="color:var(--blue)"></i>
+        <h4>مراكز العلاج الطبيعي</h4>
+        <p>2,100 مركز في المملكة</p>
+      </div>
+      <div class="connect-card">
+        <i class="fas fa-user-md" style="color:var(--purple)"></i>
+        <h4>الأخصائيين</h4>
+        <p>22,000 أخصائي معتمد</p>
+      </div>
+      <div class="connect-card">
+        <i class="fas fa-hospital" style="color:var(--gold2)"></i>
+        <h4>المستشفيات</h4>
+        <p>نظام إحالات متكامل</p>
+      </div>
+      <div class="connect-card">
+        <i class="fas fa-pills" style="color:var(--green)"></i>
+        <h4>الصيدليات</h4>
+        <p>صرف وصفات إلكترونية</p>
+      </div>
+      <div class="connect-card">
+        <i class="fas fa-file-medical-alt" style="color:var(--red)"></i>
+        <h4>شركات التأمين</h4>
+        <p>اعتماد التغطية فوراً</p>
+      </div>
     </div>
+
     <div class="grid-3" style="margin-top:1.5rem">
       <div class="card">
-        <div class="card-icon ic-green"><i class="fab fa-node-js"></i></div>
-        <h3 class="i18n" data-ar="باك إند سريع" data-en="Fast Backend">باك إند سريع</h3>
-        <p class="i18n" data-ar="Node.js + Express مع SSR لأداء عالي وتجربة سلسة" data-en="Node.js + Express with SSR for high performance and smooth experience">Node.js + Express مع SSR لأداء عالي وتجربة سلسة</p>
+        <div class="card-icon ic-teal"><i class="fas fa-calendar-check"></i></div>
+        <h3>حجز الجلسات</h3>
+        <p>مراكز + خدمة منزلية مع جدول مرن وتأكيد فوري</p>
       </div>
       <div class="card">
-        <div class="card-icon ic-green"><i class="fas fa-database"></i></div>
-        <h3 class="i18n" data-ar="قاعدة بيانات سحابية" data-en="Cloud Database">قاعدة بيانات سحابية</h3>
-        <p class="i18n" data-ar="MongoDB Atlas مع Mongoose — مرنة وقابلة للتوسع" data-en="MongoDB Atlas with Mongoose — flexible and scalable">MongoDB Atlas مع Mongoose — مرنة وقابلة للتوسع</p>
+        <div class="card-icon ic-blue"><i class="fas fa-route"></i></div>
+        <h3>نظام الإحالات</h3>
+        <p>إحالة إلكترونية بين الجهات الصحية بشكل تلقائي</p>
       </div>
       <div class="card">
-        <div class="card-icon ic-purple"><i class="fas fa-plug"></i></div>
-        <h3 class="i18n" data-ar="اتصال حي" data-en="Real-time Connection">اتصال حي</h3>
-        <p class="i18n" data-ar="Socket.io للمحادثات والإشعارات الفورية" data-en="Socket.io for live chat and instant notifications">Socket.io للمحادثات والإشعارات الفورية</p>
+        <div class="card-icon ic-gold"><i class="fas fa-chart-pie"></i></div>
+        <h3>لوحة تحليلية</h3>
+        <p>Revenue + Utilization للمراكز في الوقت الفعلي</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- AUTH SYSTEM -->
-<section>
+<!-- ━━━━━━━━━━━━━━━ MARKET SIZE ━━━━━━━━━━━━━━━ -->
+<section class="dark-sec">
   <div class="container reveal">
-    <span class="section-badge b-purple"><i class="fas fa-lock"></i> <span class="i18n" data-ar="نظام المصادقة" data-en="Authentication">نظام المصادقة</span></span>
-    <h2 class="section-title i18n" data-ar='6 طرق <span>تسجيل دخول</span>' data-en='6 <span>Login</span> Methods'>6 طرق <span>تسجيل دخول</span></h2>
-    <p class="section-sub i18n" data-ar="نظام مصادقة متعدد الطبقات يدعم كل الطرق الحديثة — من البصمة إلى الهوية الوطنية." data-en="Multi-layered authentication system supporting all modern methods — from biometrics to national identity.">نظام مصادقة متعدد الطبقات يدعم كل الطرق الحديثة — من البصمة إلى الهوية الوطنية.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
-    <div class="auth-grid">
-      <div class="auth-card">
-        <i class="fas fa-mobile-alt" style="color:var(--teal)"></i>
-        <h4 class="i18n" data-ar="الجوال + OTP" data-en="Phone + OTP">الجوال + OTP</h4>
-        <p class="i18n" data-ar="رمز تحقق 6 أرقام" data-en="6-digit verification code">رمز تحقق 6 أرقام</p>
+    <span class="sec-badge badge-dark"><i class="fas fa-globe-asia"></i> حجم السوق</span>
+    <h2 class="section-title" style="color:#fff">فرصة <span>ضخمة</span> في سوق ناضج</h2>
+    <div class="divider"></div>
+
+    <div class="market-highlight">
+      <span class="mh-val" id="marketVal">9.72</span>
+      <div class="mh-label">مليار ريال سعودي — حجم السوق السنوي</div>
+      <div class="mh-sub">36 مليون نسمة × 15% يحتاجون علاجاً طبيعياً = 5.4 مليون حالة × 10 جلسات × 180 ريال</div>
+    </div>
+
+    <div class="big-stat-row">
+      <div class="big-stat"><div class="big-num">36M</div><div class="big-label">عدد السكان</div></div>
+      <div class="big-stat"><div class="big-num">15%</div><div class="big-label">نسبة الاحتياج</div></div>
+      <div class="big-stat"><div class="big-num">5.4M</div><div class="big-label">حالة سنوياً</div></div>
+      <div class="big-stat"><div class="big-num">180</div><div class="big-label">ريال / جلسة</div></div>
+      <div class="big-stat"><div class="big-num">8%</div><div class="big-label">نمو سنوي</div></div>
+    </div>
+
+    <div class="grid-2" style="margin-top:1rem">
+      <div class="card" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1)">
+        <div class="card-icon" style="background:rgba(18,169,155,0.2);color:var(--teal)"><i class="fas fa-city"></i></div>
+        <h3 style="color:#fff">الرياض</h3>
+        <p style="color:rgba(255,255,255,0.5)">520 مركز علاج طبيعي — 150 منها يقدم خدمة منزلية<br>7,000 أخصائي متخصص</p>
       </div>
-      <div class="auth-card">
-        <i class="fas fa-envelope" style="color:#2563eb"></i>
-        <h4 class="i18n" data-ar="البريد + كلمة مرور" data-en="Email + Password">البريد + كلمة مرور</h4>
-        <p class="i18n" data-ar="تسجيل كلاسيكي مع تحقق" data-en="Classic login with verification">تسجيل كلاسيكي مع تحقق</p>
-      </div>
-      <div class="auth-card">
-        <i class="fab fa-google" style="color:#DB4437"></i>
-        <h4>Google OAuth</h4>
-        <p>Passport.js</p>
-      </div>
-      <div class="auth-card">
-        <i class="fab fa-apple" style="color:#000"></i>
-        <h4>Apple Sign-In</h4>
-        <p>iOS & Mac</p>
-      </div>
-      <div class="auth-card">
-        <i class="fas fa-fingerprint" style="color:#16a34a"></i>
-        <h4>WebAuthn</h4>
-        <p class="i18n" data-ar="بصمة / Face ID" data-en="Fingerprint / Face ID">بصمة / Face ID</p>
-      </div>
-      <div class="auth-card">
-        <i class="fas fa-id-card" style="color:#d97706"></i>
-        <h4 class="i18n" data-ar="نفاذ الوطني" data-en="Nafath National ID">نفاذ الوطني</h4>
-        <p class="i18n" data-ar="هوية موحدة سعودية" data-en="Saudi unified identity">هوية موحدة سعودية</p>
+      <div class="card" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1)">
+        <div class="card-icon" style="background:rgba(37,99,235,0.2);color:#60a5fa"><i class="fas fa-flag"></i></div>
+        <h3 style="color:#fff">المملكة كاملة</h3>
+        <p style="color:rgba(255,255,255,0.5)">2,100 مركز إجمالاً — 580 منها يقدم خدمة منزلية<br>22,000 أخصائي معتمد</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CHAT SYSTEM -->
-<section>
+<!-- ━━━━━━━━━━━━━━━ CONDITIONS ━━━━━━━━━━━━━━━ -->
+<section class="white-sec">
   <div class="container reveal">
-    <div class="flex-showcase">
-      <div class="content">
-        <span class="section-badge b-green"><i class="fas fa-comments"></i> <span class="i18n" data-ar="نظام الشات" data-en="Chat System">نظام الشات</span></span>
-        <h2 class="section-title i18n" data-ar='محادثات <span>فورية</span> متقدمة' data-en='Advanced <span>Real-time</span> Messaging'>محادثات <span>فورية</span> متقدمة</h2>
-        <p class="section-sub i18n" data-ar="نظام محادثات حي مبني على Socket.io مع دعم كامل للملفات والرسائل الداخلية بين الأخصائيين والمستفيدين." data-en="Live chat system built on Socket.io with full file support and internal messaging between specialists and patients.">نظام محادثات حي مبني على Socket.io مع دعم كامل للملفات والرسائل الداخلية بين الأخصائيين والمستفيدين.</p>
-        <ul class="feature-list">
-          <li><i class="fas fa-bolt"></i> <span class="i18n" data-ar="WebSocket — تحديث فوري" data-en="WebSocket — instant updates">WebSocket — تحديث فوري</span></li>
-          <li><i class="fas fa-keyboard"></i> <span class="i18n" data-ar="مؤشر الكتابة الحي" data-en="Live typing indicator">مؤشر الكتابة الحي</span></li>
-          <li><i class="fas fa-check-double"></i> <span class="i18n" data-ar="تم الاستلام / تم القراءة" data-en="Delivered / Read receipts">تم الاستلام / تم القراءة</span></li>
-          <li><i class="fas fa-lock"></i> <span class="i18n" data-ar="ملاحظات داخلية للفريق" data-en="Internal team notes">ملاحظات داخلية للفريق</span></li>
-          <li><i class="fas fa-paperclip"></i> <span class="i18n" data-ar="مرفقات وصور وملفات" data-en="Attachments, images & files">مرفقات وصور وملفات</span></li>
-        </ul>
-      </div>
-      <div class="visual">
-        <div class="phone-mockup">
-          <div class="phone-screen">
-            <div class="mockup-header">
-              <h4 class="i18n" data-ar="الأخصائي أحمد" data-en="Dr. Ahmed">الأخصائي أحمد</h4>
-              <span style="width:8px;height:8px;border-radius:50%;background:#16a34a"></span>
-            </div>
-            <div class="chat-mockup">
-              <div class="chat-msg chat-sent i18n" data-ar="السلام عليكم أخصائي" data-en="Hello Doctor">السلام عليكم أخصائي</div>
-              <div class="chat-msg chat-recv i18n" data-ar="وعليكم السلام! كيف أقدر أساعدك؟" data-en="Hello! How can I help you?">وعليكم السلام! كيف أقدر أساعدك؟</div>
-              <div class="chat-msg chat-sent i18n" data-ar="عندي ألم في الركبة من أسبوع" data-en="I've had knee pain for a week">عندي ألم في الركبة من أسبوع</div>
-              <div class="chat-msg chat-recv i18n" data-ar="هل الألم يزيد مع الحركة؟ وهل في تورم؟" data-en="Does the pain increase with movement? Any swelling?">هل الألم يزيد مع الحركة؟ وهل في تورم؟</div>
-              <div class="chat-msg chat-sent i18n" data-ar="إي يزيد لما أمشي كثير" data-en="Yes, it gets worse when I walk a lot">إي يزيد لما أمشي كثير</div>
-              <div class="chat-msg chat-recv i18n" data-ar="أنصحك تحجز جلسة علاج طبيعي عندنا 💪" data-en="I recommend booking a physiotherapy session with us">أنصحك تحجز جلسة علاج طبيعي عندنا</div>
-            </div>
-            <div style="display:flex;gap:0.4rem;margin-top:auto;padding-top:0.5rem">
-              <div style="flex:1;background:#f1f5f9;border-radius:20px;padding:0.5rem 0.8rem;font-size:0.7rem;color:var(--muted)" class="i18n" data-ar="اكتب رسالة..." data-en="Type a message...">اكتب رسالة...</div>
-              <div style="width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center"><i class="fas fa-paper-plane" style="color:#fff;font-size:0.7rem"></i></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MEETINGS -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-blue"><i class="fas fa-video"></i> <span class="i18n" data-ar="الاجتماعات المرئية" data-en="Video Meetings">الاجتماعات المرئية</span></span>
-    <h2 class="section-title i18n" data-ar='اجتماعات <span>QMeet</span> المرئية' data-en='<span>QMeet</span> Video Meetings'>اجتماعات <span>QMeet</span> المرئية</h2>
-    <p class="section-sub i18n" data-ar="نظام اجتماعات مرئية يربط الأخصائي بالمستفيد عبر WebRTC مع جودة عالية وتشفير كامل." data-en="Video meeting system connecting specialists with patients via WebRTC with high quality and full encryption.">نظام اجتماعات مرئية يربط الأخصائي بالمستفيد عبر WebRTC مع جودة عالية وتشفير كامل.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
+    <span class="sec-badge badge-blue"><i class="fas fa-heartbeat"></i> الحالات المرضية</span>
+    <h2 class="section-title">أبرز الحالات <span>المستهدفة</span></h2>
+    <p class="section-sub">تمثل هذه الحالات مجتمعةً 85% من السوق المستهدف</p>
+    <div class="divider" style="background:linear-gradient(90deg,var(--blue),transparent)"></div>
     <div class="grid-2">
       <div>
-        <div class="timeline">
-          <div class="tl-item">
-            <h4 class="i18n" data-ar="إنشاء الجلسة" data-en="Create Session">إنشاء الجلسة</h4>
-            <p class="i18n" data-ar='الأخصائي يضغط "ابدأ الجلسة" من لوحة التحكم' data-en="Specialist clicks 'Start Session' from dashboard">الأخصائي يضغط "ابدأ الجلسة" من لوحة التحكم</p>
-          </div>
-          <div class="tl-item">
-            <h4 class="i18n" data-ar="إرسال الدعوة" data-en="Send Invitation">إرسال الدعوة</h4>
-            <p class="i18n" data-ar="إرسال رابط مباشر للمستفيد عبر الإشعارات" data-en="Direct link sent to patient via notifications">إرسال رابط مباشر للمستفيد عبر الإشعارات</p>
-          </div>
-          <div class="tl-item">
-            <h4 class="i18n" data-ar="اتصال مشفر" data-en="Encrypted Connection">اتصال مشفر</h4>
-            <p class="i18n" data-ar="WebRTC مع تشفير E2E وجودة HD" data-en="WebRTC with E2E encryption and HD quality">WebRTC مع تشفير E2E وجودة HD</p>
-          </div>
-          <div class="tl-item">
-            <h4 class="i18n" data-ar="حفظ السجل" data-en="Save Record">حفظ السجل</h4>
-            <p class="i18n" data-ar="حفظ تفاصيل الجلسة في الملف الطبي" data-en="Session details saved to medical record">حفظ تفاصيل الجلسة في الملف الطبي</p>
-          </div>
-        </div>
+        <div class="condition-bar"><div class="cb-top"><span class="cb-name">آلام الظهر</span><span class="cb-pct">30%</span></div><div class="bar-track"><div class="bar-fill" style="width:0" data-w="30"></div></div></div>
+        <div class="condition-bar"><div class="cb-top"><span class="cb-name">إصابات الركبة</span><span class="cb-pct">20%</span></div><div class="bar-track"><div class="bar-fill" style="width:0" data-w="20"></div></div></div>
+        <div class="condition-bar"><div class="cb-top"><span class="cb-name">ما بعد العمليات</span><span class="cb-pct">15%</span></div><div class="bar-track"><div class="bar-fill" style="width:0" data-w="15"></div></div></div>
+        <div class="condition-bar"><div class="cb-top"><span class="cb-name">الجلطات الدماغية</span><span class="cb-pct">10%</span></div><div class="bar-track"><div class="bar-fill" style="width:0" data-w="10"></div></div></div>
+        <div class="condition-bar"><div class="cb-top"><span class="cb-name">كبار السن</span><span class="cb-pct">10%</span></div><div class="bar-track"><div class="bar-fill" style="width:0" data-w="10"></div></div></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:1rem;justify-content:center">
-        <div class="card" style="text-align:center;padding:2rem;background:linear-gradient(135deg,#dbeafe,#ede9fe)">
-          <i class="fas fa-video" style="font-size:3rem;color:#2563eb;margin-bottom:0.6rem;display:block"></i>
-          <h3 class="i18n" data-ar="مكالمة فيديو HD" data-en="HD Video Call">مكالمة فيديو HD</h3>
-          <p style="color:var(--muted);font-size:0.8rem" class="i18n" data-ar="صوت وصورة بجودة عالية" data-en="High quality audio & video">صوت وصورة بجودة عالية</p>
+        <div class="card" style="background:linear-gradient(135deg,#f0fdf9,#e6faf8);border-color:#b2f0ea;text-align:center;padding:2rem">
+          <div style="font-size:4rem;font-weight:900;color:var(--teal);line-height:1">85%</div>
+          <div style="font-size:0.9rem;color:var(--muted);margin-top:0.5rem;font-weight:600">من السوق الإجمالي</div>
         </div>
-        <div class="card" style="text-align:center;padding:2rem;background:linear-gradient(135deg,#e6faf8,#dcfce7)">
-          <i class="fas fa-shield-alt" style="font-size:3rem;color:var(--teal);margin-bottom:0.6rem;display:block"></i>
-          <h3 class="i18n" data-ar="تشفير كامل" data-en="Full Encryption">تشفير كامل</h3>
-          <p style="color:var(--muted);font-size:0.8rem" class="i18n" data-ar="حماية خصوصية الجلسة" data-en="Session privacy protection">حماية خصوصية الجلسة</p>
+        <div class="card" style="text-align:center;padding:1.5rem">
+          <div style="font-size:2.5rem;font-weight:900;color:var(--gold2)">5.4M</div>
+          <div style="font-size:0.85rem;color:var(--muted);font-weight:600">حالة سنوية في المملكة</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PHARMACY -->
-<section>
+<!-- ━━━━━━━━━━━━━━━ GOVERNMENT SUPPORT ━━━━━━━━━━━━━━━ -->
+<section class="light-sec">
   <div class="container reveal">
-    <div class="flex-showcase">
-      <div class="content">
-        <span class="section-badge b-teal"><i class="fas fa-pills"></i> <span class="i18n" data-ar="الصيدلية" data-en="Pharmacy">الصيدلية</span></span>
-        <h2 class="section-title i18n" data-ar='سوق <span>الصيدليات</span> الرقمي' data-en='Digital <span>Pharmacy</span> Market'>سوق <span>الصيدليات</span> الرقمي</h2>
-        <p class="section-sub i18n" data-ar="تصفح الصيدليات والأدوية والشراء بالتأمين أو الدفع المباشر مع توصيل سريع." data-en="Browse pharmacies and medications, purchase with insurance or direct payment, with fast delivery.">تصفح الصيدليات والأدوية والشراء بالتأمين أو الدفع المباشر مع توصيل سريع.</p>
-        <ul class="feature-list">
-          <li><i class="fas fa-store"></i> <span class="i18n" data-ar="تصفح الصيدليات المتاحة" data-en="Browse available pharmacies">تصفح الصيدليات المتاحة</span></li>
-          <li><i class="fas fa-search"></i> <span class="i18n" data-ar="بحث ذكي في الأدوية" data-en="Smart medication search">بحث ذكي في الأدوية</span></li>
-          <li><i class="fas fa-shield-alt"></i> <span class="i18n" data-ar="شراء بالتأمين / نقد / بطاقة" data-en="Buy with insurance / cash / card">شراء بالتأمين / نقد / بطاقة</span></li>
-          <li><i class="fas fa-truck"></i> <span class="i18n" data-ar="توصيل سريع للمنزل" data-en="Fast home delivery">توصيل سريع للمنزل</span></li>
-          <li><i class="fas fa-prescription-bottle-alt"></i> <span class="i18n" data-ar="دعم الوصفات الطبية" data-en="Prescription support">دعم الوصفات الطبية</span></li>
-        </ul>
+    <span class="sec-badge badge-gold"><i class="fas fa-landmark"></i> دعم الدولة</span>
+    <h2 class="section-title">متوافق مع <span>رؤية 2030</span></h2>
+    <p class="section-sub">الحكومة تدعم التحول الرقمي الصحي بشكل مباشر عبر ثلاثة برامج رئيسية</p>
+    <div class="divider" style="background:var(--grad-gold)"></div>
+
+    <div class="vision-box">
+      <h4>الجهات الداعمة</h4>
+      <div class="vb-row">
+        <div class="vb-item"><i class="fas fa-check-circle"></i> برنامج تحول القطاع الصحي</div>
+        <div class="vb-item"><i class="fas fa-check-circle"></i> وزارة الاتصالات وتقنية المعلومات</div>
+        <div class="vb-item"><i class="fas fa-check-circle"></i> منشآت (دعم المنشآت الصغيرة والمتوسطة)</div>
       </div>
-      <div class="visual">
-        <div class="phone-mockup">
-          <div class="phone-screen">
-            <div class="mockup-header">
-              <h4 class="i18n" data-ar="صيدلية النهدي" data-en="Al Nahdi Pharmacy">صيدلية النهدي</h4>
-              <i class="fas fa-store" style="color:var(--teal);font-size:0.8rem"></i>
-            </div>
-            <div class="pharmacy-items">
-              <div class="pharmacy-item">
-                <div class="drug-icon ic-teal"><i class="fas fa-pills"></i></div>
-                <span class="drug-name i18n" data-ar="بنادول" data-en="Panadol">بنادول</span>
-                <span class="drug-price i18n" data-ar="12 ر.س" data-en="12 SAR">12 ر.س</span>
-              </div>
-              <div class="pharmacy-item">
-                <div class="drug-icon ic-blue"><i class="fas fa-pills"></i></div>
-                <span class="drug-name i18n" data-ar="فولتارين" data-en="Voltaren">فولتارين</span>
-                <span class="drug-price i18n" data-ar="28 ر.س" data-en="28 SAR">28 ر.س</span>
-              </div>
-              <div class="pharmacy-item">
-                <div class="drug-icon ic-purple"><i class="fas fa-pills"></i></div>
-                <span class="drug-name i18n" data-ar="أوجمنتين" data-en="Augmentin">أوجمنتين</span>
-                <span class="drug-price i18n" data-ar="45 ر.س" data-en="45 SAR">45 ر.س</span>
-              </div>
-              <div class="pharmacy-item">
-                <div class="drug-icon ic-green"><i class="fas fa-pills"></i></div>
-                <span class="drug-name i18n" data-ar="زيرتك" data-en="Zyrtec">زيرتك</span>
-                <span class="drug-price i18n" data-ar="22 ر.س" data-en="22 SAR">22 ر.س</span>
-              </div>
-              <div class="pharmacy-item">
-                <div class="drug-icon ic-gold"><i class="fas fa-pills"></i></div>
-                <span class="drug-name i18n" data-ar="أموكسيل" data-en="Amoxil">أموكسيل</span>
-                <span class="drug-price i18n" data-ar="35 ر.س" data-en="35 SAR">35 ر.س</span>
-              </div>
-            </div>
-            <div style="margin-top:auto;padding-top:0.5rem">
-              <div style="background:var(--teal);color:#fff;text-align:center;padding:0.6rem;border-radius:12px;font-size:0.8rem;font-weight:700" class="i18n" data-ar="أضف للسلة 🛒" data-en="Add to Cart">أضف للسلة</div>
-            </div>
-          </div>
-        </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:1rem">
+      <div class="card" style="border-inline-start:4px solid var(--gold2)">
+        <div class="card-icon ic-gold"><i class="fas fa-percent"></i></div>
+        <h3>16% من الميزانية</h3>
+        <p>نسبة الإنفاق الحكومي على القطاع الصحي — من أعلى النسب عالمياً</p>
+      </div>
+      <div class="card" style="border-inline-start:4px solid var(--teal)">
+        <div class="card-icon ic-teal"><i class="fas fa-chart-line"></i></div>
+        <h3>+12% نمو رقمي سنوي</h3>
+        <p>معدل نمو التحول الرقمي الصحي في المملكة — يتسارع مع رؤية 2030</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- AI ASSISTANT -->
-<section>
+<!-- ━━━━━━━━━━━━━━━ LICENSES ━━━━━━━━━━━━━━━ -->
+<section class="white-sec">
   <div class="container reveal">
-    <div class="ai-showcase">
-      <div class="ai-features">
-        <span class="section-badge b-purple"><i class="fas fa-robot"></i> <span class="i18n" data-ar="المساعد الذكي" data-en="AI Assistant">المساعد الذكي</span></span>
-        <h2 class="section-title i18n" data-ar='مساعد <span>ذكي</span> بلهجة سعودية' data-en='<span>Smart</span> AI Assistant with Saudi Dialect'>مساعد <span>ذكي</span> بلهجة سعودية</h2>
-        <p class="section-sub i18n" data-ar="مساعد طبي مدعوم بالذكاء الاصطناعي (Gemini) يتحدث باللهجة السعودية ويفهم الأعراض ويوجه المستفيد للقسم المناسب." data-en="AI-powered medical assistant (Gemini) that speaks Saudi dialect, understands symptoms, and directs patients to the right department.">مساعد طبي مدعوم بالذكاء الاصطناعي (Gemini) يتحدث باللهجة السعودية ويفهم الأعراض ويوجه المستفيد للقسم المناسب.</p>
-        <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
-        <ul class="feature-list">
-          <li><i class="fas fa-brain"></i> <span class="i18n" data-ar="تحليل الأعراض وتوجيه ذكي" data-en="Symptom analysis & smart routing">تحليل الأعراض وتوجيه ذكي</span></li>
-          <li><i class="fas fa-language"></i> <span class="i18n" data-ar="لهجة سعودية طبيعية" data-en="Natural Saudi dialect">لهجة سعودية طبيعية</span></li>
-          <li><i class="fas fa-clock"></i> <span class="i18n" data-ar="متاح 24/7 بدون انتظار" data-en="Available 24/7 with no wait">متاح 24/7 بدون انتظار</span></li>
-          <li><i class="fas fa-file-medical"></i> <span class="i18n" data-ar="حفظ في السجل الطبي" data-en="Saved to medical record">حفظ في السجل الطبي</span></li>
-        </ul>
-      </div>
-      <div class="ai-visual">
-        <div class="phone-mockup" style="background:linear-gradient(135deg,#f8fafc,#ede9fe)">
-          <div class="phone-screen">
-            <div class="mockup-header">
-              <h4 style="color:#7c3aed"><i class="fas fa-robot"></i> <span class="i18n" data-ar="المساعد الذكي" data-en="AI Assistant">المساعد الذكي</span></h4>
-            </div>
-            <div class="chat-mockup">
-              <div class="chat-msg chat-recv" style="background:#ede9fe;color:#7c3aed"><span class="i18n" data-ar="هلا فيك! أنا مساعدك الصحي 🌿 كيف أقدر أساعدك اليوم؟" data-en="Welcome! I'm your health assistant. How can I help you today?">هلا فيك! أنا مساعدك الصحي كيف أقدر أساعدك اليوم؟</span></div>
-              <div class="chat-msg chat-sent i18n" data-ar="عندي صداع قوي من يومين" data-en="I've had a severe headache for two days">عندي صداع قوي من يومين</div>
-              <div class="chat-msg chat-recv" style="background:#ede9fe;color:#7c3aed"><span class="i18n" data-ar="يا هلا! الصداع المستمر يحتاج تقييم. هل معاه غثيان أو حساسية من الضوء؟" data-en="Persistent headaches need evaluation. Any nausea or light sensitivity?">يا هلا! الصداع المستمر يحتاج تقييم. هل معاه غثيان أو حساسية من الضوء؟</span></div>
-              <div class="chat-msg chat-sent i18n" data-ar="إي في غثيان خفيف" data-en="Yes, mild nausea">إي في غثيان خفيف</div>
-              <div class="chat-msg chat-recv" style="background:#ede9fe;color:#7c3aed"><span class="i18n" data-ar="أنصحك تحجز استشارة مع أخصائي. أرسلك للقسم المناسب الحين؟" data-en="I recommend booking a consultation with a specialist. Shall I direct you?">أنصحك تحجز استشارة مع أخصائي. أرسلك للقسم المناسب الحين؟</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MAPS -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-green"><i class="fas fa-map-marked-alt"></i> <span class="i18n" data-ar="الخريطة التفاعلية" data-en="Interactive Map">الخريطة التفاعلية</span></span>
-    <h2 class="section-title i18n" data-ar='اكتشف <span>المراكز</span> القريبة' data-en='Find Nearby <span>Centers</span>'>اكتشف <span>المراكز</span> القريبة</h2>
-    <p class="section-sub i18n" data-ar="خريطة تفاعلية تعرض مراكز العلاج الطبيعي والصيدليات القريبة مع فلاتر ذكية وتوجيه مباشر." data-en="Interactive map showing nearby physiotherapy centers and pharmacies with smart filters and direct navigation.">خريطة تفاعلية تعرض مراكز العلاج الطبيعي والصيدليات القريبة مع فلاتر ذكية وتوجيه مباشر.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#16a34a,transparent)"></div>
-    <div class="map-mockup">
-      <div style="position:absolute;inset:0;opacity:0.15">
-        <svg width="100%" height="100%"><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#888" stroke-width="0.5"/></pattern><rect width="100%" height="100%" fill="url(#grid)"/></svg>
-      </div>
-      <div class="map-pin" style="top:25%;right:35%;animation-delay:0.2s"><i class="fas fa-map-marker-alt"></i><span class="i18n" data-ar="مركز الحركة" data-en="Motion Center">مركز الحركة</span></div>
-      <div class="map-pin" style="top:45%;right:55%;animation-delay:0.5s"><i class="fas fa-map-marker-alt" style="color:var(--teal)"></i><span class="i18n" data-ar="صيدلية النهدي" data-en="Al Nahdi Pharmacy">صيدلية النهدي</span></div>
-      <div class="map-pin" style="top:60%;right:25%;animation-delay:0.8s"><i class="fas fa-map-marker-alt"></i><span class="i18n" data-ar="مركز المفاصل" data-en="Mafasel Center">مركز المفاصل</span></div>
-      <div class="map-pin" style="top:35%;right:70%;animation-delay:1.1s"><i class="fas fa-map-marker-alt" style="color:var(--teal)"></i><span class="i18n" data-ar="صيدلية الدواء" data-en="Al Dawaa Pharmacy">صيدلية الدواء</span></div>
-      <div class="map-pin" style="top:70%;right:60%;animation-delay:1.4s"><i class="fas fa-map-marker-alt"></i><span class="i18n" data-ar="مركز الشفاء" data-en="Al Shifa Center">مركز الشفاء</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- HEALTH CARD -->
-<section>
-  <div class="container reveal">
-    <div class="flex-showcase">
-      <div class="content">
-        <span class="section-badge b-teal"><i class="fas fa-id-card-alt"></i> <span class="i18n" data-ar="البطاقة الصحية" data-en="Health Card">البطاقة الصحية</span></span>
-        <h2 class="section-title i18n" data-ar='بطاقة <span>مفاصل</span> الصحية الذكية' data-en='<span>Mafasel</span> Smart Health Card'>بطاقة <span>مفاصل</span> الصحية الذكية</h2>
-        <p class="section-sub i18n" data-ar="بطاقة رقمية ذكية تحمل كل بيانات المستفيد الطبية — تضاف مباشرة إلى Apple Wallet وتعمل بتقنية QR Code." data-en="Smart digital card containing all patient medical data — directly added to Apple Wallet with QR Code technology.">بطاقة رقمية ذكية تحمل كل بيانات المستفيد الطبية — تضاف مباشرة إلى Apple Wallet وتعمل بتقنية QR Code.</p>
-        <ul class="feature-list">
-          <li><i class="fas fa-qrcode"></i> <span class="i18n" data-ar="QR فوري لنقل الملف الطبي" data-en="Instant QR for medical record transfer">QR فوري لنقل الملف الطبي</span></li>
-          <li><i class="fab fa-apple"></i> <span class="i18n" data-ar="إضافة إلى Apple Wallet" data-en="Add to Apple Wallet">إضافة إلى Apple Wallet</span></li>
-          <li><i class="fas fa-exchange-alt"></i> <span class="i18n" data-ar="نقل الملف بين المراكز فوراً" data-en="Instant record transfer between centers">نقل الملف بين المراكز فوراً</span></li>
-          <li><i class="fas fa-heartbeat"></i> <span class="i18n" data-ar="الحساسية والأمراض المزمنة" data-en="Allergies & chronic conditions">الحساسية والأمراض المزمنة</span></li>
-        </ul>
-      </div>
-      <div class="visual">
-        <div class="health-card-mockup">
-          <div class="hc-logo">
-            <img src="/icons/logo.png" alt="">
-            <span class="i18n" data-ar="مفاصل" data-en="Mafasel">مفاصل</span>
-          </div>
-          <div class="hc-name i18n" data-ar="محمد عبدالله" data-en="Mohammed Abdullah">محمد عبدالله</div>
-          <div class="hc-id">ID: MF-2024-00847</div>
-          <div class="hc-row">
-            <div class="hc-field">
-              <label class="i18n" data-ar="فصيلة الدم" data-en="Blood Type">فصيلة الدم</label>
-              <span>A+</span>
-            </div>
-            <div class="hc-field">
-              <label class="i18n" data-ar="الحساسية" data-en="Allergies">الحساسية</label>
-              <span class="i18n" data-ar="بنسلين" data-en="Penicillin">بنسلين</span>
-            </div>
-          </div>
-          <div class="hc-row">
-            <div class="hc-field">
-              <label class="i18n" data-ar="التأمين" data-en="Insurance">التأمين</label>
-              <span class="i18n" data-ar="بوبا VIP" data-en="Bupa VIP">بوبا VIP</span>
-            </div>
-          </div>
-          <div class="hc-qr">
-            <i class="fas fa-qrcode" style="font-size:2rem;color:var(--accent)"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- INSURANCE & PAYMENT -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-green"><i class="fas fa-credit-card"></i> <span class="i18n" data-ar="الدفع والتأمين" data-en="Payment & Insurance">الدفع والتأمين</span></span>
-    <h2 class="section-title i18n" data-ar='بوابة <span>الدفع</span> المتكاملة' data-en='Integrated <span>Payment</span> Gateway'>بوابة <span>الدفع</span> المتكاملة</h2>
-    <p class="section-sub i18n" data-ar="نظام دفع متعدد القنوات يدعم البطاقات والتأمين والدفع عند الاستلام مع فواتير متوافقة مع ZATCA." data-en="Multi-channel payment system supporting cards, insurance, and cash on delivery with ZATCA-compliant invoices.">نظام دفع متعدد القنوات يدعم البطاقات والتأمين والدفع عند الاستلام مع فواتير متوافقة مع ZATCA.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#16a34a,transparent)"></div>
-    <div class="payment-methods">
-      <div class="pay-card">
-        <i class="fas fa-credit-card" style="color:#16a34a"></i>
-        <h4 class="i18n" data-ar="بطاقة ائتمان" data-en="Credit Card">بطاقة ائتمان</h4>
-        <p>Visa / Mastercard</p>
-      </div>
-      <div class="pay-card">
-        <i class="fab fa-apple-pay" style="color:#000"></i>
-        <h4>Apple Pay</h4>
-        <p class="i18n" data-ar="دفع سريع وآمن" data-en="Fast & secure">دفع سريع وآمن</p>
-      </div>
-      <div class="pay-card">
-        <i class="fas fa-shield-alt" style="color:var(--teal)"></i>
-        <h4 class="i18n" data-ar="التأمين" data-en="Insurance">التأمين</h4>
-        <p class="i18n" data-ar="تغطية تأمينية مباشرة" data-en="Direct insurance coverage">تغطية تأمينية مباشرة</p>
-      </div>
-      <div class="pay-card">
-        <i class="fas fa-money-bill-wave" style="color:#d97706"></i>
-        <h4 class="i18n" data-ar="نقد / COD" data-en="Cash / COD">نقد / COD</h4>
-        <p class="i18n" data-ar="الدفع عند الاستلام" data-en="Cash on delivery">الدفع عند الاستلام</p>
-      </div>
-    </div>
-    <div class="grid-2">
-      <div class="card" style="display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,#dcfce7,#e6faf8)">
-        <i class="fas fa-file-invoice-dollar" style="font-size:2.5rem;color:#16a34a"></i>
-        <div>
-          <h3 class="i18n" data-ar="فواتير إلكترونية" data-en="Electronic Invoices">فواتير إلكترونية</h3>
-          <p class="i18n" data-ar="متوافقة مع معايير ZATCA السعودية" data-en="Compliant with ZATCA Saudi standards">متوافقة مع معايير ZATCA السعودية</p>
-        </div>
-      </div>
-      <div class="card" style="display:flex;align-items:center;gap:1rem;background:linear-gradient(135deg,#e6faf8,#dbeafe)">
-        <i class="fas fa-lock" style="font-size:2.5rem;color:var(--teal)"></i>
-        <div>
-          <h3>PCI DSS</h3>
-          <p class="i18n" data-ar="معايير أمان الدفع العالمية" data-en="Global payment security standards">معايير أمان الدفع العالمية</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ADMIN PANEL -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-orange"><i class="fas fa-tachometer-alt"></i> <span class="i18n" data-ar="لوحة الإدارة" data-en="Admin Panel">لوحة الإدارة</span></span>
-    <h2 class="section-title i18n" data-ar='لوحة <span>تحكم</span> شاملة' data-en='Comprehensive <span>Control</span> Panel'>لوحة <span>تحكم</span> شاملة</h2>
-    <p class="section-sub i18n" data-ar="تحكّم كامل في المنصة من مكان واحد — مستخدمين، شركات، استشارات، طلبات، ودعم فني." data-en="Full platform control from one place — users, companies, consultations, orders, and support.">تحكّم كامل في المنصة من مكان واحد — مستخدمين، شركات، استشارات، طلبات، ودعم فني.</p>
+    <span class="sec-badge badge-orange"><i class="fas fa-certificate"></i> التراخيص الحكومية</span>
+    <h2 class="section-title">الجهات والتراخيص <span>المطلوبة</span></h2>
+    <p class="section-sub">6 جهات تنظيمية — متطلبات واضحة وقابلة للإنجاز</p>
     <div class="divider" style="background:linear-gradient(90deg,#ea580c,transparent)"></div>
-    <div class="admin-grid">
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-users"></i></div><h3 class="i18n" data-ar="المستخدمين" data-en="Users">المستخدمين</h3><p class="i18n" data-ar="بحث، فلاتر، تعليق، حذف" data-en="Search, filter, suspend, delete">بحث، فلاتر، تعليق، حذف</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-building"></i></div><h3 class="i18n" data-ar="الشركات" data-en="Companies">الشركات</h3><p class="i18n" data-ar="إدارة الشركات والموظفين" data-en="Manage companies & employees">إدارة الشركات والموظفين</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-stethoscope"></i></div><h3 class="i18n" data-ar="الاستشارات" data-en="Consultations">الاستشارات</h3><p class="i18n" data-ar="تعيين أخصائيين ومتابعة" data-en="Assign specialists & follow up">تعيين أخصائيين ومتابعة</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-shopping-bag"></i></div><h3 class="i18n" data-ar="الطلبات" data-en="Orders">الطلبات</h3><p class="i18n" data-ar="متابعة طلبات الصيدلية" data-en="Track pharmacy orders">متابعة طلبات الصيدلية</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-headset"></i></div><h3 class="i18n" data-ar="الدعم الفني" data-en="Support">الدعم الفني</h3><p class="i18n" data-ar="تذاكر + AI مقترحات" data-en="Tickets + AI suggestions">تذاكر + AI مقترحات</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-server"></i></div><h3 class="i18n" data-ar="مراقبة النظام" data-en="Monitoring">مراقبة النظام</h3><p class="i18n" data-ar="CPU, RAM حي كل 15 ثانية" data-en="CPU, RAM live every 15s">CPU, RAM حي كل 15 ثانية</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-images"></i></div><h3 class="i18n" data-ar="البانرات" data-en="Banners">البانرات</h3><p class="i18n" data-ar="رفع وإدارة الصور" data-en="Upload & manage images">رفع وإدارة الصور</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-link"></i></div><h3 class="i18n" data-ar="الدعوات" data-en="Invitations">الدعوات</h3><p class="i18n" data-ar="روابط تسجيل مخصصة" data-en="Custom registration links">روابط تسجيل مخصصة</p></div>
-      <div class="card"><div class="card-icon ic-orange"><i class="fas fa-clipboard-list"></i></div><h3 class="i18n" data-ar="سجل النشاطات" data-en="Activity Log">سجل النشاطات</h3><p class="i18n" data-ar="فلاتر + تصدير CSV" data-en="Filters + CSV export">فلاتر + تصدير CSV</p></div>
-    </div>
-  </div>
-</section>
 
-<!-- SECURITY -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-red"><i class="fas fa-shield-alt"></i> <span class="i18n" data-ar="الأمان" data-en="Security">الأمان</span></span>
-    <h2 class="section-title i18n" data-ar='حماية <span>متقدمة</span> متعددة الطبقات' data-en='Multi-layer <span>Advanced</span> Protection'>حماية <span>متقدمة</span> متعددة الطبقات</h2>
-    <p class="section-sub i18n" data-ar="أمان على مستوى المؤسسات مع تشفير شامل وسجل نشاطات كامل." data-en="Enterprise-grade security with full encryption and comprehensive activity logging.">أمان على مستوى المؤسسات مع تشفير شامل وسجل نشاطات كامل.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#dc2626,transparent)"></div>
-    <div class="grid-4">
-      <div class="card" style="text-align:center"><i class="fas fa-lock" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>HTTPS/TLS</h3><p class="i18n" data-ar="تشفير كامل" data-en="Full encryption">تشفير كامل</p></div>
-      <div class="card" style="text-align:center"><i class="fas fa-user-shield" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>RBAC</h3><p class="i18n" data-ar="صلاحيات دقيقة" data-en="Fine-grained access">صلاحيات دقيقة</p></div>
-      <div class="card" style="text-align:center"><i class="fas fa-helmet-safety" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>Helmet + CSP</h3><p class="i18n" data-ar="حماية Headers" data-en="Header protection">حماية Headers</p></div>
-      <div class="card" style="text-align:center"><i class="fas fa-fingerprint" style="font-size:2rem;color:#dc2626;display:block;margin-bottom:0.5rem"></i><h3>WebAuthn</h3><p class="i18n" data-ar="مصادقة بيومترية" data-en="Biometric auth">مصادقة بيومترية</p></div>
+    <div class="license-item">
+      <div class="lic-icon ic-teal"><i class="fas fa-heartbeat"></i></div>
+      <div class="lic-body">
+        <h4>وزارة الصحة السعودية</h4>
+        <p>تصريح منصة صحية رقمية (Digital Health Platform) — لا يُشترط ترخيص عيادة لأنك منصة ربط</p>
+        <span class="lic-cost">20,000 ريال</span>
+      </div>
     </div>
-  </div>
-</section>
 
-<!-- IDENTITY & MEDICAL PROFILE -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-gold"><i class="fas fa-id-card"></i> <span class="i18n" data-ar="الهوية والملف الطبي" data-en="Identity & Medical Profile">الهوية والملف الطبي</span></span>
-    <h2 class="section-title i18n" data-ar='ربط <span>الهوية</span> والملف الطبي الشامل' data-en='<span>Identity</span> Linking & Comprehensive Medical Profile'>ربط <span>الهوية</span> والملف الطبي الشامل</h2>
-    <p class="section-sub i18n" data-ar="ربط الحساب بالهوية الوطنية عبر نفاذ مع ملف صحي شامل يحتوي على كل المعلومات الطبية." data-en="Account linking with national ID via Nafath, with a comprehensive health profile containing all medical data.">ربط الحساب بالهوية الوطنية عبر نفاذ مع ملف صحي شامل يحتوي على كل المعلومات الطبية.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#d97706,#db2777)"></div>
-    <div class="grid-2">
-      <div class="card" style="border-inline-start:4px solid #d97706">
-        <div class="card-icon ic-gold"><i class="fas fa-id-card"></i></div>
-        <h3 class="i18n" data-ar="ربط الهوية (نفاذ)" data-en="Identity Linking (Nafath)">ربط الهوية (نفاذ)</h3>
-        <p class="i18n" data-ar="تحقق من الهوية الوطنية عبر خدمة نفاذ الموحدة — ربط آمن وموثوق للبيانات الشخصية." data-en="National ID verification via unified Nafath service — secure and trusted personal data linking.">تحقق من الهوية الوطنية عبر خدمة نفاذ الموحدة — ربط آمن وموثوق للبيانات الشخصية.</p>
-        <ul class="feature-list" style="margin:0.8rem 0 0">
-          <li><i class="fas fa-check"></i> <span class="i18n" data-ar="تسجيل بأي طريقة متاحة" data-en="Register with any available method">تسجيل بأي طريقة متاحة</span></li>
-          <li><i class="fas fa-check"></i> <span class="i18n" data-ar="إرسال للتحقق عبر نفاذ" data-en="Send for Nafath verification">إرسال للتحقق عبر نفاذ</span></li>
-          <li><i class="fas fa-check"></i> <span class="i18n" data-ar="استلام وتحديث البيانات تلقائياً" data-en="Auto receive & update data">استلام وتحديث البيانات تلقائياً</span></li>
-        </ul>
-      </div>
-      <div class="card" style="border-inline-start:4px solid #db2777">
-        <div class="card-icon ic-pink"><i class="fas fa-file-medical"></i></div>
-        <h3 class="i18n" data-ar="الملف الطبي الشامل" data-en="Comprehensive Medical File">الملف الطبي الشامل</h3>
-        <p class="i18n" data-ar="ملف صحي يحتوي على فصيلة الدم، الحساسية، الأمراض المزمنة، الأدوية الحالية، والسجل الطبي الكامل." data-en="Health file containing blood type, allergies, chronic diseases, current medications, and complete medical history.">ملف صحي يحتوي على فصيلة الدم، الحساسية، الأمراض المزمنة، الأدوية الحالية، والسجل الطبي الكامل.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.8rem">
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="فصيلة الدم" data-en="Blood Type">فصيلة الدم</span></span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="الحساسية" data-en="Allergies">الحساسية</span></span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="أمراض مزمنة" data-en="Chronic Diseases">أمراض مزمنة</span></span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="الأدوية" data-en="Medications">الأدوية</span></span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem"><span class="i18n" data-ar="السجل الطبي" data-en="Medical History">السجل الطبي</span></span>
-        </div>
+    <div class="license-item">
+      <div class="lic-icon ic-blue"><i class="fas fa-user-md"></i></div>
+      <div class="lic-body">
+        <h4>الهيئة السعودية للتخصصات الصحية</h4>
+        <p>التحقق من الأخصائيين وربط التراخيص المهنية</p>
+        <span class="lic-cost">2,000 ريال / أخصائي (يتحملها الشريك)</span>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- NOTIFICATIONS & SCHEDULER -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-pink"><i class="fas fa-bell"></i> <span class="i18n" data-ar="الإشعارات والمواعيد" data-en="Notifications & Scheduling">الإشعارات والمواعيد</span></span>
-    <h2 class="section-title i18n" data-ar='نظام <span>الإشعارات</span> وجدولة المواعيد' data-en='<span>Notifications</span> & Appointment Scheduling'>نظام <span>الإشعارات</span> وجدولة المواعيد</h2>
-    <p class="section-sub i18n" data-ar="إشعارات فورية متعددة القنوات مع نظام حجز مواعيد متكامل وتذكيرات تلقائية." data-en="Multi-channel instant notifications with an integrated appointment booking system and automatic reminders.">إشعارات فورية متعددة القنوات مع نظام حجز مواعيد متكامل وتذكيرات تلقائية.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#db2777,transparent)"></div>
-    <div class="grid-2">
-      <div class="card" style="padding:1.5rem">
-        <div class="card-icon ic-pink"><i class="fas fa-bell"></i></div>
-        <h3 class="i18n" data-ar="إشعارات فورية" data-en="Instant Notifications">إشعارات فورية</h3>
-        <p class="i18n" data-ar="نظام إشعارات متعدد القنوات — داخل التطبيق، بريد إلكتروني، وإشعارات Push." data-en="Multi-channel notification system — in-app, email, and push notifications.">نظام إشعارات متعدد القنوات — داخل التطبيق، بريد إلكتروني، وإشعارات Push.</p>
-        <ul class="feature-list" style="margin:0.8rem 0 0">
-          <li><i class="fas fa-inbox"></i> <span class="i18n" data-ar="إشعارات داخل التطبيق" data-en="In-app notifications">إشعارات داخل التطبيق</span></li>
-          <li><i class="fas fa-envelope"></i> <span class="i18n" data-ar="إشعارات بريد إلكتروني" data-en="Email notifications">إشعارات بريد إلكتروني</span></li>
-          <li><i class="fas fa-mobile-alt"></i> <span class="i18n" data-ar="Push Notifications" data-en="Push Notifications">Push Notifications</span></li>
-          <li><i class="fas fa-bell-slash"></i> <span class="i18n" data-ar="تحكم بالتفضيلات" data-en="Preference controls">تحكم بالتفضيلات</span></li>
-        </ul>
-      </div>
-      <div class="card" style="padding:1.5rem">
-        <div class="card-icon ic-blue"><i class="fas fa-calendar-check"></i></div>
-        <h3 class="i18n" data-ar="جدولة المواعيد" data-en="Appointment Scheduling">جدولة المواعيد</h3>
-        <p class="i18n" data-ar="نظام حجز مواعيد ذكي مع تذكيرات تلقائية وإدارة الجدول الزمني للأخصائيين." data-en="Smart appointment booking system with automatic reminders and specialist schedule management.">نظام حجز مواعيد ذكي مع تذكيرات تلقائية وإدارة الجدول الزمني للأخصائيين.</p>
-        <ul class="feature-list" style="margin:0.8rem 0 0">
-          <li><i class="fas fa-calendar-plus"></i> <span class="i18n" data-ar="حجز موعد فوري" data-en="Instant appointment booking">حجز موعد فوري</span></li>
-          <li><i class="fas fa-clock"></i> <span class="i18n" data-ar="تذكيرات تلقائية" data-en="Automatic reminders">تذكيرات تلقائية</span></li>
-          <li><i class="fas fa-calendar-alt"></i> <span class="i18n" data-ar="جدول الأخصائي" data-en="Specialist schedule">جدول الأخصائي</span></li>
-          <li><i class="fas fa-redo"></i> <span class="i18n" data-ar="إعادة جدولة / إلغاء" data-en="Reschedule / Cancel">إعادة جدولة / إلغاء</span></li>
-        </ul>
+    <div class="license-item" style="border-color:rgba(37,99,235,0.25)">
+      <div class="lic-icon ic-purple"><i class="fas fa-file-medical-alt"></i></div>
+      <div class="lic-body">
+        <h4>مجلس الضمان الصحي ⚠️ مهم</h4>
+        <p>ربط المنصة مع شركات التأمين — إدارة المطالبات (Claims Integration) — اعتماد الشبكة الطبية</p>
+        <span class="lic-cost">40,000 – 80,000 ريال</span>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- PWA & SEO -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-blue"><i class="fas fa-mobile-alt"></i> <span class="i18n" data-ar="التطبيق والتحسين" data-en="PWA & SEO">التطبيق والتحسين</span></span>
-    <h2 class="section-title i18n" data-ar='تطبيق ويب <span>تقدمي</span> + تحسين محركات البحث' data-en='Progressive <span>Web App</span> + SEO Optimization'>تطبيق ويب <span>تقدمي</span> + تحسين محركات البحث</h2>
-    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
-    <div class="grid-2">
-      <div class="card" style="padding:2rem">
-        <div class="card-icon ic-blue"><i class="fas fa-mobile-alt"></i></div>
-        <h3>PWA</h3>
-        <p class="i18n" data-ar="تطبيق ويب تقدمي يعمل كتطبيق أصلي — تثبيت على الجهاز، عمل بدون إنترنت، إشعارات فورية." data-en="Progressive Web App working like a native app — device install, offline mode, push notifications.">تطبيق ويب تقدمي يعمل كتطبيق أصلي — تثبيت على الجهاز، عمل بدون إنترنت، إشعارات فورية.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.8rem">
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">manifest.json</span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Service Worker</span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Offline Mode</span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Push Notifications</span>
-        </div>
-      </div>
-      <div class="card" style="padding:2rem">
-        <div class="card-icon ic-green"><i class="fas fa-search"></i></div>
-        <h3>SEO</h3>
-        <p class="i18n" data-ar="تحسين محركات البحث مع SSR وبيانات منظمة طبية — تصدر في نتائج Google." data-en="Search engine optimization with SSR and structured medical data — ranking on Google results.">تحسين محركات البحث مع SSR وبيانات منظمة طبية — تصدر في نتائج Google.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.8rem">
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">SSR Rendering</span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Meta Tags</span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Schema Medical</span>
-          <span class="tech-tag" style="font-size:0.72rem;padding:0.3rem 0.7rem">Sitemap</span>
-        </div>
+    <div class="license-item">
+      <div class="lic-icon ic-green"><i class="fas fa-pills"></i></div>
+      <div class="lic-body">
+        <h4>هيئة الغذاء والدواء</h4>
+        <p>التكامل مع صرف الوصفات الإلكترونية والامتثال لتنظيم الأدوية</p>
+        <span class="lic-cost">15,000 – 30,000 ريال</span>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- DEMO ACCOUNTS -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-purple"><i class="fas fa-users-cog"></i> <span class="i18n" data-ar="الحسابات التجريبية" data-en="Demo Accounts">الحسابات التجريبية</span></span>
-    <h2 class="section-title i18n" data-ar='جرّب <span>المنصة</span> بأي دور' data-en='Try the <span>Platform</span> with Any Role'>جرّب <span>المنصة</span> بأي دور</h2>
-    <p class="section-sub">
-      <span class="i18n" data-ar="كلمة المرور الموحدة:" data-en="Default password:">كلمة المرور الموحدة:</span>
-      <span class="password-badge" style="background:#ede9fe;color:#7c3aed">demo123</span>
-      &nbsp;|&nbsp;
-      <span class="i18n" data-ar="المدير:" data-en="Admin:">المدير:</span>
-      <span class="password-badge" style="background:#fee2e2;color:#dc2626">admin123</span>
-    </p>
-    <div class="divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
-    <div class="demo-grid">
-      <div class="demo-card" style="border-inline-start:3px solid var(--teal)">
-        <div class="demo-avatar ic-teal"><i class="fas fa-user-injured" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="مستفيد" data-en="Patient">مستفيد</strong><span>patient@mafasel.com</span></div>
-      </div>
-      <div class="demo-card" style="border-inline-start:3px solid #2563eb">
-        <div class="demo-avatar ic-blue"><i class="fas fa-user-md" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="أخصائي" data-en="Specialist">أخصائي</strong><span>doctor@mafasel.com</span></div>
-      </div>
-      <div class="demo-card" style="border-inline-start:3px solid #16a34a">
-        <div class="demo-avatar ic-green"><i class="fas fa-pills" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="صيدلي" data-en="Pharmacist">صيدلي</strong><span>pharmacist@mafasel.com</span></div>
-      </div>
-      <div class="demo-card" style="border-inline-start:3px solid #d97706">
-        <div class="demo-avatar ic-gold"><i class="fas fa-building" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="شركة" data-en="Company">شركة</strong><span>company@mafasel.com</span></div>
-      </div>
-      <div class="demo-card" style="border-inline-start:3px solid #db2777">
-        <div class="demo-avatar ic-pink"><i class="fas fa-shield-alt" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="وكيل تأمين" data-en="Insurance Agent">وكيل تأمين</strong><span>insurance@mafasel.com</span></div>
-      </div>
-      <div class="demo-card" style="border-inline-start:3px solid #7c3aed">
-        <div class="demo-avatar ic-purple"><i class="fas fa-user-tie" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="موظف" data-en="Employee">موظف</strong><span>employee@mafasel.com</span></div>
-      </div>
-      <div class="demo-card" style="border-inline-start:3px solid #2563eb">
-        <div class="demo-avatar ic-blue"><i class="fas fa-eye" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="مشرف" data-en="Moderator">مشرف</strong><span>moderator@mafasel.com</span></div>
-      </div>
-      <div class="demo-card" style="border-inline-start:3px solid #dc2626;background:linear-gradient(135deg,#fff,#fee2e2)">
-        <div class="demo-avatar ic-red"><i class="fas fa-crown" style="font-size:1.1rem"></i></div>
-        <div><strong class="i18n" data-ar="مدير النظام" data-en="System Admin">مدير النظام</strong><span>admin@mafasel.com</span></div>
+    <div class="license-item">
+      <div class="lic-icon ic-gold"><i class="fas fa-database"></i></div>
+      <div class="lic-body">
+        <h4>الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA)</h4>
+        <p>الامتثال لنظام حماية البيانات الشخصية (PDPL)</p>
+        <span class="lic-cost">40,000 – 70,000 ريال</span>
       </div>
     </div>
-    <div class="card" style="margin-top:1.5rem;padding:1rem 1.5rem;background:linear-gradient(135deg,#e6faf8,#dbeafe);display:flex;align-items:center;gap:0.8rem">
-      <i class="fas fa-info-circle" style="color:var(--teal);font-size:1.2rem;flex-shrink:0"></i>
-      <p style="font-size:0.85rem;line-height:1.6" class="i18n" data-ar='جميع الحسابات مفعّلة وجاهزة للاختبار. سجّل الدخول من <a href="/login" style="color:var(--teal);font-weight:700">/login</a> واستكشف كل واجهة حسب الدور.' data-en='All accounts are active and ready for testing. Log in from <a href="/login" style="color:var(--teal);font-weight:700">/login</a> and explore each interface by role.'>جميع الحسابات مفعّلة وجاهزة للاختبار. سجّل الدخول من <a href="/login" style="color:var(--teal);font-weight:700">/login</a> واستكشف كل واجهة حسب الدور.</p>
-    </div>
-  </div>
-</section>
 
-<!-- TESTING & DEPLOYMENT -->
-<section>
-  <div class="container reveal">
-    <span class="section-badge b-blue"><i class="fas fa-rocket"></i> <span class="i18n" data-ar="الاختبار والنشر" data-en="Testing & Deployment">الاختبار والنشر</span></span>
-    <h2 class="section-title i18n" data-ar='الاختبار و<span>النشر</span> الاحترافي' data-en='Professional Testing & <span>Deployment</span>'>الاختبار و<span>النشر</span> الاحترافي</h2>
-    <p class="section-sub i18n" data-ar="اختبارات شاملة على كل المستويات مع بيئة نشر مستقرة ومراقبة حية 24/7." data-en="Comprehensive testing at all levels with a stable deployment environment and 24/7 live monitoring.">اختبارات شاملة على كل المستويات مع بيئة نشر مستقرة ومراقبة حية 24/7.</p>
-    <div class="divider" style="background:linear-gradient(90deg,#2563eb,transparent)"></div>
-    <div class="grid-2">
-      <div class="card" style="padding:1.5rem">
-        <div class="card-icon ic-purple"><i class="fas fa-flask"></i></div>
-        <h3 class="i18n" data-ar="الاختبار" data-en="Testing">الاختبار</h3>
-        <ul class="feature-list" style="margin:0.5rem 0 0">
-          <li><i class="fas fa-check-circle" style="color:#7c3aed"></i> <span class="i18n" data-ar="اختبار الوحدات المنفردة" data-en="Unit Testing">اختبار الوحدات المنفردة</span></li>
-          <li><i class="fas fa-project-diagram" style="color:#2563eb"></i> <span class="i18n" data-ar="اختبار التكامل بين الأنظمة" data-en="Integration Testing">اختبار التكامل بين الأنظمة</span></li>
-          <li><i class="fas fa-tachometer-alt" style="color:#dc2626"></i> <span class="i18n" data-ar="اختبار الأداء تحت الضغط" data-en="Load & Performance Testing">اختبار الأداء تحت الضغط</span></li>
-        </ul>
-      </div>
-      <div class="card" style="padding:1.5rem">
-        <div class="card-icon ic-blue"><i class="fas fa-cloud-upload-alt"></i></div>
-        <h3 class="i18n" data-ar="النشر" data-en="Deployment">النشر</h3>
-        <ul class="feature-list" style="margin:0.5rem 0 0">
-          <li><i class="fas fa-server" style="color:var(--teal)"></i> <span class="i18n" data-ar="VM Deployment — دائم التشغيل" data-en="VM Deployment — Always On">VM Deployment — دائم التشغيل</span></li>
-          <li><i class="fas fa-heartbeat" style="color:#16a34a"></i> <span class="i18n" data-ar="Health Check مع إحصائيات" data-en="Health Check with Stats">Health Check مع إحصائيات</span></li>
-          <li><i class="fas fa-chart-bar" style="color:#ea580c"></i> <span class="i18n" data-ar="مراقبة حية 24/7" data-en="24/7 Live Monitoring">مراقبة حية 24/7</span></li>
-        </ul>
+    <div class="license-item">
+      <div class="lic-icon ic-orange"><i class="fas fa-store"></i></div>
+      <div class="lic-body">
+        <h4>وزارة التجارة السعودية</h4>
+        <p>سجل تجاري (تقنية معلومات + منصات رقمية)</p>
+        <span class="lic-cost">1,500 ريال سنوياً</span>
       </div>
     </div>
-    <div class="card" style="margin-top:1.2rem;padding:1rem 1.5rem;display:flex;align-items:center;gap:0.8rem;background:linear-gradient(135deg,#e6faf8,#dbeafe)">
-      <i class="fas fa-check-circle" style="color:var(--teal);font-size:1.3rem;flex-shrink:0"></i>
+
+    <div class="lic-total">
       <div>
-        <strong style="font-size:0.9rem" class="i18n" data-ar="Graceful Shutdown" data-en="Graceful Shutdown">Graceful Shutdown</strong>
-        <p style="font-size:0.8rem;color:var(--muted)" class="i18n" data-ar="إيقاف آمن مع حفظ الجلسات — SIGTERM + معالجة الأخطاء غير المتوقعة" data-en="Safe shutdown with session preservation — SIGTERM + unhandled error handling">إيقاف آمن مع حفظ الجلسات — SIGTERM + معالجة الأخطاء غير المتوقعة</p>
+        <h3>إجمالي تكاليف التراخيص</h3>
+        <p style="color:rgba(255,255,255,0.45);font-size:0.82rem;margin-top:0.2rem">تقديرات السنة الأولى</p>
+      </div>
+      <div class="amount">150K – 220K ريال</div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ LAUNCH STRATEGY ━━━━━━━━━━━━━━━ -->
+<section class="light-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-teal"><i class="fas fa-map-marker-alt"></i> استراتيجية الإطلاق</span>
+    <h2 class="section-title">البداية من <span>الرياض</span></h2>
+    <p class="section-sub">الأحياء المستهدفة ذات الكثافة السكانية العالية والدخل المرتفع والطلب على العلاج المنزلي</p>
+    <div class="divider"></div>
+    <div class="location-grid">
+      <div class="loc-card"><i class="fas fa-map-pin"></i><h4>حي الملقا</h4></div>
+      <div class="loc-card"><i class="fas fa-map-pin"></i><h4>حي الياسمين</h4></div>
+      <div class="loc-card"><i class="fas fa-map-pin"></i><h4>حي النرجس</h4></div>
+      <div class="loc-card"><i class="fas fa-map-pin"></i><h4>حي العليا</h4></div>
+      <div class="loc-card"><i class="fas fa-map-pin"></i><h4>حي السليمانية</h4></div>
+    </div>
+    <div class="grid-3" style="margin-top:0.5rem">
+      <div class="card" style="text-align:center">
+        <div class="card-icon ic-teal" style="margin:0 auto 0.8rem"><i class="fas fa-users"></i></div>
+        <h3>كثافة سكانية</h3>
+        <p>مناطق ذات تجمعات سكانية كبيرة ومتنوعة</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-icon ic-gold" style="margin:0 auto 0.8rem"><i class="fas fa-money-bill-wave"></i></div>
+        <h3>دخل مرتفع</h3>
+        <p>قدرة شرائية عالية تدعم الخدمات الصحية المتميزة</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-icon ic-purple" style="margin:0 auto 0.8rem"><i class="fas fa-home"></i></div>
+        <h3>طلب منزلي عالٍ</h3>
+        <p>إقبال كبير على خدمات العلاج الطبيعي المنزلي</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section">
-  <div class="orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+<!-- ━━━━━━━━━━━━━━━ REVENUE MODEL ━━━━━━━━━━━━━━━ -->
+<section class="white-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-green"><i class="fas fa-coins"></i> نموذج الإيرادات</span>
+    <h2 class="section-title">5 مصادر <span>إيراد</span> متنوعة</h2>
+    <p class="section-sub">نموذج هجين يجمع العمولات والاشتراكات والرسوم لضمان تدفق نقدي مستقر</p>
+    <div class="divider" style="background:linear-gradient(90deg,var(--green),transparent)"></div>
+    <div style="display:flex;flex-direction:column;gap:0.9rem">
+      <div class="rev-card">
+        <div class="rev-icon ic-teal"><i class="fas fa-percentage"></i></div>
+        <div class="rev-body"><h4>عمولة جلسة العلاج</h4><p>من كل جلسة يتم حجزها عبر المنصة</p></div>
+        <div class="rev-rate">12% – 18%</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-icon ic-blue"><i class="fas fa-calendar-alt"></i></div>
+        <div class="rev-body"><h4>اشتراك شهري للمراكز</h4><p>اشتراك ثابت للمراكز مقابل الظهور والأدوات</p></div>
+        <div class="rev-rate">1,500 ريال/شهر</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-icon ic-purple"><i class="fas fa-exchange-alt"></i></div>
+        <div class="rev-body"><h4>رسوم الإحالة</h4><p>عن كل إحالة طبية ناجحة بين الجهات</p></div>
+        <div class="rev-rate">40 ريال/إحالة</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-icon ic-green"><i class="fas fa-pills"></i></div>
+        <div class="rev-body"><h4>عمولة الصيدليات</h4><p>من مبيعات الأدوية المنجزة عبر المنصة</p></div>
+        <div class="rev-rate">5% – 10%</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-icon ic-gold"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="rev-body"><h4>رسوم مطالبات التأمين</h4><p>معالجة مطالبات التأمين الصحي بشكل إلكتروني</p></div>
+        <div class="rev-rate">3% – 7%</div>
+      </div>
+    </div>
   </div>
-  <div class="container" style="position:relative">
-    <h2 class="i18n" data-ar="جاهز تجرّب مفاصل؟" data-en="Ready to try Mafasel?">جاهز تجرّب مفاصل؟</h2>
-    <p class="i18n" data-ar="ادخل المنصة الآن واستكشف كل الميزات بنفسك" data-en="Enter the platform now and explore all features yourself">ادخل المنصة الآن واستكشف كل الميزات بنفسك</p>
-    <a href="/login" class="cta-btn">
-      <i class="fas fa-sign-in-alt"></i>
-      <span class="i18n" data-ar="ادخل المنصة" data-en="Enter Platform">ادخل المنصة</span>
-    </a>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ CAPITAL ━━━━━━━━━━━━━━━ -->
+<section class="dark-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-dark"><i class="fas fa-wallet"></i> رأس المال</span>
+    <h2 class="section-title" style="color:#fff">رأس المال <span>المطلوب</span></h2>
+    <div class="divider"></div>
+    <table class="cap-table">
+      <thead>
+        <tr>
+          <th>البند</th>
+          <th style="text-align:left">التكلفة (ريال)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>تطوير المنصة التقنية</td><td>350,000</td></tr>
+        <tr><td>التراخيص الحكومية</td><td>200,000</td></tr>
+        <tr><td>التسويق والترويج</td><td>400,000</td></tr>
+        <tr><td>الرواتب (السنة الأولى)</td><td>600,000</td></tr>
+        <tr><td>مصاريف التشغيل</td><td>250,000</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>الإجمالي المطلوب</td><td>1.8 – 2.2 مليون ريال</td></tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ TEAM ━━━━━━━━━━━━━━━ -->
+<section class="white-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-purple"><i class="fas fa-users"></i> الفريق</span>
+    <h2 class="section-title">فريق <span>الإطلاق</span></h2>
+    <p class="section-sub">إجمالي الرواتب الشهرية: <strong style="color:var(--teal)">95,000 ريال/شهر</strong></p>
+    <div class="divider" style="background:linear-gradient(90deg,var(--purple),transparent)"></div>
+    <div class="grid-4">
+      <div class="team-card">
+        <div class="team-avatar ic-teal"><i class="fas fa-user-tie"></i></div>
+        <h4>CEO</h4>
+        <div class="salary">15,000</div>
+        <p>ريال/شهر</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar ic-blue"><i class="fas fa-cogs"></i></div>
+        <h4>COO</h4>
+        <div class="salary">12,000</div>
+        <p>ريال/شهر</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar ic-purple"><i class="fas fa-code"></i></div>
+        <h4>Developer</h4>
+        <div class="salary">12,000</div>
+        <p>ريال/شهر</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar ic-pink" style="background:#fce7f3;color:#db2777"><i class="fas fa-paint-brush"></i></div>
+        <h4>UX/UI Designer</h4>
+        <div class="salary">8,000</div>
+        <p>ريال/شهر</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar ic-gold"><i class="fas fa-bullhorn"></i></div>
+        <h4>Marketing</h4>
+        <div class="salary">10,000</div>
+        <p>ريال/شهر</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar ic-green"><i class="fas fa-handshake"></i></div>
+        <h4>Partnerships</h4>
+        <div class="salary">10,000</div>
+        <p>ريال/شهر</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar ic-orange" style="background:#ffedd5;color:#ea580c"><i class="fas fa-headset"></i></div>
+        <h4>Customer Service</h4>
+        <div class="salary">5,000 ×2</div>
+        <p>ريال/شهر</p>
+      </div>
+      <div class="team-card" style="background:linear-gradient(135deg,#0b1520,#1a2e38);border:none">
+        <div class="team-avatar" style="background:rgba(18,169,155,0.2);color:var(--teal);margin:0 auto 0.8rem"><i class="fas fa-calculator"></i></div>
+        <h4 style="color:#fff">الإجمالي</h4>
+        <div style="font-size:1.3rem;font-weight:900;color:var(--teal)">95K</div>
+        <p style="color:rgba(255,255,255,0.5)">ريال/شهر</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ GROWTH TABLE ━━━━━━━━━━━━━━━ -->
+<section class="light-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-teal"><i class="fas fa-chart-line"></i> نموذج النمو</span>
+    <h2 class="section-title">مسار النمو <span>2026 – 2031</span></h2>
+    <p class="section-sub">توقعات مبنية على معدل نمو السوق وزيادة الاختراق التدريجي</p>
+    <div class="divider"></div>
+    <table class="growth-table">
+      <thead>
+        <tr>
+          <th>السنة</th>
+          <th>المستخدمين</th>
+          <th>الإيرادات</th>
+          <th>نمو السوق</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="year-cell">2026</td>
+          <td>5,000</td>
+          <td class="rev-cell">2 مليون ريال</td>
+          <td><span class="growth-cell"><i class="fas fa-arrow-up"></i> 8%</span></td>
+        </tr>
+        <tr>
+          <td class="year-cell">2027</td>
+          <td>15,000</td>
+          <td class="rev-cell">6 مليون ريال</td>
+          <td><span class="growth-cell"><i class="fas fa-arrow-up"></i> 8%</span></td>
+        </tr>
+        <tr>
+          <td class="year-cell">2028</td>
+          <td>40,000</td>
+          <td class="rev-cell">15 مليون ريال</td>
+          <td><span class="growth-cell"><i class="fas fa-arrow-up"></i> 9%</span></td>
+        </tr>
+        <tr>
+          <td class="year-cell">2029</td>
+          <td>90,000</td>
+          <td class="rev-cell">30 مليون ريال</td>
+          <td><span class="growth-cell"><i class="fas fa-arrow-up"></i> 9%</span></td>
+        </tr>
+        <tr>
+          <td class="year-cell">2030</td>
+          <td>180,000</td>
+          <td class="rev-cell">60 مليون ريال</td>
+          <td><span class="growth-cell"><i class="fas fa-arrow-up"></i> 10%</span></td>
+        </tr>
+        <tr>
+          <td class="year-cell">2031</td>
+          <td>320,000</td>
+          <td class="rev-cell">110 مليون ريال</td>
+          <td><span class="growth-cell"><i class="fas fa-arrow-up"></i> 10%</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ REVENUE BY SECTOR ━━━━━━━━━━━━━━━ -->
+<section class="white-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-blue"><i class="fas fa-chart-pie"></i> توزيع الإيرادات</span>
+    <h2 class="section-title">توزيع الإيرادات <span>حسب القطاع</span></h2>
+    <div class="divider" style="background:linear-gradient(90deg,var(--blue),transparent)"></div>
+    <div class="grid-2" style="align-items:center">
+      <div class="sector-list">
+        <div class="sector-item">
+          <div class="sector-dot" style="background:var(--teal)"></div>
+          <div class="sector-label">العلاج الطبيعي</div>
+          <div class="sector-bar-wrap"><div class="sector-bar" style="width:60%;background:var(--teal)"></div></div>
+          <div class="sector-pct" style="color:var(--teal)">60%</div>
+        </div>
+        <div class="sector-item">
+          <div class="sector-dot" style="background:var(--blue)"></div>
+          <div class="sector-label">التأمين الصحي</div>
+          <div class="sector-bar-wrap"><div class="sector-bar" style="width:20%;background:var(--blue)"></div></div>
+          <div class="sector-pct" style="color:var(--blue)">20%</div>
+        </div>
+        <div class="sector-item">
+          <div class="sector-dot" style="background:var(--green)"></div>
+          <div class="sector-label">الصيدليات</div>
+          <div class="sector-bar-wrap"><div class="sector-bar" style="width:10%;background:var(--green)"></div></div>
+          <div class="sector-pct" style="color:var(--green)">10%</div>
+        </div>
+        <div class="sector-item">
+          <div class="sector-dot" style="background:var(--gold2)"></div>
+          <div class="sector-label">خدمات إضافية</div>
+          <div class="sector-bar-wrap"><div class="sector-bar" style="width:10%;background:var(--gold2)"></div></div>
+          <div class="sector-pct" style="color:var(--gold2)">10%</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <div class="card" style="text-align:center;background:linear-gradient(135deg,#e6faf8,#f0fdf9);border-color:#b2f0ea">
+          <div style="font-size:2.5rem;font-weight:900;color:var(--teal)">60%</div>
+          <div style="font-size:0.85rem;color:var(--muted);font-weight:700">القطاع الأساسي — العلاج الطبيعي</div>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:1.1rem;font-weight:900;color:var(--dark2)">متنوع ومستقر</div>
+          <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem">4 مصادر إيراد تضمن الاستدامة</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ CAPITAL RECOVERY ━━━━━━━━━━━━━━━ -->
+<section class="dark-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-dark"><i class="fas fa-clock"></i> استرداد رأس المال</span>
+    <h2 class="section-title" style="color:#fff">الطريق إلى <span>الربحية</span></h2>
+    <div class="divider"></div>
+    <div class="recovery-line">
+      <div class="rec-step" style="background:rgba(18,169,155,0.12);border-radius:12px 0 0 12px">
+        <div style="font-size:1.8rem;margin-bottom:0.3rem">🚀</div>
+        <h4 style="color:#fff">إطلاق المنصة</h4>
+        <p>نهاية 2026</p>
+      </div>
+      <div style="width:2px;background:rgba(255,255,255,0.1);height:80px"></div>
+      <div class="rec-step" style="background:rgba(37,99,235,0.12)">
+        <div style="font-size:1.8rem;margin-bottom:0.3rem">💰</div>
+        <h4 style="color:#fff">بداية الدخل</h4>
+        <p>منتصف 2027</p>
+      </div>
+      <div style="width:2px;background:rgba(255,255,255,0.1);height:80px"></div>
+      <div class="rec-step" style="background:rgba(124,58,237,0.12)">
+        <div style="font-size:1.8rem;margin-bottom:0.3rem">⚖️</div>
+        <h4 style="color:#fff">نقطة التعادل</h4>
+        <p>نهاية 2028</p>
+      </div>
+      <div style="width:2px;background:rgba(255,255,255,0.1);height:80px"></div>
+      <div class="rec-step active" style="background:rgba(18,169,155,0.2);border-radius:0 12px 12px 0;border:1px solid rgba(18,169,155,0.3)">
+        <div style="font-size:1.8rem;margin-bottom:0.3rem">🏆</div>
+        <h4 style="color:var(--teal)">الربحية</h4>
+        <p>2029</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:1.5rem">
+      <div style="display:inline-block;padding:0.8rem 2rem;border-radius:12px;background:rgba(18,169,155,0.15);border:1px solid rgba(18,169,155,0.3)">
+        <span style="font-size:1.5rem;font-weight:900;color:var(--teal)">18 – 24 شهراً</span>
+        <div style="color:rgba(255,255,255,0.5);font-size:0.82rem;margin-top:0.2rem">فترة استرداد رأس المال بعد الإطلاق</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ COMPETITORS ━━━━━━━━━━━━━━━ -->
+<section class="white-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-red"><i class="fas fa-chess"></i> تحليل المنافسة</span>
+    <h2 class="section-title">الفجوة في <span>السوق</span></h2>
+    <p class="section-sub">لا يوجد منصة ربط متخصصة بالعلاج الطبيعي + التأمين + الصيدليات في السوق السعودي</p>
+    <div class="divider" style="background:linear-gradient(90deg,var(--red),transparent)"></div>
+    <div class="vs-grid">
+      <div class="vs-card competitor">
+        <h4>Sehhaty / صحتي</h4>
+        <ul class="feat-list">
+          <li>منصة حكومية عامة</li>
+          <li>لا تخصص في العلاج الطبيعي</li>
+          <li>لا تكامل مع التأمين</li>
+          <li>لا خدمة منزلية</li>
+          <li class="yes">✕ ليست منصة ربط</li>
+        </ul>
+      </div>
+      <div class="vs-card competitor">
+        <h4>Altibbi / Vezeeta</h4>
+        <ul class="feat-list">
+          <li>استشارات طبية عامة</li>
+          <li>لا تخصص في الطبيعي</li>
+          <li>لا ربط مع الصيدليات</li>
+          <li>لا متابعة مستمرة</li>
+          <li class="yes">✕ منصة استشارات فقط</li>
+        </ul>
+      </div>
+      <div class="vs-card us">
+        <div class="vs-badge">مفاصل</div>
+        <h4>الميزة التنافسية</h4>
+        <ul class="feat-list">
+          <li class="yes">✓ متخصص 100% في العلاج الطبيعي</li>
+          <li class="yes">✓ تكامل مع التأمين</li>
+          <li class="yes">✓ ربط مع الصيدليات</li>
+          <li class="yes">✓ خدمة منزلية</li>
+          <li class="yes">✓ منصة ربط متكاملة</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ TADAWUL ━━━━━━━━━━━━━━━ -->
+<section class="light-sec">
+  <div class="container reveal">
+    <span class="sec-badge badge-gold"><i class="fas fa-chart-bar"></i> الطرح في السوق</span>
+    <h2 class="section-title">الإدراج في <span>تداول</span> السعودية</h2>
+    <div class="divider" style="background:var(--grad-gold)"></div>
+    <div class="tadawul-box">
+      <div>
+        <h3>الطرح العام الأولي (IPO)</h3>
+        <p>بعد تجاوز عتبة 50 مليون ريال في الإيرادات السنوية</p>
+        <p style="margin-top:0.5rem;color:rgba(255,255,255,0.4);font-size:0.8rem">مرحلة التوسع الوطني والإقليمي</p>
+      </div>
+      <div style="display:flex;gap:1rem">
+        <div class="tadawul-badge">
+          <span class="tb-val">5-6</span>
+          <span class="tb-label">سنوات بعد الإطلاق</span>
+        </div>
+        <div class="tadawul-badge">
+          <span class="tb-val">+50M</span>
+          <span class="tb-label">ريال إيرادات</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━ CLOSING STATEMENT ━━━━━━━━━━━━━━━ -->
+<section class="closing">
+  <div class="closing-inner reveal">
+    <span class="sec-badge badge-dark" style="margin-bottom:2rem"><i class="fas fa-fire"></i> الخلاصة</span>
+    <div class="big-stat-row" style="margin-bottom:3rem">
+      <div class="big-stat"><div class="big-num">9.7B</div><div class="big-label" style="color:rgba(255,255,255,0.45)">سوق ريال</div></div>
+      <div class="big-stat"><div class="big-num">8%</div><div class="big-label" style="color:rgba(255,255,255,0.45)">نمو سنوي</div></div>
+      <div class="big-stat"><div class="big-num">2030</div><div class="big-label" style="color:rgba(255,255,255,0.45)">دعم حكومي</div></div>
+      <div class="big-stat"><div class="big-num">2029</div><div class="big-label" style="color:rgba(255,255,255,0.45)">ربحية</div></div>
+    </div>
+    <h2>
+      مفاصل ليست مجرد منصة حجز…
+    </h2>
+    <div class="punch">
+      بل <span>البنية التحتية الرقمية</span><br>
+      لقطاع العلاج الطبيعي في <span>المملكة</span>
+    </div>
+    <div class="closing-chips" style="margin-top:3rem">
+      <span class="closing-chip"><i class="fas fa-check"></i> سوق 9.7 مليار</span>
+      <span class="closing-chip"><i class="fas fa-check"></i> نمو 8% سنوياً</span>
+      <span class="closing-chip"><i class="fas fa-check"></i> دعم حكومي مباشر</span>
+      <span class="closing-chip"><i class="fas fa-check"></i> نموذج ربحي واضح</span>
+      <span class="closing-chip"><i class="fas fa-check"></i> قابل للتوسع</span>
+    </div>
   </div>
 </section>
 
 <footer>
-  <div class="container">
-    <p class="i18n" data-ar='مفاصل &copy; 2024 — منصة طبية رقمية متكاملة | <a href="/">الرئيسية</a>' data-en='Mafasel &copy; 2024 — Integrated Digital Medical Platform | <a href="/">Home</a>'>مفاصل &copy; 2024 — منصة طبية رقمية متكاملة | <a href="/">الرئيسية</a></p>
-  </div>
+  <div>منصة <span>مفاصل</span> الطبية — الدراسة التكاملية &copy; 2026</div>
 </footer>
 
 <script>
-var currentLang = 'ar';
+  // ===== REVEAL ON SCROLL =====
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
 
-function setLang(lang) {
-  currentLang = lang;
-  var root = document.getElementById('htmlRoot');
-  root.lang = lang;
-  root.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  // ===== ANIMATE BARS =====
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const fills = entry.target.querySelectorAll('.bar-fill');
+        fills.forEach(f => {
+          const w = f.getAttribute('data-w');
+          setTimeout(() => f.style.width = w + '%', 200);
+        });
+        barObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.grid-2').forEach(g => barObserver.observe(g));
 
-  document.querySelectorAll('.lang-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-  });
-  if (lang === 'ar') {
-    document.querySelectorAll('.lang-btn')[0].classList.add('active');
-  } else {
-    document.querySelectorAll('.lang-btn')[1].classList.add('active');
+  // ===== COUNTER ANIMATION =====
+  function animateCounter(el, target, suffix, decimals) {
+    const duration = 2000;
+    const start = performance.now();
+    const update = (time) => {
+      const progress = Math.min((time - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = (target * eased).toFixed(decimals || 0);
+      el.textContent = current + (suffix || '');
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
   }
-
-  document.querySelectorAll('.i18n').forEach(function(el) {
-    var text = el.getAttribute('data-' + lang);
-    if (text) el.innerHTML = text;
-  });
-
-  var backLink = document.querySelector('.back-link span');
-  if (backLink) {
-    backLink.textContent = lang === 'ar' ? 'الرئيسية' : 'Home';
+  const marketEl = document.getElementById('marketVal');
+  if (marketEl) {
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCounter(marketEl, 9.72, '', 2);
+          counterObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    counterObserver.observe(marketEl);
   }
-
-  var arrow = document.querySelector('.back-link i');
-  if (arrow) {
-    arrow.className = lang === 'ar' ? 'fas fa-arrow-right' : 'fas fa-arrow-left';
-  }
-
-  document.title = lang === 'ar' ? 'مفاصل | العرض التقديمي' : 'Mafasel | Presentation';
-}
-
-var reveals = document.querySelectorAll('.reveal');
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-reveals.forEach(function(el) { observer.observe(el); });
 </script>
 </body>
 </html>
