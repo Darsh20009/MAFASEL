@@ -1,0 +1,64 @@
+==> Downloading cache...
+==> Cloning from https://github.com/Darsh20009/MAFASEL
+==> Checking out commit eab19fc3447232fad03821b1256c0909e11f6815 in branch main
+==> Downloaded 349MB in 2s. Extraction took 11s.
+info: using existing install for stable-x86_64-unknown-linux-gnu
+info: default toolchain set to stable-x86_64-unknown-linux-gnu
+  stable-x86_64-unknown-linux-gnu unchanged - rustc 1.94.1 (e408947bf 2026-03-25)
+==> Running build command 'npm install; npm run build'...
+==> Using Node.js version 22.22.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+up to date, audited 289 packages in 917ms
+30 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+> mafasel@1.0.0 build
+> echo 'No build step required'
+No build step required
+==> Uploading build...
+==> Uploaded in 14.5s. Compression took 10.0s
+==> Build successful 🎉
+==> Deploying...
+==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+==> Running 'npm run start'
+> mafasel@1.0.0 start
+> node server.js
+Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+<anonymous_script>:1
+SyntaxError: Unexpected token '', "Ma"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at /opt/render/project/src/server/middleware/i18n.js:11:31
+    at Array.forEach (<anonymous>)
+    at loadTranslations (/opt/render/project/src/server/middleware/i18n.js:9:9)
+    at Object.<anonymous> (/opt/render/project/src/server/middleware/i18n.js:15:1)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+Node.js v22.22.0
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> No open ports detected, continuing to scan...
+==> Running 'npm run start'
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+> mafasel@1.0.0 start
+> node server.js
+Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+<anonymous_script>:1
+SyntaxError: Unexpected token '', "Ma"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at /opt/render/project/src/server/middleware/i18n.js:11:31
+    at Array.forEach (<anonymous>)
+    at loadTranslations (/opt/render/project/src/server/middleware/i18n.js:9:9)
+    at Object.<anonymous> (/opt/render/project/src/server/middleware/i18n.js:15:1)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+Node.js v22.22.0
