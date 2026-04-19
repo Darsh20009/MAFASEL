@@ -149,3 +149,87 @@ id = "2kZrQuTbZOadWYFv3gZts"
 uri = "file://attached_assets/stock_images/baby-medicine.jpg"
 type = "image"
 title = "baby children syrup medicine pink bottle pharmaceutical pediatric"
+
+[[outputs]]
+id = "tPJ_jEpXONZ7tPy6YsNe0"
+uri = "file://attached_assets/stock_images/physiotherapy_exercise_1.jpg"
+type = "image"
+title = "physical therapy clinic patient exercise"
+
+[[outputs]]
+id = "zVtFLSmiVgLR7FawwjEDh"
+uri = "file://attached_assets/stock_images/physiotherapy_exercise_2.jpg"
+type = "image"
+title = "physical therapy clinic patient exercise"
+
+[[outputs]]
+id = "QRdF3xohB3mNInmXd0D4w"
+uri = "file://attached_assets/stock_images/male_physiotherapist_portrait.jpg"
+type = "image"
+title = "physiotherapist doctor portrait male clinic"
+
+[[outputs]]
+id = "QePfUE9aVYlbfCITEKk94"
+uri = "file://attached_assets/stock_images/female_physiotherapist_portrait.jpg"
+type = "image"
+title = "female physiotherapist doctor portrait clinic"
+
+[[outputs]]
+id = "o5EmnLcG0-AcuURuhDNl-"
+uri = "file://attached_assets/stock_images/male_doctor_portrait_clinic_1.jpg"
+type = "image"
+title = "male doctor white coat portrait clinic professional"
+
+[[outputs]]
+id = "oxJ_J4AXdgNJm77A_eA4B"
+uri = "file://attached_assets/stock_images/male_doctor_portrait_clinic_2.jpg"
+type = "image"
+title = "male doctor white coat portrait clinic professional"
+
+[[outputs]]
+id = "xt2QPQBhK6IeDIAjHAvSW"
+uri = "file://attached_assets/stock_images/male_doctor_portrait_clinic_3.jpg"
+type = "image"
+title = "male doctor white coat portrait clinic professional"
+
+[[outputs]]
+id = "PhZ60suXKNn8bnoOefrup"
+uri = "file://attached_assets/stock_images/real_physiotherapy_clinic_interior_1.jpg"
+type = "image"
+title = "modern physical therapy clinic interior rehabilitation equipment treatment room"
+
+[[outputs]]
+id = "pBqVFhmSq_nK0HVPKwaPR"
+uri = "file://attached_assets/stock_images/real_physiotherapy_clinic_interior_2.jpg"
+type = "image"
+title = "modern physical therapy clinic interior rehabilitation equipment treatment room"
+
+[[outputs]]
+id = "9wwT3cTD4oyNxCFuB9wiA"
+uri = "file://attached_assets/stock_images/real_physiotherapy_clinic_interior_3.jpg"
+type = "image"
+title = "modern physical therapy clinic interior rehabilitation equipment treatment room"
+
+[[outputs]]
+id = "MsqKmwOzgDr5CSlZYcg5d"
+uri = "file://attached_assets/stock_images/real_rehab_therapy_session_1.jpg"
+type = "image"
+title = "physical therapist helping patient rehabilitation exercise real photo clinic"
+
+[[outputs]]
+id = "-c_kG5dQ7CDw74qQlvAsX"
+uri = "file://attached_assets/stock_images/real_rehab_therapy_session_2.jpg"
+type = "image"
+title = "physical therapist helping patient rehabilitation exercise real photo clinic"
+
+[[outputs]]
+id = "u-2LJ5xttPCQnnsNdoqVP"
+uri = "file://attached_assets/stock_images/real_rehab_therapy_session_3.jpg"
+type = "image"
+title = "physical therapist helping patient rehabilitation exercise real photo clinic"
+
+[[outputs]]
+id = "u75Vk45GeSA4iRqQMb22a"
+uri = "file://attached_assets/stock_images/real_rehab_therapy_session_4.jpg"
+type = "image"
+title = "physical therapist helping patient rehabilitation exercise real photo clinic"

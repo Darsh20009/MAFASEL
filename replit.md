@@ -6,8 +6,8 @@
 ## الصور والوسائط
 - **صور الأدوية**: `public/uploads/drugs/` — 15 صورة (10 مولّدة بالذكاء الاصطناعي + 5 صور مخزون) بأسماء: panadol, brufen, amoxicillin, augmentin, omeprazole, metformin, vitamin-d, vitamin-c, omega3, cetirizine, losartan, atorvastatin, betaderm, optive, panadol-baby
 - **أغلفة الصيدليات**: `public/uploads/pharmacy/covers/` — nahdi, aldawaa, lemon, orange cover photos
-- **صور مراكز العلاج الطبيعي**: `public/uploads/centers/` — physio-center-1 إلى physio-center-4
-- **صور المتخصصين**: `public/uploads/specialists/` — specialist-male, specialist-female
+- **صور مراكز العلاج الطبيعي**: `public/uploads/centers/` — physio-center-1 إلى physio-center-4 بصور فوتوغرافية واقعية للعلاج الطبيعي والتأهيل
+- **صور المتخصصين**: `public/uploads/specialists/` — specialist-male, specialist-female بصور واقعية منفصلة للأخصائي والأخصائية
 - **ترحيل الصور**: يعمل تلقائياً عند كل بداية تشغيل في `server/index.js` — يُحدّث المراكز والصيدليات والأدوية والمتخصصين في DB
 
 ## آخر التحديثات (أبريل 2026)
