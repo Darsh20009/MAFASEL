@@ -1,0 +1,4 @@
+Google OAuth: Missing credentials, skipping setup
+No MONGODB_URI set, skipping DB connection
+MAFASEL server running on port 5000 (without DB)
+SIGTERM received, shutting down gracefully...
