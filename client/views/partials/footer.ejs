@@ -1,7 +1,11 @@
 <% if (user) { %>
 <footer class="footer">
   <div class="footer-content">
-    <p>&copy; 2026 <%= typeof t === 'function' ? t('site_name') : 'مفاصل' %> - <%= (typeof lang !== 'undefined' && lang === 'en') ? 'All rights reserved' : 'جميع الحقوق محفوظة' %></p>
+    <a href="/" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;color:inherit;opacity:.7;margin-bottom:.35rem">
+      <img src="/icons/logo.png" alt="مفاصل" style="width:22px;height:22px;object-fit:contain;filter:brightness(0) invert(0.6)">
+      <span style="font-weight:700;font-size:.9rem">مفاصل</span>
+    </a>
+    <p>&copy; 2026 <%= typeof t === 'function' ? t('site_name') : 'مفاصل' %> &mdash; <%= (typeof lang !== 'undefined' && lang === 'en') ? 'All rights reserved' : 'جميع الحقوق محفوظة' %></p>
   </div>
 </footer>
 

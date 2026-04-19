@@ -1,5 +1,9 @@
 <aside class="admin-sidebar">
   <div class="admin-sidebar-header">
+    <a href="/" style="display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem;text-decoration:none">
+      <img src="/icons/logo.png" alt="مفاصل" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1)">
+      <span style="color:#fff;font-weight:900;font-size:1.15rem;letter-spacing:0.02em">مفاصل</span>
+    </a>
     <h2><i class="fas fa-shield-halved"></i> لوحة الإدارة</h2>
     <p><%= user.name %> &middot; <%= user.role === 'admin' ? 'مدير النظام' : 'مشرف' %></p>
   </div>

@@ -1,10 +1,15 @@
 <%- include('../partials/header') %>
-<div class="error-page">
-  <div class="error-content">
-    <h1>500</h1>
-    <h2>خطأ في الخادم</h2>
-    <p>عذراً، حدث خطأ غير متوقع</p>
-    <a href="/" class="btn btn-primary">العودة للرئيسية</a>
+<div class="error-page" style="min-height:65vh;display:flex;align-items:center;justify-content:center">
+  <div class="error-content" style="text-align:center;padding:2rem">
+    <a href="/" style="display:inline-block;margin-bottom:1.5rem">
+      <img src="/icons/logo.png" alt="مفاصل" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(18,169,155,.3));opacity:.7">
+    </a>
+    <h1 style="font-size:5rem;font-weight:900;color:var(--secondary);margin-bottom:.25rem;line-height:1">500</h1>
+    <h2 style="font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:.6rem">خطأ في الخادم</h2>
+    <p style="color:var(--text-muted);margin-bottom:1.75rem">عذراً، حدث خطأ غير متوقع. سنعمل على إصلاحه في أقرب وقت.</p>
+    <a href="/" class="btn btn-primary" style="padding:.75rem 2rem;border-radius:12px;background:linear-gradient(135deg,#12a99b,#0d8a7e);color:#fff;text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:.5rem">
+      <i class="fas fa-home"></i> العودة للرئيسية
+    </a>
   </div>
 </div>
 <%- include('../partials/footer') %>
