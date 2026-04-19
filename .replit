@@ -10,22 +10,9 @@ channel = "stable-25_05"
 [userenv.shared]
 PORT = "5000"
 NODE_ENV = "development"
-MONGODB_URI = "mongodb+srv://mafaseltec_12478:ASDqwe123@mafasel.iwktcdg.mongodb.net/?appName=mafasel"
-GROQ_API_KEY = "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"
-GOOGLE_CLIENT_SECRET = "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"
 GOOGLE_CLIENT_ID = "982269596237-4d8rrm0jbsq14dll6u6d1ocebhem13c8.apps.googleusercontent.com"
 APPLE_TEAM_ID = "V4K6RM59LS"
-QMEET_API_KEY = "qmeet_e75c9f4b8c18c1a3b612ffc072bfa38a6f7da09d"
-VAPID_PRIVATE_KEY = "PVr3ZjgEXZMk1k4WJ4lsS4YPBojNmVheqi5rHf8dRE0"
-APPLE_PRIVATE_KEY = """
------BEGIN PRIVATE KEY-----
-MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgY48g90UlbYqpzPPX
-uZCz740zbLKdkC4PTjQYOK1la6KgCgYIKoZIzj0DAQehRANCAAQjBedeglvvg9VF
-NlCEcNa9xS5Xt0xvbSySgHAcFy4FzwlUnQ1dEg9eYLUxs/2ddOqPMSKm4EJOQsYg
-VPFADSEm
------END PRIVATE KEY-----"""
 APPLE_CLIENT_ID = "com.mafaseltech.mafaseltech"
-SMTP2GO_API_KEY = "api-9185601B31184187B68AAE7A0C0952C5"
 VAPID_PUBLIC_KEY = "BEycBOkyfpLUcEdSqIP9TBFIJf_krICKbdtMoGuwST5x_X6gkqQ6dsMN3BlQqubWNCNCLXAH1kmZtFLtMJVVCwI"
 VAPID_EMAIL = "mailto:admin@mafasel.com"
 GOOGLE_CALLBACK_URL = "https://mafaseltech.com/api/auth/google/callback"

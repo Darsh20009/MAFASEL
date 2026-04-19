@@ -5,7 +5,7 @@ const translations = {};
 
 function loadTranslations() {
   const localesDir = path.join(__dirname, '../../locales');
-  const files = fs.readdirSync(localesDir).filter(f => f.endsWith('.json'));
+  const files = fs.readdirSync(localesDir).filter(f => /^[a-z]{2}\.json$/.test(f));
   files.forEach(file => {
     const lang = file.replace('.json', '');
     translations[lang] = JSON.parse(fs.readFileSync(path.join(localesDir, file), 'utf8'));

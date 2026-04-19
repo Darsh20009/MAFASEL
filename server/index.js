@@ -12,16 +12,39 @@ const ROOT_DIR = path.join(__dirname, '..');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
-
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || '';
+const isProduction = process.env.NODE_ENV === 'production';
+
+function getAllowedOrigins() {
+  if (!isProduction) return true;
+  const origins = new Set();
+  if (process.env.BASE_URL) origins.add(process.env.BASE_URL);
+  if (process.env.REPLIT_DOMAINS) {
+    for (const domain of process.env.REPLIT_DOMAINS.split(',')) {
+      origins.add(`https://${domain.trim()}`);
+    }
+  }
+  return Array.from(origins);
+}
+
+const allowedOrigins = getAllowedOrigins();
+const corsOptions = {
+  origin(origin, callback) {
+    if (allowedOrigins === true || !origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origin not allowed'));
+  },
+  credentials: true
+};
+const io = new Server(server, { cors: corsOptions });
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(ROOT_DIR, 'client', 'views'));
 
 app.use(compression());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
@@ -38,10 +61,13 @@ app.use('/.well-known', express.static(path.join(ROOT_DIR, 'public', '.well-know
   setHeaders: (res) => { res.setHeader('Content-Type', 'text/plain'); }
 }));
 
-const isProduction = process.env.NODE_ENV === 'production';
+const sessionSecret = process.env.SESSION_SECRET || (isProduction ? null : 'development-session-secret');
+if (!sessionSecret) {
+  throw new Error('SESSION_SECRET must be configured in production');
+}
 
 let sessionConfig = {
-  secret: process.env.SESSION_SECRET || 'mafasel-secret-key-2026',
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -242,7 +268,7 @@ async function startServer() {
     try {
       const User = require('./modules/users/user.model');
       const adminExists = await User.findOne({ role: 'admin' });
-      if (!adminExists) {
+      if (!adminExists && process.env.NODE_ENV !== 'production') {
         const bcrypt = require('bcryptjs');
         const hash = await bcrypt.hash('admin123', 10);
         await User.create({
