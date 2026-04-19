@@ -1,68 +1,170 @@
 <%- include('../partials/header') %>
 <div class="main-content">
-  <div class="container">
-    <div class="page-header">
-      <h1><i class="fas fa-comment-dots"></i> الشكاوى والمتابعة</h1>
+  <div class="container" style="padding-top:1.5rem;padding-bottom:2rem">
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success" style="display:flex;align-items:center;gap:.6rem;background:rgba(16,185,129,.1);border:1.5px solid #10b981;border-radius:14px;padding:.9rem 1.2rem;margin-bottom:1.25rem;color:#065f46;font-weight:600">
+      <i class="fas fa-check-circle" style="color:#10b981"></i> <%= success %>
+    </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error" style="display:flex;align-items:center;gap:.6rem;background:rgba(239,68,68,.1);border:1.5px solid #ef4444;border-radius:14px;padding:.9rem 1.2rem;margin-bottom:1.25rem;color:#991b1b;font-weight:600">
+      <i class="fas fa-exclamation-circle" style="color:#ef4444"></i> <%= error %>
+    </div>
+    <% } %>
+
+    <!-- HERO BANNER -->
+    <div class="support-hero">
+      <h1><i class="fas fa-headset" style="color:#12a99b;margin-left:.5rem"></i> مركز الدعم والمساعدة</h1>
+      <p>نحن هنا لمساعدتك — تواصل معنا وسنرد عليك في أقرب وقت</p>
+      <div class="support-hero-stats">
+        <div class="sh-stat">
+          <strong><%= complaints.length %></strong>
+          <span>طلباتي</span>
+        </div>
+        <div class="sh-stat">
+          <strong><%= complaints.filter(c => c.status === 'resolved').length %></strong>
+          <span>تم حلها</span>
+        </div>
+        <div class="sh-stat">
+          <strong><%= complaints.filter(c => c.status === 'open' || c.status === 'in_progress').length %></strong>
+          <span>قيد المعالجة</span>
+        </div>
+        <div class="sh-stat">
+          <strong>&lt;24h</strong>
+          <span>متوسط الرد</span>
+        </div>
+      </div>
     </div>
 
-    <div class="form-card">
-      <h2>تقديم شكوى جديدة</h2>
-      <form method="POST" action="/complaints/new">
-        <div class="form-row">
-          <div class="form-group">
-            <label>التصنيف</label>
-            <select name="category">
-              <option value="service">خدمة</option>
-              <option value="technical">تقني</option>
-              <option value="billing">مالي</option>
-              <option value="doctor">أخصائي</option>
-              <option value="pharmacy">صيدلية</option>
-              <option value="other">أخرى</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>الأولوية</label>
-            <select name="priority">
-              <option value="low">منخفضة</option>
-              <option value="medium" selected>متوسطة</option>
-              <option value="high">مرتفعة</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>الموضوع</label>
-          <input type="text" name="subject" required placeholder="عنوان الشكوى">
-        </div>
-        <div class="form-group">
-          <label>التفاصيل</label>
-          <textarea name="description" required rows="4" placeholder="اشرح المشكلة بالتفصيل..."></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">إرسال الشكوى</button>
-      </form>
-    </div>
+    <div class="support-grid">
 
-    <% if (complaints.length > 0) { %>
-    <h2 style="margin-top:2rem">شكاواي السابقة</h2>
-    <div class="list-items">
-      <% complaints.forEach(c => { %>
-      <div class="list-item">
-        <div class="list-item-info">
-          <strong><%= c.subject %></strong>
-          <p><%= c.description.substring(0, 100) %></p>
-          <span class="text-muted"><%= new Date(c.createdAt).toLocaleDateString('ar-SA') %></span>
+      <!-- FORM COLUMN -->
+      <div>
+        <div class="support-form-card">
+          <h2><i class="fas fa-paper-plane"></i> تقديم طلب دعم جديد</h2>
+
+          <form method="POST" action="/complaints/new" id="supportForm">
+
+            <div style="margin-bottom:1rem">
+              <label style="display:block;font-size:.83rem;font-weight:700;margin-bottom:.5rem">التصنيف</label>
+              <div class="category-pills" id="catPills">
+                <button type="button" class="cat-pill active" data-val="technical" onclick="selectCat(this)"><i class="fas fa-wrench"></i> تقني</button>
+                <button type="button" class="cat-pill" data-val="service" onclick="selectCat(this)"><i class="fas fa-concierge-bell"></i> خدمة</button>
+                <button type="button" class="cat-pill" data-val="billing" onclick="selectCat(this)"><i class="fas fa-receipt"></i> مالي</button>
+                <button type="button" class="cat-pill" data-val="doctor" onclick="selectCat(this)"><i class="fas fa-user-md"></i> أخصائي</button>
+                <button type="button" class="cat-pill" data-val="pharmacy" onclick="selectCat(this)"><i class="fas fa-pills"></i> صيدلية</button>
+                <button type="button" class="cat-pill" data-val="other" onclick="selectCat(this)"><i class="fas fa-ellipsis-h"></i> أخرى</button>
+              </div>
+              <input type="hidden" name="category" id="categoryInput" value="technical">
+            </div>
+
+            <div style="margin-bottom:1rem">
+              <label style="display:block;font-size:.83rem;font-weight:700;margin-bottom:.5rem">الأولوية</label>
+              <div class="priority-selector">
+                <button type="button" class="pri-btn low" onclick="selectPri(this,'low')"><i class="fas fa-arrow-down"></i> منخفضة</button>
+                <button type="button" class="pri-btn medium active" onclick="selectPri(this,'medium')"><i class="fas fa-minus"></i> متوسطة</button>
+                <button type="button" class="pri-btn high" onclick="selectPri(this,'high')"><i class="fas fa-arrow-up"></i> مرتفعة</button>
+              </div>
+              <input type="hidden" name="priority" id="priorityInput" value="medium">
+            </div>
+
+            <div class="form-group-modern">
+              <label>موضوع الشكوى</label>
+              <input type="text" name="subject" required placeholder="اشرح المشكلة باختصار…" maxlength="120">
+            </div>
+
+            <div class="form-group-modern">
+              <label>التفاصيل الكاملة</label>
+              <textarea name="description" required rows="5" placeholder="اشرح المشكلة بالتفصيل لنتمكن من مساعدتك بشكل أسرع…"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit-support">
+              <i class="fas fa-paper-plane"></i> إرسال الطلب
+            </button>
+          </form>
+        </div>
+
+        <!-- FAQ QUICK TIPS -->
+        <div class="support-tips" style="margin-top:1rem">
+          <h4><i class="fas fa-lightbulb"></i> نصائح قبل الإرسال</h4>
+          <div class="support-tip-item"><i class="fas fa-check"></i> تأكد من اختيار التصنيف الصحيح لطلبك</div>
+          <div class="support-tip-item"><i class="fas fa-check"></i> كلما كانت التفاصيل أوضح، كلما كان الرد أسرع</div>
+          <div class="support-tip-item"><i class="fas fa-check"></i> يمكنك متابعة حالة طلبك من قائمة الطلبات</div>
+          <div class="support-tip-item"><i class="fas fa-check"></i> وقت الاستجابة المتوسط أقل من 24 ساعة</div>
+        </div>
+      </div>
+
+      <!-- COMPLAINTS LIST COLUMN -->
+      <div class="complaints-panel">
+        <h2><i class="fas fa-list-alt"></i> طلباتي السابقة</h2>
+
+        <% if (complaints.length === 0) { %>
+        <div class="empty-complaints">
+          <i class="fas fa-inbox"></i>
+          <p>لا توجد طلبات دعم بعد</p>
+          <small style="color:var(--muted);font-size:.8rem">ابدأ بتقديم طلبك الأول من النموذج</small>
+        </div>
+        <% } else { %>
+
+        <% complaints.forEach(function(c) { %>
+        <div class="complaint-item">
+          <div class="complaint-item-top">
+            <div class="complaint-subject"><%= c.subject %></div>
+            <div class="complaint-meta">
+              <span class="badge status-<%= c.status %>" style="font-size:.72rem;padding:.2rem .6rem;border-radius:50px;font-weight:700">
+                <% if (c.status === 'open') { %><i class="fas fa-clock"></i> مفتوحة
+                <% } else if (c.status === 'in_progress') { %><i class="fas fa-spinner"></i> قيد المعالجة
+                <% } else if (c.status === 'resolved') { %><i class="fas fa-check-circle"></i> تم الحل
+                <% } else { %><i class="fas fa-ban"></i> مغلقة<% } %>
+              </span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">
+            <span class="badge priority-<%= c.priority %>" style="font-size:.7rem;padding:.15rem .5rem;border-radius:50px">
+              <% if (c.priority === 'low') { %>منخفضة<% } else if (c.priority === 'medium') { %>متوسطة<% } else { %>مرتفعة<% } %>
+            </span>
+            <span style="font-size:.72rem;color:var(--muted);background:var(--surface);padding:.15rem .5rem;border-radius:50px;border:1px solid var(--border)">
+              <%= c.category === 'technical' ? 'تقني' : c.category === 'service' ? 'خدمة' : c.category === 'billing' ? 'مالي' : c.category === 'doctor' ? 'أخصائي' : c.category === 'pharmacy' ? 'صيدلية' : 'أخرى' %>
+            </span>
+          </div>
+
+          <div class="complaint-desc"><%= c.description.substring(0, 120) %><%= c.description.length > 120 ? '…' : '' %></div>
+          <div class="complaint-date"><i class="fas fa-calendar-alt" style="color:var(--accent);font-size:.7rem"></i> <%= new Date(c.createdAt).toLocaleDateString('ar-SA', {year:'numeric',month:'long',day:'numeric'}) %></div>
+
           <% if (c.response) { %>
           <div class="complaint-response">
-            <strong>الرد:</strong> <%= c.response %>
+            <strong><i class="fas fa-reply"></i> رد فريق الدعم</strong>
+            <p><%= c.response %></p>
           </div>
           <% } %>
         </div>
-        <span class="badge badge-<%= c.status === 'resolved' ? 'success' : c.status === 'open' ? 'warning' : 'primary' %>">
-          <%= c.status === 'open' ? 'مفتوحة' : c.status === 'in_progress' ? 'قيد المعالجة' : c.status === 'resolved' ? 'تم الحل' : 'مغلقة' %>
-        </span>
+        <% }) %>
+        <% } %>
       </div>
-      <% }) %>
+
     </div>
-    <% } %>
   </div>
 </div>
+
+<script>
+function selectCat(btn) {
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('categoryInput').value = btn.dataset.val;
+}
+function selectPri(btn, val) {
+  document.querySelectorAll('.pri-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('priorityInput').value = val;
+}
+// Init priorities active style
+document.querySelectorAll('.pri-btn').forEach(b => {
+  if (b.classList.contains('medium') && b.classList.contains('active')) {
+    b.classList.add('active');
+  }
+});
+</script>
+
 <%- include('../partials/footer') %>

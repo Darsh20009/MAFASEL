@@ -10,6 +10,13 @@
 - **صور المتخصصين**: `public/uploads/specialists/` — specialist-male, specialist-female
 - **ترحيل الصور**: يعمل تلقائياً عند كل بداية تشغيل في `server/index.js` — يُحدّث المراكز والصيدليات والأدوية والمتخصصين في DB
 
+## آخر التحديثات (أبريل 2026)
+- **CSS Variables**: إضافة `--card`, `--surface`, `--muted`, `--accent`, `--accent2`, `--accent-light` للوضعين الفاتح والداكن
+- **Stat Icons**: إضافة `bg-red`, `bg-blue`, `bg-purple`, `bg-pink`, `bg-indigo` لأيقونات البطاقات الإحصائية
+- **Employee Dashboard**: لوحة تحكم متكاملة للموظفين مع 8 خدمات سريعة + مساعد AI + روابط سريعة
+- **Support Portal**: إعادة تصميم كاملة لصفحة الشكاوى كبوابة دعم احترافية مع تصنيفات، أولويات، وإحصائيات
+- **Role Badges**: شارات CSS لجميع الأدوار (doctor, pharmacist, company, insurance, employee, patient)
+
 ## البنية التقنية
 - **Backend**: Node.js + Express.js
 - **Frontend**: EJS Templates (Server-Side Rendering)

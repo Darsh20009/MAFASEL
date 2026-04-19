@@ -353,6 +353,92 @@
       </div>
     </section>
 
+    <% } else if (r === 'employee') { %>
+    <div class="role-panel-header">
+      <div class="role-panel-badge employee-badge"><i class="fas fa-id-badge"></i> لوحة تحكم الموظف</div>
+    </div>
+    <section class="stats-grid">
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium"><i class="fas fa-stethoscope"></i></div>
+        <div class="stat-info"><h3><%= stats.consultations %></h3><p>استشاراتي</p></div>
+      </div>
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium bg-green"><i class="fas fa-pills"></i></div>
+        <div class="stat-info"><h3><%= stats.orders %></h3><p>طلبات الدواء</p></div>
+      </div>
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium <%= stats.activeInsurance ? 'bg-green' : 'bg-muted' %>"><i class="fas fa-shield-alt"></i></div>
+        <div class="stat-info"><h3><%= stats.activeInsurance ? 'فعّال' : 'غير فعّال' %></h3><p>التأمين الصحي</p></div>
+      </div>
+      <div class="stat-card-premium">
+        <div class="stat-card-shine"></div>
+        <div class="stat-icon-premium bg-amber"><i class="fas fa-bell"></i></div>
+        <div class="stat-info"><h3><%= stats.unreadNotifs %></h3><p>إشعارات جديدة</p></div>
+      </div>
+    </section>
+    <section class="role-control-panel">
+      <div class="control-panel-grid">
+        <div class="control-panel-main">
+          <h2 class="section-heading-inline"><i class="fas fa-tasks"></i> خدماتي</h2>
+          <div class="control-panel-actions">
+            <a href="/consultations/new" class="control-action-card primary">
+              <div class="ca-icon"><i class="fas fa-plus-circle"></i></div>
+              <div class="ca-info"><strong>طلب استشارة طبية</strong><small>احجز استشارة مع أخصائي</small></div>
+            </a>
+            <a href="/consultations" class="control-action-card">
+              <div class="ca-icon bg-teal"><i class="fas fa-notes-medical"></i></div>
+              <div class="ca-info"><strong>استشاراتي</strong><small>متابعة جميع استشاراتك الطبية</small></div>
+              <% if (stats.consultations > 0) { %><span class="ca-badge"><%= stats.consultations %></span><% } %>
+            </a>
+            <a href="/physiotherapy" class="control-action-card">
+              <div class="ca-icon bg-green"><i class="fas fa-hand-holding-medical"></i></div>
+              <div class="ca-info"><strong>العلاج الطبيعي</strong><small>حجز جلسات العلاج والتأهيل</small></div>
+            </a>
+            <a href="/pharmacy" class="control-action-card">
+              <div class="ca-icon bg-amber"><i class="fas fa-pills"></i></div>
+              <div class="ca-info"><strong>الصيدلية</strong><small>طلب الأدوية والوصفات الطبية</small></div>
+            </a>
+            <a href="/insurance" class="control-action-card">
+              <div class="ca-icon bg-blue"><i class="fas fa-shield-alt"></i></div>
+              <div class="ca-info"><strong>تأميني الصحي</strong><small>عرض تفاصيل تغطيتك التأمينية</small></div>
+            </a>
+            <a href="/medical-profile" class="control-action-card">
+              <div class="ca-icon bg-purple"><i class="fas fa-heartbeat"></i></div>
+              <div class="ca-info"><strong>ملفي الطبي</strong><small>بياناتك الصحية والتاريخ المرضي</small></div>
+            </a>
+            <a href="/meetings" class="control-action-card">
+              <div class="ca-icon bg-indigo"><i class="fas fa-video"></i></div>
+              <div class="ca-info"><strong>مكالمات الفيديو</strong><small>جلسات الاستشارة عن بُعد</small></div>
+            </a>
+            <a href="/complaints" class="control-action-card">
+              <div class="ca-icon bg-red"><i class="fas fa-headset"></i></div>
+              <div class="ca-info"><strong>الدعم والمساعدة</strong><small>تقديم شكاوى أو طلبات دعم</small></div>
+            </a>
+          </div>
+        </div>
+        <div class="control-panel-side">
+          <div class="ai-assistant-panel">
+            <div class="ai-panel-glow"></div>
+            <div class="ai-panel-icon"><img src="/icons/logo.png" alt="مساعد مفاصل" style="width:44px;height:44px;object-fit:contain;filter:brightness(0) invert(1);"></div>
+            <h3>مساعد مفاصل الذكي</h3>
+            <p>استفسر عن حالتك الصحية أو استشر المساعد الذكي في أي سؤال طبي</p>
+            <a href="/ai" class="btn-ai-start"><i class="fas fa-robot"></i> ابدأ المحادثة</a>
+          </div>
+          <div class="quick-links-panel">
+            <h4><i class="fas fa-link"></i> روابط سريعة</h4>
+            <a href="/scheduler" class="quick-link-item"><i class="fas fa-calendar-alt"></i> مواعيدي</a>
+            <a href="/chat" class="quick-link-item"><i class="fas fa-comments"></i> المحادثات</a>
+            <a href="/notifications" class="quick-link-item"><i class="fas fa-bell"></i> الإشعارات <% if(stats.unreadNotifs>0){%><span class="ql-badge"><%= stats.unreadNotifs %></span><%}%></a>
+            <a href="/maps" class="quick-link-item"><i class="fas fa-map-marker-alt"></i> خريطة المراكز</a>
+            <a href="/health-card" class="quick-link-item"><i class="fas fa-id-card"></i> بطاقتي الصحية</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <% } else if (r === 'insurance_agent') { %>
     <div class="role-panel-header">
       <div class="role-panel-badge insurance-badge"><i class="fas fa-file-shield"></i> لوحة تحكم وكيل التأمين</div>

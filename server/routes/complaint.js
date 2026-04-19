@@ -6,7 +6,9 @@ const { fireNotifyAdmins } = require('../utils/notifications');
 
 router.get('/', isAuthenticated, async (req, res) => {
   const complaints = await Complaint.find({ user: req.session.user._id }).sort({ createdAt: -1 });
-  res.render('pages/complaints', { title: 'الشكاوى والمتابعة', complaints });
+  const success = req.session.success; delete req.session.success;
+  const error   = req.session.error;   delete req.session.error;
+  res.render('pages/complaints', { title: 'الشكاوى والمتابعة', complaints, success, error });
 });
 
 router.post('/new', isAuthenticated, async (req, res) => {
