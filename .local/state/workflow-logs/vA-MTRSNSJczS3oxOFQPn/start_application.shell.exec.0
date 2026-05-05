@@ -1,7 +1,0 @@
-Google OAuth configured successfully
-Callback URL: https://bc1ae41b-d029-4d89-9656-6d518ad0e9e2-00-111cu9o672u2f.worf.replit.dev/api/auth/google/callback
-MongoDB connected successfully
-Demo skip: doctor@mafasel.com - E11000 duplicate key error collection: test.users index: phone_1 dup key: { phone: "0500000002" }
-Image migration completed
-MAFASEL server running on port 5000
-SIGTERM received, shutting down gracefully...
